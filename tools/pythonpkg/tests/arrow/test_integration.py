@@ -1,14 +1,12 @@
 import duckdb
 import os
 import sys
-try:
-    import pyarrow
-    import pyarrow.parquet
-    import urllib.request
+import pyarrow
+import pyarrow.parquet
+import urllib.request
 
-    can_run = True
-except:
-    can_run = False
+can_run = True
+
 
 class TestArrowIntegration(object):
     def test_parquet_roundtrip(self, duckdb_cursor):
@@ -37,7 +35,6 @@ class TestArrowIntegration(object):
 
             assert rel_from_arrow.equals(rel_from_arrow2, check_metadata=True)
             assert rel_from_arrow.equals(rel_from_duckdb, check_metadata=True)
-            assert 1 == 0
 
     def test_unsigned_roundtrip(self,duckdb_cursor):
         if not can_run:
