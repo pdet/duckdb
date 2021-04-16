@@ -2,7 +2,7 @@ add_definitions(-DDUCKDB)
 
 if(NOT MSVC)
   set(CMAKE_CXX_FLAGS_DEBUG
-      "${CMAKE_CXX_FLAGS_DEBUG} -Wextra -Wno-unused-parameter -Wno-redundant-move -Wnarrowing"
+      "${CMAKE_CXX_FLAGS_DEBUG} -Wextra -Wno-unused-parameter -Wno-redundant-move"
   )
 endif()
 
@@ -41,6 +41,8 @@ if(AMALGAMATION_BUILD)
           DESTINATION "${INSTALL_INCLUDE_DIR}/duckdb/common")
 
 else()
+
+  add_definitions(-DDUCKDB_MAIN_LIBRARY)
 
   add_subdirectory(optimizer)
   add_subdirectory(planner)

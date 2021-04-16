@@ -26,6 +26,7 @@ struct DBGenFunctionData : public TableFunctionData {
 
 static unique_ptr<FunctionData> dbgen_bind(ClientContext &context, vector<Value> &inputs,
                                            unordered_map<string, Value> &named_parameters,
+                                           vector<LogicalType> &input_table_types, vector<string> &input_table_names,
                                            vector<LogicalType> &return_types, vector<string> &names) {
 	auto result = make_unique<DBGenFunctionData>();
 	for (auto &kv : named_parameters) {
@@ -45,7 +46,7 @@ static unique_ptr<FunctionData> dbgen_bind(ClientContext &context, vector<Value>
 }
 
 static void dbgen_function(ClientContext &context, const FunctionData *bind_data, FunctionOperatorData *operator_state,
-                           DataChunk &output) {
+                           DataChunk *input, DataChunk &output) {
 	auto &data = (DBGenFunctionData &)*bind_data;
 	if (data.finished) {
 		return;
@@ -73,7 +74,6 @@ void TPCHExtension::Load(DuckDB &db) {
 
 	// create the dbgen function
 	auto &catalog = Catalog::GetCatalog(*con.context);
-	;
 	catalog.CreateTableFunction(*con.context, &dbgen_info);
 
 	// create the TPCH pragma that allows us to run the query

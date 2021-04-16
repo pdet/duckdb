@@ -745,7 +745,7 @@ static char *one_input_line(FILE *in, char *zPrior, int isContinuation){
 #else
     free(zPrior);
     zResult = shell_readline(zPrompt);
-    if( zResult && *zResult ) shell_add_history(zResult);
+    if( zResult && *zResult && *zResult != '\3' ) shell_add_history(zResult);
 #endif
   }
   return zResult;
@@ -18716,7 +18716,6 @@ static int do_meta_command(char *zLine, ShellState *p){
     char *zErrMsg = 0;
     const char *zDiv = "(";
     const char *zName = 0;
-    int iSchema = 0;
     int bDebug = 0;
     int ii;
 
@@ -18761,47 +18760,7 @@ static int do_meta_command(char *zLine, ShellState *p){
       }
     }
     if( zDiv ){
-      sqlite3_stmt *pStmt = 0;
-      rc = sqlite3_prepare_v2(p->db, "SELECT name FROM pragma_database_list",
-                              -1, &pStmt, 0);
-      if( rc ){
-        utf8_printf(stderr, "Error: %s\n", sqlite3_errmsg(p->db));
-        sqlite3_finalize(pStmt);
-        rc = 1;
-        goto meta_command_exit;
-      }
-      appendText(&sSelect, "SELECT sql FROM", 0);
-      iSchema = 0;
-      while( sqlite3_step(pStmt)==SQLITE_ROW ){
-        const char *zDb = (const char*)sqlite3_column_text(pStmt, 0);
-        char zScNum[30];
-        sqlite3_snprintf(sizeof(zScNum), zScNum, "%d", ++iSchema);
-        appendText(&sSelect, zDiv, 0);
-        zDiv = " UNION ALL ";
-        appendText(&sSelect, "SELECT shell_add_schema(sql,", 0);
-        if( sqlite3_stricmp(zDb, "main")!=0 ){
-          appendText(&sSelect, zDb, '\'');
-        }else{
-          appendText(&sSelect, "NULL", 0);
-        }
-        appendText(&sSelect, ",name) AS sql, type, tbl_name, name, rowid,", 0);
-        appendText(&sSelect, zScNum, 0);
-        appendText(&sSelect, " AS snum, ", 0);
-        appendText(&sSelect, zDb, '\'');
-        appendText(&sSelect, " AS sname FROM ", 0);
-        appendText(&sSelect, zDb, quoteChar(zDb));
-        appendText(&sSelect, ".sqlite_schema", 0);
-      }
-      sqlite3_finalize(pStmt);
-#ifndef SQLITE_OMIT_INTROSPECTION_PRAGMAS
-      if( zName ){
-        appendText(&sSelect,
-           " UNION ALL SELECT shell_module_schema(name),"
-           " 'table', name, name, name, 9e+99, 'main' FROM pragma_module_list",
-        0);
-      }
-#endif
-      appendText(&sSelect, ") WHERE ", 0);
+      appendText(&sSelect, "SELECT sql FROM sqlite_master WHERE ", 0);
       if( zName ){
         char *zQarg = sqlite3_mprintf("%Q", zName);
         int bGlob = strchr(zName, '*') != 0 || strchr(zName, '?') != 0 ||
@@ -18820,7 +18779,7 @@ static int do_meta_command(char *zLine, ShellState *p){
         sqlite3_free(zQarg);
       }
       appendText(&sSelect, "type!='meta' AND sql IS NOT NULL"
-                           " ORDER BY snum, rowid", 0);
+                           " ORDER BY name", 0);
       if( bDebug ){
         utf8_printf(p->out, "SQL: %s;\n", sSelect.z);
       }else{
@@ -19974,13 +19933,13 @@ static int _all_whitespace(const char *z){
 */
 static int line_is_command_terminator(const char *zLine){
   while( IsSpace(zLine[0]) ){ zLine++; };
-  if( zLine[0]=='/' && _all_whitespace(&zLine[1]) ){
-    return 1;  /* Oracle */
-  }
-  if( ToLower(zLine[0])=='g' && ToLower(zLine[1])=='o'
-         && _all_whitespace(&zLine[2]) ){
-    return 1;  /* SQL Server */
-  }
+  // if( zLine[0]=='/' && _all_whitespace(&zLine[1]) ){
+  //   return 1;  /* Oracle */
+  // }
+  // if( ToLower(zLine[0])=='g' && ToLower(zLine[1])=='o'
+  //        && _all_whitespace(&zLine[2]) ){
+  //   return 1;  /* SQL Server */
+  // }
   return 0;
 }
 
@@ -20064,7 +20023,7 @@ static int process_input(ShellState *p){
   int rc;                   /* Error code */
   int errCnt = 0;           /* Number of errors seen */
   int startline = 0;        /* Line number for start of current input */
-
+  int numCtrlC = 0;
   p->lineno = 0;
   while( errCnt==0 || !bail_on_error || (p->in==0 && stdin_is_interactive) ){
     fflush(p->out);
@@ -20073,6 +20032,21 @@ static int process_input(ShellState *p){
       /* End of input */
       if( p->in==0 && stdin_is_interactive ) printf("\n");
       break;
+    }
+    if (*zLine == '\3') {
+      // ctrl c: reset sql statement
+      if (nSql == 0 && zLine[1] == '\0' && stdin_is_interactive) {
+        // if in interactive mode and we press ctrl c twice
+        // on an empty line, we exit
+        numCtrlC++;
+        if (numCtrlC >= 2) {
+          break;
+        }
+      }
+      nSql = 0;
+      continue;
+    } else {
+      numCtrlC = 0;
     }
     if( seenInterrupt ){
       if( p->in!=0 ) break;

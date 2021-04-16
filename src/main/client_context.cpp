@@ -96,12 +96,17 @@ unique_ptr<DataChunk> ClientContext::Fetch() {
 
 string ClientContext::FinalizeQuery(ClientContextLock &lock, bool success) {
 	profiler.EndQuery();
-
 	executor.Reset();
 
 	string error;
 	if (transaction.HasActiveTransaction()) {
 		ActiveTransaction().active_query = MAXIMUM_QUERY_ID;
+		query_profiler_history.GetPrevProfilers().emplace_back(transaction.ActiveTransaction().active_query,
+		                                                       move(profiler));
+		profiler.save_location = query_profiler_history.GetPrevProfilers().back().second.save_location;
+		if (query_profiler_history.GetPrevProfilers().size() >= query_profiler_history.GetPrevProfilersSize()) {
+			query_profiler_history.GetPrevProfilers().pop_front();
+		}
 		try {
 			if (transaction.IsAutoCommit()) {
 				if (success) {
@@ -331,6 +336,7 @@ unique_ptr<QueryResult> ClientContext::Execute(const string &query, shared_ptr<P
 	} catch (std::exception &ex) {
 		return make_unique<MaterializedQueryResult>(ex.what());
 	}
+	LogQueryInternal(*lock, query);
 	return RunStatementOrPreparedStatement(*lock, query, nullptr, prepared, &values, allow_stream_result);
 }
 
@@ -469,9 +475,7 @@ void ClientContext::LogQueryInternal(ClientContextLock &, const string &query) {
 
 unique_ptr<QueryResult> ClientContext::Query(unique_ptr<SQLStatement> statement, bool allow_stream_result) {
 	auto lock = LockContext();
-	if (log_query_writer) {
-		LogQueryInternal(*lock, statement->query.substr(statement->stmt_location, statement->stmt_length));
-	}
+	LogQueryInternal(*lock, statement->query.substr(statement->stmt_location, statement->stmt_length));
 
 	vector<unique_ptr<SQLStatement>> statements;
 	statements.push_back(move(statement));

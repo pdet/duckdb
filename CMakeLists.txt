@@ -52,6 +52,7 @@ if(FORCE_32_BIT)
   set(M32_FLAG " -m32 ")
 endif()
 
+
 option(DISABLE_UNITY "Disable unity builds." FALSE)
 
 option(FORCE_COLORED_OUTPUT
@@ -65,6 +66,7 @@ if(${FORCE_COLORED_OUTPUT})
 endif()
 
 option(ENABLE_SANITIZER "Enable address sanitizer." TRUE)
+option(ENABLE_THREAD_SANITIZER "Enable thread sanitizer." FALSE)
 option(ENABLE_UBSAN "Enable undefined behavior sanitizer." TRUE)
 option(
   FORCE_SANITIZER
@@ -88,12 +90,32 @@ if((BUILD_PYTHON OR BUILD_R)
     set(ENABLE_UBSAN FALSE)
   endif()
 endif()
-if(${ENABLE_SANITIZER})
-  set(CXX_EXTRA_DEBUG "${CXX_EXTRA_DEBUG} -fsanitize=address")
+if(${ENABLE_THREAD_SANITIZER})
+  if(${ENABLE_SANITIZER})
+    message(
+      WARNING
+        "Both thread and address sanitizers are enabled. This is not supported by clang. The address sanitizer will be disabled, and we will run with only the thread sanitizer."
+    )
+  endif()
+  if(FORCE_ASSERT)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
+  else()
+    set(CXX_EXTRA_DEBUG "${CXX_EXTRA_DEBUG} -fsanitize=thread")
+  endif()
+elseif(${ENABLE_SANITIZER})
+  if(FORCE_ASSERT)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+  else()
+    set(CXX_EXTRA_DEBUG "${CXX_EXTRA_DEBUG} -fsanitize=address")
+  endif()
 endif()
 
 if(${ENABLE_UBSAN})
-  set(CXX_EXTRA_DEBUG "${CXX_EXTRA_DEBUG} -fsanitize=undefined")
+  if(FORCE_ASSERT)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+  else()
+    set(CXX_EXTRA_DEBUG "${CXX_EXTRA_DEBUG} -fsanitize=undefined")
+  endif()
 endif()
 
 option(EXPLICIT_EXCEPTIONS "Explicitly enable C++ exceptions." FALSE)
@@ -166,7 +188,11 @@ option(FORCE_ASSERT "Enable checking of assertions, even in release mode" FALSE)
 
 option(TREAT_WARNINGS_AS_ERRORS "Treat warnings as errors" FALSE)
 option(EXPORT_DLL_SYMBOLS "Export dll symbols on Windows, else import" TRUE)
+option(BUILD_RDTSC "Enable the rdtsc instruction." FALSE)
 
+if(${BUILD_RDTSC})
+  add_compile_definitions(RDTSC)
+endif()
 
 if(BUILD_PYTHON
    OR BUILD_R
@@ -200,7 +226,7 @@ if(NOT MSVC)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} -g")
 
   set(CXX_EXTRA_DEBUG
-      "${CXX_EXTRA_DEBUG} -Wunused-variable -Wunused-const-variable -Werror=vla -Wnarrowing"
+      "${CXX_EXTRA_DEBUG} -Wunused-variable -Wunused-const-variable -Werror=vla -Wnarrowing  -Wnarrowing -pedantic"
   )
   if(TREAT_WARNINGS_AS_ERRORS)
     set(CXX_EXTRA_DEBUG "${CXX_EXTRA_DEBUG} -Werror")
@@ -252,6 +278,7 @@ include_directories(third_party/utf8proc/include)
 include_directories(third_party/miniparquet)
 include_directories(third_party/concurrentqueue)
 include_directories(third_party/pcg)
+include_directories(third_party/tdigest)
 
 # todo only regenerate ub file if one of the input files changed hack alert
 function(enable_unity_build UB_SUFFIX SOURCE_VARIABLE_NAME)
@@ -276,7 +303,7 @@ function(enable_unity_build UB_SUFFIX SOURCE_VARIABLE_NAME)
   foreach(source_file ${files})
     file(
       APPEND ${temp_unit_build_file}
-      "#line 0 \"${source_file}\"\n#include <${CMAKE_CURRENT_SOURCE_DIR}/${source_file}>\n"
+      "#include <${CMAKE_CURRENT_SOURCE_DIR}/${source_file}>\n"
     )
   endforeach(source_file)
 
@@ -301,7 +328,7 @@ function(enable_unity_build UB_SUFFIX SOURCE_VARIABLE_NAME)
     foreach(source_file ${files})
       file(
         APPEND ${unit_build_file}
-        "#line 0 \"${source_file}\"\n#include <${CMAKE_CURRENT_SOURCE_DIR}/${source_file}>\n"
+        "#include <${CMAKE_CURRENT_SOURCE_DIR}/${source_file}>\n"
       )
     endforeach(source_file)
   endif()
@@ -380,7 +407,7 @@ function(add_extension_dependencies LIBRARY)
     add_dependencies(${LIBRARY} fts_extension)
   endif()
 
-  if(${BUILD_FTS_EXTENSION})
+  if(${BUILD_HTTPFS_EXTENSION})
     add_dependencies(${LIBRARY} httpfs_extension)
   endif()
 endfunction()
