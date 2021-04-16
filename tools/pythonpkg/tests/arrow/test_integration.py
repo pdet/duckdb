@@ -37,6 +37,7 @@ class TestArrowIntegration(object):
 
             assert rel_from_arrow.equals(rel_from_arrow2, check_metadata=True)
             assert rel_from_arrow.equals(rel_from_duckdb, check_metadata=True)
+            assert 1 == 0
 
     def test_unsigned_roundtrip(self,duckdb_cursor):
         if not can_run:
