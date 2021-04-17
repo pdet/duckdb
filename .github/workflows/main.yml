@@ -17,9 +17,8 @@ jobs:
     runs-on: ubuntu-20.04
 
     env:
-      CIBW_DEPENDENCY_VERSIONS: latest
       CIBW_BUILD: 'cp36-* cp37-* cp38-* cp39-*'
-      CIBW_BEFORE_BUILD: 'pip install --prefer-binary "pandas>=0.24" "pytest>=4.3" '
+      CIBW_BEFORE_BUILD: 'pip install --prefer-binary "pandas>=0.24" "pytest>=4.3" "pytest>=3.2" "cmake>=3.2" '
       CIBW_TEST_REQUIRES: 'pytest' 
       CIBW_BEFORE_TEST: 'pip install --prefer-binary "pandas>=0.24" "pyarrow>=3.0"'
       CIBW_TEST_COMMAND: 'python -m pytest {project}/tests'
@@ -37,7 +36,7 @@ jobs:
 
 
     - name: Install
-      run: pip install cibuildwheel twine 
+      run: pip install cibuildwheel twine cmake>=3.2
 
     - name: Build
       run: |
