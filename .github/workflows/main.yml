@@ -36,7 +36,7 @@ jobs:
 
 
     - name: Install
-      run: pip install cibuildwheel twine cmake>=3.2
+      run: pip install cibuildwheel twine
 
     - name: Build
       run: |
