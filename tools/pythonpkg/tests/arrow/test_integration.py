@@ -1,12 +1,13 @@
 import duckdb
 import os
 import sys
-import pyarrow
-import pyarrow.parquet
-import urllib.request
 
-can_run = True
-
+try:
+    import pyarrow
+    import pyarrow.parquet
+    can_run = True
+except:
+    can_run = False
 
 class TestArrowIntegration(object):
     def test_parquet_roundtrip(self, duckdb_cursor):
