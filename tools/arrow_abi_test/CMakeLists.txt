@@ -1,8 +1,14 @@
 # Always build the abi test with asan to reveal problems with the release
 # callbacks
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache) # Less useful to do it for linking, see edit2
+endif(CCACHE_FOUND)
+
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
-SET (CMAKE_C_COMPILER_WORKS 1)
-SET (CMAKE_CXX_COMPILER_WORKS 1)
+
 include(ExternalProject)
 ExternalProject_Add(
   arrow_ep
