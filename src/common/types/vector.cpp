@@ -194,6 +194,9 @@ void Vector::Initialize(bool zero_data, idx_t capacity) {
 	} else if (internal_type == PhysicalType::LIST) {
 		auto list_buffer = make_unique<VectorListBuffer>(type);
 		auxiliary = move(list_buffer);
+	} else if( internal_type == PhysicalType::STRING ){
+		auto string_buffer = make_unique<VectorArrowStringBuffer>();
+		auxiliary = move(string_buffer);
 	}
 	auto type_size = GetTypeIdSize(internal_type);
 	if (type_size > 0) {

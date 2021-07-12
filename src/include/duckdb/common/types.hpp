@@ -351,6 +351,8 @@ enum class LogicalTypeId : uint8_t {
 	USMALLINT = 29,
 	UINTEGER = 30,
 	UBIGINT = 31,
+	STRING = 32,
+	LARGE_STRING=33,
 
 
 	HUGEINT = 50,
@@ -454,6 +456,8 @@ public:
 	DUCKDB_API static const LogicalType TIMESTAMP_NS;
 	DUCKDB_API static const LogicalType TIME;
 	DUCKDB_API static const LogicalType VARCHAR;
+	DUCKDB_API static const LogicalType STRING;
+	DUCKDB_API static const LogicalType LARGE_STRING;
 	DUCKDB_API static const LogicalType ANY;
 	DUCKDB_API static const LogicalType BLOB;
 	DUCKDB_API static const LogicalType INTERVAL;

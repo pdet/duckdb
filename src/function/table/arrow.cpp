@@ -58,11 +58,9 @@ LogicalType GetArrowLogicalType(ArrowSchema &schema,
 		}
 		return LogicalType::DECIMAL(width, scale);
 	} else if (format == "u") {
-		arrow_convert_data[col_idx]->variable_sz_type.emplace_back(ArrowVariableSizeType::NORMAL, 0);
-		return LogicalType::VARCHAR;
+		return LogicalType::STRING;
 	} else if (format == "U") {
-		arrow_convert_data[col_idx]->variable_sz_type.emplace_back(ArrowVariableSizeType::SUPER_SIZE, 0);
-		return LogicalType::VARCHAR;
+		return LogicalType::LARGE_STRING;
 	} else if (format == "tsn:") {
 		return LogicalTypeId::TIMESTAMP_NS;
 	} else if (format == "tsu:") {
@@ -450,22 +448,22 @@ void ArrowToDuckDBMapList(Vector &vector, ArrowArray &array, ArrowScanState &sca
 		                    offsets[0]);
 	}
 }
-template <class T>
-static void SetVectorString(Vector &vector, idx_t size, char *cdata, T *offsets) {
-	for (idx_t row_idx = 0; row_idx < size; row_idx++) {
-		if (FlatVector::IsNull(vector, row_idx)) {
-			continue;
-		}
-		auto cptr = cdata + offsets[row_idx];
-		auto str_len = offsets[row_idx + 1] - offsets[row_idx];
-
-		auto utf_type = Utf8Proc::Analyze(cptr, str_len);
-		if (utf_type == UnicodeType::INVALID) {
-			throw std::runtime_error("Invalid UTF8 string encoding");
-		}
-		FlatVector::GetData<string_t>(vector)[row_idx] = StringVector::AddString(vector, cptr, str_len);
-	}
-}
+//template <class T>
+//static void SetVectorString(Vector &vector, idx_t size, char *cdata, T *offsets) {
+//	for (idx_t row_idx = 0; row_idx < size; row_idx++) {
+//		if (FlatVector::IsNull(vector, row_idx)) {
+//			continue;
+//		}
+//		auto cptr = cdata + offsets[row_idx];
+//		auto str_len = offsets[row_idx + 1] - offsets[row_idx];
+//
+//		auto utf_type = Utf8Proc::Analyze(cptr, str_len);
+//		if (utf_type == UnicodeType::INVALID) {
+//			throw std::runtime_error("Invalid UTF8 string encoding");
+//		}
+//		FlatVector::GetData<string_t>(vector)[row_idx] = StringVector::AddString(vector, cptr, str_len);
+//	}
+//}
 
 void DirectConversion(Vector &vector, ArrowArray &array, ArrowScanState &scan_state, int64_t nested_offset) {
 	auto internal_type = GetTypeIdSize(vector.GetType().InternalType());
@@ -585,29 +583,34 @@ void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowScanState &scan
 		}
 		break;
 	}
-	case LogicalTypeId::VARCHAR: {
-		auto original_type = arrow_convert_data[col_idx]->variable_sz_type[arrow_convert_idx.first++];
-		auto cdata = (char *)array.buffers[2];
-		if (original_type.first == ArrowVariableSizeType::SUPER_SIZE) {
-			if (((uint64_t *)array.buffers[1])[array.length] > NumericLimits<uint32_t>::Maximum()) {
-				throw std::runtime_error("We do not support Strings over 4GB");
-			}
-			auto offsets = (uint64_t *)array.buffers[1] + array.offset + scan_state.chunk_offset;
-			if (nested_offset != -1) {
-				offsets = (uint64_t *)array.buffers[1] + array.offset + nested_offset;
-			}
-			SetVectorString(vector, size, cdata, offsets);
+	case LogicalTypeId::STRING:{
+		auto string_vector = FlatVector::GetData<arrow_string_t>(vector);
 
-		} else {
-			auto offsets = (uint32_t *)array.buffers[1] + array.offset + scan_state.chunk_offset;
-			if (nested_offset != -1) {
-				offsets = (uint32_t *)array.buffers[1] + array.offset + nested_offset;
-			}
-			SetVectorString(vector, size, cdata, offsets);
-		}
-
-		break;
 	}
+
+//	case LogicalTypeId::VARCHAR: {
+//		auto original_type = arrow_convert_data[col_idx]->variable_sz_type[arrow_convert_idx.first++];
+//		auto cdata = (char *)array.buffers[2];
+//		if (original_type.first == ArrowVariableSizeType::SUPER_SIZE) {
+//			if (((uint64_t *)array.buffers[1])[array.length] > NumericLimits<uint32_t>::Maximum()) {
+//				throw std::runtime_error("We do not support Strings over 4GB");
+//			}
+//			auto offsets = (uint64_t *)array.buffers[1] + array.offset + scan_state.chunk_offset;
+//			if (nested_offset != -1) {
+//				offsets = (uint64_t *)array.buffers[1] + array.offset + nested_offset;
+//			}
+//			SetVectorString(vector, size, cdata, offsets);
+//
+//		} else {
+//			auto offsets = (uint32_t *)array.buffers[1] + array.offset + scan_state.chunk_offset;
+//			if (nested_offset != -1) {
+//				offsets = (uint32_t *)array.buffers[1] + array.offset + nested_offset;
+//			}
+//			SetVectorString(vector, size, cdata, offsets);
+//		}
+//
+//		break;
+//	}
 	case LogicalTypeId::DATE: {
 		auto precision = arrow_convert_data[col_idx]->date_time_precision[arrow_convert_idx.second++];
 		switch (precision) {

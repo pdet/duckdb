@@ -42,6 +42,13 @@ VectorStructBuffer::VectorStructBuffer(const LogicalType &type, idx_t capacity)
 VectorStructBuffer::~VectorStructBuffer() {
 }
 
+VectorArrowStringBuffer::VectorArrowStringBuffer(): VectorBuffer(VectorBufferType::ARROW_STRING_BUFFER) {
+
+}
+VectorArrowStringBuffer::~VectorArrowStringBuffer() {
+
+}
+
 VectorListBuffer::VectorListBuffer(unique_ptr<Vector> vector, idx_t initial_capacity)
     : VectorBuffer(VectorBufferType::LIST_BUFFER), capacity(initial_capacity), child(move(vector)) {
 }

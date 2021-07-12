@@ -25,6 +25,7 @@ enum class VectorBufferType : uint8_t {
 	DICTIONARY_BUFFER,   // dictionary buffer, holds a selection vector
 	VECTOR_CHILD_BUFFER, // vector child buffer: holds another vector
 	STRING_BUFFER,       // string buffer, holds a string heap
+	ARROW_STRING_BUFFER, // string buffer, holds an array of chars and an array of offsets
 	STRUCT_BUFFER,       // struct buffer, holds a ordered mapping from name to child vector
 	LIST_BUFFER,         // list buffer, holds a single flatvector child
 	MANAGED_BUFFER,      // managed buffer, holds a buffer managed by the buffermanager
@@ -146,6 +147,25 @@ public:
 private:
 	//! child vectors used for nested data
 	vector<unique_ptr<Vector>> children;
+};
+
+class VectorArrowStringBuffer : public VectorBuffer {
+public:
+	VectorArrowStringBuffer();
+	~VectorArrowStringBuffer() override;
+
+public:
+	const vector<unique_ptr<Vector>> &GetChildren() const {
+		return children;
+	}
+	vector<unique_ptr<Vector>> &GetChildren() {
+		return children;
+	}
+
+private:
+	//! child vectors used for nested data
+	unique_ptr<Vector> data;
+	unique_ptr<Vector> offsets;
 };
 
 class VectorListBuffer : public VectorBuffer {

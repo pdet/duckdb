@@ -15,6 +15,56 @@
 
 namespace duckdb {
 
+struct arrow_string_t{
+    //! A pointer to the data.
+	data_ptr_t data;
+	//! A pointer to the offsets.
+	data_ptr_t offset_data;
+	//! The Type of the offsets
+	LogicalType offset_type
+
+	arrow_string_t(data_ptr data_p, data_ptr_t offset_data_p, LogicalType offset_type_p): data(data_p),offset_data(offset_data_p), offset_type(offset_type_p){
+	};
+
+	//! this is unsafe since the string will not be terminated at the end
+	const char *GetDataUnsafe(idx_t i) const {
+		//! Get String Offsets
+		idx_t start;
+		if (offset_type.id() == LogicalTypeId::UINTEGER){
+            auto offsets = (uint32_t*) offset_data;
+			start = offsets[i];
+		}
+		else if (offset_type.id() == LogicalTypeId::UBIGINT){
+			auto offsets = (uint64_t*) offset_data;
+			start = offsets[i];
+		}
+		else{
+			throw std::runtime_error("Unsupported type for Arrow Strings Offsets " + offset_type.ToString());
+		}
+		return (const char *) &data[start];
+	}
+
+	idx_t GetSize() const {
+		//! Get String Offsets
+		idx_t start,end;
+		if (offset_type.id() == LogicalTypeId::UINTEGER){
+            auto offsets = (uint32_t*) offset_data;
+			start = offsets[i];
+			end = offsets[i+1];
+		}
+		else if (offset_type.id() == LogicalTypeId::UBIGINT){
+			auto offsets = (uint64_t*) offset_data;
+			start = offsets[i];
+			end = offsets[i+1];
+		}
+		else{
+			throw std::runtime_error("Unsupported type for Arrow Strings Offsets " + offset_type.ToString());
+		}
+		return end-start;
+	}
+
+};
+
 struct string_t {
 	friend struct StringComparisonOperators;
 	friend class StringSegment;
