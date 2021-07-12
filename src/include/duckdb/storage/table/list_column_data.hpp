@@ -58,7 +58,16 @@ public:
 	void GetStorageInfo(idx_t row_group_index, vector<idx_t> col_path, vector<vector<Value>> &result) override;
 
 private:
-	list_entry_t FetchListEntry(idx_t row_idx);
+	template <class T>
+	T FetchListEntry(idx_t row_idx) {
+		auto segment = (ColumnSegment *)data.GetSegment(row_idx);
+		ColumnFetchState fetch_state;
+		Vector result(type, 1);
+		segment->FetchRow(fetch_state, row_idx, result, 0);
+
+		auto list_data = FlatVector::GetData<T>(result);
+		return list_data[0];
+	}
 };
 
 } // namespace duckdb

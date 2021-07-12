@@ -19,6 +19,42 @@ namespace duckdb {
 class Serializer;
 class Deserializer;
 
+enum ListOffsetType: uint8_t{
+	u_int_32 = 0,
+	u_int_64 = 1
+};
+
+//===--------------------------------------------------------------------===//
+// Extra Type Info
+//===--------------------------------------------------------------------===//
+enum class ExtraTypeInfoType : uint8_t {
+	INVALID_TYPE_INFO = 0,
+	DECIMAL_TYPE_INFO = 1,
+	STRING_TYPE_INFO = 2,
+	LIST_TYPE_INFO = 3,
+	STRUCT_TYPE_INFO = 4
+};
+
+struct ExtraTypeInfo {
+	explicit ExtraTypeInfo(ExtraTypeInfoType type) : type(type) {
+	}
+	virtual ~ExtraTypeInfo() {
+	}
+
+	ExtraTypeInfoType type;
+
+public:
+	virtual bool Equals(ExtraTypeInfo *other) = 0;
+	//! Serializes a ExtraTypeInfo to a stand-alone binary blob
+	virtual void Serialize(Serializer &serializer) const = 0;
+	//! Serializes a ExtraTypeInfo to a stand-alone binary blob
+	static void Serialize(ExtraTypeInfo *info, Serializer &serializer);
+	//! Deserializes a blob back into an ExtraTypeInfo
+	static shared_ptr<ExtraTypeInfo> Deserialize(Deserializer &source);
+};
+
+
+
 //! Type used to represent dates (days since 1970-01-01)
 struct date_t {
 	int32_t days;
@@ -182,15 +218,6 @@ template <class T, typename... Args>
 buffer_ptr<T> make_buffer(Args &&...args) {
 	return make_shared<T>(std::forward<Args>(args)...);
 }
-
-struct list_entry_t {
-	list_entry_t() = default;
-	list_entry_t(uint64_t offset, uint64_t length) : offset(offset), length(length) {
-	}
-
-	uint64_t offset;
-	uint64_t length;
-};
 
 //===--------------------------------------------------------------------===//
 // Internal Types
@@ -466,7 +493,7 @@ public:
 	// explicitly allowing these functions to be capitalized to be in-line with the remaining functions
 	DUCKDB_API static LogicalType DECIMAL(int width, int scale);                 // NOLINT
 	DUCKDB_API static LogicalType VARCHAR_COLLATION(string collation);           // NOLINT
-	DUCKDB_API static LogicalType LIST(LogicalType child);                       // NOLINT
+	DUCKDB_API static LogicalType LIST(LogicalType child, ListOffsetType offset_type);                       // NOLINT
 	DUCKDB_API static LogicalType STRUCT(child_list_t<LogicalType> children);    // NOLINT
 	DUCKDB_API static LogicalType MAP(child_list_t<LogicalType> children);       // NOLINT
 
@@ -477,6 +504,27 @@ public:
 	//! A list of ALL SQL types
 	DUCKDB_API static const vector<LogicalType> ALL_TYPES;
 };
+
+
+//===--------------------------------------------------------------------===//
+// List Type
+//===--------------------------------------------------------------------===//
+struct ListTypeInfo : public ExtraTypeInfo {
+	explicit ListTypeInfo(LogicalType child_type_p, ListOffsetType offset_type_p)
+	    : ExtraTypeInfo(ExtraTypeInfoType::LIST_TYPE_INFO), child_type(move(child_type_p)), offset_type(offset_type_p) {
+	}
+
+	LogicalType child_type;
+    ListOffsetType offset_type;
+
+public:
+	bool Equals(ExtraTypeInfo *other_p) override;
+
+	void Serialize(Serializer &serializer) const override;
+
+	static shared_ptr<ExtraTypeInfo> Deserialize(Deserializer &source);
+};
+
 
 struct DecimalType {
 	DUCKDB_API static uint8_t GetWidth(const LogicalType &type);

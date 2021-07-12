@@ -243,8 +243,8 @@ idx_t GetTypeIdSize(PhysicalType type) {
 		return sizeof(interval_t);
 	case PhysicalType::STRUCT:
 		return 0; // no own payload
-	case PhysicalType::LIST:
-		return sizeof(list_entry_t); // offset + len
+		          //	case PhysicalType::LIST:
+		          //		return sizeof(list_entry_t); // offset + len
 
 	default:
 		throw ConversionException("Invalid PhysicalType %s", type);
@@ -702,7 +702,10 @@ LogicalType LogicalType::MaxLogicalType(const LogicalType &left, const LogicalTy
 		} else if (left.id() == LogicalTypeId::LIST) {
 			// list: perform max recursively on child type
 			auto new_child = MaxLogicalType(ListType::GetChildType(left), ListType::GetChildType(right));
-			return LogicalType::LIST(move(new_child));
+			auto left_info = (ListTypeInfo *)left.type_info_.get();
+			auto right_info = (ListTypeInfo *)right.type_info_.get();
+			auto new_offset = ListOffsetType(MaxValue<uint8_t>(left_info->offset_type, right_info->offset_type));
+			return LogicalType::LIST(move(new_child), new_offset);
 		} else if (left.id() == LogicalTypeId::STRUCT) {
 			// struct: perform recursively
 			auto &left_child_types = StructType::GetChildTypes(left);
@@ -743,35 +746,6 @@ bool ApproxEqual(double ldecimal, double rdecimal) {
 	double epsilon = std::fabs(rdecimal) * 0.01;
 	return std::fabs(ldecimal - rdecimal) <= epsilon;
 }
-
-//===--------------------------------------------------------------------===//
-// Extra Type Info
-//===--------------------------------------------------------------------===//
-enum class ExtraTypeInfoType : uint8_t {
-	INVALID_TYPE_INFO = 0,
-	DECIMAL_TYPE_INFO = 1,
-	STRING_TYPE_INFO = 2,
-	LIST_TYPE_INFO = 3,
-	STRUCT_TYPE_INFO = 4
-};
-
-struct ExtraTypeInfo {
-	explicit ExtraTypeInfo(ExtraTypeInfoType type) : type(type) {
-	}
-	virtual ~ExtraTypeInfo() {
-	}
-
-	ExtraTypeInfoType type;
-
-public:
-	virtual bool Equals(ExtraTypeInfo *other) = 0;
-	//! Serializes a ExtraTypeInfo to a stand-alone binary blob
-	virtual void Serialize(Serializer &serializer) const = 0;
-	//! Serializes a ExtraTypeInfo to a stand-alone binary blob
-	static void Serialize(ExtraTypeInfo *info, Serializer &serializer);
-	//! Deserializes a blob back into an ExtraTypeInfo
-	static shared_ptr<ExtraTypeInfo> Deserialize(Deserializer &source);
-};
 
 //===--------------------------------------------------------------------===//
 // Decimal Type
@@ -869,38 +843,6 @@ LogicalType LogicalType::VARCHAR_COLLATION(string collation) { // NOLINT
 	return LogicalType(LogicalTypeId::VARCHAR, move(string_info));
 }
 
-//===--------------------------------------------------------------------===//
-// List Type
-//===--------------------------------------------------------------------===//
-struct ListTypeInfo : public ExtraTypeInfo {
-	explicit ListTypeInfo(LogicalType child_type_p)
-	    : ExtraTypeInfo(ExtraTypeInfoType::LIST_TYPE_INFO), child_type(move(child_type_p)) {
-	}
-
-	LogicalType child_type;
-
-public:
-	bool Equals(ExtraTypeInfo *other_p) override {
-		if (!other_p) {
-			return false;
-		}
-		if (type != other_p->type) {
-			return false;
-		}
-		auto &other = (ListTypeInfo &)*other_p;
-		return child_type == other.child_type;
-	}
-
-	void Serialize(Serializer &serializer) const override {
-		child_type.Serialize(serializer);
-	}
-
-	static shared_ptr<ExtraTypeInfo> Deserialize(Deserializer &source) {
-		auto child_type = LogicalType::Deserialize(source);
-		return make_shared<ListTypeInfo>(move(child_type));
-	}
-};
-
 const LogicalType &ListType::GetChildType(const LogicalType &type) {
 	D_ASSERT(type.id() == LogicalTypeId::LIST);
 	auto info = type.AuxInfo();
@@ -908,8 +850,8 @@ const LogicalType &ListType::GetChildType(const LogicalType &type) {
 	return ((ListTypeInfo &)*info).child_type;
 }
 
-LogicalType LogicalType::LIST(LogicalType child) {
-	auto info = make_shared<ListTypeInfo>(move(child));
+LogicalType LogicalType::LIST(LogicalType child, ListOffsetType offset_type) {
+	auto info = make_shared<ListTypeInfo>(move(child), offset_type);
 	return LogicalType(LogicalTypeId::LIST, move(info));
 }
 
@@ -1052,5 +994,28 @@ bool LogicalType::operator==(const LogicalType &rhs) const {
 		return rhs.type_info_->Equals(type_info_.get());
 	}
 }
+
+    bool ListTypeInfo::Equals(ExtraTypeInfo *other_p){
+		if (!other_p) {
+			return false;
+		}
+		if (type != other_p->type) {
+			return false;
+		}
+
+		auto &other = (ListTypeInfo &)*other_p;
+		return child_type == other.child_type && offset_type == other.offset_type;
+	}
+
+    void ListTypeInfo::Serialize(Serializer &serializer) const  {
+		child_type.Serialize(serializer);
+		serializer.Write(offset_type);
+	}
+
+    shared_ptr<ExtraTypeInfo> ListTypeInfo::Deserialize(Deserializer &source) {
+		auto child_type = LogicalType::Deserialize(source);
+		auto offset_type = ListOffsetType(source.Read<uint8_t>());
+		return make_shared<ListTypeInfo>(move(child_type),offset_type);
+	}
 
 } // namespace duckdb

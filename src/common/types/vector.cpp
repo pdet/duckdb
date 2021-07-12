@@ -395,9 +395,17 @@ void Vector::SetValue(idx_t index, const Value &val) {
 			}
 		}
 		//! now set the pointer
-		auto &entry = ((list_entry_t *)data)[index];
-		entry.length = val.list_value.size();
-		entry.offset = offset;
+		if (ListVector::GetOffsetType(*this) == ListOffsetType::u_int_32) {
+			auto &entry = ((uint32_t *)data)[index];
+			auto &next_entry = ((uint32_t *)data)[index + 1];
+			entry = offset;
+			next_entry = entry + val.list_value.size();
+		} else {
+			auto &entry = ((uint64_t *)data)[index];
+			auto &next_entry = ((uint64_t *)data)[index + 1];
+			entry = offset;
+			next_entry = entry + val.list_value.size();
+		}
 		break;
 	}
 	default:
@@ -511,10 +519,20 @@ Value Vector::GetValue(idx_t index) const {
 	case LogicalTypeId::LIST: {
 		Value ret(GetType());
 		ret.is_null = false;
-		auto offlen = ((list_entry_t *)data)[index];
-		auto &child_vec = ListVector::GetEntry(*this);
-		for (idx_t i = offlen.offset; i < offlen.offset + offlen.length; i++) {
-			ret.list_value.push_back(child_vec.GetValue(i));
+		if (ListVector::GetOffsetType(*this) == ListOffsetType::u_int_32) {
+			auto offset = ((uint32_t *)data)[index];
+			auto final_offset = ((uint32_t *)data)[index + 1];
+			auto &child_vec = ListVector::GetEntry(*this);
+			for (idx_t i = offset; i < final_offset; i++) {
+				ret.list_value.push_back(child_vec.GetValue(i));
+			}
+		} else {
+			auto offset = ((uint64_t *)data)[index];
+			auto final_offset = ((uint64_t *)data)[index + 1];
+			auto &child_vec = ListVector::GetEntry(*this);
+			for (idx_t i = offset; i < final_offset; i++) {
+				ret.list_value.push_back(child_vec.GetValue(i));
+			}
 		}
 		return ret;
 	}
@@ -683,7 +701,12 @@ void Vector::Normalify(idx_t count) {
 			TemplatedFlattenConstantVector<string_t>(data, old_data, count);
 			break;
 		case PhysicalType::LIST: {
-			TemplatedFlattenConstantVector<list_entry_t>(data, old_data, count);
+			if (ListVector::GetOffsetType(*this) == ListOffsetType::u_int_32) {
+				TemplatedFlattenConstantVector<uint32_t>(data, old_data, count + 1);
+			} else {
+				TemplatedFlattenConstantVector<uint64_t>(data, old_data, count + 1);
+			}
+
 			break;
 		}
 		case PhysicalType::STRUCT: {
@@ -830,18 +853,29 @@ void Vector::Serialize(idx_t count, Serializer &serializer) {
 			auto list_size = ListVector::GetListSize(*this);
 
 			// serialize the list entries in a flat array
-			auto data = unique_ptr<list_entry_t[]>(new list_entry_t[count]);
-			auto source_array = (list_entry_t *)vdata.data;
-			for (idx_t i = 0; i < count; i++) {
-				auto idx = vdata.sel->get_index(i);
-				auto source = source_array[idx];
-				data[i].offset = source.offset;
-				data[i].length = source.length;
-			}
+			if (ListVector::GetOffsetType(*this) == ListOffsetType::u_int_32) {
+				auto data = unique_ptr<uint32_t[]>(new uint32_t[count + 1]);
+				auto source_array = (uint32_t *)vdata.data;
+				for (idx_t i = 0; i <= count; i++) {
+					auto idx = vdata.sel->get_index(i);
+					data[i] = source_array[idx];
+				}
 
-			// write the list size
-			serializer.Write<idx_t>(list_size);
-			serializer.WriteData((data_ptr_t)data.get(), count * sizeof(list_entry_t));
+				// write the list size
+				serializer.Write<idx_t>(list_size);
+				serializer.WriteData((data_ptr_t)data.get(), count * sizeof(uint64_t));
+			} else {
+				auto data = unique_ptr<uint64_t[]>(new uint64_t[count + 1]);
+				auto source_array = (uint64_t *)vdata.data;
+				for (idx_t i = 0; i <= count; i++) {
+					auto idx = vdata.sel->get_index(i);
+					data[i] = source_array[idx];
+				}
+
+				// write the list size
+				serializer.Write<idx_t>(list_size);
+				serializer.WriteData((data_ptr_t)data.get(), count * sizeof(uint64_t));
+			};
 
 			child.Serialize(list_size, serializer);
 			break;
@@ -900,7 +934,11 @@ void Vector::Deserialize(idx_t count, Deserializer &source) {
 
 			// read the list entry
 			auto list_entries = FlatVector::GetData(*this);
-			source.ReadData(list_entries, count * sizeof(list_entry_t));
+			if (ListVector::GetOffsetType(*this) == ListOffsetType::u_int_32) {
+				source.ReadData(list_entries, (count+1) * sizeof(uint32_t));
+			} else {
+				source.ReadData(list_entries, (count+1) * sizeof(uint64_t));
+			}
 
 			// deserialize the child vector
 			auto &child = ListVector::GetEntry(*this);
@@ -1149,14 +1187,24 @@ void ConstantVector::Reference(Vector &vector, Vector &source, idx_t position, i
 			vector.Reference(null_value);
 			break;
 		}
+		if (ListVector::GetOffsetType(source) == ListOffsetType::u_int_32) {
+			auto list_data = (uint32_t *)vdata.data;
 
-		auto list_data = (list_entry_t *)vdata.data;
-		auto list_entry = list_data[list_index];
+            // add the list entry as the first element of "vector"
+            // FIXME: we only need to allocate space for 1 tuple here
+            auto target_data = FlatVector::GetData<uint32_t>(vector);
+            target_data[0] = list_data[list_index];
+			target_data[1] = list_data[list_index+1];
+		} else {
+			auto list_data = (uint64_t *)vdata.data;
 
-		// add the list entry as the first element of "vector"
-		// FIXME: we only need to allocate space for 1 tuple here
-		auto target_data = FlatVector::GetData<list_entry_t>(vector);
-		target_data[0] = list_entry;
+            // add the list entry as the first element of "vector"
+            // FIXME: we only need to allocate space for 1 tuple here
+            auto target_data = FlatVector::GetData<uint64_t>(vector);
+            target_data[0] = list_data[list_index];
+			target_data[1] = list_data[list_index+1];
+		}
+
 
 		// create a reference to the child list of the source vector
 		auto &child = ListVector::GetEntry(vector);
@@ -1392,74 +1440,83 @@ vector<idx_t> ListVector::Search(Vector &list, Value &key, idx_t row) {
 	vector<idx_t> offsets;
 
 	auto &list_vector = ListVector::GetEntry(list);
-	auto &entry = ((list_entry_t *)list.GetData())[row];
+	uint64_t start_offset, end_offset;
+	if (ListVector::GetOffsetType(list) == ListOffsetType::u_int_32) {
+        start_offset = ((uint32_t *)list.GetData())[row];
+		end_offset = ((uint32_t *)list.GetData())[row];
+	} else{
+        start_offset = ((uint64_t *)list.GetData())[row];
+		end_offset = ((uint64_t *)list.GetData())[row];
+	}
 	switch (list_vector.GetType().id()) {
 
 	case LogicalTypeId::SQLNULL:
 		if (key.is_null) {
-			for (idx_t i = entry.offset; i < entry.offset + entry.length; i++) {
+			for (idx_t i = start_offset; i < end_offset; i++) {
 				offsets.push_back(i);
 			}
 		}
 		break;
 	case LogicalTypeId::UTINYINT:
-		::duckdb::TemplatedSearchInMap<uint8_t>(list, key.value_.utinyint, offsets, key.is_null, entry.offset,
-		                                        entry.length);
+		::duckdb::TemplatedSearchInMap<uint8_t>(list, key.value_.utinyint, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::TINYINT:
-		::duckdb::TemplatedSearchInMap<int8_t>(list, key.value_.tinyint, offsets, key.is_null, entry.offset,
-		                                       entry.length);
+		::duckdb::TemplatedSearchInMap<int8_t>(list, key.value_.tinyint, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::USMALLINT:
-		::duckdb::TemplatedSearchInMap<uint16_t>(list, key.value_.usmallint, offsets, key.is_null, entry.offset,
-		                                         entry.length);
+		::duckdb::TemplatedSearchInMap<uint16_t>(list, key.value_.usmallint, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::SMALLINT:
-		::duckdb::TemplatedSearchInMap<int16_t>(list, key.value_.smallint, offsets, key.is_null, entry.offset,
-		                                        entry.length);
+		::duckdb::TemplatedSearchInMap<int16_t>(list, key.value_.smallint, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::UINTEGER:
-		::duckdb::TemplatedSearchInMap<uint32_t>(list, key.value_.uinteger, offsets, key.is_null, entry.offset,
-		                                         entry.length);
+		::duckdb::TemplatedSearchInMap<uint32_t>(list, key.value_.uinteger, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::INTEGER:
-		::duckdb::TemplatedSearchInMap<int32_t>(list, key.value_.integer, offsets, key.is_null, entry.offset,
-		                                        entry.length);
+		::duckdb::TemplatedSearchInMap<int32_t>(list, key.value_.integer, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::UBIGINT:
-		::duckdb::TemplatedSearchInMap<uint64_t>(list, key.value_.ubigint, offsets, key.is_null, entry.offset,
-		                                         entry.length);
+		::duckdb::TemplatedSearchInMap<uint64_t>(list, key.value_.ubigint, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::BIGINT:
-		::duckdb::TemplatedSearchInMap<int64_t>(list, key.value_.bigint, offsets, key.is_null, entry.offset,
-		                                        entry.length);
+		::duckdb::TemplatedSearchInMap<int64_t>(list, key.value_.bigint, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::HUGEINT:
-		::duckdb::TemplatedSearchInMap<hugeint_t>(list, key.value_.hugeint, offsets, key.is_null, entry.offset,
-		                                          entry.length);
+		::duckdb::TemplatedSearchInMap<hugeint_t>(list, key.value_.hugeint, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::FLOAT:
-		::duckdb::TemplatedSearchInMap<float>(list, key.value_.float_, offsets, key.is_null, entry.offset,
-		                                      entry.length);
+		::duckdb::TemplatedSearchInMap<float>(list, key.value_.float_, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::DOUBLE:
-		::duckdb::TemplatedSearchInMap<double>(list, key.value_.double_, offsets, key.is_null, entry.offset,
-		                                       entry.length);
+		::duckdb::TemplatedSearchInMap<double>(list, key.value_.double_, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::DATE:
-		::duckdb::TemplatedSearchInMap<date_t>(list, key.value_.date, offsets, key.is_null, entry.offset, entry.length);
+		::duckdb::TemplatedSearchInMap<date_t>(list, key.value_.date, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::TIME:
-		::duckdb::TemplatedSearchInMap<dtime_t>(list, key.value_.time, offsets, key.is_null, entry.offset,
-		                                        entry.length);
+		::duckdb::TemplatedSearchInMap<dtime_t>(list, key.value_.time, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::TIMESTAMP:
-		::duckdb::TemplatedSearchInMap<timestamp_t>(list, key.value_.timestamp, offsets, key.is_null, entry.offset,
-		                                            entry.length);
+		::duckdb::TemplatedSearchInMap<timestamp_t>(list, key.value_.timestamp, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	case LogicalTypeId::BLOB:
 	case LogicalTypeId::VARCHAR:
-		::duckdb::SearchString(list, key.str_value, offsets, key.is_null, entry.offset, entry.length);
+		::duckdb::SearchString(list, key.str_value, offsets, key.is_null, start_offset,
+		                                        end_offset-start_offset);
 		break;
 	default:
 		throw InvalidTypeException(list.GetType().id(), "Invalid type for List Vector Search");
@@ -1525,6 +1582,11 @@ void ListVector::Append(Vector &target, const Vector &source, const SelectionVec
 void ListVector::PushBack(Vector &target, Value &insert) {
 	auto &target_buffer = (VectorListBuffer &)*target.auxiliary;
 	target_buffer.PushBack(insert);
+}
+
+ListOffsetType ListVector::GetOffsetType(const Vector &vector) {
+	auto list_type_info = (ListTypeInfo *)vector.GetType().AuxInfo();
+	return list_type_info->offset_type;
 }
 
 } // namespace duckdb

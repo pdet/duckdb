@@ -31,17 +31,6 @@ void ListColumnData::InitializeScan(ColumnScanState &state) {
 	state.child_states.push_back(move(child_state));
 }
 
-list_entry_t ListColumnData::FetchListEntry(idx_t row_idx) {
-	auto segment = (ColumnSegment *)data.GetSegment(row_idx);
-	ColumnFetchState fetch_state;
-	Vector result(type, 1);
-	segment->FetchRow(fetch_state, row_idx, result, 0);
-
-	// initialize the child scan with the required offset
-	auto list_data = FlatVector::GetData<list_entry_t>(result);
-	return list_data[0];
-}
-
 void ListColumnData::InitializeScanWithOffset(ColumnScanState &state, idx_t row_idx) {
 	if (row_idx == 0) {
 		InitializeScan(state);
@@ -54,10 +43,15 @@ void ListColumnData::InitializeScanWithOffset(ColumnScanState &state, idx_t row_
 	validity.InitializeScanWithOffset(validity_state, row_idx);
 	state.child_states.push_back(move(validity_state));
 
+	// initialize the child scan with the required offset
+	auto list_type_info = (ListTypeInfo *)type.AuxInfo();
 	// we need to read the list at position row_idx to get the correct row offset of the child
-	auto list_entry = FetchListEntry(row_idx);
-	auto child_offset = list_entry.offset;
-
+	uint64_t child_offset;
+	if (list_type_info->offset_type == ListOffsetType::u_int_32) {
+		child_offset = FetchListEntry<uint32_t>(row_idx);
+	} else {
+		child_offset = FetchListEntry<uint64_t>(row_idx);
+	}
 	D_ASSERT(child_offset <= child_column->GetMaxEntry());
 	ColumnScanState child_state;
 	if (child_offset < child_column->GetMaxEntry()) {
@@ -84,23 +78,43 @@ idx_t ListColumnData::ScanCount(ColumnScanState &state, Vector &result, idx_t co
 	idx_t scan_count = ScanVector(state, result, count);
 	validity.ScanCount(state.child_states[0], result, count);
 
-	auto data = FlatVector::GetData<list_entry_t>(result);
-	auto first_entry = data[0];
-	auto last_entry = data[scan_count - 1];
+	idx_t child_scan_count;
+	if (ListVector::GetOffsetType(result) == ListOffsetType::u_int_32) {
+			auto data = FlatVector::GetData<uint32_t>(result);
+		    auto first_entry = data[0];
+	        auto last_entry = data[scan_count];
+		    #ifdef DEBUG
+                for (idx_t i = 1; i < scan_count; i++) {
+                    D_ASSERT(data[i].offset == data[i - 1].offset + data[i - 1].length);
+                }
+            #endif
+                // shift all offsets so they are 0 at the first entry
+                for (idx_t i = 0; i < scan_count; i++) {
+                    data[i] -= first_entry;
+                }
 
-#ifdef DEBUG
-	for (idx_t i = 1; i < scan_count; i++) {
-		D_ASSERT(data[i].offset == data[i - 1].offset + data[i - 1].length);
-	}
-#endif
-	// shift all offsets so they are 0 at the first entry
-	for (idx_t i = 0; i < scan_count; i++) {
-		data[i].offset -= first_entry.offset;
-	}
+                D_ASSERT(last_entry.offset >= first_entry.offset);
+                child_scan_count = last_entry- first_entry;
+                ListVector::Reserve(result, child_scan_count);
+	} else{
+		    auto data = FlatVector::GetData<uint64_t>(result);
+		    auto first_entry = data[0];
+	        auto last_entry = data[scan_count];
+		    #ifdef DEBUG
+                for (idx_t i = 1; i < scan_count; i++) {
+                    D_ASSERT(data[i].offset == data[i - 1].offset + data[i - 1].length);
+                }
+            #endif
+                // shift all offsets so they are 0 at the first entry
+                for (idx_t i = 0; i < scan_count; i++) {
+                    data[i] -= first_entry;
+                }
 
-	D_ASSERT(last_entry.offset >= first_entry.offset);
-	idx_t child_scan_count = last_entry.offset + last_entry.length - first_entry.offset;
-	ListVector::Reserve(result, child_scan_count);
+                D_ASSERT(last_entry.offset >= first_entry.offset);
+                child_scan_count = last_entry- first_entry;
+                ListVector::Reserve(result, child_scan_count);
+
+	}
 
 	if (child_scan_count > 0) {
 		auto &child_entry = ListVector::GetEntry(result);
@@ -119,16 +133,28 @@ void ListColumnData::Skip(ColumnScanState &state, idx_t count) {
 	// we need to read the list entries/offsets to figure out how much to skip
 	// note that we only need to read the first and last entry
 	// however, let's just read all "count" entries for now
-	auto data = unique_ptr<list_entry_t[]>(new list_entry_t[count]);
-	Vector result(type, (data_ptr_t)data.get());
-	idx_t scan_count = ScanVector(state, result, count);
-	if (scan_count == 0) {
-		return;
+	idx_t child_scan_count;
+	if (((ListTypeInfo*) type.AuxInfo())->offset_type == ListOffsetType::u_int_32) {
+		auto data = unique_ptr<uint32_t []>(new uint32_t[count+1]);
+		Vector result(type, (data_ptr_t)data.get());
+        idx_t scan_count = ScanVector(state, result, count);
+        if (scan_count == 0) {
+            return;
+        }
+        auto &first_entry = data[0];
+        auto &last_entry = data[scan_count - 1];
+		child_scan_count = last_entry - first_entry;
+	} else {
+		auto data = unique_ptr<uint64_t []>(new uint64_t[count+1]);
+		Vector result(type, (data_ptr_t)data.get());
+        idx_t scan_count = ScanVector(state, result, count);
+        if (scan_count == 0) {
+            return;
+        }
+        auto &first_entry = data[0];
+        auto &last_entry = data[scan_count - 1];
+		child_scan_count = last_entry - first_entry;
 	}
-
-	auto &first_entry = data[0];
-	auto &last_entry = data[scan_count - 1];
-	idx_t child_scan_count = last_entry.offset + last_entry.length - first_entry.offset;
 
 	// skip the list state and the validity state forward by "count"
 	state.NextInternal(count);
@@ -153,19 +179,18 @@ void ListColumnData::InitializeAppend(ColumnAppendState &state) {
 	state.child_appends.push_back(move(child_append_state));
 }
 
-void ListColumnData::Append(BaseStatistics &stats_p, ColumnAppendState &state, Vector &vector, idx_t count) {
-	D_ASSERT(count > 0);
+template <class T>
+void TemplatedListColumnDataAppend(BaseStatistics &stats_p, ColumnAppendState &state, Vector &vector, idx_t count, ListColumnData& list_data){
+	// construct the list_entry_t entries to append to the column data
 	auto &stats = (ListStatistics &)stats_p;
 
 	vector.Normalify(count);
 	auto &list_validity = FlatVector::Validity(vector);
-
-	// construct the list_entry_t entries to append to the column data
-	auto input_offsets = FlatVector::GetData<list_entry_t>(vector);
-	auto start_offset = child_column->GetMaxEntry();
+	auto input_offsets = FlatVector::GetData<T>(vector);
+	auto start_offset = list_data.child_column->GetMaxEntry();
 	idx_t child_count = 0;
 
-	auto append_offsets = unique_ptr<list_entry_t[]>(new list_entry_t[count]);
+	auto append_offsets = unique_ptr<T[]>(new T[count]);
 	for (idx_t i = 0; i < count; i++) {
 		if (list_validity.RowIsValid(i)) {
 			append_offsets[i].offset = start_offset + input_offsets[i].offset;
@@ -195,14 +220,26 @@ void ListColumnData::Append(BaseStatistics &stats_p, ColumnAppendState &state, V
 	vdata.data = (data_ptr_t)append_offsets.get();
 
 	// append the list offsets
-	ColumnData::AppendData(stats, state, vdata, count);
+	list_data.ColumnData::AppendData(stats, state, vdata, count);
 	// append the validity data
-	validity.AppendData(*stats.validity_stats, state.child_appends[0], vdata, count);
+	list_data.validity.AppendData(*stats.validity_stats, state.child_appends[0], vdata, count);
 	// append the child vector
 	if (child_count > 0) {
 		auto &child_vector = ListVector::GetEntry(vector);
-		child_column->Append(*stats.child_stats, state.child_appends[1], child_vector, child_count);
+		list_data.child_column->Append(*stats.child_stats, state.child_appends[1], child_vector, child_count);
 	}
+}
+void ListColumnData::Append(BaseStatistics &stats_p, ColumnAppendState &state, Vector &vector, idx_t count) {
+	D_ASSERT(count > 0);
+
+
+	if (ListVector::GetOffsetType(vector) == ListOffsetType::u_int_32) {
+		auto input_offsets = FlatVector::GetData<uint32_t>(vector);
+	} else{
+
+	}
+
+
 }
 
 void ListColumnData::RevertAppend(row_t start_row) {

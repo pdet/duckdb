@@ -297,6 +297,9 @@ struct ListVector {
 	DUCKDB_API static const Vector &GetEntry(const Vector &vector);
 	//! Gets a reference to the underlying child-vector of a list
 	DUCKDB_API static Vector &GetEntry(Vector &vector);
+	//! Get the Offsets of the list
+	//	DUCKDB_API static const Vector &GetOffsets(const Vector &vector);
+	DUCKDB_API static ListOffsetType GetOffsetType(const Vector &vector);
 	//! Gets the total size of the underlying child-vector of a list
 	DUCKDB_API static idx_t GetListSize(const Vector &vector);
 	//! Sets the total size of the underlying child-vector of a list

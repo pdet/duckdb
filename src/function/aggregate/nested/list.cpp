@@ -82,7 +82,7 @@ static void ListFinalize(Vector &state_vector, FunctionData *, Vector &result, i
 			continue;
 		}
 		D_ASSERT(state->list_vector);
-		auto list_struct_data = FlatVector::GetData<list_entry_t>(result);
+		auto list_struct_data = FlatVector::GetData<uint64_t>(result);
 		auto &state_lv = *state->list_vector;
 		auto state_lv_count = ListVector::GetListSize(state_lv);
 		list_struct_data[i].length = state_lv_count;
