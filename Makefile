@@ -134,7 +134,7 @@ unittestci:
 	build/debug/tools/sqlite3_api_wrapper/test_sqlite3_api_wrapper
 
 unittestarrow:
-	build/debug/test/unittest ""Test Throw on Nested Type Children""
+	build/debug/test/unittest "[arrow]"
 
 
 allunit: release_expanded # uses release build because otherwise allunit takes forever
