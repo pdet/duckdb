@@ -1,0 +1,45 @@
+# name: test/sql/types/enum/test_enum_updates.test
+# description: ENUM tests
+# group: [enum]
+
+statement ok
+PRAGMA enable_verification
+
+statement ok
+CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
+
+statement ok
+CREATE TABLE person (
+    name text,
+    current_mood mood
+);
+
+statement ok
+insert into person values ('pedro','happy'), ('diego','sad')
+
+statement error
+insert into person values ('tim','angry')
+
+statement ok
+ALTER TYPE mood ADD VALUE 'angry';
+
+statement ok
+insert into person values ('tim','angry')
+
+query I
+select * from person;
+----
+1
+
+statement error
+ALTER TYPE mood REMOVE VALUE 'happy';
+
+statement ok
+ALTER TYPE mood REMOVE VALUE 'sad';
+
+# Clean up Pedro
+statement ok
+DELETE FROM person WHERE current_mood = 'happy';
+
+statement ok
+ALTER TYPE mood REMOVE VALUE 'happy';

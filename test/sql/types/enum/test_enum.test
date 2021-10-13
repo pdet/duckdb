@@ -46,16 +46,6 @@ CREATE TYPE bla AS ENUM ('sad','sad');
 statement ok
 CREATE TYPE mood_2 AS ENUM ('sad','Sad','SAD');
 
-mode skip
-#We should be able to update enums eventually
-statement ok
-ALTER TYPE mood ADD VALUE 'depressive';
-
-statement ok
-ALTER TYPE mood REMOVE VALUE 'depressive';
-
-mode unskip
-
 # Delete ENUMs
 statement ok
 DROP TYPE mood;
@@ -89,14 +79,6 @@ DROP TYPE IF EXISTS mood;
 # We shouldn't be able to add NULL values to ENUMs
 statement error
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy', NULL);
-
-mode skip
-
-# CREATE TEMPORARY TYPE (Fixme : Parser doesn't support this yet)
-statement ok
-CREATE TEMPORARY TYPE mood AS ENUM ('sad', 'ok', 'happy');
-
-mode unskip
 
 #Enums in structs/lists/maps
 statement ok

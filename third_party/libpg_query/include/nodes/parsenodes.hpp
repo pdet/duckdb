@@ -1413,6 +1413,17 @@ typedef struct PGAlterTableCmd /* one subcommand of an ALTER TABLE */
 	bool missing_ok;          /* skip error if missing? */
 } PGAlterTableCmd;
 
+/* ------------------------
+ *		Alter Type Set ( this-n-that )
+ * ------------------------
+ */
+typedef struct PGAlterTypeStmt
+{
+	PGNodeTag		type;
+	PGList	   *typeName;		/* type name (possibly qualified) */
+	PGList	   *options;		/* List of DefElem nodes */
+} PGAlterTypeStmt;
+
 /*
  * Note: PGObjectWithArgs carries only the types of the input parameters of the
  * function.  So it is sufficient to identify an existing function, but it

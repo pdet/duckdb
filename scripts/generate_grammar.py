@@ -116,9 +116,9 @@ def get_file_contents(fpath, add_line_numbers=False):
     with open_utf8(fpath, 'r') as f:
         result = f.read()
         if add_line_numbers:
-            return '#line 1 "%s"\n' % (fpath,) + result
+            return '#line 1 "%s"\n' % (fpath,) + result + "\n"
         else:
-            return result
+            return result + "\n"
 
 
 # grammar.hpp

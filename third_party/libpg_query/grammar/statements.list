@@ -1,3 +1,4 @@
+AlterEnumStmt
 AlterObjectSchemaStmt
 AlterSeqStmt
 AlterTableStmt
