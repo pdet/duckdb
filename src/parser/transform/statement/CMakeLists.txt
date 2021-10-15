@@ -1,6 +1,7 @@
 add_library_unity(
   duckdb_transformer_statement
   OBJECT
+        transform_alter_enum.cpp
   transform_alter_table.cpp
   transform_call.cpp
   transform_checkpoint.cpp

@@ -17,7 +17,7 @@
 
 #include "pg_definitions.hpp"
 #include "nodes/parsenodes.hpp"
-
+#include "duckdb/parser/statement/alter_enum_statement.hpp"
 namespace duckdb {
 
 class ColumnDefinition;
@@ -69,6 +69,8 @@ private:
 	unique_ptr<SelectStatement> TransformSelect(duckdb_libpgquery::PGNode *node, bool isSelect = true);
 	//! Transform a Postgres T_AlterStmt node into a AlterStatement
 	unique_ptr<AlterStatement> TransformAlter(duckdb_libpgquery::PGNode *node);
+	//! Transform a Postgres T_AlterStmt node into a AlterStatement
+	unique_ptr<AlterEnumStatement> TransformAlterEnum(duckdb_libpgquery::PGNode *node);
 	//! Transform a Postgres duckdb_libpgquery::T_PGRenameStmt node into a RenameStatement
 	unique_ptr<AlterStatement> TransformRename(duckdb_libpgquery::PGNode *node);
 	//! Transform a Postgres duckdb_libpgquery::T_PGCreateStmt node into a CreateStatement

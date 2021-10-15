@@ -1424,6 +1424,21 @@ typedef struct PGAlterTypeStmt
 	PGList	   *options;		/* List of DefElem nodes */
 } PGAlterTypeStmt;
 
+/* ----------------------
+ *		Alter Type Statement, enum types
+ * ----------------------
+ */
+typedef struct PGAlterEnumStmt
+{
+	PGNodeTag		type;
+	PGList	   *typeName;		/* qualified name (list of String) */
+	char	   *oldVal;			/* old enum value's name, if renaming */
+	char	   *newVal;			/* new enum value's name */
+	char	   *newValNeighbor; /* neighboring enum value, if specified */
+	bool		newValIsAfter;	/* place new enum value after neighbor? */
+	bool		skipIfNewValExists; /* no error if new already exists? */
+} PGAlterEnumStmt;
+
 /*
  * Note: PGObjectWithArgs carries only the types of the input parameters of the
  * function.  So it is sufficient to identify an existing function, but it

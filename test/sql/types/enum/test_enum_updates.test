@@ -17,8 +17,8 @@ CREATE TABLE person (
 statement ok
 insert into person values ('pedro','happy'), ('diego','sad')
 
-statement error
-insert into person values ('tim','angry')
+#statement error
+#insert into person values ('tim','angry')
 
 statement ok
 ALTER TYPE mood ADD VALUE 'angry';
