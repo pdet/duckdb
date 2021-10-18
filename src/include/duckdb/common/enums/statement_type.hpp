@@ -25,6 +25,7 @@ enum class StatementType : uint8_t {
 	PREPARE_STATEMENT,      // prepare statement type
 	EXECUTE_STATEMENT,      // execute statement type
 	ALTER_STATEMENT,        // alter statement type
+	ALTER_ENUM_STATEMENT,   // alter enum statement type
 	TRANSACTION_STATEMENT,  // transaction statement type,
 	COPY_STATEMENT,         // copy type
 	ANALYZE_STATEMENT,      // analyze type

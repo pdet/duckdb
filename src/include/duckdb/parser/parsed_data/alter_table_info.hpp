@@ -14,7 +14,7 @@
 
 namespace duckdb {
 
-enum class AlterType : uint8_t { INVALID = 0, ALTER_TABLE = 1, ALTER_VIEW = 2, ALTER_ENUM=3 };
+enum class AlterType : uint8_t { INVALID = 0, ALTER_TABLE = 1, ALTER_VIEW = 2, ALTER_ENUM = 3 };
 
 struct AlterInfo : public ParseInfo {
 	AlterInfo(AlterType type, string schema, string name) : type(type), schema(schema), name(name) {

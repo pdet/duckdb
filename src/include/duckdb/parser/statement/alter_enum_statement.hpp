@@ -18,11 +18,9 @@ class AlterEnumStatement : public SQLStatement {
 public:
 	AlterEnumStatement();
 	explicit AlterEnumStatement(unique_ptr<AlterEnumInfo> info);
+	unique_ptr<SQLStatement> Copy() const override;
 
 	unique_ptr<AlterEnumInfo> info;
-
-public:
-	unique_ptr<SQLStatement> Copy() const override;
 };
 
 } // namespace duckdb
