@@ -1,7 +1,7 @@
 //===----------------------------------------------------------------------===//
 //                         DuckDB
 //
-// duckdb_python/array_wrapper.hpp
+// duckdb_python/vector_conversion.hpp
 //
 //
 //===----------------------------------------------------------------------===//
@@ -56,6 +56,8 @@ public:
 
 	static void BindPandas(py::handle df, vector<PandasColumnBindData> &out, vector<LogicalType> &return_types,
 	                       vector<string> &names);
+
+	static py::object Analyze(py::handle original_df);
 };
 
 } // namespace duckdb

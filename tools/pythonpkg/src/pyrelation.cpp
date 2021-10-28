@@ -2,6 +2,8 @@
 #include "duckdb_python/pyconnection.hpp"
 #include "duckdb_python/pyresult.hpp"
 #include "duckdb/parser/qualified_name.hpp"
+#include "duckdb_python/vector_conversion.hpp"
+
 namespace duckdb {
 
 void DuckDBPyRelation::Initialize(py::handle &m) {
@@ -149,6 +151,10 @@ unique_ptr<DuckDBPyRelation> DuckDBPyRelation::Distinct() {
 
 unique_ptr<DuckDBPyRelation> DuckDBPyRelation::DistinctDF(py::object df) {
 	return DuckDBPyConnection::DefaultConnection()->FromDF(std::move(df))->Distinct();
+}
+
+py::object DuckDBPyRelation::AnalyzeDF(const py::object &df) {
+	return VectorConversion::Analyze(df);
 }
 
 py::object DuckDBPyRelation::ToDF() {

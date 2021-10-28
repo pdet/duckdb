@@ -12,8 +12,6 @@ class TestPandasObject(object):
         df = con.execute('select * from view2').fetchall()
         assert df == [(1, None, 2),(1, '1.1', 2), (1, '1.1', 2), (1, '1.1', 2)]
 
-    def test_2273(self, duckdb_cursor):          
-        return 
-        
+    def test_2273(self, duckdb_cursor):                  
         df_in = pd.DataFrame([[datetime.date(1992, 7, 30)]])
         assert duckdb.query("Select * from df_in").fetchall() == [('1992-07-30',)]

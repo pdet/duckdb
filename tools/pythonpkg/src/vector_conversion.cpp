@@ -333,19 +333,7 @@ static void ConvertPandasType(const string &col_type, LogicalType &duckdb_col_ty
 	}
 }
 
-void VectorConversion::BindPandas(py::handle original_df, vector<PandasColumnBindData> &bind_columns,
-                                  vector<LogicalType> &return_types, vector<string> &names) {
-	// This performs a shallow copy that allows us to rename the dataframe
-	auto df = original_df.attr("copy")(false);
-	auto df_columns = py::list(df.attr("columns"));
-	auto df_types = py::list(df.attr("dtypes"));
-	auto get_fun = df.attr("__getitem__");
-	// TODO support masked arrays as well
-	// TODO support dicts of numpy arrays as well
-	if (py::len(df_columns) == 0 || py::len(df_types) == 0 || py::len(df_columns) != py::len(df_types)) {
-		throw std::runtime_error("Need a DataFrame with at least one column");
-	}
-
+void RenameDFRepeatedColumns(py::object &df, const py::list &df_columns, vector<string> &names) {
 	// check if names in pandas dataframe are unique
 	unordered_map<string, idx_t> pandas_column_names_map;
 	py::array column_attributes = df.attr("columns").attr("values");
@@ -364,6 +352,22 @@ void VectorConversion::BindPandas(py::handle original_df, vector<PandasColumnBin
 			names.emplace_back(column_name_py);
 		}
 	}
+}
+
+void VectorConversion::BindPandas(py::handle original_df, vector<PandasColumnBindData> &bind_columns,
+                                  vector<LogicalType> &return_types, vector<string> &names) {
+	// This performs a shallow copy that allows us to rename the dataframe
+	auto df = original_df.attr("copy")(false);
+	auto df_columns = py::list(df.attr("columns"));
+	auto df_types = py::list(df.attr("dtypes"));
+	auto get_fun = df.attr("__getitem__");
+	// TODO support masked arrays as well
+	// TODO support dicts of numpy arrays as well
+	if (py::len(df_columns) == 0 || py::len(df_types) == 0 || py::len(df_columns) != py::len(df_types)) {
+		throw std::runtime_error("Need a DataFrame with at least one column");
+	}
+
+	RenameDFRepeatedColumns(df, df_columns, names);
 
 	for (idx_t col_idx = 0; col_idx < py::len(df_columns); col_idx++) {
 		LogicalType duckdb_col_type;
@@ -419,6 +423,48 @@ void VectorConversion::BindPandas(py::handle original_df, vector<PandasColumnBin
 		bind_data.numpy_stride = bind_data.numpy_col.attr("strides").attr("__getitem__")(0).cast<idx_t>();
 		return_types.push_back(duckdb_col_type);
 		bind_columns.push_back(move(bind_data));
+	}
+}
+void MaybeReplaceColumnType(py::array &column) {
+	idx_t row_count = py::len(column);
+	D_ASSERT(row_count > 0);
+	string object_type = py::str(column.attr("__getitem__")(0));
+	if (object_type == "object") {
+		// Can't change
+		return;
+	}
+	for (size_t i = 1; i < row_count; i++) {
+		string next_object_type = py::str(column.attr("__getitem__")(i));
+		if (object_type != next_object_type) {
+			// Can't change
+			return;
+		}
+	}
+	// Ha, we can baptize - wolololo -  this column
+	// ndarray.astype(dtype, order='K', casting='unsafe', subok=True, copy=True)
+	column = column.attr("astype")(object_type, py::arg("casting") = "no", py::arg("copy") = false);
+}
+py::object VectorConversion::Analyze(py::handle original_df) {
+	// This performs a shallow copy that allows us to rename the dataframe
+	auto df = original_df.attr("copy")(false);
+	auto df_columns = py::list(df.attr("columns"));
+	auto df_types = py::list(df.attr("dtypes"));
+	auto get_fun = df.attr("__getitem__");
+	vector<string> names;
+	if (py::len(df_columns) == 0 || py::len(df_types) == 0 || py::len(df_columns) != py::len(df_types)) {
+		throw std::runtime_error("Need a DataFrame with at least one column");
+	}
+
+	RenameDFRepeatedColumns(df, df_columns, names);
+
+	for (idx_t col_idx = 0; col_idx < py::len(df_columns); col_idx++) {
+		auto col_type = string(py::str(df_types[col_idx]));
+		if (col_type == "object") {
+			// We gotta check if all the types of the column are the same, if yes we can change it
+			auto column = get_fun(df_columns[col_idx]);
+			auto numpy_col = py::array(column.attr("to_numpy")());
+			MaybeReplaceColumnType(numpy_col);
+		}
 	}
 }
 } // namespace duckdb

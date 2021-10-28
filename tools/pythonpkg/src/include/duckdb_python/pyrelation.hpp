@@ -67,6 +67,8 @@ public:
 
 	static unique_ptr<DuckDBPyRelation> DistinctDF(py::object df);
 
+	static py::object AnalyzeDF(const py::object &df);
+
 	py::object ToDF();
 
 	py::object Fetchone();
