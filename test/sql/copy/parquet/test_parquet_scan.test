@@ -247,3 +247,9 @@ SELECT FIRST(comments) OVER w, LAST(comments) OVER w FROM userdata1 WINDOW w AS 
 
 statement error
 SELECT * FROM parquet_scan('data/parquet-testing/broken-arrow.parquet')
+
+query I
+select date from parquet_scan('data/parquet-testing/arrow/dates/data*.parquet') where date >= '2019-12-30'
+----
+2019-12-30 00:00:00
+2019-12-31 00:00:00
