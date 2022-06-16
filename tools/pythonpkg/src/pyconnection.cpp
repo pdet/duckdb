@@ -610,7 +610,14 @@ shared_ptr<DuckDBPyConnection> DuckDBPyConnection::Connect(const string &databas
 		}
 		config.SetOption(*config_property, Value(val));
 	}
-	res->database = make_unique<DuckDB>(database, &config);
+	if (DuckDBPyConnection::open_databases.find(database) != DuckDBPyConnection::open_databases.end()) {
+		res->database = make_unique<DuckDB>(DuckDBPyConnection::open_databases[database], &config);
+	} else {
+		res->database = make_unique<DuckDB>(database, &config);
+		if (!database.empty() && database != ":memory:") {
+			DuckDBPyConnection::open_databases[database] = res->database->instance->internal_contents;
+		}
+	}
 	res->connection = make_unique<Connection>(*res->database);
 	res->check_same_thread = check_same_thread;
 	if (config.enable_external_access) {

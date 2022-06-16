@@ -136,6 +136,8 @@ public:
 
 	//! Default connection to an in-memory database
 	static shared_ptr<DuckDBPyConnection> default_connection;
+	// Open databases
+	static unordered_map<string, shared_ptr<DatabaseContents>> open_databases;
 
 	static bool IsAcceptedArrowObject(string &py_object_type);
 };

@@ -22,6 +22,16 @@ class FileSystem;
 class TaskScheduler;
 class ObjectCache;
 
+struct DatabaseContents {
+	unique_ptr<StorageManager> storage;
+	unique_ptr<Catalog> catalog;
+	unique_ptr<TransactionManager> transaction_manager;
+	unique_ptr<TaskScheduler> scheduler;
+	unique_ptr<ObjectCache> object_cache;
+	unique_ptr<ConnectionManager> connection_manager;
+	unordered_set<std::string> loaded_extensions;
+};
+
 class DatabaseInstance : public std::enable_shared_from_this<DatabaseInstance> {
 	friend class DuckDB;
 
@@ -30,6 +40,7 @@ public:
 	DUCKDB_API ~DatabaseInstance();
 
 	DBConfig config;
+	shared_ptr<DatabaseContents> internal_contents;
 
 public:
 	DUCKDB_API StorageManager &GetStorageManager();
@@ -48,15 +59,6 @@ private:
 	void Initialize(const char *path, DBConfig *config);
 
 	void Configure(DBConfig &config);
-
-private:
-	unique_ptr<StorageManager> storage;
-	unique_ptr<Catalog> catalog;
-	unique_ptr<TransactionManager> transaction_manager;
-	unique_ptr<TaskScheduler> scheduler;
-	unique_ptr<ObjectCache> object_cache;
-	unique_ptr<ConnectionManager> connection_manager;
-	unordered_set<std::string> loaded_extensions;
 };
 
 //! The database object. This object holds the catalog and all the
@@ -66,6 +68,7 @@ public:
 	DUCKDB_API explicit DuckDB(const char *path = nullptr, DBConfig *config = nullptr);
 	DUCKDB_API explicit DuckDB(const string &path, DBConfig *config = nullptr);
 	DUCKDB_API explicit DuckDB(DatabaseInstance &instance);
+	DUCKDB_API explicit DuckDB(shared_ptr<DatabaseContents> internal_contents, DBConfig *config);
 
 	DUCKDB_API ~DuckDB();
 

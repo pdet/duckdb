@@ -1,5 +1,7 @@
 #include "duckdb/main/database.hpp"
 
+#include <utility>
+
 #include "duckdb/catalog/catalog.hpp"
 #include "duckdb/common/virtual_file_system.hpp"
 #include "duckdb/main/client_context.hpp"
@@ -25,6 +27,7 @@ DBConfig::~DBConfig() {
 }
 
 DatabaseInstance::DatabaseInstance() {
+	internal_contents = make_shared<DatabaseContents>();
 }
 
 DatabaseInstance::~DatabaseInstance() {
@@ -122,19 +125,19 @@ void DatabaseInstance::Initialize(const char *path, DBConfig *new_config) {
 		config.temporary_directory = string();
 	}
 
-	storage =
+	internal_contents->storage =
 	    make_unique<StorageManager>(*this, path ? string(path) : string(), config.access_mode == AccessMode::READ_ONLY);
-	catalog = make_unique<Catalog>(*this);
-	transaction_manager = make_unique<TransactionManager>(*this);
-	scheduler = make_unique<TaskScheduler>(*this);
-	object_cache = make_unique<ObjectCache>();
-	connection_manager = make_unique<ConnectionManager>();
+	internal_contents->catalog = make_unique<Catalog>(*this);
+	internal_contents->transaction_manager = make_unique<TransactionManager>(*this);
+	internal_contents->scheduler = make_unique<TaskScheduler>(*this);
+	internal_contents->object_cache = make_unique<ObjectCache>();
+	internal_contents->connection_manager = make_unique<ConnectionManager>();
 
 	// initialize the database
-	storage->Initialize();
+	internal_contents->storage->Initialize();
 
 	// only increase thread count after storage init because we get races on catalog otherwise
-	scheduler->SetThreads(config.maximum_threads);
+	internal_contents->scheduler->SetThreads(config.maximum_threads);
 }
 
 DuckDB::DuckDB(const char *path, DBConfig *new_config) : instance(make_shared<DatabaseInstance>()) {
@@ -150,27 +153,32 @@ DuckDB::DuckDB(const string &path, DBConfig *config) : DuckDB(path.c_str(), conf
 DuckDB::DuckDB(DatabaseInstance &instance_p) : instance(instance_p.shared_from_this()) {
 }
 
+DuckDB::DuckDB(shared_ptr<DatabaseContents> internal_contents, DBConfig *config) {
+	instance->internal_contents = std::move(internal_contents);
+	instance->Configure(*config);
+};
+
 DuckDB::~DuckDB() {
 }
 
 StorageManager &DatabaseInstance::GetStorageManager() {
-	return *storage;
+	return *internal_contents->storage;
 }
 
 Catalog &DatabaseInstance::GetCatalog() {
-	return *catalog;
+	return *internal_contents->catalog;
 }
 
 TransactionManager &DatabaseInstance::GetTransactionManager() {
-	return *transaction_manager;
+	return *internal_contents->transaction_manager;
 }
 
 TaskScheduler &DatabaseInstance::GetScheduler() {
-	return *scheduler;
+	return *internal_contents->scheduler;
 }
 
 ObjectCache &DatabaseInstance::GetObjectCache() {
-	return *object_cache;
+	return *internal_contents->object_cache;
 }
 
 FileSystem &DatabaseInstance::GetFileSystem() {
@@ -178,7 +186,7 @@ FileSystem &DatabaseInstance::GetFileSystem() {
 }
 
 ConnectionManager &DatabaseInstance::GetConnectionManager() {
-	return *connection_manager;
+	return *internal_contents->connection_manager;
 }
 
 FileSystem &DuckDB::GetFileSystem() {
@@ -237,7 +245,7 @@ DBConfig &DBConfig::GetConfig(ClientContext &context) {
 }
 
 idx_t DatabaseInstance::NumberOfThreads() {
-	return scheduler->NumberOfThreads();
+	return internal_contents->scheduler->NumberOfThreads();
 }
 
 idx_t DuckDB::NumberOfThreads() {
@@ -245,10 +253,11 @@ idx_t DuckDB::NumberOfThreads() {
 }
 
 bool DuckDB::ExtensionIsLoaded(const std::string &name) {
-	return instance->loaded_extensions.find(name) != instance->loaded_extensions.end();
+	return instance->internal_contents->loaded_extensions.find(name) !=
+	       instance->internal_contents->loaded_extensions.end();
 }
 void DuckDB::SetExtensionLoaded(const std::string &name) {
-	instance->loaded_extensions.insert(name);
+	instance->internal_contents->loaded_extensions.insert(name);
 }
 
 string ClientConfig::ExtractTimezoneFromConfig(ClientConfig &config) {
