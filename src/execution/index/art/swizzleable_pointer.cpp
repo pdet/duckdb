@@ -2,13 +2,20 @@
 
 namespace duckdb {
 SwizzleablePointer::~SwizzleablePointer() {
-	if (pointer) {
-		if (!IsSwizzled()) {
-			delete (Node *)pointer;
-		}
-	}
+	Reset();
 }
-
+uint64_t ShiftBit(idx_t bit_pos, uint64_t pointer) {
+	idx_t pointer_size = sizeof(pointer) * 8;
+	uint64_t mask = 1;
+	mask = mask << (pointer_size - bit_pos);
+	pointer |= mask;
+	return pointer;
+}
+SwizzleablePointer::SwizzleablePointer(row_t row_id) {
+	pointer = row_id;
+	// Set the second most but to indicate this is a single node leaf
+	pointer = ShiftBit(2, pointer);
+}
 SwizzleablePointer::SwizzleablePointer(duckdb::MetaBlockReader &reader) {
 	idx_t block_id = reader.Read<block_id_t>();
 	idx_t offset = reader.Read<uint32_t>();
@@ -21,12 +28,11 @@ SwizzleablePointer::SwizzleablePointer(duckdb::MetaBlockReader &reader) {
 	pointer = pointer << (pointer_size / 2);
 	pointer += offset;
 	// Set the left most bit to indicate this is a swizzled pointer and send it back to the mother-ship
-	uint64_t mask = 1;
-	mask = mask << (pointer_size - 1);
-	pointer |= mask;
+	pointer = ShiftBit(1, pointer);
 }
 
 SwizzleablePointer &SwizzleablePointer::operator=(const Node *ptr) {
+	Reset();
 	if (sizeof(ptr) == 4) {
 		pointer = (uint32_t)(size_t)ptr;
 	} else {
@@ -47,14 +53,27 @@ BlockPointer SwizzleablePointer::GetSwizzledBlockInfo() {
 	uint32_t offset = pointer & 0xffffffff;
 	return {block_id, offset};
 }
-bool SwizzleablePointer::IsSwizzled() {
+
+bool IsBitSet(idx_t bit_pos, uint64_t pointer) {
 	idx_t pointer_size = sizeof(pointer) * 8;
-	return (pointer >> (pointer_size - 1)) & 1;
+	return (pointer >> (pointer_size - bit_pos)) & 1;
+}
+bool SwizzleablePointer::IsSwizzled() {
+	return IsBitSet(1, pointer);
+}
+
+bool SwizzleablePointer::IsUniqueLeaf() {
+	return IsBitSet(2, pointer);
+}
+
+row_t SwizzleablePointer::GetRowID() {
+	idx_t pointer_size = sizeof(pointer) * 8;
+	return pointer & ~(1ULL << (pointer_size - 2));
 }
 
 void SwizzleablePointer::Reset() {
 	if (pointer) {
-		if (!IsSwizzled()) {
+		if (!IsSwizzled() && !IsUniqueLeaf()) {
 			delete (Node *)pointer;
 		}
 	}

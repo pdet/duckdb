@@ -271,16 +271,23 @@ void ART::VerifyDeleteForeignKey(DataChunk &chunk, string *err_msg_ptr) {
 	VerifyExistence(chunk, VerifyExistenceType::DELETE_FK, err_msg_ptr);
 }
 
-bool ART::InsertToLeaf(Leaf &leaf, row_t row_id) {
+bool ART::InsertToLeaf(SwizzleablePointer &leaf, row_t row_id) {
+
 #ifdef DEBUG
-	for (idx_t k = 0; k < leaf.count; k++) {
-		D_ASSERT(leaf.GetRowId(k) != row_id);
+	if (leaf.IsUniqueLeaf()) {
+		D_ASSERT(Leaf::GetRowId(leaf, 0) != row_id);
+	} else {
+		auto leaf_ptr = (Leaf *)leaf.pointer;
+		for (idx_t k = 0; k < leaf_ptr->count; k++) {
+			D_ASSERT(Leaf::GetRowId(leaf, k) != row_id);
+		}
 	}
+
 #endif
-	if (IsUnique() && leaf.count != 0) {
+	if (IsUnique()) {
 		return false;
 	}
-	leaf.Insert(row_id);
+	InsertToLeaf(leaf, row_id);
 	return true;
 }
 

@@ -95,7 +95,7 @@ public:
 
 private:
 	//! Insert a row id into a leaf node
-	bool InsertToLeaf(Leaf &leaf, row_t row_id);
+	bool InsertToLeaf(SwizzleablePointer &leaf, row_t row_id);
 	//! Insert the leaf value into the tree
 	bool Insert(Node *&node, unique_ptr<Key> key, unsigned depth, row_t row_id);
 

@@ -6,11 +6,66 @@
 
 namespace duckdb {
 
-Leaf::Leaf(Key &value, unsigned depth, row_t row_id) : Node(NodeType::NLeaf) {
+SwizzleablePointer Leaf::CreateLeaf(Key &value, unsigned depth, row_t row_id) {
+	if (value.len - depth == 0) {
+		// This Leaf Has no Prefix, we can create a Single Value Leaf
+		return SwizzleablePointer(row_id);
+	}
+
+	SwizzleablePointer ptr;
+	ptr = new Leaf(value, depth, row_id);
+	return ptr;
+}
+
+void Leaf::Insert(SwizzleablePointer &leaf, row_t row_id) {
+	D_ASSERT(!leaf.IsSwizzled());
+	if (leaf.IsUniqueLeaf()) {
+		// We have to grow to a non-unique leaf
+		auto new_leaf = new Leaf(row_id);
+		leaf = new_leaf;
+	} else {
+		// We are in a non unique leaf, so we do an insert.
+		auto leaf_ptr = (Leaf *)leaf.pointer;
+		leaf_ptr->Insert(row_id);
+	}
+}
+void Leaf::Remove(SwizzleablePointer &leaf, row_t row_id) {
+	D_ASSERT(!leaf.IsSwizzled());
+	if (leaf.IsUniqueLeaf()) {
+		leaf.Reset();
+	} else {
+		// We are in a non unique leaf, so we do remove
+		auto leaf_ptr = (Leaf *)leaf.pointer;
+		leaf_ptr->Remove(row_id);
+		if (leaf_ptr->count == 1) {
+			// We turn this into a one leaf node
+			auto remaining_row_id = leaf_ptr->GetRowId(0);
+			// We have to grow to a non-unique leaf
+			auto new_leaf = new Leaf(remaining_row_id);
+			leaf = new_leaf;
+		}
+	}
+}
+row_t Leaf::GetRowId(SwizzleablePointer &leaf, idx_t index) {
+	D_ASSERT(!leaf.IsSwizzled());
+	if (leaf.IsUniqueLeaf()) {
+		D_ASSERT(index == 0);
+		return leaf.GetRowID();
+	} else {
+		// We are in a non unique leaf, so we do remove
+		auto leaf_ptr = (Leaf *)leaf.pointer;
+		return leaf_ptr->GetRowId(index);
+	}
+}
+
+Leaf::Leaf(row_t row_id) : Node(NodeType::NLeaf) {
 	capacity = 1;
 	row_ids = unique_ptr<row_t[]>(new row_t[capacity]);
 	row_ids[0] = row_id;
 	count = 1;
+}
+
+Leaf::Leaf(Key &value, unsigned depth, row_t row_id) : Leaf(row_id) {
 	D_ASSERT(value.len >= depth);
 	prefix = Prefix(value, depth, value.len - depth);
 }
