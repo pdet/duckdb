@@ -201,9 +201,7 @@ bool ArrowUtil::TryFetchChunk(QueryResult *result, idx_t chunk_size, ArrowArray 
 		count += data_chunk->size();
 		appender.Append(*data_chunk);
 	}
-	if (count > 0) {
-		*out = appender.Finalize();
-	}
+	*out = appender.Finalize();
 	return true;
 }
 

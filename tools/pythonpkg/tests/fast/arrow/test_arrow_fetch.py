@@ -93,6 +93,6 @@ class TestArrowFetch(object):
         duckdb_cursor.execute("CREATE table t as select range a from range(3000);")
         relation = duckdb_cursor.table('t')
         arrow_tbl = relation.arrow()
-        assert arrow_tbl['a'].num_chunks == 1
+        assert arrow_tbl['a'].num_chunks == 2
         arrow_tbl = relation.arrow(1024)
-        assert arrow_tbl['a'].num_chunks == 3
+        assert arrow_tbl['a'].num_chunks == 4

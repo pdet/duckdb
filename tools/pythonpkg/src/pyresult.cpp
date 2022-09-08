@@ -377,13 +377,13 @@ void TransformDuckToArrowChunk(ArrowSchema &arrow_schema, ArrowArray &data, py::
 bool DuckDBPyResult::FetchArrowChunk(QueryResult *result, py::list &batches, idx_t chunk_size) {
 	ArrowArray data;
 	auto count = ArrowUtil::FetchChunk(result, chunk_size, &data);
-	if (count == 0) {
-		return false;
-	}
 	ArrowSchema arrow_schema;
 	timezone_config = QueryResult::GetConfigTimezone(*result);
 	ArrowConverter::ToArrowSchema(&arrow_schema, result->types, result->names, timezone_config);
 	TransformDuckToArrowChunk(arrow_schema, data, batches);
+    if (count == 0) {
+	    return false;
+    }
 	return true;
 }
 
