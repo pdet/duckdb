@@ -119,7 +119,7 @@ LogicalType ArrowTableFunction::GetArrowLogicalType(
 		child_list_t<LogicalType> child_types;
 		for (idx_t type_idx = 0; type_idx < (idx_t)schema.n_children; type_idx++) {
 			auto child_type = GetArrowLogicalType(*schema.children[type_idx], arrow_convert_data, col_idx);
-			child_types.push_back({schema.children[type_idx]->name, child_type});
+			child_types.emplace_back(schema.children[type_idx]->name, child_type);
 		}
 		return LogicalType::STRUCT(move(child_types));
 
@@ -132,7 +132,7 @@ LogicalType ArrowTableFunction::GetArrowLogicalType(
 			auto child_type = GetArrowLogicalType(*struct_schema.children[type_idx], arrow_convert_data, col_idx);
 
 			auto list_type = LogicalType::LIST(child_type);
-			child_types.push_back({struct_schema.children[type_idx]->name, list_type});
+			child_types.emplace_back(struct_schema.children[type_idx]->name, list_type);
 		}
 		return LogicalType::MAP(move(child_types));
 	} else if (format == "z") {

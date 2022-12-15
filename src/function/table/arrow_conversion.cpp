@@ -72,7 +72,7 @@ void SetValidityMask(Vector &vector, ArrowArray &array, ArrowScanLocalState &sca
 void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowScanLocalState &scan_state, idx_t size,
                          std::unordered_map<idx_t, unique_ptr<ArrowConvertData>> &arrow_convert_data, idx_t col_idx,
                          std::pair<idx_t, idx_t> &arrow_convert_idx, int64_t nested_offset = -1,
-                         ValidityMask *parent_mask = nullptr);
+                         ValidityMask *parent_mask = nullptr, uint64_t parent_offset = 0);
 
 void ArrowToDuckDBList(Vector &vector, ArrowArray &array, ArrowScanLocalState &scan_state, idx_t size,
                        std::unordered_map<idx_t, unique_ptr<ArrowConvertData>> &arrow_convert_data, idx_t col_idx,
@@ -281,11 +281,13 @@ static void SetVectorString(Vector &vector, idx_t size, char *cdata, T *offsets)
 	}
 }
 
-void DirectConversion(Vector &vector, ArrowArray &array, ArrowScanLocalState &scan_state, int64_t nested_offset) {
+void DirectConversion(Vector &vector, ArrowArray &array, ArrowScanLocalState &scan_state, int64_t nested_offset,
+                      uint64_t parent_offset) {
 	auto internal_type = GetTypeIdSize(vector.GetType().InternalType());
-	auto data_ptr = (data_ptr_t)array.buffers[1] + internal_type * (scan_state.chunk_offset + array.offset);
+	auto data_ptr =
+	    (data_ptr_t)array.buffers[1] + internal_type * (scan_state.chunk_offset + array.offset + parent_offset);
 	if (nested_offset != -1) {
-		data_ptr = (data_ptr_t)array.buffers[1] + internal_type * (array.offset + nested_offset);
+		data_ptr = (data_ptr_t)array.buffers[1] + internal_type * (array.offset + nested_offset + parent_offset);
 	}
 	FlatVector::SetData(vector, data_ptr);
 }
@@ -359,7 +361,8 @@ void IntervalConversionMonths(Vector &vector, ArrowArray &array, ArrowScanLocalS
 
 void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowScanLocalState &scan_state, idx_t size,
                          std::unordered_map<idx_t, unique_ptr<ArrowConvertData>> &arrow_convert_data, idx_t col_idx,
-                         std::pair<idx_t, idx_t> &arrow_convert_idx, int64_t nested_offset, ValidityMask *parent_mask) {
+                         std::pair<idx_t, idx_t> &arrow_convert_idx, int64_t nested_offset, ValidityMask *parent_mask,
+                         uint64_t parent_offset) {
 	switch (vector.GetType().id()) {
 	case LogicalTypeId::SQLNULL:
 		vector.Reference(Value());
@@ -407,7 +410,7 @@ void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowScanLocalState 
 	case LogicalTypeId::TIMESTAMP_SEC:
 	case LogicalTypeId::TIMESTAMP_MS:
 	case LogicalTypeId::TIMESTAMP_NS: {
-		DirectConversion(vector, array, scan_state, nested_offset);
+		DirectConversion(vector, array, scan_state, nested_offset, parent_offset);
 		break;
 	}
 	case LogicalTypeId::JSON:
@@ -436,7 +439,7 @@ void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowScanLocalState 
 		auto precision = arrow_convert_data[col_idx]->date_time_precision[arrow_convert_idx.second++];
 		switch (precision) {
 		case ArrowDateTimeType::DAYS: {
-			DirectConversion(vector, array, scan_state, nested_offset);
+			DirectConversion(vector, array, scan_state, nested_offset, parent_offset);
 			break;
 		}
 		case ArrowDateTimeType::MILLISECONDS: {
@@ -499,7 +502,7 @@ void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowScanLocalState 
 			break;
 		}
 		case ArrowDateTimeType::MICROSECONDS: {
-			DirectConversion(vector, array, scan_state, nested_offset);
+			DirectConversion(vector, array, scan_state, nested_offset, parent_offset);
 			break;
 		}
 		case ArrowDateTimeType::NANOSECONDS: {
@@ -651,7 +654,8 @@ void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowScanLocalState 
 				}
 			}
 			ColumnArrowToDuckDB(*child_entries[type_idx], *array.children[type_idx], scan_state, size,
-			                    arrow_convert_data, col_idx, arrow_convert_idx, nested_offset, &struct_validity_mask);
+			                    arrow_convert_data, col_idx, arrow_convert_idx, nested_offset, &struct_validity_mask,
+			                    array.offset);
 		}
 		break;
 	}
