@@ -122,8 +122,8 @@ if(BUILD_PYTHON
     if(USER_SPACE)
       add_custom_target(
         duckdb_python ALL
-        COMMAND python3 setup.py install --user --binary-dir=${CMAKE_BINARY_DIR}
-                --compile-flags=${ALL_COMPILE_FLAGS} --libs="${duckdb_libs}"
+        COMMAND python3 -m pip install
+                --install-option="--binary-dir=${CMAKE_BINARY_DIR}" --user.
         DEPENDS duckdb
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/pythonpkg
         COMMENT Build
@@ -131,8 +131,8 @@ if(BUILD_PYTHON
     else()
       add_custom_target(
         duckdb_python ALL
-        COMMAND python3 setup.py install --binary-dir=${CMAKE_BINARY_DIR}
-                --compile-flags=${ALL_COMPILE_FLAGS} --libs="${duckdb_libs}"
+        COMMAND python3 -m pip install
+                --install-option="--binary-dir=${CMAKE_BINARY_DIR}" .
         DEPENDS duckdb
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/pythonpkg
         COMMENT Build
