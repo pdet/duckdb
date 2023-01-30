@@ -1,0 +1,16 @@
+# name: benchmark/micro/csv_reader/csv_sniffer.benchmark
+# description: Benchmarking CSV Reader Sniffer on Lineitem (TPC-H)
+# group: [csv_reader]
+
+name CSV Sniffer TPC-H
+group aggregate
+subgroup parallel
+
+require tpch
+
+load
+CALL dbgen(sf=1);
+COPY lineitem TO '${BENCHMARK_DIR}/lineitem.csv' (FORMAT CSV, DELIMITER '|', HEADER);
+
+run
+select * from '${BENCHMARK_DIR}/lineitem.csv' limit 5
