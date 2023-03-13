@@ -358,7 +358,7 @@ jobs:
       name: Python Address Sanitizer (Linux)
       runs-on: ubuntu-latest
       container: ubuntu:16.04
-      needs: linux-python3-9
+#      needs: linux-python3-9
       env:
          GEN: ninja
          DUCKDEBUG: 1
