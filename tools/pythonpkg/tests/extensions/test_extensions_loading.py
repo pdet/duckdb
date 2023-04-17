@@ -12,6 +12,13 @@ def test_extension_loading(require):
         connection = require(extension)
         assert connection is not None
 
+def test_httpfs_6827(require):
+    if not os.getenv('DUCKDB_PYTHON_TEST_EXTENSION_REQUIRED', False):
+        return
+    connection = require('httpfs')
+    rel = connection.read_json('https://jsonplaceholder.typicode.com/todos')
+    assert rel.count("*").fetchone()[0] == 200
+
 
 def test_install_non_existent_extension():
     conn = duckdb.connect()
