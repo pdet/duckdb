@@ -1,4 +1,3 @@
-#include "duckdb/execution/operator/persistent/csv_scanner/buffered_csv_reader.hpp"
 #include "duckdb/execution/operator/persistent/csv_scanner/csv_sniffer.hpp"
 #include "duckdb/common/types/cast_helpers.hpp"
 #include "utf8proc.hpp"
@@ -169,7 +168,7 @@ static string NormalizeColumnName(const string &col_name) {
 	return col_name_cleaned;
 }
 
-bool BufferedCSVReader::JumpToNextSample() {
+bool CSVSniffer::JumpToNextSample() {
 	// get bytes contained in the previously read chunk
 	idx_t remaining_bytes_in_buffer = buffer_size - start;
 	bytes_in_chunk -= remaining_bytes_in_buffer;
@@ -403,7 +402,7 @@ vector<CSVReaderOptions> CSVSniffer::DetectDialect() {
 	return result;
 }
 
-void BufferedCSVReader::DetectCandidateTypes(const vector<LogicalType> &type_candidates,
+void CSVSniffer::DetectCandidateTypes(const vector<LogicalType> &type_candidates,
                                              const map<LogicalTypeId, vector<const char *>> &format_template_candidates,
                                              const vector<CSVReaderOptions> &info_candidates,
                                              CSVReaderOptions &original_options, idx_t best_num_cols,
@@ -571,7 +570,7 @@ void BufferedCSVReader::DetectCandidateTypes(const vector<LogicalType> &type_can
 	}
 }
 
-void BufferedCSVReader::DetectHeader(const vector<vector<LogicalType>> &best_sql_types_candidates,
+void CSVSniffer::DetectHeader(const vector<vector<LogicalType>> &best_sql_types_candidates,
                                      const DataChunk &best_header_row) {
 	// information for header detection
 	bool first_row_consistent = true;
@@ -636,7 +635,7 @@ void BufferedCSVReader::DetectHeader(const vector<vector<LogicalType>> &best_sql
 	}
 }
 
-vector<LogicalType> BufferedCSVReader::RefineTypeDetection(const vector<LogicalType> &type_candidates,
+vector<LogicalType> CSVSniffer::RefineTypeDetection(const vector<LogicalType> &type_candidates,
                                                            const vector<LogicalType> &requested_types,
                                                            vector<vector<LogicalType>> &best_sql_types_candidates,
                                                            map<LogicalTypeId, vector<string>> &best_format_candidates) {
@@ -719,7 +718,7 @@ vector<LogicalType> BufferedCSVReader::RefineTypeDetection(const vector<LogicalT
 
 vector<LogicalType> BufferedCSVReader::SniffCSV(const vector<LogicalType> &requested_types) {
 	for (auto &type : requested_types) {
-		// auto detect for blobs not supported: there may be invalid UTF-8 in the file
+		// auto-detect for blobs not supported: there may be invalid UTF-8 in the file
 		if (type.id() == LogicalTypeId::BLOB) {
 			return requested_types;
 		}
@@ -732,9 +731,8 @@ vector<LogicalType> BufferedCSVReader::SniffCSV(const vector<LogicalType> &reque
 		// Skip rows if they are set
 		SkipRowsAndReadHeader(options.skip_rows, false);
 	}
-	ReadBuffer(start, start);
 
-	StateBuffer state_buffer(buffer.get(), buffer_size, position);
+	StateBuffer state_buffer(buffer, buffer_size, position);
 	CSVSniffer sniffer(options, std::move(state_buffer), requested_types);
 
 	CSVReaderOptions original_options = options;

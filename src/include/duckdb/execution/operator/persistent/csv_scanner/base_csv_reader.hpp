@@ -18,6 +18,7 @@
 #include "duckdb/execution/operator/persistent/csv_scanner/csv_reader_options.hpp"
 #include "duckdb/common/multi_file_reader.hpp"
 #include "duckdb/execution/operator/persistent/csv_scanner/csv_line_info.hpp"
+#include "duckdb/execution/operator/persistent/csv_scanner/csv_buffer_manager.hpp"
 
 #include <sstream>
 
@@ -62,6 +63,8 @@ public:
 	DataChunk parse_chunk;
 
 	ParserMode mode;
+
+	unique_ptr<CSVBufferManager> buffer_manager;
 
 public:
 	const string &GetFileName() {

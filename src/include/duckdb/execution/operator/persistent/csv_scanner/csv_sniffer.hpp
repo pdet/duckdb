@@ -26,7 +26,7 @@ struct CSVStateCandidates {
 class CSVSniffer {
 public:
 	explicit CSVSniffer(CSVReaderOptions options_p, StateBuffer buffer_p, const vector<LogicalType> &requested_types_p)
-	    : requested_types(requested_types_p), options(options_p), buffer(std::move(buffer_p)) {};
+	    : requested_types(requested_types_p), options(std::move(options_p)), buffer(std::move(buffer_p)) {};
 	//! First phase of auto detection: detect CSV dialect (i.e. delimiter, quote rules, etc)
 	vector<CSVReaderOptions> DetectDialect();
 	//! Resets stats so it can analyze the next chunk
