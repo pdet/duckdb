@@ -18,9 +18,6 @@ require-env DUCKDB_S3_ENDPOINT
 
 require-env DUCKDB_S3_USE_SSL
 
-# override the default behaviour of skipping HTTP errors and connection failures: this test fails on connection issues
-set ignore_error_messages
-
 # copy files to S3 before beginning tests
 statement ok
 COPY (select * from 'test/sql/copy/csv/data/glob/a1/a1.csv') to 's3://test-bucket/copy_csv_glob_s3/copy/a1/a1.csv';
