@@ -1,7 +1,7 @@
 // #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
 
-#include "duckdb/execution/operator/scan/csv/buffered_csv_reader.hpp"
+#include "duckdb/execution/operator/scan/csv/parallel_csv_reader.hpp"
 #include "duckdb/common/file_system.hpp"
 #include "duckdb/common/value_operations/value_operations.hpp"
 #include "compare_result.hpp"
@@ -323,7 +323,8 @@ bool compare_result(string csv, ColumnDataCollection &collection, vector<Logical
 
 	DuckDB db;
 	Connection con(db);
-	BufferedCSVReader reader(*con.context, std::move(options), sql_types);
+	unique_ptr<CSVBufferRead> buffer;
+	ParallelCSVReader reader(*con.context, options,std::move(buffer), 0, sql_types,1);
 	reader.InitializeProjection();
 
 	ColumnDataCollection csv_data_collection(*con.context, sql_types);

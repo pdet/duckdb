@@ -588,4 +588,25 @@ void BaseCSVReader::SetNewLineDelimiter(bool carry, bool carry_followed_by_nl) {
 		options.dialect_options.new_line = this_line_identifier;
 	}
 }
+
+string BaseCSVReader::ColumnTypesError(case_insensitive_map_t<idx_t> sql_types_per_column,
+                                           const vector<string> &names) {
+	for (idx_t i = 0; i < names.size(); i++) {
+		auto it = sql_types_per_column.find(names[i]);
+		if (it != sql_types_per_column.end()) {
+			sql_types_per_column.erase(names[i]);
+			continue;
+		}
+	}
+	if (sql_types_per_column.empty()) {
+		return string();
+	}
+	string exception = "COLUMN_TYPES error: Columns with names: ";
+	for (auto &col : sql_types_per_column) {
+		exception += "\"" + col.first + "\",";
+	}
+	exception.pop_back();
+	exception += " do not exist in the CSV File";
+	return exception;
+}
 } // namespace duckdb

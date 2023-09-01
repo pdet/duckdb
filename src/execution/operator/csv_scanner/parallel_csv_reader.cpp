@@ -33,6 +33,18 @@ ParallelCSVReader::ParallelCSVReader(ClientContext &context, CSVReaderOptions op
 	SetBufferRead(std::move(buffer_p));
 }
 
+ParallelCSVReader::ParallelCSVReader(ClientContext &context, CSVReaderOptions options_p, const vector<LogicalType> &requested_types):
+      BaseCSVReader(context, std::move(options_p), requested_types){
+	Initialize(requested_types);
+	auto file_handle = BaseCSVReader::OpenCSV(context, options);
+	buffer_manager = make_shared<CSVBufferManager>(context, std::move(file_handle), options);
+	line_info = make_uniq<LineInfo>(main_mutex, batch_to_tuple_end, tuple_start, tuple_end)
+	auto bla = make_uniq<CSVBufferRead>(
+	    buffer_manager->GetBuffer(cur_buffer_idx), buffer_manager->GetBuffer(cur_buffer_idx + 1), next_byte,
+	    next_byte + bytes_per_local_state, batch_index++, local_batch_index++, &line_info);
+	SetBufferRead(std::move(buffer_p));
+}
+
 void ParallelCSVReader::Initialize(const vector<LogicalType> &requested_types) {
 	return_types = requested_types;
 	InitParseChunk(return_types.size());

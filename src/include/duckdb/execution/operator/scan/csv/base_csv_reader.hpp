@@ -89,6 +89,9 @@ public:
 	static bool TryCastTimestampVector(map<LogicalTypeId, StrpTimeFormat> &options, Vector &input_vector,
 	                                   Vector &result_vector, idx_t count, string &error_message);
 
+	static string ColumnTypesError(case_insensitive_map_t<idx_t> sql_types_per_column,
+                                           const vector<string> &names);
+
 protected:
 	//! Initializes the parse_chunk with varchar columns and aligns info with new number of cols
 	void InitParseChunk(idx_t num_cols);

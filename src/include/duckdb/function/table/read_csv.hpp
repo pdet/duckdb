@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "duckdb/execution/operator/scan/csv/buffered_csv_reader.hpp"
 #include "duckdb/execution/operator/scan/csv/csv_buffer.hpp"
 #include "duckdb/execution/operator/scan/csv/csv_buffer_manager.hpp"
 #include "duckdb/execution/operator/scan/csv/csv_file_handle.hpp"
@@ -95,19 +94,15 @@ struct ReadCSVData : public BaseCSVData {
 	//! The buffer manager (if any): this is used when automatic detection is used during binding.
 	//! In this case, some CSV buffers have already been read and can be reused.
 	shared_ptr<CSVBufferManager> buffer_manager;
-	unique_ptr<BufferedCSVReader> initial_reader;
+//	unique_ptr<BufferedCSVReader> initial_reader;
 	//! The union readers are created (when csv union_by_name option is on) during binding
 	//! Those readers can be re-used during ReadCSVFunction
-	vector<unique_ptr<BufferedCSVReader>> union_readers;
+//	vector<unique_ptr<BufferedCSVReader>> union_readers;
 	//! Whether or not the single-threaded reader should be used
 	bool single_threaded = false;
 	//! Reader bind data
 	MultiFileReaderBindData reader_bind;
 	vector<ColumnInfo> column_info;
-
-	void Initialize(unique_ptr<BufferedCSVReader> &reader) {
-		this->initial_reader = std::move(reader);
-	}
 	void FinalizeRead(ClientContext &context);
 
 	void FormatSerialize(FormatSerializer &serializer) const;

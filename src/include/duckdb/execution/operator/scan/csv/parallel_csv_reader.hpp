@@ -13,7 +13,7 @@
 #include "duckdb/execution/operator/scan/csv/csv_file_handle.hpp"
 #include "duckdb/execution/operator/scan/csv/csv_buffer.hpp"
 #include "duckdb/execution/operator/scan/csv/csv_line_info.hpp"
-
+#include "duckdb/execution/operator/scan/csv/csv_buffer_manager.hpp"
 #include <sstream>
 #include <utility>
 
@@ -101,6 +101,8 @@ class ParallelCSVReader : public BaseCSVReader {
 public:
 	ParallelCSVReader(ClientContext &context, CSVReaderOptions options, unique_ptr<CSVBufferRead> buffer,
 	                  idx_t first_pos_first_buffer, const vector<LogicalType> &requested_types, idx_t file_idx_p);
+	ParallelCSVReader(ClientContext &context, CSVReaderOptions options, const vector<LogicalType> &requested_types);
+
 	virtual ~ParallelCSVReader() {
 	}
 
@@ -128,6 +130,28 @@ public:
 	//! Position of the first read line and last read line for verification purposes
 	VerificationPositions verification_positions;
 
+	shared_ptr<CSVBufferManager> buffer_manager;
+	idx_t cur_buffer_idx = 0;
+
+	//! Byte set from for last thread
+	idx_t next_byte = 0;
+	//! How many bytes we should execute per local state
+	idx_t bytes_per_local_state;
+	//! Current batch index
+	idx_t batch_index = 0;
+	idx_t local_batch_index = 0;
+	//! Line Info used in error messages
+	unique_ptr<LineInfo> line_info;
+	//! Mutex to lock when getting next batch of bytes (Parallel Only)
+	mutex main_mutex;
+	//! The vector stores positions where threads ended the last line they read in the CSV File, and the set stores
+	//! Positions where they started reading the first line.
+	vector<vector<idx_t>> tuple_end;
+	vector<set<idx_t>> tuple_start;
+	//! Tuple end to batch
+	vector<unordered_map<idx_t, idx_t>> tuple_end_to_batch;
+	//! Batch to Tuple End
+	vector<unordered_map<idx_t, idx_t>> batch_to_tuple_end;
 public:
 	void SetBufferRead(unique_ptr<CSVBufferRead> buffer);
 	//! Extract a single DataChunk from the CSV file and stores it in insert_chunk

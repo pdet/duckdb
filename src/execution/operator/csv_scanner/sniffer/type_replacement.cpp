@@ -1,5 +1,5 @@
 #include "duckdb/execution/operator/scan/csv/csv_sniffer.hpp"
-#include "duckdb/execution/operator/scan/csv/buffered_csv_reader.hpp"
+#include "duckdb/execution/operator/scan/csv/base_csv_reader.hpp"
 
 namespace duckdb {
 void CSVSniffer::ReplaceTypes() {
@@ -20,7 +20,7 @@ void CSVSniffer::ReplaceTypes() {
 		}
 		if (!best_candidate->options.file_options.union_by_name &&
 		    found < best_candidate->options.sql_types_per_column.size()) {
-			string error_msg = BufferedCSVReader::ColumnTypesError(options.sql_types_per_column, names);
+			string error_msg = BaseCSVReader::ColumnTypesError(options.sql_types_per_column, names);
 			if (!error_msg.empty()) {
 				throw BinderException(error_msg);
 			}
