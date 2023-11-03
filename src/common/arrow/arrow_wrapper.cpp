@@ -58,6 +58,15 @@ shared_ptr<ArrowArrayWrapper> ArrowArrayStreamWrapper::GetNextChunk() {
 	return current_chunk;
 }
 
+unique_ptr<ArrowArrayWrapper> ArrowArrayStreamWrapper::GetNextChunkUnique() {
+	auto current_chunk = make_uniq<ArrowArrayWrapper>();
+	if (arrow_array_stream.get_next(&arrow_array_stream, &current_chunk->arrow_array)) { // LCOV_EXCL_START
+		throw InvalidInputException("arrow_scan: get_next failed(): %s", string(GetError()));
+	} // LCOV_EXCL_STOP
+
+	return current_chunk;
+}
+
 const char *ArrowArrayStreamWrapper::GetError() { // LCOV_EXCL_START
 	return arrow_array_stream.get_last_error(&arrow_array_stream);
 } // LCOV_EXCL_STOP

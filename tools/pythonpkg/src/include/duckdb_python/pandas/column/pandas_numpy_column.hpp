@@ -6,7 +6,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-
 #pragma once
 
 #include "duckdb_python/pandas/pandas_column.hpp"
@@ -16,7 +15,8 @@ namespace duckdb {
 
 class PandasNumpyColumn : public PandasColumn {
 public:
-	explicit PandasNumpyColumn(py::array array_p) : PandasColumn(PandasColumnBackend::NUMPY), array(std::move(array_p)) {
+	explicit PandasNumpyColumn(py::array array_p)
+	    : PandasColumn(PandasColumnBackend::NUMPY), array(std::move(array_p)) {
 		D_ASSERT(py::hasattr(array, "strides"));
 		stride = array.attr("strides").attr("__getitem__")(0).cast<idx_t>();
 	}

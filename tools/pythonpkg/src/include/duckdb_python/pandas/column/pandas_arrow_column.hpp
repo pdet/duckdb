@@ -6,7 +6,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-
 #pragma once
 
 #include "duckdb_python/pandas/pandas_column.hpp"
@@ -15,7 +14,9 @@
 namespace duckdb {
 class ChunkedArray : public py::object {
 public:
-	explicit ChunkedArray(const py::object &o) : py::object(o, borrowed_t {}) {
+	explicit ChunkedArray(const py::object &o) {
+		D_ASSERT(hasattr(o, "_pa_array"));
+		py::object(o.attr("_pa_array"));
 	}
 	using py::object::object;
 
@@ -27,7 +28,8 @@ public:
 
 class PandasArrowColumn : public PandasColumn {
 public:
-	explicit PandasArrowColumn(ChunkedArray array_p) : PandasColumn(PandasColumnBackend::ARROW), array(std::move(array_p)) {
+	explicit PandasArrowColumn(ChunkedArray array_p)
+	    : PandasColumn(PandasColumnBackend::ARROW), array(std::move(array_p)) {
 	}
 
 public:

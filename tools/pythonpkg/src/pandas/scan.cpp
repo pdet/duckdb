@@ -156,10 +156,9 @@ void PandasScanFunction::PandasBackendScanSwitch(PandasColumnBindData &bind_data
 		NumpyScan::Scan(bind_data, count, offset, out);
 		break;
 	case PandasColumnBackend::ARROW:
-		ArrowScan::Scan(bind_data,count,offset,out);
+		ArrowScan::Scan(bind_data, count, offset, out);
 	default:
 		throw NotImplementedException("Type not implemented for PandasColumnBackend");
-
 	}
 }
 

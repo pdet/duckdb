@@ -51,6 +51,8 @@ public:
 
 	shared_ptr<ArrowArrayWrapper> GetNextChunk();
 
+	unique_ptr<ArrowArrayWrapper> GetNextChunkUnique();
+
 	const char *GetError();
 
 	~ArrowArrayStreamWrapper();

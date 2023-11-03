@@ -166,7 +166,8 @@ static void ArrowToDuckDBList(Vector &vector, ArrowArray &array, ArrowArrayScanS
 			// TODO: add support for offsets
 			ColumnArrowToDuckDBDictionary(child_vector, child_array, child_state, list_size, child_type, start_offset);
 		} else {
-			ArrowConverter::ColumnArrowToDuckDB(child_vector, child_array, child_state, list_size, child_type, start_offset);
+			ArrowConverter::ColumnArrowToDuckDB(child_vector, child_array, child_state, list_size, child_type,
+			                                    start_offset);
 		}
 	}
 }
@@ -355,9 +356,9 @@ static void IntervalConversionMonthDayNanos(Vector &vector, ArrowArray &array, A
 	}
 }
 
-void ArrowConverter::ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowArrayScanState &array_state, idx_t size,
-                                const ArrowType &arrow_type, int64_t nested_offset, ValidityMask *parent_mask,
-                                uint64_t parent_offset) {
+void ArrowConverter::ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowArrayScanState &array_state,
+                                         idx_t size, const ArrowType &arrow_type, int64_t nested_offset,
+                                         ValidityMask *parent_mask, uint64_t parent_offset) {
 	auto &scan_state = array_state.state;
 	D_ASSERT(!array.dictionary);
 	switch (vector.GetType().id()) {
@@ -830,7 +831,7 @@ static void ColumnArrowToDuckDBDictionary(Vector &vector, ArrowArray &array, Arr
 		auto base_vector = make_uniq<Vector>(vector.GetType(), array.dictionary->length);
 		SetValidityMask(*base_vector, *array.dictionary, scan_state, array.dictionary->length, 0, array.null_count > 0);
 		ArrowConverter::ColumnArrowToDuckDB(*base_vector, *array.dictionary, array_state, array.dictionary->length,
-		                    arrow_type.GetDictionary());
+		                                    arrow_type.GetDictionary());
 		array_state.AddDictionary(std::move(base_vector));
 	}
 	auto offset_type = arrow_type.GetDuckType();

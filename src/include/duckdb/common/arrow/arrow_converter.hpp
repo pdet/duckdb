@@ -21,9 +21,9 @@ struct ArrowConverter {
 	                                     const vector<string> &names, const ClientProperties &options);
 	DUCKDB_API static void ToArrowArray(DataChunk &input, ArrowArray *out_array, ClientProperties options);
 
-	DUCKDB_API static void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowArrayScanState &array_state, idx_t size,
-                                const ArrowType &arrow_type, int64_t nested_offset = -1,
-                                ValidityMask *parent_mask = nullptr, uint64_t parent_offset = 0);
+	DUCKDB_API static void ColumnArrowToDuckDB(Vector &vector, ArrowArray &array, ArrowArrayScanState &array_state,
+	                                           idx_t size, const ArrowType &arrow_type, int64_t nested_offset = -1,
+	                                           ValidityMask *parent_mask = nullptr, uint64_t parent_offset = 0);
 };
 
 } // namespace duckdb
