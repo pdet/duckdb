@@ -16,7 +16,7 @@ class ChunkedArray : public py::object {
 public:
 	explicit ChunkedArray(const py::object &o) {
 		D_ASSERT(hasattr(o, "_pa_array"));
-		py::object(o.attr("_pa_array"));
+		py::object(o.attr("_pa_array")(o));
 	}
 	using py::object::object;
 

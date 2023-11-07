@@ -22,6 +22,8 @@ namespace duckdb {
 // 'count' is the amount of values we will convert in this batch
 void ArrowScan::Scan(PandasColumnBindData &bind_data, idx_t count, idx_t offset, Vector &out) {
 	D_ASSERT(bind_data.pandas_col->Backend() == PandasColumnBackend::ARROW);
+	auto gil = make_uniq<PythonGILWrapper>();
+
 	auto &arrow_col = reinterpret_cast<PandasArrowColumn &>(*bind_data.pandas_col);
 	auto &chunked_array = arrow_col.array;
 	// We have to turn the chunked array into something we can export to c
@@ -40,6 +42,9 @@ void ArrowScan::Scan(PandasColumnBindData &bind_data, idx_t count, idx_t offset,
 	auto export_to_c = arrow_table.attr("__arrow_c_stream__");
 	ArrowArrayStreamWrapper stream_wrapper;
 	export_to_c(reinterpret_cast<uint64_t>(&stream_wrapper.arrow_array_stream));
+
+	// I think we can release the gil gere
+	gil.reset();
 
 	auto array = stream_wrapper.GetNextChunkUnique();
 	ArrowScanLocalState arrow_local(std::move(array));
