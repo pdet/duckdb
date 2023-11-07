@@ -97,7 +97,8 @@ static LogicalType BindColumn(PandasBindColumn &column_p, PandasColumnBindData &
 		auto pandas_array = column.attr("array");
 		if (py::hasattr(pandas_array, "_pa_array")) {
 			// This means we can access the arrow array directly
-			bind_data.pandas_col = make_uniq<PandasArrowColumn>(PyObject(pandas_array.attr("_pa_array")));
+			ChunkedArray array_p(pandas_array);
+			bind_data.pandas_col = make_uniq<PandasArrowColumn>(array_p);
 		} else if (py::hasattr(pandas_array, "_data")) {
 			// This means we can access the numpy array directly
 			bind_data.pandas_col = make_uniq<PandasNumpyColumn>(pandas_array.attr("_data"));
