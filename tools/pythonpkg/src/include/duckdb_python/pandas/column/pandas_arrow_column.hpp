@@ -14,9 +14,7 @@
 namespace duckdb {
 class ChunkedArray : public py::object {
 public:
-	explicit ChunkedArray(const py::object &o) {
-		D_ASSERT(hasattr(o, "_pa_array"));
-		py::object(o.attr("_pa_array")(o));
+	ChunkedArray(const py::object &o) : py::object(o, borrowed_t {}) {
 	}
 	using py::object::object;
 

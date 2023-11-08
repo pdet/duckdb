@@ -1374,7 +1374,8 @@ static unique_ptr<TableRef> TryReplacement(py::dict &dict, py::str &table_name, 
 		auto materialized = entry.attr("collect")();
 		auto arrow_dataset = materialized.attr("to_arrow")();
 		CreateArrowScan(arrow_dataset, *table_function, children, client_properties);
-	} else if ((numpytype = DuckDBPyConnection::IsAcceptedNumpyObject(entry)) != NumpyObjectType::INVALID) {
+	} else if ((DuckDBPyConnection::IsAcceptedNumpyObject(entry)) != NumpyObjectType::INVALID) {
+		numpytype = DuckDBPyConnection::IsAcceptedNumpyObject(entry);
 		string name = "np_" + StringUtil::GenerateRandomName();
 		py::dict data; // we will convert all the supported format to dict{"key": np.array(value)}.
 		size_t idx = 0;

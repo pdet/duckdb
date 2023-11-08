@@ -13,6 +13,7 @@
 #include "duckdb_python/numpy/numpy_type.hpp"
 #include "duckdb/common/helper.hpp"
 #include "duckdb_python/pandas/pandas_column.hpp"
+#include "duckdb/main/client_properties.hpp"
 
 namespace duckdb {
 
@@ -32,6 +33,7 @@ struct PandasColumnBindData {
 	string internal_categorical_type;
 	//! Hold ownership of objects created during scanning
 	PythonObjectContainer object_str_val;
+	ClientProperties client_properties;
 };
 
 struct Pandas {

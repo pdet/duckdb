@@ -39,14 +39,20 @@ void ArrowScan::Scan(PandasColumnBindData &bind_data, idx_t count, idx_t offset,
 	py::list column_list = py::cast(column);
 	py::list column_name_list = py::cast(column_name);
 	auto arrow_table = arrow_table_class.attr("from_arrays")(column_list, column_name_list);
-	auto export_to_c = arrow_table.attr("__arrow_c_stream__");
-	ArrowArrayStreamWrapper stream_wrapper;
-	export_to_c(reinterpret_cast<uint64_t>(&stream_wrapper.arrow_array_stream));
+
+	auto stream_factory =
+	    make_uniq<PythonTableArrowArrayStreamFactory>(arrow_table.ptr(), bind_data.client_properties);
+//	ArrowArrayStreamWrapper stream_wrapper;
+//	export_to_c(reinterpret_cast<uint64_t>(&stream_wrapper.arrow_array_stream));
 
 	// I think we can release the gil gere
 	gil.reset();
-
-	auto array = stream_wrapper.GetNextChunkUnique();
+	ArrowStreamParameters parameters;
+	parameters.projected_columns.columns = {"a"};
+	parameters.projected_columns.projection_map = {{0,"a"}};
+	parameters.filters = nullptr;
+	auto stream_wrapper = stream_factory->Produce((uintptr_t)stream_factory.get(), parameters);
+	auto array = stream_wrapper->GetNextChunkUnique();
 	ArrowScanLocalState arrow_local(std::move(array));
 	ArrowArrayScanState scan_state(arrow_local);
 	// now we can build the scanner

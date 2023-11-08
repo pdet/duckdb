@@ -97,7 +97,8 @@ static LogicalType BindColumn(PandasBindColumn &column_p, PandasColumnBindData &
 		auto pandas_array = column.attr("array");
 		if (py::hasattr(pandas_array, "_pa_array")) {
 			// This means we can access the arrow array directly
-			ChunkedArray array_p(pandas_array);
+			auto pyarrow = pandas_array.attr("_pa_array");
+			ChunkedArray array_p(pyarrow);
 			bind_data.pandas_col = make_uniq<PandasArrowColumn>(array_p);
 		} else if (py::hasattr(pandas_array, "_data")) {
 			// This means we can access the numpy array directly
@@ -139,6 +140,8 @@ void Pandas::Bind(const ClientContext &context, py::handle df_p, vector<PandasCo
 		names.emplace_back(py::str(df.names[col_idx]));
 		auto column = df[col_idx];
 		auto column_type = BindColumn(column, bind_data, context);
+
+		bind_data.client_properties = context.GetClientProperties();
 
 		return_types.push_back(column_type);
 		bind_columns.push_back(std::move(bind_data));
