@@ -36,6 +36,7 @@ with pytest.warns(None) as warning_record:
         _con.register(name, df)
     assert len(warning_record) == 0
 
+print(_con.execute("FROM EUROPE ORDER BY ALL").fetchall())
 assert _con.execute("FROM EUROPE ORDER BY ALL").fetchall() == [
     ('BELGIUM',),
     ('BULGARIA',),
