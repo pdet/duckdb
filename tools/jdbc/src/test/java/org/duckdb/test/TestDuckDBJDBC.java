@@ -169,6 +169,23 @@ public class TestDuckDBJDBC {
         }
     }
 
+    public static void test_StatementCloseParallel() throws SQLException, InterruptedException {
+        for (int j = 0; j < 100; j++) {
+            ExecutorService executor_service = Executors.newFixedThreadPool(1);
+
+            for (int i = 0; i < 100; i++) {
+                try (Connection conn = DriverManager.getConnection(JDBC_URL)) {
+                    createTable(conn);
+                    try (Statement statement = conn.createStatement()) {
+                        executeStatementWithThread(statement, executor_service);
+                    } catch (SQLException e) {
+                        System.out.println("Error executing statement: " + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
     private static void createTable(Connection conn) throws SQLException {
         try (Statement createStmt = conn.createStatement()) {
             createStmt.execute("CREATE TABLE foo as select * from range(1000000);");
