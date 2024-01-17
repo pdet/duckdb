@@ -18,46 +18,60 @@ namespace duckdb {
 //! Current, previous, and state before the previous
 struct CSVStates {
 	void Initialize(CSVState initial_state) {
-		current_state = initial_state;
-		previous_state = initial_state;
+		states[0] = initial_state;
+		states[1] = initial_state;
+		cur_pos = 1;
 	}
+
 	inline bool NewValue() {
-		return current_state == CSVState::DELIMITER;
+		return states[cur_pos] == CSVState::DELIMITER;
 	}
 
 	inline bool NewRow() {
 		// It is a new row, if the previous state is not a record separator, and the current one is
-		return previous_state != CSVState::RECORD_SEPARATOR && previous_state != CSVState::CARRIAGE_RETURN &&
-		       (current_state == CSVState::RECORD_SEPARATOR || current_state == CSVState::CARRIAGE_RETURN);
+		return states[static_cast<uint8_t>(cur_pos - 1)] != CSVState::RECORD_SEPARATOR &&
+		       states[static_cast<uint8_t>(cur_pos - 1)] != CSVState::CARRIAGE_RETURN &&
+		       (states[cur_pos] == CSVState::RECORD_SEPARATOR || states[cur_pos] == CSVState::CARRIAGE_RETURN);
 	}
 
 	inline bool EmptyLastValue() {
 		// It is a new row, if the previous state is not a record separator, and the current one is
-		return previous_state == CSVState::DELIMITER &&
-		       (current_state == CSVState::RECORD_SEPARATOR || current_state == CSVState::CARRIAGE_RETURN);
+		return states[static_cast<uint8_t>(cur_pos - 1)] == CSVState::DELIMITER &&
+		       (states[cur_pos] == CSVState::RECORD_SEPARATOR || states[cur_pos] == CSVState::CARRIAGE_RETURN);
 	}
 
 	inline bool EmptyLine() {
-		return (current_state == CSVState::CARRIAGE_RETURN || current_state == CSVState::RECORD_SEPARATOR) &&
-		       previous_state == CSVState::RECORD_SEPARATOR;
+		return (states[cur_pos] == CSVState::CARRIAGE_RETURN || states[cur_pos] == CSVState::RECORD_SEPARATOR) &&
+		       states[static_cast<uint8_t>(cur_pos - 1)] == CSVState::RECORD_SEPARATOR;
 	}
 
 	inline bool IsCurrentNewRow() {
-		return current_state == CSVState::RECORD_SEPARATOR || current_state == CSVState::CARRIAGE_RETURN;
+		return states[cur_pos] == CSVState::RECORD_SEPARATOR || states[cur_pos] == CSVState::CARRIAGE_RETURN;
+	}
+
+	inline bool IsCurrentRecordSeparator() {
+		return states[cur_pos] == CSVState::RECORD_SEPARATOR;
+	}
+
+	inline bool IsCurrentCarriageReturn() {
+		return states[cur_pos] == CSVState::CARRIAGE_RETURN;
 	}
 
 	inline bool IsQuoted() {
-		return previous_state == CSVState::QUOTED;
+		return states[static_cast<uint8_t>(cur_pos - 1)] == CSVState::QUOTED;
 	}
 	inline bool IsEscaped() {
-		return current_state == CSVState::ESCAPE ||
-		       (previous_state == CSVState::UNQUOTED && current_state == CSVState::QUOTED);
+		return states[cur_pos] == CSVState::ESCAPE ||
+		       (states[static_cast<uint8_t>(cur_pos - 1)] == CSVState::UNQUOTED && states[cur_pos] == CSVState::QUOTED);
 	}
 	inline bool IsQuotedCurrent() {
-		return current_state == CSVState::QUOTED;
+		return states[cur_pos] == CSVState::QUOTED;
 	}
-	CSVState current_state = CSVState::RECORD_SEPARATOR;
-	CSVState previous_state = CSVState::RECORD_SEPARATOR;
+
+	//! We store up to 256 states
+	CSVState states[256];
+	//! We use a uint8_t here to exploit under/over-flows to go through the list of states in a circular way
+	uint8_t cur_pos;
 };
 
 //! The CSV State Machine comprises a state transition array (STA).
@@ -77,8 +91,9 @@ public:
 
 	//! Transition all states to next state, that depends on the current char
 	inline void Transition(CSVStates &states, char current_char) const {
-		states.previous_state = states.current_state;
-		states.current_state = transition_array[states.current_state][static_cast<uint8_t>(current_char)];
+		//! Gotta love the evaluation order of cpp
+		states.states[++states.cur_pos] =
+		    transition_array[states.states[states.cur_pos]][static_cast<uint8_t>(current_char)];
 	}
 
 	const vector<SelectionVector> &GetSelectionVector();
