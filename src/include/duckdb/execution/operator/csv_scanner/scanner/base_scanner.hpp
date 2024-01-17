@@ -77,18 +77,17 @@ public:
 	//! OP = Operation used to alter the result of the parser
 	//! T = Type of the result
 	template <class T>
-	inline static bool ProcessCharacter(BaseScanner &scanner, const char current_char, const idx_t buffer_pos,
+	inline static bool ProcessCharacter(BaseScanner &scanner, const uint8_t cur_state_pos, const idx_t buffer_pos,
 	                                    T &result) {
-		scanner.state_machine->Transition(scanner.states, current_char);
-		switch (scanner.states.states[scanner.states.cur_pos]) {
+		switch (scanner.states.states[cur_state_pos]) {
 		case CSVState::INVALID:
 			T::InvalidState(result);
 			return true;
 		case CSVState::RECORD_SEPARATOR:
-			if (scanner.states.states[static_cast<uint8_t>(scanner.states.cur_pos - 1)] == CSVState::RECORD_SEPARATOR) {
+			if (scanner.states.states[static_cast<uint8_t>(cur_state_pos- 1)] == CSVState::RECORD_SEPARATOR) {
 				scanner.lines_read++;
 				return T::EmptyLine(result, buffer_pos);
-			} else if (scanner.states.states[static_cast<uint8_t>(scanner.states.cur_pos - 1)] !=
+			} else if (scanner.states.states[static_cast<uint8_t>(cur_state_pos - 1)] !=
 			           CSVState::CARRIAGE_RETURN) {
 				scanner.lines_read++;
 				return T::AddRow(result, buffer_pos);
@@ -96,7 +95,7 @@ public:
 			return false;
 		case CSVState::CARRIAGE_RETURN:
 			scanner.lines_read++;
-			if (scanner.states.states[static_cast<uint8_t>(scanner.states.cur_pos - 1)] != CSVState::RECORD_SEPARATOR) {
+			if (scanner.states.states[static_cast<uint8_t>(cur_state_pos - 1)] != CSVState::RECORD_SEPARATOR) {
 				return T::AddRow(result, buffer_pos);
 			} else {
 				return T::EmptyLine(result, buffer_pos);
@@ -105,7 +104,7 @@ public:
 			T::AddValue(result, buffer_pos);
 			return false;
 		case CSVState::QUOTED:
-			if (scanner.states.states[static_cast<uint8_t>(scanner.states.cur_pos - 1)] == CSVState::UNQUOTED) {
+			if (scanner.states.states[static_cast<uint8_t>(cur_state_pos- 1)] == CSVState::UNQUOTED) {
 				T::SetEscaped(result);
 			}
 			T::SetQuoted(result);
@@ -136,6 +135,8 @@ public:
 protected:
 	//! Boundaries of this scanner
 	CSVIterator iterator;
+
+
 
 	//! Unique pointer to the buffer_handle, this is unique per scanner, since it also contains the necessary counters
 	//! To offload buffers to disk if necessary

@@ -82,7 +82,9 @@ public:
 	CSVPosition pos;
 
 	bool done = false;
-
+	bool continue_from_states_pos = false;
+	uint8_t states_pos;
+	uint8_t states_end;
 private:
 	//! The original setting
 	CSVBoundary boundary;

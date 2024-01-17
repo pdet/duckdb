@@ -91,7 +91,6 @@ public:
 
 	//! Transition all states to next state, that depends on the current char
 	inline void Transition(CSVStates &states, char current_char) const {
-		//! Gotta love the evaluation order of cpp
 		states.states[++states.cur_pos] =
 		    transition_array[states.states[states.cur_pos]][static_cast<uint8_t>(current_char)];
 	}

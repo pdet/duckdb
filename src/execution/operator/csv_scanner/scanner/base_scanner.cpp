@@ -78,11 +78,76 @@ void BaseScanner::Process(T &result) {
 	} else {
 		to_pos = cur_buffer_handle->actual_size;
 	}
-	for (; iterator.pos.buffer_pos < to_pos; iterator.pos.buffer_pos++) {
-		if (ProcessCharacter(*this, buffer_handle_ptr[iterator.pos.buffer_pos], iterator.pos.buffer_pos, result)) {
-			iterator.pos.buffer_pos++;
-			return;
+	// operate over the buffer
+	idx_t state_end = iterator.states_end;
+	if (iterator.continue_from_states_pos){
+		states.cur_pos = iterator.states_pos;
+	}
+	iterator.continue_from_states_pos = false;
+	while (iterator.pos.buffer_pos < to_pos){
+		uint8_t cur_state_pos = states.cur_pos + 1;
+		// We first fill our states buffer with 255 pos or the total buffer size
+		if (!iterator.continue_from_states_pos){
+			state_end = to_pos - iterator.pos.buffer_pos < 255 ? to_pos - iterator.pos.buffer_pos : 255;
+			for (idx_t i = 0; i < state_end; i++){
+				state_machine->Transition(states, buffer_handle_ptr[iterator.pos.buffer_pos+i]);
+			}
 		}
+		idx_t skip_end = (state_end -4)/4;
+		if (state_end < 4){
+			skip_end=0;
+		}
+		for (idx_t  i = 0; i < skip_end; i++){
+			idx_t actual_idx = i*4;
+			if (static_cast<uint8_t>(cur_state_pos + actual_idx) < 252){
+				if (*reinterpret_cast<int32_t*>(&states.states[static_cast<uint8_t>(cur_state_pos + actual_idx)]) == 0){
+					continue;
+				}
+			}
+			for (idx_t j = 0; j < 4; j++){
+				if (ProcessCharacter(*this,cur_state_pos+actual_idx+j, iterator.pos.buffer_pos + actual_idx+j, result)) {
+					iterator.pos.buffer_pos += actual_idx+j + 1;
+					iterator.continue_from_states_pos = true;
+					iterator.states_pos = cur_state_pos + actual_idx+j;
+					iterator.states_end = state_end - (actual_idx+j+1);
+					return;
+			}
+			}
+		}
+		for (idx_t i = skip_end*4; i < state_end; i++){
+			// Do some SIMD-like skipping
+			if (static_cast<uint8_t> (cur_state_pos + i) < 252 && i + 4 < state_end ){
+				if (*reinterpret_cast<int32_t*>(&states.states[static_cast<uint8_t>(cur_state_pos + i)]) == 0){
+					i+=3;
+					continue;
+				}
+			}
+			if (ProcessCharacter(*this,cur_state_pos+i, iterator.pos.buffer_pos + i, result)) {
+				iterator.pos.buffer_pos += i + 1;
+				iterator.continue_from_states_pos = true;
+				iterator.states_pos = cur_state_pos + i;
+				iterator.states_end = state_end - (i+1);
+				return;
+			}
+		}
+		// Now we actually turn the buffer into strings
+//		for (idx_t i = 0; i < state_end; i++){
+//			// Do some SIMD-like skipping
+//			if (static_cast<uint8_t> (cur_state_pos + i) < 252 && i + 4 < state_end ){
+//				if (*reinterpret_cast<int32_t*>(&states.states[static_cast<uint8_t>(cur_state_pos + i)]) == 0){
+//					i+=3;
+//					continue;
+//				}
+//			}
+//			if (ProcessCharacter(*this,cur_state_pos+i, iterator.pos.buffer_pos + i, result)) {
+//				iterator.pos.buffer_pos += i + 1;
+//				iterator.continue_from_states_pos = true;
+//				iterator.states_pos = cur_state_pos + i;
+//				iterator.states_end = state_end - (i+1);
+//				return;
+//			}
+//		}
+		iterator.pos.buffer_pos +=state_end;
 	}
 }
 

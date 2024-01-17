@@ -213,7 +213,7 @@ bool StringValueResult::AddRow(StringValueResult &result, const idx_t buffer_pos
 			result.AddValueToVector(value);
 		}
 		if (result.state_machine.dialect_options.state_machine_options.new_line == NewLineIdentifier::CARRY_ON) {
-			if (result.states.IsCurrentRecordSeparator()) {
+		if (result.states.IsCurrentRecordSeparator()) {
 				// Even though this is marked as a carry on, this is a hippie mixie
 				result.last_position = buffer_pos + 1;
 			} else {
@@ -446,7 +446,8 @@ void StringValueScanner::ProcessExtraRow() {
 	idx_t cur_result_pos = result.result_position;
 	cur_result_pos++;
 	for (; iterator.pos.buffer_pos < to_pos; iterator.pos.buffer_pos++) {
-		if (ProcessCharacter(*this, buffer_handle_ptr[iterator.pos.buffer_pos], iterator.pos.buffer_pos, result) ||
+		state_machine->Transition(states, buffer_handle_ptr[iterator.pos.buffer_pos]);
+		if (ProcessCharacter(*this, states.cur_pos, iterator.pos.buffer_pos, result) ||
 		    (result.result_position >= cur_result_pos &&
 		     result.result_position % state_machine->dialect_options.num_cols == 0)) {
 			return;
