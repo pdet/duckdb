@@ -25,7 +25,7 @@ public:
 	                 const idx_t file_idx);
 	//! Returns a buffer from a buffer id (starting from 0). If it's in the auto-detection then we cache new buffers
 	//! Otherwise we remove them from the cache if they are already there, or just return them bypassing the cache.
-	unique_ptr<CSVBufferHandle> GetBuffer(const idx_t buffer_idx);
+	unique_ptr<CSVBufferHandle> GetBuffer(const idx_t buffer_idx, bool sniffing);
 	//! unique_ptr to the file handle, gets stolen after sniffing
 	unique_ptr<CSVFileHandle> file_handle;
 	//! Initializes the buffer manager, during it's construction/reset
@@ -47,7 +47,7 @@ public:
 
 private:
 	//! Reads next buffer in reference to cached_buffers.front()
-	bool ReadNextAndCacheIt();
+	bool ReadNextAndCacheIt(bool sniffing);
 	//! The file index this Buffer Manager refers to
 	const idx_t file_idx;
 	//! The file path this Buffer Manager refers to
@@ -64,6 +64,7 @@ private:
 	idx_t bytes_read = 0;
 	//! Because the buffer manager can be accessed in Parallel we need a mutex.
 	mutex main_mutex;
+	idx_t reuse_buffer_idx = 0;
 };
 
 } // namespace duckdb

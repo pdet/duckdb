@@ -48,10 +48,10 @@ public:
 
 	//! Constructor for `Next()` Buffers
 	CSVBuffer(CSVFileHandle &file_handle, ClientContext &context, idx_t buffer_size, idx_t global_csv_current_position,
-	          idx_t file_number_p, idx_t buffer_idx);
+	          idx_t file_number_p, idx_t buffer_idx, shared_ptr<CSVBuffer> reuse_buffer);
 
 	//! Creates a new buffer with the next part of the CSV File
-	shared_ptr<CSVBuffer> Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number);
+	shared_ptr<CSVBuffer> Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number, shared_ptr<CSVBuffer> reuse_buffer);
 
 	//! Gets the buffer actual size
 	idx_t GetBufferSize();

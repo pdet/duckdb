@@ -18,10 +18,19 @@ CSVBuffer::CSVBuffer(ClientContext &context, idx_t buffer_size_p, CSVFileHandle 
 }
 
 CSVBuffer::CSVBuffer(CSVFileHandle &file_handle, ClientContext &context, idx_t buffer_size,
-                     idx_t global_csv_current_position, idx_t file_number_p, idx_t buffer_idx_p)
+                     idx_t global_csv_current_position, idx_t file_number_p, idx_t buffer_idx_p, shared_ptr<CSVBuffer> reuse_buffer)
     : context(context), global_csv_start(global_csv_current_position), file_number(file_number_p),
       can_seek(file_handle.CanSeek()), buffer_idx(buffer_idx_p) {
-	AllocateBuffer(buffer_size);
+	if (reuse_buffer){
+		if (reuse_buffer->handle.IsValid()){
+			// We can reuse the buffer
+			block = reuse_buffer->block;
+			handle = std::move(reuse_buffer->handle);
+			buffer_size = handle.GetFileBuffer().size;
+		}
+	} else{
+		AllocateBuffer(buffer_size);
+	}
 	auto buffer = handle.Ptr();
 	actual_buffer_size = file_handle.Read(handle.Ptr(), buffer_size);
 	while (actual_buffer_size < buffer_size && !file_handle.FinishedReading()) {
@@ -31,9 +40,9 @@ CSVBuffer::CSVBuffer(CSVFileHandle &file_handle, ClientContext &context, idx_t b
 	last_buffer = file_handle.FinishedReading();
 }
 
-shared_ptr<CSVBuffer> CSVBuffer::Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number_p) {
+shared_ptr<CSVBuffer> CSVBuffer::Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number_p, shared_ptr<CSVBuffer> reuse_buffer) {
 	auto next_csv_buffer = make_shared<CSVBuffer>(file_handle, context, buffer_size,
-	                                              global_csv_start + actual_buffer_size, file_number_p, buffer_idx + 1);
+	                                              global_csv_start + actual_buffer_size, file_number_p, buffer_idx + 1, reuse_buffer);
 	if (next_csv_buffer->GetBufferSize() == 0) {
 		// We are done reading
 		return nullptr;

@@ -33,7 +33,7 @@ void CSVBufferManager::Initialize() {
 	}
 }
 
-bool CSVBufferManager::ReadNextAndCacheIt() {
+bool CSVBufferManager::ReadNextAndCacheIt(bool sniffing) {
 	D_ASSERT(last_buffer);
 	for (idx_t i = 0; i < 2; i++) {
 		if (!last_buffer->IsCSVFileLastBuffer()) {
@@ -47,7 +47,15 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 				last_buffer->last_buffer = true;
 				return false;
 			}
-			auto maybe_last_buffer = last_buffer->Next(*file_handle, cur_buffer_size, file_idx);
+			shared_ptr<CSVBuffer> reuse_buffer;
+			if (!sniffing){
+				if (cached_buffers.front().use_count() == 1){
+					reuse_buffer = cached_buffers[reuse_buffer_idx];
+					cached_buffers[reuse_buffer_idx] = nullptr;
+				}
+			}
+
+			auto maybe_last_buffer = last_buffer->Next(*file_handle, cur_buffer_size, file_idx, reuse_buffer);
 			if (!maybe_last_buffer) {
 				last_buffer->last_buffer = true;
 				return false;
@@ -61,18 +69,20 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 	return false;
 }
 
-unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos) {
+unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos, bool sniffing) {
 	lock_guard<mutex> parallel_lock(main_mutex);
 	while (pos >= cached_buffers.size()) {
 		if (done) {
 			return nullptr;
 		}
-		if (!ReadNextAndCacheIt()) {
+		if (!ReadNextAndCacheIt(sniffing)) {
 			done = true;
 		}
 	}
 	if (pos != 0) {
-		cached_buffers[pos - 1]->Unpin();
+		if (cached_buffers[pos - 1]){
+			cached_buffers[pos - 1]->Unpin();
+		}
 	}
 	return cached_buffers[pos]->Pin(*file_handle);
 }
