@@ -51,7 +51,8 @@ public:
 	          idx_t file_number_p, idx_t buffer_idx, shared_ptr<CSVBuffer> recycled_buffer = nullptr);
 
 	//! Creates a new buffer with the next part of the CSV File
-	shared_ptr<CSVBuffer> Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number);
+	shared_ptr<CSVBuffer> Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number,
+	                           shared_ptr<CSVBuffer> recycled_buffer);
 
 	//! Gets the buffer actual size
 	idx_t GetBufferSize();

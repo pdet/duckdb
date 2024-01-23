@@ -47,10 +47,12 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 	for (idx_t i = 0; i < 2; i++) {
 		if (!last_buffer->IsCSVFileLastBuffer()) {
 			auto cur_buffer_size = buffer_size;
+			shared_ptr<CSVBuffer> recycled_buffer;
 			if (!recycled_buffers.empty()) {
-				auto recycled_buffer = recycled_buffers.back();
+				recycled_buffer = recycled_buffers.back();
+				recycled_buffers.pop_back();
 			}
-			if (file_handle->uncompressed) {
+			if (file_handle->uncompressed && !recycled_buffer) {
 				if (file_handle->FileSize() - bytes_read) {
 					cur_buffer_size = file_handle->FileSize() - bytes_read;
 				}
@@ -59,7 +61,7 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 				last_buffer->last_buffer = true;
 				return false;
 			}
-			auto maybe_last_buffer = last_buffer->Next(*file_handle, cur_buffer_size, file_idx);
+			auto maybe_last_buffer = last_buffer->Next(*file_handle, cur_buffer_size, file_idx, recycled_buffer);
 			if (!maybe_last_buffer) {
 				last_buffer->last_buffer = true;
 				return false;

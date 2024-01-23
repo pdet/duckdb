@@ -47,9 +47,11 @@ CSVBuffer::CSVBuffer(CSVFileHandle &file_handle, ClientContext &context, idx_t b
 	last_buffer = file_handle.FinishedReading();
 }
 
-shared_ptr<CSVBuffer> CSVBuffer::Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number_p) {
-	auto next_csv_buffer = make_shared<CSVBuffer>(file_handle, context, buffer_size,
-	                                              global_csv_start + actual_buffer_size, file_number_p, buffer_idx + 1);
+shared_ptr<CSVBuffer> CSVBuffer::Next(CSVFileHandle &file_handle, idx_t buffer_size, idx_t file_number_p,
+                                      shared_ptr<CSVBuffer> recycled_buffer) {
+	auto next_csv_buffer =
+	    make_shared<CSVBuffer>(file_handle, context, buffer_size, global_csv_start + actual_buffer_size, file_number_p,
+	                           buffer_idx + 1, recycled_buffer);
 	if (next_csv_buffer->GetBufferSize() == 0) {
 		// We are done reading
 		return nullptr;
