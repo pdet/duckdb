@@ -762,9 +762,13 @@ void StringValueScanner::SetStart() {
 
 void StringValueScanner::FinalizeChunkProcess() {
 	if (result.result_position >= result.vector_size || iterator.done) {
+		if (!sniffing){
+			csv_file_scan->bytes_read += bytes_read;
+		}
 		// We are done
 		return;
 	}
+
 	// If we are not done we have two options.
 	// 1) If a boundary is set.
 	if (iterator.IsBoundarySet()) {

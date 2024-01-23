@@ -107,6 +107,8 @@ protected:
 	//! How many lines were read by this scanner
 	idx_t lines_read = 0;
 
+	idx_t bytes_read;
+
 	//! Internal Functions used to perform the parsing
 	//! Initializes the scanner
 	virtual void Initialize();
@@ -123,24 +125,28 @@ protected:
 		} else {
 			to_pos = cur_buffer_handle->actual_size;
 		}
+		idx_t start_pos = iterator.pos.buffer_pos;
 		while (iterator.pos.buffer_pos < to_pos) {
 			state_machine->Transition(states, buffer_handle_ptr[iterator.pos.buffer_pos]);
 			switch (states.states[1]) {
 			case CSVState::INVALID:
 				T::InvalidState(result);
 				iterator.pos.buffer_pos++;
+				bytes_read = iterator.pos.buffer_pos - start_pos;
 				return;
 			case CSVState::RECORD_SEPARATOR:
 				if (states.states[0] == CSVState::RECORD_SEPARATOR || states.states[0] == CSVState::NOT_SET) {
 					lines_read++;
 					if (T::EmptyLine(result, iterator.pos.buffer_pos)) {
 						iterator.pos.buffer_pos++;
+						bytes_read = iterator.pos.buffer_pos - start_pos;
 						return;
 					}
 				} else if (states.states[0] != CSVState::CARRIAGE_RETURN) {
 					lines_read++;
 					if (T::AddRow(result, iterator.pos.buffer_pos)) {
 						iterator.pos.buffer_pos++;
+						bytes_read = iterator.pos.buffer_pos - start_pos;
 						return;
 					}
 				}
@@ -151,11 +157,13 @@ protected:
 				if (states.states[0] == CSVState::RECORD_SEPARATOR || states.states[0] == CSVState::NOT_SET) {
 					if (T::EmptyLine(result, iterator.pos.buffer_pos)) {
 						iterator.pos.buffer_pos++;
+						bytes_read = iterator.pos.buffer_pos - start_pos;
 						return;
 					}
 				} else if (states.states[0] != CSVState::CARRIAGE_RETURN) {
 					if (T::AddRow(result, iterator.pos.buffer_pos)) {
 						iterator.pos.buffer_pos++;
+						bytes_read = iterator.pos.buffer_pos - start_pos;
 						return;
 					}
 				}
@@ -194,6 +202,7 @@ protected:
 				break;
 			}
 		}
+		bytes_read = iterator.pos.buffer_pos - start_pos;
 	}
 
 	//! Finalizes the process of the chunk
