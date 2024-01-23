@@ -107,6 +107,10 @@ string CSVBufferManager::GetFilePath() {
 	return file_path;
 }
 vector<shared_ptr<CSVBuffer>> &CSVBufferManager::GetRecycledBuffers() {
+	while (!recycled_buffers.empty()){
+		cached_buffers.push_back(recycled_buffers.back());
+		recycled_buffers.pop_back();
+	}
 	return cached_buffers;
 }
 
