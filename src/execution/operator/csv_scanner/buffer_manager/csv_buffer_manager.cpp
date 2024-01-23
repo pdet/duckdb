@@ -4,8 +4,9 @@
 namespace duckdb {
 
 CSVBufferManager::CSVBufferManager(ClientContext &context_p, const CSVReaderOptions &options, const string &file_path_p,
-                                   const idx_t file_idx_p)
-    : context(context_p), file_idx(file_idx_p), file_path(file_path_p), buffer_size(CSVBuffer::CSV_BUFFER_SIZE) {
+                                   const idx_t file_idx_p, vector<shared_ptr<CSVBuffer>> recycled_buffers_p)
+    : context(context_p), file_idx(file_idx_p), file_path(file_path_p), buffer_size(CSVBuffer::CSV_BUFFER_SIZE),
+      recycled_buffers(recycled_buffers_p) {
 	D_ASSERT(!file_path.empty());
 	file_handle = ReadCSV::OpenCSV(file_path, options.compression, context);
 	skip_rows = options.dialect_options.skip_rows.GetValue();
@@ -27,8 +28,16 @@ void CSVBufferManager::UnpinBuffer(const idx_t cache_idx) {
 
 void CSVBufferManager::Initialize() {
 	if (cached_buffers.empty()) {
-		cached_buffers.emplace_back(
-		    make_shared<CSVBuffer>(context, buffer_size, *file_handle, global_csv_pos, file_idx));
+		if (!recycled_buffers.empty()) {
+			auto recycled_buffer = recycled_buffers.back();
+			cached_buffers.emplace_back(
+			    make_shared<CSVBuffer>(context, buffer_size, *file_handle, global_csv_pos, file_idx, recycled_buffer));
+			recycled_buffers.pop_back();
+		} else {
+			cached_buffers.emplace_back(
+			    make_shared<CSVBuffer>(context, buffer_size, *file_handle, global_csv_pos, file_idx));
+		}
+
 		last_buffer = cached_buffers.front();
 	}
 }
@@ -38,6 +47,9 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 	for (idx_t i = 0; i < 2; i++) {
 		if (!last_buffer->IsCSVFileLastBuffer()) {
 			auto cur_buffer_size = buffer_size;
+			if (!recycled_buffers.empty()) {
+				auto recycled_buffer = recycled_buffers.back();
+			}
 			if (file_handle->uncompressed) {
 				if (file_handle->FileSize() - bytes_read) {
 					cur_buffer_size = file_handle->FileSize() - bytes_read;
@@ -91,6 +103,9 @@ bool CSVBufferManager::Done() {
 
 string CSVBufferManager::GetFilePath() {
 	return file_path;
+}
+vector<shared_ptr<CSVBuffer>> &CSVBufferManager::GetRecycledBuffers() {
+	return cached_buffers;
 }
 
 } // namespace duckdb

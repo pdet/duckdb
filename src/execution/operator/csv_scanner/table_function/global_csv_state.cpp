@@ -55,7 +55,7 @@ double CSVGlobalState::GetProgress(const ReadCSVData &bind_data_p) const {
 	return percentage * 100;
 }
 
-unique_ptr<StringValueScanner> CSVGlobalState::Next() {
+unique_ptr<StringValueScanner> CSVGlobalState::Next(unique_ptr<StringValueScanner> previous_scanner) {
 	if (single_threaded) {
 		idx_t cur_idx = last_file_idx++;
 		if (cur_idx >= bind_data.files.size()) {
@@ -65,8 +65,14 @@ unique_ptr<StringValueScanner> CSVGlobalState::Next() {
 		if (cur_idx == 0) {
 			current_file = file_scans.back();
 		} else {
-			current_file = make_shared<CSVFileScan>(context, bind_data.files[cur_idx], bind_data.options, cur_idx,
-			                                        bind_data, column_ids, file_schema);
+			if (previous_scanner) {
+				current_file = make_shared<CSVFileScan>(
+				    context, bind_data.files[cur_idx], bind_data.options, cur_idx, bind_data, column_ids, file_schema,
+				    previous_scanner->csv_file_scan->buffer_manager->GetRecycledBuffers());
+			} else {
+				current_file = make_shared<CSVFileScan>(context, bind_data.files[cur_idx], bind_data.options, cur_idx,
+				                                        bind_data, column_ids, file_schema);
+			}
 		}
 		auto csv_scanner =
 		    make_uniq<StringValueScanner>(scanner_idx++, current_file->buffer_manager, current_file->state_machine,

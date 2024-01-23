@@ -1,12 +1,20 @@
 #include "duckdb/execution/operator/csv_scanner/buffer_manager/csv_buffer.hpp"
 #include "duckdb/common/string_util.hpp"
+#include <iostream>
 
 namespace duckdb {
 
 CSVBuffer::CSVBuffer(ClientContext &context, idx_t buffer_size_p, CSVFileHandle &file_handle,
-                     idx_t &global_csv_current_position, idx_t file_number_p)
+                     idx_t &global_csv_current_position, idx_t file_number_p, shared_ptr<CSVBuffer> recycled_buffer)
     : context(context), file_number(file_number_p), can_seek(file_handle.CanSeek()) {
-	AllocateBuffer(buffer_size_p);
+	if (recycled_buffer) {
+		block = recycled_buffer->block;
+		auto &buffer_manager = BufferManager::GetBufferManager(context);
+		handle = buffer_manager.Pin(block);
+		buffer_size_p = handle.GetFileBuffer().size;
+	} else {
+		AllocateBuffer(buffer_size_p);
+	}
 	auto buffer = Ptr();
 	actual_buffer_size = file_handle.Read(buffer, buffer_size_p);
 	while (actual_buffer_size < buffer_size_p && !file_handle.FinishedReading()) {
@@ -18,10 +26,18 @@ CSVBuffer::CSVBuffer(ClientContext &context, idx_t buffer_size_p, CSVFileHandle 
 }
 
 CSVBuffer::CSVBuffer(CSVFileHandle &file_handle, ClientContext &context, idx_t buffer_size,
-                     idx_t global_csv_current_position, idx_t file_number_p, idx_t buffer_idx_p)
+                     idx_t global_csv_current_position, idx_t file_number_p, idx_t buffer_idx_p,
+                     shared_ptr<CSVBuffer> recycled_buffer)
     : context(context), global_csv_start(global_csv_current_position), file_number(file_number_p),
       can_seek(file_handle.CanSeek()), buffer_idx(buffer_idx_p) {
-	AllocateBuffer(buffer_size);
+	if (recycled_buffer) {
+		block = recycled_buffer->block;
+		auto &buffer_manager = BufferManager::GetBufferManager(context);
+		handle = buffer_manager.Pin(block);
+		buffer_size = handle.GetFileBuffer().size;
+	} else {
+		AllocateBuffer(buffer_size);
+	}
 	auto buffer = handle.Ptr();
 	actual_buffer_size = file_handle.Read(handle.Ptr(), buffer_size);
 	while (actual_buffer_size < buffer_size && !file_handle.FinishedReading()) {
