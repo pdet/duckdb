@@ -68,7 +68,6 @@ unique_ptr<StringValueScanner> CSVGlobalState::Next(unique_ptr<StringValueScanne
 			std::cout << cur_idx << std::endl;
 			if (previous_scanner) {
 				std::cout << "recycling" << std::endl;
-
 				current_file = make_shared<CSVFileScan>(
 				    context, bind_data.files[cur_idx], bind_data.options, cur_idx, bind_data, column_ids, file_schema,
 				    previous_scanner->csv_file_scan->buffer_manager->GetRecycledBuffers());

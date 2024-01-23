@@ -60,6 +60,7 @@ shared_ptr<CSVBuffer> CSVBuffer::Next(CSVFileHandle &file_handle, idx_t buffer_s
 }
 
 void CSVBuffer::AllocateBuffer(idx_t buffer_size) {
+	std::cout << "allocating_buffer" << std::endl;
 	auto &buffer_manager = BufferManager::GetBufferManager(context);
 	bool can_destroy = can_seek;
 	handle = buffer_manager.Allocate(MaxValue<idx_t>(Storage::BLOCK_SIZE, buffer_size), can_destroy, &block);
