@@ -49,7 +49,7 @@ bool CSVIterator::Next(CSVBufferManager &buffer_manager) {
 	}
 	boundary.boundary_idx++;
 	// This is our start buffer
-	auto buffer = buffer_manager.GetBuffer(boundary.buffer_idx);
+	auto buffer = buffer_manager.GetBuffer(boundary.buffer_idx, false);
 	if (buffer->is_last_buffer && boundary.buffer_pos + CSVIterator::BYTES_PER_THREAD > buffer->actual_size) {
 		// 1) We are done with the current file
 		return false;
@@ -59,7 +59,7 @@ bool CSVIterator::Next(CSVBufferManager &buffer_manager) {
 		boundary.buffer_idx++;
 		boundary.buffer_pos = 0;
 		// Verify this buffer really exists
-		auto next_buffer = buffer_manager.GetBuffer(boundary.buffer_idx);
+		auto next_buffer = buffer_manager.GetBuffer(boundary.buffer_idx, false);
 		if (!next_buffer) {
 			return false;
 		}

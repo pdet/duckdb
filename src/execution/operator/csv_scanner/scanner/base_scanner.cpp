@@ -22,7 +22,7 @@ BaseScanner::BaseScanner(shared_ptr<CSVBufferManager> buffer_manager_p, shared_p
 	D_ASSERT(buffer_manager);
 	D_ASSERT(state_machine);
 	// Initialize current buffer handle
-	cur_buffer_handle = buffer_manager->GetBuffer(iterator.GetBufferIdx());
+	cur_buffer_handle = buffer_manager->GetBuffer(iterator.GetBufferIdx(), false);
 	if (!cur_buffer_handle) {
 		buffer_handle_ptr = nullptr;
 	} else {

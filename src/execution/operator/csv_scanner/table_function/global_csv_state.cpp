@@ -33,7 +33,7 @@ CSVGlobalState::CSVGlobalState(ClientContext &context_p, const shared_ptr<CSVBuf
 	if (single_threaded) {
 		current_boundary = CSVIterator();
 	} else {
-		auto buffer_size = file_scans.back()->buffer_manager->GetBuffer(0)->actual_size;
+		auto buffer_size = file_scans.back()->buffer_manager->GetBuffer(0, false)->actual_size;
 		current_boundary = CSVIterator(0, 0, 0, 0, buffer_size);
 	}
 }
@@ -105,7 +105,7 @@ unique_ptr<StringValueScanner> CSVGlobalState::Next(unique_ptr<StringValueScanne
 			                                                 bind_data.options, current_file_idx, bind_data, column_ids,
 			                                                 file_schema));
 			// And re-start the boundary-iterator
-			auto buffer_size = file_scans.back()->buffer_manager->GetBuffer(0)->actual_size;
+			auto buffer_size = file_scans.back()->buffer_manager->GetBuffer(0, false)->actual_size;
 			current_boundary = CSVIterator(current_file_idx, 0, 0, 0, buffer_size);
 		} else {
 			// If not we are done with this CSV Scanning

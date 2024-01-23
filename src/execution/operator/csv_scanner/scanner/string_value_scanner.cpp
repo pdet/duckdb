@@ -639,7 +639,7 @@ void StringValueScanner::ProcessOverbufferValue() {
 bool StringValueScanner::MoveToNextBuffer() {
 	if (iterator.pos.buffer_pos >= cur_buffer_handle->actual_size) {
 		previous_buffer_handle = std::move(cur_buffer_handle);
-		cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
+		cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx, !sniffing && !iterator.IsBoundarySet());
 		if (!cur_buffer_handle) {
 			iterator.pos.buffer_idx--;
 			buffer_handle_ptr = nullptr;

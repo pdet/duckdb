@@ -42,7 +42,7 @@ void CSVBufferManager::Initialize() {
 	}
 }
 
-bool CSVBufferManager::ReadNextAndCacheIt() {
+bool CSVBufferManager::ReadNextAndCacheIt(bool recycle) {
 	D_ASSERT(last_buffer);
 	for (idx_t i = 0; i < 2; i++) {
 		if (!last_buffer->IsCSVFileLastBuffer()) {
@@ -51,6 +51,9 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 			if (!recycled_buffers.empty()) {
 				recycled_buffer = recycled_buffers.back();
 				recycled_buffers.pop_back();
+			}
+			if (!recycled_buffer && recycle && cached_buffers.size() >2){
+				recycled_buffer = cached_buffers[cached_buffers.size() - 3];
 			}
 			if (file_handle->uncompressed && !recycled_buffer) {
 				if (file_handle->FileSize() - bytes_read) {
@@ -75,13 +78,13 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 	return false;
 }
 
-unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos) {
+unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos, bool recycle) {
 	lock_guard<mutex> parallel_lock(main_mutex);
 	while (pos >= cached_buffers.size()) {
 		if (done) {
 			return nullptr;
 		}
-		if (!ReadNextAndCacheIt()) {
+		if (!ReadNextAndCacheIt(recycle)) {
 			done = true;
 		}
 	}
@@ -106,12 +109,16 @@ bool CSVBufferManager::Done() {
 string CSVBufferManager::GetFilePath() {
 	return file_path;
 }
-vector<shared_ptr<CSVBuffer>> &CSVBufferManager::GetRecycledBuffers() {
-	while (!recycled_buffers.empty()){
-		cached_buffers.push_back(recycled_buffers.back());
-		recycled_buffers.pop_back();
+vector<shared_ptr<CSVBuffer>> CSVBufferManager::GetRecycledBuffers() {
+	if (cached_buffers.size() < 3){
+		return cached_buffers;
 	}
-	return cached_buffers;
+	vector<shared_ptr<CSVBuffer>> statiegeld;
+	for (idx_t i = 0; i < 3; i ++){
+		statiegeld.push_back(cached_buffers.back());
+		cached_buffers.pop_back();
+	}
+	return statiegeld;
 }
 
 } // namespace duckdb

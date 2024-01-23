@@ -75,7 +75,7 @@ void ColumnCountScanner::FinalizeChunkProcess() {
 	while (!FinishedFile() && result.result_position < STANDARD_VECTOR_SIZE && !result.error) {
 		if (iterator.pos.buffer_pos == cur_buffer_handle->actual_size) {
 			// Move to next buffer
-			cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
+			cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx, false);
 			if (!cur_buffer_handle) {
 				buffer_handle_ptr = nullptr;
 				if (states.EmptyLine() || states.NewRow() || states.IsCurrentNewRow() || states.IsNotSet()) {
