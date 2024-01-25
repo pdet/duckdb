@@ -107,32 +107,32 @@ void StringValueResult::HandleOverLimitRows() {
 }
 
 void StringValueResult::AddValueToVector(string_t &value, bool allocate) {
-	if (state_machine.options.has_null){
-		if (((quoted && state_machine.options.allow_quoted_nulls) || !quoted) && value == null_str) {
-		bool empty = false;
-		idx_t cur_pos = result_position % number_of_columns;
-		if (cur_pos < state_machine.options.force_not_null.size()) {
-			empty = state_machine.options.force_not_null[cur_pos];
-		}
-		if (empty) {
-			vector_ptr[result_position++] = string_t();
-		} else {
-			validity_mask->SetInvalid(result_position++);
-		}
-	} else {
+//	if (state_machine.options.has_null){
+//		if (((quoted && state_machine.options.allow_quoted_nulls) || !quoted) && value == null_str) {
+//		bool empty = false;
+//		idx_t cur_pos = result_position % number_of_columns;
+//		if (cur_pos < state_machine.options.force_not_null.size()) {
+//			empty = state_machine.options.force_not_null[cur_pos];
+//		}
+//		if (empty) {
+//			vector_ptr[result_position++] = string_t();
+//		} else {
+//			validity_mask->SetInvalid(result_position++);
+//		}
+//	} else {
+//		if (allocate) {
+//			vector_ptr[result_position++] = StringVector::AddStringOrBlob(*vector, value);
+//		} else {
+//			vector_ptr[result_position++] = value;
+//		}
+//	}
+//	} else{
 		if (allocate) {
 			vector_ptr[result_position++] = StringVector::AddStringOrBlob(*vector, value);
 		} else {
 			vector_ptr[result_position++] = value;
 		}
-	}
-	} else{
-		if (allocate) {
-			vector_ptr[result_position++] = StringVector::AddStringOrBlob(*vector, value);
-		} else {
-			vector_ptr[result_position++] = value;
-		}
-	}
+//	}
 
 }
 void StringValueResult::QuotedNewLine(StringValueResult &result) {
