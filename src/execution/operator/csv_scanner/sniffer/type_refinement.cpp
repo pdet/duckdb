@@ -64,6 +64,10 @@ void CSVSniffer::RefineTypes() {
 					auto save_format_candidates = best_type_format_candidates;
 					while (!best_type_format_candidates.empty()) {
 						if (TryCastVector(parse_chunk.data[col], parse_chunk.size(), sql_type)) {
+							if (!FlatVector::Validity(parse_chunk.data[col]).CheckAllValid(parse_chunk.size())){
+								std::cout << col << std::endl;
+								has_null = true;
+							}
 							break;
 						}
 						//	doesn't work - move to the next one
@@ -84,6 +88,10 @@ void CSVSniffer::RefineTypes() {
 					}
 				}
 				if (TryCastVector(parse_chunk.data[col], parse_chunk.size(), sql_type)) {
+					if (!FlatVector::Validity(parse_chunk.data[col]).CheckAllValid(parse_chunk.size())){
+						std::cout << col << std::endl;
+						has_null = true;
+					}
 					break;
 				} else {
 					if (col_type_candidates.back() == LogicalType::BOOLEAN && is_bool_type) {

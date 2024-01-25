@@ -624,6 +624,10 @@
       {"id": 130,
         "name": "parallel",
         "type": "bool"
+      },
+      {"id": 131,
+        "name": "has_null",
+        "type": "bool"
       }
     ],
     "pointer_type": "none"

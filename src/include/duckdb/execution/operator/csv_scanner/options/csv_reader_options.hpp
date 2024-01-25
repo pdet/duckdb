@@ -58,6 +58,8 @@ struct CSVReaderOptions {
 	FileCompressionType compression = FileCompressionType::AUTO_DETECT;
 	//! Option to convert quoted values to NULL values
 	bool allow_quoted_nulls = true;
+	//! If the CSV File has null values
+	bool has_null = true;
 
 	//===--------------------------------------------------------------------===//
 	// CSVAutoOptions

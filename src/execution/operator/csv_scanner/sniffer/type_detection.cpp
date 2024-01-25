@@ -85,6 +85,7 @@ string GenerateDateFormat(const string &separator, const char *format_template) 
 
 bool CSVSniffer::TryCastValue(CSVStateMachine &candidate, const Value &value, const LogicalType &sql_type) {
 	if (value.IsNull()) {
+		has_null = true;
 		return true;
 	}
 	if (!candidate.dialect_options.date_format.find(LogicalTypeId::DATE)->second.GetValue().Empty() &&

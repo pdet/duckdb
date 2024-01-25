@@ -107,7 +107,8 @@ void StringValueResult::HandleOverLimitRows() {
 }
 
 void StringValueResult::AddValueToVector(string_t &value, bool allocate) {
-	if (((quoted && state_machine.options.allow_quoted_nulls) || !quoted) && value == null_str) {
+	if (state_machine.options.has_null){
+		if (((quoted && state_machine.options.allow_quoted_nulls) || !quoted) && value == null_str) {
 		bool empty = false;
 		idx_t cur_pos = result_position % number_of_columns;
 		if (cur_pos < state_machine.options.force_not_null.size()) {
@@ -125,6 +126,14 @@ void StringValueResult::AddValueToVector(string_t &value, bool allocate) {
 			vector_ptr[result_position++] = value;
 		}
 	}
+	} else{
+		if (allocate) {
+			vector_ptr[result_position++] = StringVector::AddStringOrBlob(*vector, value);
+		} else {
+			vector_ptr[result_position++] = value;
+		}
+	}
+
 }
 void StringValueResult::QuotedNewLine(StringValueResult &result) {
 	result.quoted_new_line = true;
@@ -341,7 +350,9 @@ bool StringValueScanner::FinishedIterator() {
 StringValueResult &StringValueScanner::ParseChunk() {
 	result.result_position = 0;
 	result.last_row_pos = 0;
-	result.validity_mask->SetAllValid(result.vector_size);
+	if (state_machine->options.has_null || state_machine->options.null_padding){
+		result.validity_mask->SetAllValid(result.vector_size);
+	}
 	ParseChunkInternal(result);
 	return result;
 }

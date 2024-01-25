@@ -106,6 +106,8 @@ private:
 	SetColumns set_columns;
 	shared_ptr<CSVErrorHandler> error_handler;
 	shared_ptr<CSVErrorHandler> detection_error_handler;
+
+	bool has_null = false;
 	//! Sets the result options
 	void SetResultOptions();
 

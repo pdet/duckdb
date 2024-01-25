@@ -35,6 +35,7 @@ public:
 	idx_t buffer_idx = 0;
 };
 
+
 class StringValueResult : public ScannerResult {
 public:
 	StringValueResult(CSVStates &states, CSVStateMachine &state_machine, CSVBufferHandle &buffer_handle,
@@ -90,6 +91,7 @@ public:
 	inline bool AddRowInternal();
 
 	void HandleOverLimitRows();
+
 	void AddValueToVector(string_t &value, bool allocate = false);
 
 	Value GetValue(idx_t row_idx, idx_t col_idx);
