@@ -52,6 +52,7 @@ bool CSVBufferManager::ReadNextAndCacheIt(CSVFileHandle *optional_handle) {
 				return false;
 			}
 			auto maybe_last_buffer = last_buffer->Next(*file_handle_in_use, cur_buffer_size, file_idx);
+			lock_guard<mutex> parallel_lock(main_mutex);
 			if (!maybe_last_buffer) {
 				last_buffer->last_buffer = true;
 				return false;
@@ -66,7 +67,6 @@ bool CSVBufferManager::ReadNextAndCacheIt(CSVFileHandle *optional_handle) {
 }
 
 unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos, CSVFileHandle *optional_handle) {
-	lock_guard<mutex> parallel_lock(main_mutex);
 	while (pos >= cached_buffers.size()) {
 		if (done) {
 			return nullptr;
@@ -75,6 +75,9 @@ unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos, CSVFile
 			done = true;
 		}
 	}
+
+	lock_guard<mutex> parallel_lock(main_mutex);
+
 	if (pos != 0) {
 		cached_buffers[pos - 1]->Unpin();
 	}
