@@ -35,6 +35,8 @@ public:
 	const vector<string> &GetNames();
 	const vector<LogicalType> &GetTypes();
 	void InitializeProjection();
+	//! If our file sits on some machine somewhere and is seekable
+	bool IsRemoteSeekableFile();
 
 	//! Initialize the actual names and types to be scanned from the file
 	void InitializeFileNamesTypes();

@@ -19,7 +19,7 @@ class FileSystem;
 
 struct CSVFileHandle {
 public:
-	CSVFileHandle(FileSystem &fs, Allocator &allocator, unique_ptr<FileHandle> file_handle_p, const string &path_p,
+	CSVFileHandle(FileSystem &fs, unique_ptr<FileHandle> file_handle_p, const string &path_p,
 	              FileCompressionType compression);
 
 	mutex main_mutex;
@@ -39,10 +39,10 @@ public:
 
 	string GetFilePath();
 
-	static unique_ptr<FileHandle> OpenFileHandle(FileSystem &fs, Allocator &allocator, const string &path,
-	                                             FileCompressionType compression);
-	static unique_ptr<CSVFileHandle> OpenFile(FileSystem &fs, Allocator &allocator, const string &path,
-	                                          FileCompressionType compression);
+	bool IsRemoteFile();
+
+	static unique_ptr<FileHandle> OpenFileHandle(FileSystem &fs, const string &path, FileCompressionType compression);
+	static unique_ptr<CSVFileHandle> OpenFile(FileSystem &fs, const string &path, FileCompressionType compression);
 	bool uncompressed = false;
 
 private:
@@ -55,6 +55,7 @@ private:
 	idx_t requested_bytes = 0;
 	//! If we finished reading the file
 	bool finished = false;
+	bool is_remote_file = false;
 };
 
 } // namespace duckdb

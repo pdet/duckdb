@@ -223,4 +223,11 @@ void CSVFileScan::InitializeProjection() {
 		reader_data.column_mapping.push_back(i);
 	}
 }
+
+bool CSVFileScan::IsRemoteSeekableFile() {
+	if (buffer_manager && buffer_manager->file_handle) {
+		return buffer_manager->file_handle->CanSeek() && buffer_manager->file_handle->IsRemoteFile();
+	}
+	return false;
+}
 } // namespace duckdb

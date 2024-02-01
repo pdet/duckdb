@@ -2,16 +2,17 @@
 
 namespace duckdb {
 
-CSVFileHandle::CSVFileHandle(FileSystem &fs, Allocator &allocator, unique_ptr<FileHandle> file_handle_p,
-                             const string &path_p, FileCompressionType compression)
+CSVFileHandle::CSVFileHandle(FileSystem &fs, unique_ptr<FileHandle> file_handle_p, const string &path_p,
+                             FileCompressionType compression)
     : file_handle(std::move(file_handle_p)), path(path_p) {
+	is_remote_file = fs.IsRemoteFile(file_handle->GetPath());
 	can_seek = file_handle->CanSeek();
 	on_disk_file = file_handle->OnDiskFile();
 	file_size = file_handle->GetFileSize();
 	uncompressed = compression == FileCompressionType::UNCOMPRESSED;
 }
 
-unique_ptr<FileHandle> CSVFileHandle::OpenFileHandle(FileSystem &fs, Allocator &allocator, const string &path,
+unique_ptr<FileHandle> CSVFileHandle::OpenFileHandle(FileSystem &fs, const string &path,
                                                      FileCompressionType compression) {
 	auto file_handle = fs.OpenFile(path, FileFlags::FILE_FLAGS_READ, FileLockType::NO_LOCK, compression);
 	if (file_handle->CanSeek()) {
@@ -20,10 +21,9 @@ unique_ptr<FileHandle> CSVFileHandle::OpenFileHandle(FileSystem &fs, Allocator &
 	return file_handle;
 }
 
-unique_ptr<CSVFileHandle> CSVFileHandle::OpenFile(FileSystem &fs, Allocator &allocator, const string &path,
-                                                  FileCompressionType compression) {
-	auto file_handle = CSVFileHandle::OpenFileHandle(fs, allocator, path, compression);
-	return make_uniq<CSVFileHandle>(fs, allocator, std::move(file_handle), path, compression);
+unique_ptr<CSVFileHandle> CSVFileHandle::OpenFile(FileSystem &fs, const string &path, FileCompressionType compression) {
+	auto file_handle = CSVFileHandle::OpenFileHandle(fs, path, compression);
+	return make_uniq<CSVFileHandle>(fs, std::move(file_handle), path, compression);
 }
 
 bool CSVFileHandle::CanSeek() {
@@ -91,6 +91,10 @@ string CSVFileHandle::ReadLine() {
 
 string CSVFileHandle::GetFilePath() {
 	return path;
+}
+
+bool CSVFileHandle::IsRemoteFile() {
+	return is_remote_file;
 }
 
 } // namespace duckdb

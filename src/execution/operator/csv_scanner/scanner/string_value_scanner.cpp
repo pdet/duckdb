@@ -447,6 +447,12 @@ StringValueScanner::StringValueScanner(idx_t scanner_idx_p, const shared_ptr<CSV
       result(states, *state_machine, *cur_buffer_handle, BufferAllocator::Get(buffer_manager->context), result_size,
              iterator.pos.buffer_pos, *error_handler, iterator,
              buffer_manager->context.client_data->debug_set_max_line_length, csv_file_scan, lines_read) {
+	if (csv_file_scan) {
+		if (csv_file_scan->IsRemoteSeekableFile()) {
+			// We can open a file-handle here
+			//			optional_file_handle =
+		}
+	}
 }
 
 StringValueScanner::StringValueScanner(const shared_ptr<CSVBufferManager> &buffer_manager,
