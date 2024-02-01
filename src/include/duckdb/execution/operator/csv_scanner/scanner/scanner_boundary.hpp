@@ -76,6 +76,8 @@ public:
 
 	void SetStart(idx_t pos);
 
+	idx_t GetGlobalPosition();
+
 	//! 8 MB TODO: Should benchmarks other values
 	static constexpr idx_t BYTES_PER_THREAD = 8000000;
 

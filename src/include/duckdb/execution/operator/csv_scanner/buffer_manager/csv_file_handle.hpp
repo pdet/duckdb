@@ -41,9 +41,12 @@ public:
 
 	bool IsRemoteFile();
 
+	bool IsCompressed();
+
+	FileCompressionType GetCompressionType();
+
 	static unique_ptr<FileHandle> OpenFileHandle(FileSystem &fs, const string &path, FileCompressionType compression);
 	static unique_ptr<CSVFileHandle> OpenFile(FileSystem &fs, const string &path, FileCompressionType compression);
-	bool uncompressed = false;
 
 private:
 	unique_ptr<FileHandle> file_handle;
@@ -51,6 +54,7 @@ private:
 	bool can_seek = false;
 	bool on_disk_file = false;
 	idx_t file_size = 0;
+	FileCompressionType compression_type;
 
 	idx_t requested_bytes = 0;
 	//! If we finished reading the file

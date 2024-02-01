@@ -168,10 +168,6 @@ private:
 
 	//! Pointer to the previous buffer handle, necessary for overbuffer values
 	unique_ptr<CSVBufferHandle> previous_buffer_handle;
-
-	//! When scanning from S3, scanners are allowed to have their own file handle, this helps
-	//! The parallelization of these scans
-	unique_ptr<CSVFileHandle> optional_file_handle;
 };
 
 } // namespace duckdb

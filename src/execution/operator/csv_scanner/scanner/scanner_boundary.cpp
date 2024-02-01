@@ -26,6 +26,14 @@ CSVIterator::CSVIterator(idx_t file_idx, idx_t buffer_idx, idx_t buffer_pos, idx
 	}
 }
 
+idx_t CSVIterator::GetGlobalPosition() {
+	if (!is_set) {
+		// This should never happen
+		throw InternalException("Csv Reader:Boundary is not set for a HTTPFS scan");
+	}
+	return boundary.boundary_idx * BYTES_PER_THREAD;
+}
+
 CSVIterator::CSVIterator() : is_set(false) {
 }
 

@@ -4,12 +4,11 @@ namespace duckdb {
 
 CSVFileHandle::CSVFileHandle(FileSystem &fs, unique_ptr<FileHandle> file_handle_p, const string &path_p,
                              FileCompressionType compression)
-    : file_handle(std::move(file_handle_p)), path(path_p) {
+    : file_handle(std::move(file_handle_p)), path(path_p), compression_type(compression) {
 	is_remote_file = fs.IsRemoteFile(file_handle->GetPath());
 	can_seek = file_handle->CanSeek();
 	on_disk_file = file_handle->OnDiskFile();
 	file_size = file_handle->GetFileSize();
-	uncompressed = compression == FileCompressionType::UNCOMPRESSED;
 }
 
 unique_ptr<FileHandle> CSVFileHandle::OpenFileHandle(FileSystem &fs, const string &path,
@@ -95,6 +94,14 @@ string CSVFileHandle::GetFilePath() {
 
 bool CSVFileHandle::IsRemoteFile() {
 	return is_remote_file;
+}
+
+bool CSVFileHandle::IsCompressed() {
+	return compression_type != FileCompressionType::UNCOMPRESSED;
+}
+
+FileCompressionType CSVFileHandle::GetCompressionType() {
+	return compression_type;
 }
 
 } // namespace duckdb

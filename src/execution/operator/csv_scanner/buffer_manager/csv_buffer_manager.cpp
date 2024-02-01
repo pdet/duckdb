@@ -33,21 +33,25 @@ void CSVBufferManager::Initialize() {
 	}
 }
 
-bool CSVBufferManager::ReadNextAndCacheIt() {
+bool CSVBufferManager::ReadNextAndCacheIt(CSVFileHandle *optional_handle) {
 	D_ASSERT(last_buffer);
+	CSVFileHandle *file_handle_in_use = file_handle.get();
+	if (optional_handle) {
+		file_handle_in_use = optional_handle;
+	}
 	for (idx_t i = 0; i < 2; i++) {
 		if (!last_buffer->IsCSVFileLastBuffer()) {
 			auto cur_buffer_size = buffer_size;
-			if (file_handle->uncompressed) {
-				if (file_handle->FileSize() - bytes_read) {
-					cur_buffer_size = file_handle->FileSize() - bytes_read;
+			if (!file_handle_in_use->IsCompressed()) {
+				if (file_handle_in_use->FileSize() - bytes_read) {
+					cur_buffer_size = file_handle_in_use->FileSize() - bytes_read;
 				}
 			}
 			if (cur_buffer_size == 0) {
 				last_buffer->last_buffer = true;
 				return false;
 			}
-			auto maybe_last_buffer = last_buffer->Next(*file_handle, cur_buffer_size, file_idx);
+			auto maybe_last_buffer = last_buffer->Next(*file_handle_in_use, cur_buffer_size, file_idx);
 			if (!maybe_last_buffer) {
 				last_buffer->last_buffer = true;
 				return false;
@@ -61,13 +65,13 @@ bool CSVBufferManager::ReadNextAndCacheIt() {
 	return false;
 }
 
-unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos) {
+unique_ptr<CSVBufferHandle> CSVBufferManager::GetBuffer(const idx_t pos, CSVFileHandle *optional_handle) {
 	lock_guard<mutex> parallel_lock(main_mutex);
 	while (pos >= cached_buffers.size()) {
 		if (done) {
 			return nullptr;
 		}
-		if (!ReadNextAndCacheIt()) {
+		if (!ReadNextAndCacheIt(optional_handle)) {
 			done = true;
 		}
 	}

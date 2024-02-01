@@ -104,6 +104,10 @@ protected:
 	//! How many lines were read by this scanner
 	idx_t lines_read = 0;
 	idx_t bytes_read = 0;
+
+	//! When scanning from S3, scanners are allowed to have their own file handle, this helps
+	//! The parallelization of these scans
+	unique_ptr<CSVFileHandle> optional_file_handle;
 	//! Internal Functions used to perform the parsing
 	//! Initializes the scanner
 	virtual void Initialize();

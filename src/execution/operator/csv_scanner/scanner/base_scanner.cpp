@@ -1,5 +1,6 @@
 #include "duckdb/execution/operator/csv_scanner/sniffer/csv_sniffer.hpp"
 #include "duckdb/execution/operator/csv_scanner/scanner/base_scanner.hpp"
+#include "duckdb/execution/operator/csv_scanner/table_function/csv_file_scanner.hpp"
 
 namespace duckdb {
 
@@ -14,8 +15,23 @@ BaseScanner::BaseScanner(shared_ptr<CSVBufferManager> buffer_manager_p, shared_p
       state_machine(std::move(state_machine_p)), iterator(iterator_p), buffer_manager(std::move(buffer_manager_p)) {
 	D_ASSERT(buffer_manager);
 	D_ASSERT(state_machine);
+	if (csv_file_scan) {
+		if (csv_file_scan->IsRemoteSeekableFile()) {
+			// We can open a file-handle here
+			optional_file_handle = CSVFileHandle::OpenFile(
+			    FileSystem::GetFileSystem(csv_file_scan->buffer_manager->context),
+			    buffer_manager->file_handle->GetFilePath(), buffer_manager->file_handle->GetCompressionType());
+			// We also need to set it to the right place
+			optional_file_handle->Seek(iterator.GetGlobalPosition());
+		}
+	}
 	// Initialize current buffer handle
-	cur_buffer_handle = buffer_manager->GetBuffer(iterator.GetBufferIdx());
+	if (optional_file_handle) {
+		cur_buffer_handle = buffer_manager->GetBuffer(iterator.GetBufferIdx(), optional_file_handle.get());
+
+	} else {
+		cur_buffer_handle = buffer_manager->GetBuffer(iterator.GetBufferIdx());
+	}
 	if (!cur_buffer_handle) {
 		buffer_handle_ptr = nullptr;
 	} else {
