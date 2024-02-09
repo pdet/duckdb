@@ -10,5 +10,3 @@ cache clickbench.duckdb
 load benchmark/clickbench/queries/load.sql
 
 run benchmark/clickbench/queries/q${QUERY_NUMBER_PADDED}.sql
-
-result benchmark/clickbench/answers/q${QUERY_NUMBER_PADDED}.csv
