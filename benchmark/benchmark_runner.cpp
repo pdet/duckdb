@@ -113,14 +113,14 @@ void BenchmarkRunner::RunBenchmark(Benchmark *benchmark) {
 		}
 		is_active = true;
 		timeout = false;
-		std::thread interrupt_thread(sleep_thread, benchmark, state.get(), benchmark->Timeout());
+		//		std::thread interrupt_thread(sleep_thread, benchmark, state.get(), benchmark->Timeout());
 
 		profiler.Start();
 		benchmark->Run(state.get());
 		profiler.End();
 
 		is_active = false;
-		interrupt_thread.join();
+		//		interrupt_thread.join();
 		if (hotrun) {
 			LogOutput(benchmark->GetLogOutput(state.get()));
 			if (timeout) {

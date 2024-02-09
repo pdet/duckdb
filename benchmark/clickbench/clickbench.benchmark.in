@@ -2,10 +2,6 @@
 # description: ${DESCRIPTION}
 # group: [clickbench]
 
-require httpfs
-
-require parquet
-
 name Q${QUERY_NUMBER_PADDED}
 group Clickbench
 
