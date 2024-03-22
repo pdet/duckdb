@@ -67,6 +67,7 @@ struct DuckDBAdbcStatementWrapper {
 	char *ingestion_table_name;
 	ArrowArrayStream ingestion_stream;
 	IngestionMode ingestion_mode = IngestionMode::CREATE;
+	duckdb::unique_ptr<duckdb::QueryResult> substrait_result;
 };
 
 static AdbcStatusCode QueryInternal(struct AdbcConnection *connection, struct ArrowArrayStream *out, const char *query,
@@ -169,10 +170,14 @@ AdbcStatusCode StatementSetSubstraitPlan(struct AdbcStatement *statement, const 
 	}
 	auto wrapper = reinterpret_cast<DuckDBAdbcStatementWrapper *>(statement->private_data);
 	auto plan_str = std::string(reinterpret_cast<const char *>(plan), length);
-	auto query = "CALL from_substrait('" + plan_str + "'::BLOB)";
-	auto res = duckdb_prepare(wrapper->connection, query.c_str(), &wrapper->statement);
-	auto error_msg = duckdb_prepare_error(wrapper->statement);
-	return CheckResult(res, error, error_msg);
+	duckdb::vector<duckdb::Value> params;
+	params.emplace_back(duckdb::Value::BLOB_RAW(plan_str));
+	wrapper->substrait_result = ((duckdb::Connection*) wrapper->connection)->TableFunction("from_substrait", params)->Execute();
+	return ADBC_STATUS_OK;
+//	auto query = "select * from " + name;
+//	auto res = duckdb_prepare(wrapper->connection, query.c_str(), &wrapper->statement);
+//	auto error_msg = duckdb_prepare_error(wrapper->statement);
+//	return CheckResult(res, error, error_msg);
 }
 
 AdbcStatusCode DatabaseSetOption(struct AdbcDatabase *database, const char *key, const char *value,
@@ -758,8 +763,11 @@ AdbcStatusCode StatementExecuteQuery(struct AdbcStatement *statement, struct Arr
 	if (has_stream && to_table) {
 		return IngestToTableFromBoundStream(wrapper, error);
 	}
-
-	if (has_stream) {
+	if (wrapper->substrait_result){
+		auto arrow_wrapper = new duckdb::ArrowResultWrapper();
+		arrow_wrapper->result = duckdb::unique_ptr_cast<duckdb::QueryResult, duckdb::MaterializedQueryResult>(std::move(wrapper->substrait_result));
+		wrapper->result = reinterpret_cast<duckdb_arrow>(arrow_wrapper);
+	} else if (has_stream) {
 		// A stream was bound to the statement, use that to bind parameters
 		duckdb::unique_ptr<duckdb::QueryResult> result;
 		ArrowArrayStream stream = wrapper->ingestion_stream;
