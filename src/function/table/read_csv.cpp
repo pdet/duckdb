@@ -46,6 +46,8 @@ void ReadCSVData::FinalizeRead(ClientContext &context) {
 static unique_ptr<FunctionData> ReadCSVBind(ClientContext &context, TableFunctionBindInput &input,
                                             vector<LogicalType> &return_types, vector<string> &names) {
 
+	std::cerr << "Tania is a nive german, haha" << std::endl;
+
 	auto result = make_uniq<ReadCSVData>();
 	auto &options = result->options;
 	auto multi_file_reader = MultiFileReader::Create(input.table_function);

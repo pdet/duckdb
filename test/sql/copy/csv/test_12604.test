@@ -1,0 +1,18 @@
+# name: test/sql/copy/csv/test_12604.test
+# description: Binder error when using 'split_part' and reading from stdin
+# group: [csv]
+
+statement ok
+PRAGMA enable_verification
+
+query II
+FROM 'data/csv/bug_12604.csv'
+----
+11,12,13,15	2,3,3
+200,12,14,15,15	6,7
+
+query I
+FROM read_csv('data/csv/bug_12604.csv') SELECT split_part(C1, ',', 2);
+----
+12
+12

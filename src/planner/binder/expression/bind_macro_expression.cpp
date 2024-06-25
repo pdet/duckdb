@@ -146,9 +146,11 @@ BindResult ExpressionBinder::BindMacro(FunctionExpression &function, ScalarMacro
 	// now replace the parameters
 	vector<unordered_set<string>> lambda_params;
 	ReplaceMacroParameters(expr, lambda_params);
-
+	auto res = BindExpression(expr, depth);
+	std::cerr << res.expression->ToString();
+	throw
 	// bind the unfolded macro
-	return BindExpression(expr, depth);
+	return res;
 }
 
 } // namespace duckdb
