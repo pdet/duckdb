@@ -269,7 +269,7 @@ string_t VarcharToVarInt(Vector &result, string_t int_value) {
 		idx_t digits_size = digits.size();
 		for (idx_t i = 0; i < digits_size; i++) {
 			digits[digit_idx] += static_cast<uint64_t>(remainder * pow(10, max_digits));
-			remainder = digits[digit_idx] % 256;
+			remainder = static_cast<uint8_t>(digits[digit_idx] % 256);
 			digits[digit_idx] /= 256;
 			if (digits[digit_idx] == 0 && digit_idx == digits.size() - 1) {
 				// we can cap this
@@ -305,7 +305,6 @@ string VarIntToVarchar(const string_t &blob) {
 		throw InvalidInputException("Invalid blob size.");
 	}
 	auto blob_ptr = blob.GetData();
-	std::string decimal_string;
 	std::vector<uint8_t> temp_array;
 	// Determine if the number is negative
 	bool is_negative = (blob_ptr[0] & 0x80) == 0;
@@ -316,34 +315,31 @@ string VarIntToVarchar(const string_t &blob) {
 			temp_array.push_back(static_cast<uint8_t>(blob_ptr[i]));
 		}
 	}
-	std::reverse(decimal_string.begin(), decimal_string.end());
+	// we can tranform this to a vector of uint64_t, for every 8 bytes.
+	unsafe_vector<uint64_t> integers;
+	const idx_t uint_32_size =  sizeof(uint32_t);
+	const idx_t number_of_integers = static_cast<idx_t>(std::ceil((double)temp_array.size() / uint_32_size));
 
-	while (!temp_array.empty()) {
-		std::string quotient;
-		uint8_t remainder = 0;
-		for (uint8_t byte : temp_array) {
-			int new_value = remainder * 256 + byte;
-			quotient += DigitToChar(new_value / 10);
-			remainder = static_cast<uint8_t>(new_value % 10);
+	for (idx_t i = 0; i < number_of_integers; i++){
+		uint64_t cur_integer = 0;
+		uint8_t integer_idx = uint_32_size - 1;
+		for (idx_t j = 0; j < uint_32_size; j++) {
+			cur_integer |= static_cast<uint64_t>(temp_array[i * 8 + j]) << (8 * integer_idx);
+			integer_idx--;
 		}
-
-		decimal_string += DigitToChar(remainder);
-
-		// Remove leading zeros from the quotient
-		temp_array.clear();
-		for (char digit : quotient) {
-			if (digit != '0' || !temp_array.empty()) {
-				temp_array.push_back(static_cast<uint8_t>(CharToDigit(digit)));
-			}
-		}
+		integers.push_back(cur_integer);
 	}
+
+	std::string decimal_string;
 
 	if (is_negative) {
-		decimal_string += '-';
+		decimal_string = "-";
 	}
 
-	// Reverse the string to get the correct decimal representation
-	std::reverse(decimal_string.begin(), decimal_string.end());
+	for (auto& integer: integers) {
+		decimal_string += to_string(integer);
+	}
+
 	return decimal_string;
 }
 
