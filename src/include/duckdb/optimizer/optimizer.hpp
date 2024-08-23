@@ -40,7 +40,10 @@ private:
 	void Verify(LogicalOperator &op);
 
 private:
+	//! The Query Plan
 	unique_ptr<LogicalOperator> plan;
+	//! Per-column statistics of the root node
+	column_binding_map_t<unique_ptr<BaseStatistics>> root_statistics;
 };
 
 } // namespace duckdb

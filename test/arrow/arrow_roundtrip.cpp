@@ -106,6 +106,7 @@ TEST_CASE("Test Arrow String View", "[arrow][.]") {
 	    "SELECT NULL UNION SELECT (i*10^i)::varchar str FROM range(10000) tbl(i)");
 }
 
+
 TEST_CASE("Test TPCH arrow roundtrip", "[arrow][.]") {
 	DBConfig config;
 	DuckDB db(nullptr, &config);

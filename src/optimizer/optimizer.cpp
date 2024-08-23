@@ -196,11 +196,11 @@ void Optimizer::RunBuiltInOptimizers() {
 	});
 
 	// perform statistics propagation
-	column_binding_map_t<unique_ptr<BaseStatistics>> statistics_map;
+
 	RunOptimizer(OptimizerType::STATISTICS_PROPAGATION, [&]() {
 		StatisticsPropagator propagator(*this, *plan);
-		propagator.PropagateStatistics(plan);
-		statistics_map = propagator.GetStatisticsMap();
+		auto statistics = propagator.PropagateStatistics(plan);
+		root_statistics = propagator.GetStatisticsMap();
 	});
 
 	// remove duplicate aggregates
