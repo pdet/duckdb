@@ -177,6 +177,7 @@ TEST_CASE("Test arrow in C API", "[capi][arrow]") {
 
 		const auto logical_types = duckdb::vector<LogicalType> {LogicalType(LogicalTypeId::INTEGER)};
 		const auto column_names = duckdb::vector<string> {"value"};
+		column_binding_map_t<duckdb::unique_ptr<BaseStatistics>> root_statistics;
 
 		// arrow schema, release after use
 		ArrowSchema arrow_schema;
@@ -184,7 +185,7 @@ TEST_CASE("Test arrow in C API", "[capi][arrow]") {
 		auto arrow_schema_ptr = &arrow_schema;
 
 		ClientProperties options = (reinterpret_cast<Connection *>(tester.connection)->context->GetClientProperties());
-		duckdb::ArrowConverter::ToArrowSchema(arrow_schema_ptr, logical_types, column_names, options);
+		duckdb::ArrowConverter::ToArrowSchema(arrow_schema_ptr, logical_types, column_names, options, root_statistics);
 
 		ArrowArray arrow_array;
 		arrow_array.Init();

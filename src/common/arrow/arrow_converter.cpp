@@ -339,13 +339,13 @@ void SetArrowFormat(DuckDBArrowSchemaHolder &root_holder, ArrowSchema &child, co
 }
 
 void ArrowConverter::ToArrowSchema(ArrowSchema *out_schema, const vector<LogicalType> &types,
-                                   const vector<string> &names, const ClientProperties &options) {
+                                   const vector<string> &names, const ClientProperties &options, const column_binding_map_t<unique_ptr<BaseStatistics>> &root_statistics) {
 	D_ASSERT(out_schema);
 	D_ASSERT(types.size() == names.size());
 	idx_t column_count = types.size();
-	// Allocate as unique_ptr first to cleanup properly on error
+	// Allocate as unique_ptr first to clean-up properly on error
 	auto root_holder = make_uniq<DuckDBArrowSchemaHolder>();
-
+	//root_statistics.begin()->second;
 	// Allocate the children
 	root_holder->children.resize(column_count);
 	root_holder->children_ptrs.resize(column_count, nullptr);

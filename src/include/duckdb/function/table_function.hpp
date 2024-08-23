@@ -233,7 +233,7 @@ public:
 	DUCKDB_API TableFunction();
 
 	//! Bind function
-	//! This function is used for determining the return type of a table producing function and returning bind data
+	//! This function is used for determining the return type of table producing function and returning bind data
 	//! The returned FunctionData object should be constant and should not be changed during execution.
 	table_function_bind_t bind;
 	//! (Optional) Bind replace function

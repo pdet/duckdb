@@ -25,6 +25,7 @@ public:
 	vector<LogicalType> column_types;
 	vector<string> column_names;
 	unique_ptr<ChunkScanState> scan_state;
+	column_binding_map_t<unique_ptr<BaseStatistics>> root_statistics;
 
 private:
 	static int MyStreamGetSchema(struct ArrowArrayStream *stream, struct ArrowSchema *out);

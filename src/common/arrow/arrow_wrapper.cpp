@@ -71,7 +71,7 @@ int ResultArrowArrayStreamWrapper::MyStreamGetSchema(struct ArrowArrayStream *st
 	if (!my_stream->column_types.empty()) {
 		try {
 			ArrowConverter::ToArrowSchema(out, my_stream->column_types, my_stream->column_names,
-			                              my_stream->result->client_properties);
+			                              my_stream->result->client_properties, my_stream->root_statistics);
 		} catch (std::runtime_error &e) {
 			my_stream->last_error = ErrorData(e);
 			return -1;
@@ -97,7 +97,7 @@ int ResultArrowArrayStreamWrapper::MyStreamGetSchema(struct ArrowArrayStream *st
 	}
 	try {
 		ArrowConverter::ToArrowSchema(out, my_stream->column_types, my_stream->column_names,
-		                              my_stream->result->client_properties);
+		                              my_stream->result->client_properties, my_stream->root_statistics);
 	} catch (std::runtime_error &e) {
 		my_stream->last_error = ErrorData(e);
 		return -1;

@@ -26,10 +26,11 @@ duckdb_state duckdb_query_arrow_schema(duckdb_arrow result, duckdb_arrow_schema 
 	if (!out_schema) {
 		return DuckDBSuccess;
 	}
+	duckdb::column_binding_map_t<	duckdb::unique_ptr<	duckdb::BaseStatistics>> root_statistics;
 	auto wrapper = reinterpret_cast<ArrowResultWrapper *>(result);
 	try {
 		ArrowConverter::ToArrowSchema((ArrowSchema *)*out_schema, wrapper->result->types, wrapper->result->names,
-		                              wrapper->result->client_properties);
+		                              wrapper->result->client_properties, root_statistics);
 	} catch (...) {
 		return DuckDBError;
 	}
@@ -71,7 +72,8 @@ duckdb_state duckdb_prepared_arrow_schema(duckdb_prepared_statement prepared, du
 		D_ASSERT(!result_schema->release);
 	}
 
-	ArrowConverter::ToArrowSchema(result_schema, prepared_types, prepared_names, properties);
+	duckdb::column_binding_map_t<	duckdb::unique_ptr<	duckdb::BaseStatistics>> root_statistics;
+	ArrowConverter::ToArrowSchema(result_schema, prepared_types, prepared_names, properties, root_statistics);
 	return DuckDBSuccess;
 }
 

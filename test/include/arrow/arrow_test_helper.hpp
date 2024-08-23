@@ -47,11 +47,12 @@ public:
 
 	vector<LogicalType> types;
 	vector<string> names;
-	duckdb::unique_ptr<QueryResult> result;
+	unique_ptr<QueryResult> result;
 	vector<unique_ptr<ArrowArrayWrapper>> prefetched_chunks;
 	vector<unique_ptr<ArrowArrayWrapper>>::iterator chunk_iterator;
 	bool big_result;
 	ClientProperties options;
+	column_binding_map_t<unique_ptr<BaseStatistics>> root_statistics;
 
 	struct ArrowArrayStreamData {
 		explicit ArrowArrayStreamData(ArrowTestFactory &factory, ClientProperties options)

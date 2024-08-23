@@ -129,7 +129,7 @@ void ArrowTestFactory::GetSchema(ArrowArrayStream *factory_ptr, ArrowSchema &sch
 }
 
 void ArrowTestFactory::ToArrowSchema(struct ArrowSchema *out) {
-	ArrowConverter::ToArrowSchema(out, types, names, options);
+	ArrowConverter::ToArrowSchema(out, types, names, options, root_statistics);
 }
 
 unique_ptr<QueryResult> ArrowTestHelper::ScanArrowObject(Connection &con, vector<Value> &params) {

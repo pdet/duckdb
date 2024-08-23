@@ -4,15 +4,18 @@
 
 using namespace duckdb;
 
-static void TestArrowRoundtrip(const string &query, bool export_large_buffer = false) {
+static void TestArrowRoundtrip(const string &query, bool export_large_buffer = false,  optional_ptr<Connection> conn = nullptr) {
 	DuckDB db;
 	Connection con(db);
+	if (!conn) {
+		conn = &con;
+	}
 	if (export_large_buffer) {
-		auto res = con.Query("SET arrow_large_buffer_size=True");
+		auto res = conn->Query("SET arrow_large_buffer_size=True");
 		REQUIRE(!res->HasError());
 	}
-	REQUIRE(ArrowTestHelper::RunArrowComparison(con, query, true));
-	REQUIRE(ArrowTestHelper::RunArrowComparison(con, query, false));
+	REQUIRE(ArrowTestHelper::RunArrowComparison(*conn, query, true));
+	REQUIRE(ArrowTestHelper::RunArrowComparison(*conn, query, false));
 }
 
 static void TestArrowRoundtripStringView(const string &query) {
@@ -93,6 +96,15 @@ TEST_CASE("Test Arrow Extension Types", "[arrow][.]") {
 	// JSON
 	TestArrowRoundtrip("SELECT '{\"name\":\"Pedro\", \"age\":28, \"car\":\"VW Fox\"}'::JSON str FROM range(5) tbl(i)");
 }
+
+TEST_CASE("Test null bla", "[arrow][.]") {
+	DuckDB db;
+	Connection con(db);
+	con.Query(" CREATE TABLE t (a INTEGER NOT NULL);");
+	con.Query(" INSERT INTO t values (0), (1), (2);");
+	TestArrowRoundtrip("FROM t", false, &con);
+}
+
 
 TEST_CASE("Test Arrow String View", "[arrow][.]") {
 	// Test Small Strings
