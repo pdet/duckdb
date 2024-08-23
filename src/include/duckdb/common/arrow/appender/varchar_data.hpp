@@ -28,6 +28,10 @@ struct ArrowVarcharData {
 		result.GetAuxBuffer().reserve(capacity);
 	}
 
+	template <bool ALL_VALID>
+	static void AppendProcess() {
+
+	}
 	template <bool LARGE_STRING>
 	static void AppendTemplated(ArrowAppendData &append_data, Vector &input, idx_t from, idx_t to, idx_t input_size) {
 		idx_t size = to - from;
@@ -52,39 +56,67 @@ struct ArrowVarcharData {
 		// now append the string data to the auxiliary buffer
 		// the auxiliary buffer's length depends on the string lengths, so we resize as required
 		auto last_offset = offset_data[append_data.row_count];
-		for (idx_t i = from; i < to; i++) {
-			auto source_idx = format.sel->get_index(i);
-			auto offset_idx = append_data.row_count + i + 1 - from;
+		if (format.validity.AllValid()) {
+			for (idx_t i = from; i < to; i++) {
+				auto source_idx = format.sel->get_index(i);
+				auto offset_idx = append_data.row_count + i + 1 - from;
 
-			if (!format.validity.RowIsValid(source_idx)) {
-				uint8_t current_bit;
-				idx_t current_byte;
-				GetBitPosition(append_data.row_count + i - from, current_byte, current_bit);
-				SetNull(append_data, validity_data, current_byte, current_bit);
-				offset_data[offset_idx] = last_offset;
-				continue;
+				auto string_length = OP::GetLength(data[source_idx]);
+
+				// append the offset data
+				auto current_offset = UnsafeNumericCast<idx_t>(last_offset) + string_length;
+				if (!LARGE_STRING &&
+				    UnsafeNumericCast<idx_t>(last_offset) + string_length > NumericLimits<int32_t>::Maximum()) {
+					D_ASSERT(append_data.options.arrow_offset_size == ArrowOffsetSize::REGULAR);
+					throw InvalidInputException(
+					    "Arrow Appender: The maximum total string size for regular string buffers is "
+					    "%u but the offset of %lu exceeds this.",
+					    NumericLimits<int32_t>::Maximum(), current_offset);
+				}
+				offset_data[offset_idx] = UnsafeNumericCast<BUFTYPE>(current_offset);
+
+				// resize the string buffer if required, and write the string data
+				aux_buffer.resize(current_offset);
+				OP::WriteData(aux_buffer.data() + last_offset, data[source_idx]);
+
+				last_offset = UnsafeNumericCast<BUFTYPE>(current_offset);
 			}
+		} else {
+			for (idx_t i = from; i < to; i++) {
+				auto source_idx = format.sel->get_index(i);
+				auto offset_idx = append_data.row_count + i + 1 - from;
 
-			auto string_length = OP::GetLength(data[source_idx]);
+				if (!format.validity.RowIsValid(source_idx)) {
+					uint8_t current_bit;
+					idx_t current_byte;
+					GetBitPosition(append_data.row_count + i - from, current_byte, current_bit);
+					SetNull(append_data, validity_data, current_byte, current_bit);
+					offset_data[offset_idx] = last_offset;
+					continue;
+				}
 
-			// append the offset data
-			auto current_offset = UnsafeNumericCast<idx_t>(last_offset) + string_length;
-			if (!LARGE_STRING &&
-			    UnsafeNumericCast<idx_t>(last_offset) + string_length > NumericLimits<int32_t>::Maximum()) {
-				D_ASSERT(append_data.options.arrow_offset_size == ArrowOffsetSize::REGULAR);
-				throw InvalidInputException(
-				    "Arrow Appender: The maximum total string size for regular string buffers is "
-				    "%u but the offset of %lu exceeds this.",
-				    NumericLimits<int32_t>::Maximum(), current_offset);
+				auto string_length = OP::GetLength(data[source_idx]);
+
+				// append the offset data
+				auto current_offset = UnsafeNumericCast<idx_t>(last_offset) + string_length;
+				if (!LARGE_STRING &&
+				    UnsafeNumericCast<idx_t>(last_offset) + string_length > NumericLimits<int32_t>::Maximum()) {
+					D_ASSERT(append_data.options.arrow_offset_size == ArrowOffsetSize::REGULAR);
+					throw InvalidInputException(
+					    "Arrow Appender: The maximum total string size for regular string buffers is "
+					    "%u but the offset of %lu exceeds this.",
+					    NumericLimits<int32_t>::Maximum(), current_offset);
+				}
+				offset_data[offset_idx] = UnsafeNumericCast<BUFTYPE>(current_offset);
+
+				// resize the string buffer if required, and write the string data
+				aux_buffer.resize(current_offset);
+				OP::WriteData(aux_buffer.data() + last_offset, data[source_idx]);
+
+				last_offset = UnsafeNumericCast<BUFTYPE>(current_offset);
 			}
-			offset_data[offset_idx] = UnsafeNumericCast<BUFTYPE>(current_offset);
-
-			// resize the string buffer if required, and write the string data
-			aux_buffer.resize(current_offset);
-			OP::WriteData(aux_buffer.data() + last_offset, data[source_idx]);
-
-			last_offset = UnsafeNumericCast<BUFTYPE>(current_offset);
 		}
+
 		append_data.row_count += size;
 	}
 
