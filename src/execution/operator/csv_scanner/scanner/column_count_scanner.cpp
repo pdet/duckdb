@@ -56,9 +56,10 @@ bool ColumnCountResult::UnsetComment(ColumnCountResult &result, idx_t buffer_pos
 	return done;
 }
 
-void ColumnCountResult::InvalidState(ColumnCountResult &result) {
+bool ColumnCountResult::InvalidState(ColumnCountResult &result) {
 	result.result_position = 0;
 	result.error = true;
+	return false;
 }
 
 bool ColumnCountResult::EmptyLine(ColumnCountResult &result, idx_t buffer_pos) {

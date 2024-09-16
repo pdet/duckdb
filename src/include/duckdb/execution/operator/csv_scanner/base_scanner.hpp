@@ -163,7 +163,13 @@ protected:
 			state_machine->Transition(states, buffer_handle_ptr[iterator.pos.buffer_pos]);
 			switch (states.states[1]) {
 			case CSVState::INVALID:
-				T::InvalidState(result);
+				if (T::InvalidState(result)) {
+					// if we got here, we have work to do
+					// 1. Set buffer and position to where things went wrong
+					// 2. Figure out new line
+					result.iterator.pos.buffer_pos = result.last_position.buffer_pos;
+					result.iterator.pos.buffer_idx = result.last_position.buffer_idx;
+				}
 				iterator.pos.buffer_pos++;
 				bytes_read = iterator.pos.buffer_pos - start_pos;
 				return;

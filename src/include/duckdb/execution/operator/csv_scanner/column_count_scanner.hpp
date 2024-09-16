@@ -47,7 +47,7 @@ public:
 	//! Adds a Row to the result
 	static inline bool AddRow(ColumnCountResult &result, idx_t buffer_pos);
 	//! Behavior when hitting an invalid state
-	static inline void InvalidState(ColumnCountResult &result);
+	static inline bool InvalidState(ColumnCountResult &result);
 	//! Handles QuotedNewline State
 	static inline void QuotedNewLine(ColumnCountResult &result);
 	//! Handles EmptyLine states

@@ -830,13 +830,16 @@ bool StringValueResult::AddRow(StringValueResult &result, const idx_t buffer_pos
 	return result.AddRowInternal();
 }
 
-void StringValueResult::InvalidState(StringValueResult &result) {
+bool StringValueResult::InvalidState(StringValueResult &result) {
 	bool force_error = !result.state_machine.options.ignore_errors.GetValue() && result.sniffing;
 	// Invalid unicode, we must error
 	if (force_error) {
 		result.HandleUnicodeError(result.cur_col_id, result.last_position);
 	}
+	// We must handle the error now
 	result.current_errors.Insert(UNTERMINATED_QUOTES, result.cur_col_id, result.chunk_col_id, result.last_position);
+	result.current_errors.HandleErrors(result);
+	return true;
 }
 
 bool StringValueResult::EmptyLine(StringValueResult &result, const idx_t buffer_pos) {
@@ -1458,17 +1461,7 @@ bool StringValueScanner::CanDirectlyCast(const LogicalType &type, bool icu_loade
 	}
 }
 
-void StringValueScanner::SetStart() {
-	if (iterator.first_one) {
-		if (result.store_line_size) {
-			result.error_handler.NewMaxLineSize(iterator.pos.buffer_pos);
-		}
-		return;
-	}
-	if (state_machine->options.IgnoreErrors()) {
-		// If we are ignoring errors we don't really need to figure out a line.
-		return;
-	}
+void StringValueScanner::FindNewLine() {
 	// The result size of the data after skipping the row is one line
 	// We have to look for a new line that fits our schema
 	// 1. We walk until the next new line
@@ -1516,6 +1509,19 @@ void StringValueScanner::SetStart() {
 	iterator.pos.buffer_idx = scan_finder->result.current_line_position.begin.buffer_idx;
 	iterator.pos.buffer_pos = scan_finder->result.current_line_position.begin.buffer_pos;
 	result.last_position = {iterator.pos.buffer_idx, iterator.pos.buffer_pos, result.buffer_size};
+}
+void StringValueScanner::SetStart() {
+	if (iterator.first_one) {
+		if (result.store_line_size) {
+			result.error_handler.NewMaxLineSize(iterator.pos.buffer_pos);
+		}
+		return;
+	}
+	if (state_machine->options.IgnoreErrors()) {
+		// If we are ignoring errors we don't really need to figure out a line.
+		return;
+	}
+	FindNewLine();
 }
 
 void StringValueScanner::FinalizeChunkProcess() {

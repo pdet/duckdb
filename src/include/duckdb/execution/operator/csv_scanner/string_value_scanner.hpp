@@ -239,7 +239,7 @@ public:
 	//! Adds a Row to the result
 	static inline bool AddRow(StringValueResult &result, const idx_t buffer_pos);
 	//! Behavior when hitting an invalid state
-	static inline void InvalidState(StringValueResult &result);
+	static inline bool InvalidState(StringValueResult &result);
 	//! Handles QuotedNewline State
 	static inline void QuotedNewLine(StringValueResult &result);
 	void NullPaddingQuotedNewlineCheck() const;
@@ -317,6 +317,8 @@ private:
 	void SkipUntilNewLine();
 
 	void SetStart();
+
+	void FindNewLine();
 
 	StringValueResult result;
 	vector<LogicalType> types;
