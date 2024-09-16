@@ -1,0 +1,33 @@
+# name: test/sql/copy/csv/pollock.test
+# description: Test with Pollock CSV Files
+# group: [csv]
+
+statement ok
+PRAGMA enable_verification
+
+query I
+FROM read_csv('data/csv/pollock/file_quotation_char_0x27.csv', delim = ',', quote = '''', escape = '"', header = true, ignore_errors = true)
+----
+
+#{
+#    "encoding": "ascii",
+#    "delimiter": ",",
+#    "quotechar": "'",
+#    "escapechar": "\"",
+#    "row_delimiter": "\r\n",
+#    "header_lines": 1,
+#    "preamble_lines": 0,
+#    "footnote_lines": 0,
+#    "column_names": [
+#        "DATE",
+#        "TIME",
+#        "Qty",
+#        "PRODUCTID",
+#        "Price",
+#        "ProductType",
+#        "ProductDescription",
+#        "URL",
+#        "Comments"
+#    ],
+#    "n_columns": 9
+#}
