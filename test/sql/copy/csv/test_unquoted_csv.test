@@ -5,14 +5,16 @@
 statement ok
 PRAGMA enable_verification
 
-#statement error
-#FROM read_csv('data/csv/click_mini.tsv.gz')
-#----
-#Value with unterminated quote found.
-#
-#statement ok
-#FROM read_csv('data/csv/click_mini.tsv.gz', quote = '')
+statement error
+FROM read_csv('data/csv/click_mini.tsv.gz')
+----
+Value with unterminated quote found.
+
+statement ok
+FROM read_csv('data/csv/click_mini.tsv.gz', quote = '')
 
 query III
 FROM read_csv('data/csv/unquoted/unquoted_quotes.csv', quote = '"', delim = ';', ignore_errors = true, header = true, columns = {'a':'VARCHAR','b':'VARCHAR','c':'VARCHAR'}, auto_detect = false)
 ----
+a_1	b_1	c_1
+a_3	b_3	c_3
