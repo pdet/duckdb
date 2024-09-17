@@ -24,8 +24,8 @@ StringValueResult::StringValueResult(CSVStates &states, CSVStateMachine &state_m
       number_of_columns(NumericCast<uint32_t>(state_machine.dialect_options.num_cols)),
       null_padding(state_machine.options.null_padding), ignore_errors(state_machine.options.ignore_errors.GetValue()),
       error_handler(error_hander_p), iterator(iterator_p), store_line_size(store_line_size_p),
-      csv_file_scan(std::move(csv_file_scan_p)), lines_read(lines_read_p),
-      current_errors(state_machine.options.IgnoreErrors()), sniffing(sniffing_p), path(std::move(path_p)) {
+      csv_file_scan(std::move(csv_file_scan_p)), lines_read(lines_read_p), sniffing(sniffing_p),
+      path(std::move(path_p)) {
 	// Vector information
 	D_ASSERT(number_of_columns > 0);
 	buffer_handles[buffer_handle->buffer_idx] = buffer_handle;
@@ -554,7 +554,8 @@ void StringValueResult::HandleUnicodeError(idx_t col_idx, LinePosition &error_po
 	}
 }
 
-bool LineError::HandleErrors(StringValueResult &result) {
+bool LineError::HandleErrors(ScannerResult &result_p) {
+	auto &result = static_cast<StringValueResult &>(result_p);
 	bool skip_sniffing = false;
 	for (auto &cur_error : current_errors) {
 		if (cur_error.type == CSVErrorType::INVALID_UNICODE) {

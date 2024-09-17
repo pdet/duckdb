@@ -46,6 +46,76 @@ public:
 	idx_t buffer_idx = 0;
 };
 
+class CurrentError {
+public:
+	CurrentError(CSVErrorType type, idx_t col_idx_p, idx_t chunk_idx_p, const LinePosition &error_position_p,
+	             idx_t current_line_size_p)
+	    : type(type), col_idx(col_idx_p), chunk_idx(chunk_idx_p), current_line_size(current_line_size_p),
+	      error_position(error_position_p) {};
+	//! Error Type (e.g., Cast, Wrong # of columns, ...)
+	CSVErrorType type;
+	//! Column index related to the CSV File columns
+	idx_t col_idx;
+	//! Column index related to the produced chunk (i.e., with projection applied)
+	idx_t chunk_idx;
+	//! Current CSV Line size in Bytes
+	idx_t current_line_size;
+	//! Error Message produced
+	string error_message;
+	//! Exact Position where the error happened
+	LinePosition error_position;
+
+	friend bool operator==(const CurrentError &error, CSVErrorType other) {
+		return error.type == other;
+	}
+};
+
+class ScannerResult;
+
+class LineError {
+public:
+	explicit LineError(bool ignore_errors_p) : is_error_in_line(false), ignore_errors(ignore_errors_p) {};
+	//! We clear up our CurrentError Vector
+	void Reset() {
+		current_errors.clear();
+		is_error_in_line = false;
+	}
+	void Insert(const CSVErrorType &type, const idx_t &col_idx, const idx_t &chunk_idx,
+	            const LinePosition &error_position, const idx_t current_line_size = 0) {
+		is_error_in_line = true;
+		if (!ignore_errors) {
+			// We store it for later
+			current_errors.push_back({type, col_idx, chunk_idx, error_position, current_line_size});
+			current_errors.back().current_line_size = current_line_size;
+		}
+	}
+	//! Set that we currently have an error, but don't really store them
+	void SetError() {
+		is_error_in_line = true;
+	}
+	//! Dirty hack for adding cast message
+	void ModifyErrorMessageOfLastError(string error_message) {
+		D_ASSERT(!current_errors.empty() && current_errors.back().type == CSVErrorType::CAST_ERROR);
+		current_errors.back().error_message = std::move(error_message);
+	}
+
+	bool HasErrorType(CSVErrorType type) const {
+		for (auto &error : current_errors) {
+			if (type == error.type) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool HandleErrors(ScannerResult &result);
+
+private:
+	vector<CurrentError> current_errors;
+	bool is_error_in_line;
+	bool ignore_errors;
+};
+
 class ScannerResult {
 public:
 	ScannerResult(CSVStates &states, CSVStateMachine &state_machine, idx_t result_size);
@@ -74,7 +144,7 @@ public:
 	//! Variable to keep information regarding quoted and escaped values
 	bool quoted = false;
 	bool escaped = false;
-	//! Variable to keep track if we are in a comment row. Hence won't add it
+	//! Variable to keep track if we are in a comment row. Hence, it won't add it
 	bool comment = false;
 	idx_t quoted_position = 0;
 
@@ -83,6 +153,9 @@ public:
 
 	//! Size of the result
 	const idx_t result_size;
+
+	//! Errors happening in the current line (if any)
+	LineError current_errors;
 
 	CSVStateMachine &state_machine;
 
@@ -107,7 +180,7 @@ public:
 	//! Returns true if the scanner is finished
 	bool FinishedFile();
 
-	//! Parses data into a output_chunk
+	//! Parses data into an output_chunk
 	virtual ScannerResult &ParseChunk();
 
 	//! Returns the result from the last Parse call. Shouts at you if you call it wrong

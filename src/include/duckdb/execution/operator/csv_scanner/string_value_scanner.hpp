@@ -40,76 +40,6 @@ public:
 	                              bool reconstruct_line) const;
 };
 
-class StringValueResult;
-
-class CurrentError {
-public:
-	CurrentError(CSVErrorType type, idx_t col_idx_p, idx_t chunk_idx_p, const LinePosition &error_position_p,
-	             idx_t current_line_size_p)
-	    : type(type), col_idx(col_idx_p), chunk_idx(chunk_idx_p), current_line_size(current_line_size_p),
-	      error_position(error_position_p) {};
-	//! Error Type (e.g., Cast, Wrong # of columns, ...)
-	CSVErrorType type;
-	//! Column index related to the CSV File columns
-	idx_t col_idx;
-	//! Column index related to the produced chunk (i.e., with projection applied)
-	idx_t chunk_idx;
-	//! Current CSV Line size in Bytes
-	idx_t current_line_size;
-	//! Error Message produced
-	string error_message;
-	//! Exact Position where the error happened
-	LinePosition error_position;
-
-	friend bool operator==(const CurrentError &error, CSVErrorType other) {
-		return error.type == other;
-	}
-};
-
-class LineError {
-public:
-	explicit LineError(bool ignore_errors_p) : is_error_in_line(false), ignore_errors(ignore_errors_p) {};
-	//! We clear up our CurrentError Vector
-	void Reset() {
-		current_errors.clear();
-		is_error_in_line = false;
-	}
-	void Insert(const CSVErrorType &type, const idx_t &col_idx, const idx_t &chunk_idx,
-	            const LinePosition &error_position, const idx_t current_line_size = 0) {
-		is_error_in_line = true;
-		if (!ignore_errors) {
-			// We store it for later
-			current_errors.push_back({type, col_idx, chunk_idx, error_position, current_line_size});
-			current_errors.back().current_line_size = current_line_size;
-		}
-	}
-	//! Set that we currently have an error, but don't really store them
-	void SetError() {
-		is_error_in_line = true;
-	}
-	//! Dirty hack for adding cast message
-	void ModifyErrorMessageOfLastError(string error_message) {
-		D_ASSERT(!current_errors.empty() && current_errors.back().type == CSVErrorType::CAST_ERROR);
-		current_errors.back().error_message = std::move(error_message);
-	}
-
-	bool HasErrorType(CSVErrorType type) const {
-		for (auto &error : current_errors) {
-			if (type == error.type) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool HandleErrors(StringValueResult &result);
-
-private:
-	vector<CurrentError> current_errors;
-	bool is_error_in_line;
-	bool ignore_errors;
-};
-
 struct ParseTypeInfo {
 	ParseTypeInfo() {};
 	ParseTypeInfo(const LogicalType &type, bool validate_utf_8_p) : validate_utf8(validate_utf_8_p) {
@@ -186,8 +116,6 @@ public:
 	//! Requested size of buffers (i.e., either 32Mb or set by buffer_size parameter)
 	idx_t requested_size;
 
-	//! Errors happening in the current line (if any)
-	LineError current_errors;
 	StrpTimeFormat date_format, timestamp_format;
 	bool sniffing;
 
