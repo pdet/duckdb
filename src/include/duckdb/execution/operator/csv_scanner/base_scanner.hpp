@@ -116,6 +116,19 @@ private:
 	bool ignore_errors;
 };
 
+//! Keeps track of start and end of line positions in regard to the CSV file
+class FullLinePosition {
+public:
+	FullLinePosition() {};
+	LinePosition begin;
+	LinePosition end;
+
+	//! Reconstructs the current line to be used in error messages
+	string ReconstructCurrentLine(bool &first_char_nl,
+	                              unordered_map<idx_t, shared_ptr<CSVBufferHandle>> &buffer_handles,
+	                              bool reconstruct_line) const;
+};
+
 class ScannerResult {
 public:
 	ScannerResult(CSVStates &states, CSVStateMachine &state_machine, idx_t result_size);
@@ -154,10 +167,14 @@ public:
 	//! Size of the result
 	const idx_t result_size;
 
+	idx_t number_of_rows = 0;
+
 	//! Errors happening in the current line (if any)
 	LineError current_errors;
 
 	CSVStateMachine &state_machine;
+	//! Line position of the current line
+	FullLinePosition current_line_position;
 
 	void Print() const {
 		state_machine.Print();
@@ -269,7 +286,8 @@ protected:
 		while (iterator.pos.buffer_pos < to_pos) {
 			state_machine->Transition(states, buffer_handle_ptr[iterator.pos.buffer_pos]);
 			switch (states.states[1]) {
-			case CSVState::INVALID:
+			case CSVState::INVALID: {
+				auto start_of_value = result.last_position;
 				if (T::InvalidState(result)) {
 					// if we got here, we have work to do
 					// 1. Set buffer and position to where things went wrong
@@ -283,10 +301,23 @@ protected:
 					} else {
 						to_pos = cur_buffer_handle->actual_size;
 					}
+					result.current_line_position.begin = result.current_line_position.end;
+					result.current_line_position.end = result.last_position;
+					--result.current_line_position.end.buffer_pos;
+					if (state_machine->dialect_options.state_machine_options.new_line.GetValue() ==
+					    NewLineIdentifier::CARRY_ON) {
+						--result.current_line_position.end.buffer_pos;
+					}
+					result.current_errors.Insert(UNTERMINATED_QUOTES, 0, 0, start_of_value);
+					result.current_errors.HandleErrors(result);
+					++result.number_of_rows;
+					bytes_read = iterator.pos.buffer_pos - start_pos;
 				}
-				// iterator.pos.buffer_pos++;
-				bytes_read = iterator.pos.buffer_pos - start_pos;
+				if (result.number_of_rows >= result.result_size) {
+					return;
+				}
 				break;
+			}
 			case CSVState::RECORD_SEPARATOR:
 				if (states.states[0] == CSVState::RECORD_SEPARATOR || states.states[0] == CSVState::NOT_SET) {
 					if (T::EmptyLine(result, iterator.pos.buffer_pos)) {

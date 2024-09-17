@@ -27,19 +27,6 @@ struct CSVBufferUsage {
 	idx_t buffer_idx;
 };
 
-//! Keeps track of start and end of line positions in regard to the CSV file
-class FullLinePosition {
-public:
-	FullLinePosition() {};
-	LinePosition begin;
-	LinePosition end;
-
-	//! Reconstructs the current line to be used in error messages
-	string ReconstructCurrentLine(bool &first_char_nl,
-	                              unordered_map<idx_t, shared_ptr<CSVBufferHandle>> &buffer_handles,
-	                              bool reconstruct_line) const;
-};
-
 struct ParseTypeInfo {
 	ParseTypeInfo() {};
 	ParseTypeInfo(const LogicalType &type, bool validate_utf_8_p) : validate_utf8(validate_utf_8_p) {
@@ -86,14 +73,11 @@ public:
 
 	//! Internal Data Chunk used for flushing
 	DataChunk parse_chunk;
-	idx_t number_of_rows = 0;
 	idx_t cur_col_id = 0;
 	bool figure_out_new_line = false;
 	//! Information to properly handle errors
 	CSVErrorHandler &error_handler;
 	CSVIterator &iterator;
-	//! Line position of the current line
-	FullLinePosition current_line_position;
 	//! Used for CSV line reconstruction on flushed errors
 	unordered_map<idx_t, FullLinePosition> line_positions_per_row;
 	bool store_line_size = false;

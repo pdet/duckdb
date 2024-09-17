@@ -408,7 +408,7 @@ void StringValueResult::AddValueToVector(const char *value_ptr, const idx_t size
 			if (force_error) {
 				HandleUnicodeError(cur_col_id, last_position);
 			}
-			// If we got here, we are ingoring errors, hence we must ignore this line.
+			// If we got here, we are ignoring errors, hence we must ignore this line.
 			current_errors.Insert(INVALID_UNICODE, cur_col_id, chunk_col_id, last_position);
 			break;
 		}
@@ -817,7 +817,7 @@ bool StringValueResult::AddRow(StringValueResult &result, const idx_t buffer_pos
 		}
 		if (result.state_machine.dialect_options.state_machine_options.new_line == NewLineIdentifier::CARRY_ON) {
 			if (result.states.states[1] == CSVState::RECORD_SEPARATOR) {
-				// Even though this is marked as a carry on, this is a hippie mixie
+				// Even though this is marked as a carry on, this is a hippie mix
 				result.last_position.buffer_pos = buffer_pos + 1;
 			} else {
 				result.last_position.buffer_pos = buffer_pos + 2;
@@ -837,13 +837,9 @@ bool StringValueResult::InvalidState(StringValueResult &result) {
 	if (force_error) {
 		result.HandleUnicodeError(result.cur_col_id, result.last_position);
 	}
-	// We must handle the error now
-	result.current_errors.Insert(UNTERMINATED_QUOTES, result.cur_col_id, result.chunk_col_id, result.last_position);
 	// We reset everything
 	result.iterator.pos.buffer_pos = result.last_position.buffer_pos;
 	result.iterator.pos.buffer_idx = result.last_position.buffer_idx;
-	result.current_errors.HandleErrors(result);
-	result.number_of_rows++;
 	result.quoted = false;
 	result.escaped = false;
 	result.comment = false;

@@ -39,7 +39,7 @@ public:
 
 public:
 	//! Constructor for when a CSV File Scan is being constructed over information acquired during sniffing
-	//! This means the options are alreadu set, and the buffer manager is already up and runinng.
+	//! This means the options are already set, and the buffer manager is already up and running.
 	CSVFileScan(ClientContext &context, shared_ptr<CSVBufferManager> buffer_manager,
 	            shared_ptr<CSVStateMachine> state_machine, const CSVReaderOptions &options,
 	            const ReadCSVData &bind_data, const vector<column_t> &column_ids, CSVSchema &file_schema);
