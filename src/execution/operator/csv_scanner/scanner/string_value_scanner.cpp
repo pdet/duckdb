@@ -1227,7 +1227,27 @@ void StringValueScanner::ProcessOverbufferValue() {
 			result.comment = true;
 		}
 		if (states.IsInvalid()) {
-			result.InvalidState(result);
+			{
+				auto start_of_value = result.last_position;
+				auto cur_col_id = result.cur_col_id;
+				auto chunk_col_id = result.chunk_col_id;
+				result.InvalidState(result);
+				result.iterator.pos.buffer_idx++;
+				result.iterator.pos.buffer_pos = 0;
+				result.iterator.done = false;
+				FindNewLine(result);
+				result.iterator.done = true;
+				result.current_line_position.begin = result.current_line_position.end;
+				result.current_line_position.end.buffer_pos = result.iterator.pos.buffer_pos;
+				result.current_line_position.end.buffer_idx = result.iterator.pos.buffer_idx;
+				--result.current_line_position.end.buffer_pos;
+				if (state_machine->dialect_options.state_machine_options.new_line.GetValue() ==
+				    NewLineIdentifier::CARRY_ON) {
+					--result.current_line_position.end.buffer_pos;
+				}
+				result.current_errors.Insert(UNTERMINATED_QUOTES, cur_col_id, chunk_col_id, start_of_value);
+				result.current_errors.HandleErrors(result);
+			}
 		}
 		j++;
 	}
@@ -1264,7 +1284,25 @@ void StringValueScanner::ProcessOverbufferValue() {
 			result.escaped = true;
 		}
 		if (states.IsInvalid()) {
+			auto start_of_value = result.last_position;
+			auto cur_col_id = result.cur_col_id;
+			auto chunk_col_id = result.chunk_col_id;
 			result.InvalidState(result);
+			result.iterator.pos.buffer_idx++;
+			result.iterator.pos.buffer_pos = 0;
+			result.iterator.done = false;
+			FindNewLine(result);
+			result.iterator.done = true;
+			result.current_line_position.begin = result.current_line_position.end;
+			result.current_line_position.end.buffer_pos = result.iterator.pos.buffer_pos;
+			result.current_line_position.end.buffer_idx = result.iterator.pos.buffer_idx;
+			--result.current_line_position.end.buffer_pos;
+			if (state_machine->dialect_options.state_machine_options.new_line.GetValue() ==
+			    NewLineIdentifier::CARRY_ON) {
+				--result.current_line_position.end.buffer_pos;
+			}
+			result.current_errors.Insert(UNTERMINATED_QUOTES, cur_col_id, chunk_col_id, start_of_value);
+			result.current_errors.HandleErrors(result);
 		}
 		j++;
 	}

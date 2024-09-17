@@ -81,33 +81,33 @@ DROP TABLE reject_scans;
 statement ok
 DROP TABLE reject_errors;
 
-#loop buffer_size 35 40
-#
-#query II
-#SELECT * FROM read_csv(
-#    'data/csv/rejects/unquoted/basic.csv',
-#    columns = {'a': 'VARCHAR', 'b': 'INTEGER'},
-#    buffer_size=${buffer_size},
-#    store_rejects=true, auto_detect=false, header = 1, quote = '"', escape = '"');
-#----
-#bla	1
-#bla	2
-#bla	3
-#bla	1
-#bla	2
-#bla	3
-#
-#
-#query IIIIIIII rowsort
-#SELECT regexp_replace(file_path, '\\', '/', 'g'), line, column_idx, column_name, error_type, csv_line,line_byte_position, byte_position
-#FROM reject_scans inner join reject_errors on (reject_scans.scan_id = reject_errors.scan_id and reject_scans.file_id = reject_errors.file_id);
-#----
-#data/csv/rejects/unquoted/basic.csv	5	1	a	UNQUOTED VALUE	"blaaaaaaaaaaaaaa"bla,4	29	29
-#
-#statement ok
-#DROP TABLE reject_scans;
-#
-#statement ok
-#DROP TABLE reject_errors;
-#
-#endloop
+loop buffer_size 35 40
+
+query II
+SELECT * FROM read_csv(
+    'data/csv/rejects/unquoted/basic.csv',
+    columns = {'a': 'VARCHAR', 'b': 'INTEGER'},
+    buffer_size=${buffer_size},
+    store_rejects=true, auto_detect=false, header = 1, quote = '"', escape = '"');
+----
+bla	1
+bla	2
+bla	3
+bla	1
+bla	2
+bla	3
+
+
+query IIIIIIII rowsort
+SELECT regexp_replace(file_path, '\\', '/', 'g'), line, column_idx, column_name, error_type, csv_line,line_byte_position, byte_position
+FROM reject_scans inner join reject_errors on (reject_scans.scan_id = reject_errors.scan_id and reject_scans.file_id = reject_errors.file_id);
+----
+data/csv/rejects/unquoted/basic.csv	5	1	a	UNQUOTED VALUE	"blaaaaaaaaaaaaaa"bla,4	29	29
+
+statement ok
+DROP TABLE reject_scans;
+
+statement ok
+DROP TABLE reject_errors;
+
+endloop
