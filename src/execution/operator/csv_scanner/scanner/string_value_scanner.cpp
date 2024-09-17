@@ -838,9 +838,14 @@ bool StringValueResult::InvalidState(StringValueResult &result) {
 	}
 	// We must handle the error now
 	result.current_errors.Insert(UNTERMINATED_QUOTES, result.cur_col_id, result.chunk_col_id, result.last_position);
+	// We reset everything
 	result.iterator.pos.buffer_pos = result.last_position.buffer_pos;
 	result.iterator.pos.buffer_idx = result.last_position.buffer_idx;
 	result.current_errors.HandleErrors(result);
+	result.number_of_rows++;
+	result.quoted = false;
+	result.escaped = false;
+	result.comment = false;
 	return true;
 }
 
@@ -1444,7 +1449,7 @@ void StringValueScanner::SetStart() {
 		// If we are ignoring errors we don't really need to figure out a line.
 		return;
 	}
-	FindNewLine(static_cast<ScannerResult>(result));
+	FindNewLine(result);
 }
 
 void StringValueScanner::FinalizeChunkProcess() {

@@ -107,7 +107,7 @@ void BaseScanner::SkipUntilNewLine() {
 	}
 }
 
-void BaseScanner::FindNewLine(ScannerResult result) {
+void BaseScanner::FindNewLine(ScannerResult &result) {
 	// The result size of the data after skipping the row is one line
 	// We have to look for a new line that fits our schema
 	// 1. We walk until the next new line
@@ -157,7 +157,7 @@ void BaseScanner::FindNewLine(ScannerResult result) {
 	result.last_position = {iterator.pos.buffer_idx, iterator.pos.buffer_pos, result.buffer_size};
 }
 
-CSVStateMachine &BaseScanner::GetStateMachine() {
+CSVStateMachine &BaseScanner::GetStateMachine() const {
 	return *state_machine;
 }
 

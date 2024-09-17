@@ -129,7 +129,7 @@ public:
 		return iterator.pos;
 	}
 
-	CSVStateMachine &GetStateMachine();
+	CSVStateMachine &GetStateMachine() const;
 
 	shared_ptr<CSVFileScan> csv_file_scan;
 
@@ -174,7 +174,7 @@ protected:
 	//! Initializes the scanner
 	virtual void Initialize();
 
-	void FindNewLine(ScannerResult result);
+	void FindNewLine(ScannerResult &result);
 
 	inline static bool ContainsZeroByte(uint64_t v) {
 		return (v - UINT64_C(0x0101010101010101)) & ~(v)&UINT64_C(0x8080808080808080);
@@ -201,10 +201,19 @@ protected:
 					// if we got here, we have work to do
 					// 1. Set buffer and position to where things went wrong
 					// 2. Figure out new line
+					FindNewLine(result);
+					if (iterator.IsBoundarySet()) {
+						to_pos = iterator.GetEndPos();
+						if (to_pos > cur_buffer_handle->actual_size) {
+							to_pos = cur_buffer_handle->actual_size;
+						}
+					} else {
+						to_pos = cur_buffer_handle->actual_size;
+					}
 				}
-				iterator.pos.buffer_pos++;
+				// iterator.pos.buffer_pos++;
 				bytes_read = iterator.pos.buffer_pos - start_pos;
-				return;
+				break;
 			case CSVState::RECORD_SEPARATOR:
 				if (states.states[0] == CSVState::RECORD_SEPARATOR || states.states[0] == CSVState::NOT_SET) {
 					if (T::EmptyLine(result, iterator.pos.buffer_pos)) {

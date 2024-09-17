@@ -45,12 +45,15 @@ void CSVStateMachineCache::Insert(const CSVStateMachineOptions &state_machine_op
 	uint8_t quote = static_cast<uint8_t>(state_machine_options.quote.GetValue());
 	uint8_t escape = static_cast<uint8_t>(state_machine_options.escape.GetValue());
 	uint8_t comment = static_cast<uint8_t>(state_machine_options.comment.GetValue());
+	uint8_t invalid = static_cast<uint8_t>(CSVState::INVALID);
 
 	auto new_line_id = state_machine_options.new_line.GetValue();
 
 	// Now set values depending on configuration
 	// 1) Standard/Invalid State
-	vector<uint8_t> std_inv {static_cast<uint8_t>(CSVState::STANDARD), static_cast<uint8_t>(CSVState::INVALID)};
+	vector<uint8_t> std_inv {
+	    static_cast<uint8_t>(CSVState::STANDARD),
+	};
 	for (auto &state : std_inv) {
 		transition_array[delimiter][state] = CSVState::DELIMITER;
 		transition_array[static_cast<uint8_t>('\n')][state] = CSVState::RECORD_SEPARATOR;
@@ -63,6 +66,7 @@ void CSVStateMachineCache::Insert(const CSVStateMachineOptions &state_machine_op
 			transition_array[comment][state] = CSVState::COMMENT;
 		}
 	}
+	transition_array[quote][invalid] = CSVState::QUOTED;
 	// 2) Field Separator State
 	transition_array[delimiter][static_cast<uint8_t>(CSVState::DELIMITER)] = CSVState::DELIMITER;
 	transition_array[static_cast<uint8_t>('\n')][static_cast<uint8_t>(CSVState::DELIMITER)] =
