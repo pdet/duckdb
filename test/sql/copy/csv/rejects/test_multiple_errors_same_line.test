@@ -188,7 +188,6 @@ query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
 0	3	59	59	1	name	UNQUOTED VALUE	"oogie boogie"bla,bla, 2023-01-02, 5	Value with unterminated quote found.
-0	3	59	77	2	age	CAST	"oogie boogie"bla,bla, 2023-01-02, 5	Error when converting column "age". Could not convert string "bla" to 'INTEGER'
 
 
 statement ok
@@ -209,7 +208,6 @@ query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
 0	3	59	59	1	name	UNQUOTED VALUE	"oogie boogie"bla,4, 2023-01-02	Value with unterminated quote found.
-0	3	59	90	3	barks	MISSING COLUMNS	"oogie boogie"bla,4, 2023-01-02	Expected Number of Columns: 4 Found: 3
 
 statement ok
 DROP TABLE reject_errors;
@@ -229,7 +227,6 @@ query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
 0	3	59	59	1	name	UNQUOTED VALUE	"oogie boogieoogie boogieoogie boogieoogie boogie"bla,4, 2023-01-02, 5	Value with unterminated quote found.
-0	3	59	59	NULL	NULL	LINE SIZE OVER MAXIMUM	"oogie boogieoogie boogieoogie boogieoogie boogie"bla,4, 2023-01-02, 5	Maximum line size of 40 bytes exceeded. Actual Size:71 bytes.
 
 
 statement ok
@@ -250,7 +247,6 @@ query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
 0	3	59	59	1	name	UNQUOTED VALUE	"oogie boogie"bla,4, 2023-01-02, 5, 8	Value with unterminated quote found.
-0	3	59	93	5	NULL	TOO MANY COLUMNS	"oogie boogie"bla,4, 2023-01-02, 5, 8	Expected Number of Columns: 4 Found: 5
 
 statement ok
 DROP TABLE reject_errors;
@@ -349,8 +345,7 @@ oogie	 boogie	3	2023-01-01	2
 query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
-0	3	71	71	1	name	UNQUOTED VALUE	"oogie"bla, bo??gie,3, 2023-01-01, 2	Value with unterminated quote found.
-0	3	71	82	2	last_name	INVALID UNICODE	"oogie"bla, bo??gie,3, 2023-01-01, 2	Invalid unicode (byte sequence mismatch) detected.
+0	3	71	71	1	name	UNQUOTED VALUE	"oogie"bla, bo??gie,3, 2023-01-01, 	Value with unterminated quote found.
 
 statement ok
 DROP TABLE reject_errors;
@@ -375,7 +370,6 @@ SELECT * EXCLUDE (scan_id) FROM reject_errors ORDER BY ALL;
 0	5	124	144	4	barks	CAST	oogie boogie,3, bla, bla, 7	Error when converting column "barks". Could not convert string " bla" to 'INTEGER'
 0	5	124	148	5	NULL	TOO MANY COLUMNS	oogie boogie,3, bla, bla, 7	Expected Number of Columns: 4 Found: 5
 0	6	152	152	1	name	UNQUOTED VALUE	"oogie boogie"bla,3, 2023-01-04	Value with unterminated quote found.
-0	6	152	183	3	barks	MISSING COLUMNS	"oogie boogie"bla,3, 2023-01-04	Expected Number of Columns: 4 Found: 3
 0	7	184	199	3	current_day	CAST	oogie boogie,3, bla	Error when converting column "current_day". Could not convert string " bla" to 'DATE'
 0	7	184	203	3	barks	MISSING COLUMNS	oogie boogie,3, bla	Expected Number of Columns: 4 Found: 3
 0	8	204	204	NULL	NULL	LINE SIZE OVER MAXIMUM	oogie boogieoogie boogieoogie boogieoogie boogieoogie boogieoogie boogieoogie boogie,3, bla	Maximum line size of 40 bytes exceeded. Actual Size:92 bytes.

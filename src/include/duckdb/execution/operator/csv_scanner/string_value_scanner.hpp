@@ -73,7 +73,6 @@ public:
 
 	//! Internal Data Chunk used for flushing
 	DataChunk parse_chunk;
-	idx_t cur_col_id = 0;
 	bool figure_out_new_line = false;
 	//! Information to properly handle errors
 	CSVErrorHandler &error_handler;
@@ -92,7 +91,6 @@ public:
 	//! Information regarding projected columns
 	unsafe_unique_array<bool> projected_columns;
 	bool projecting_columns = false;
-	idx_t chunk_col_id = 0;
 
 	//! We must ensure that we keep the buffers alive until processing the query result
 	unordered_map<idx_t, shared_ptr<CSVBufferHandle>> buffer_handles;

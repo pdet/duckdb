@@ -160,6 +160,8 @@ public:
 	//! Variable to keep track if we are in a comment row. Hence, it won't add it
 	bool comment = false;
 	idx_t quoted_position = 0;
+	idx_t chunk_col_id = 0;
+	idx_t cur_col_id = 0;
 
 	LinePosition last_position;
 	idx_t buffer_size;
@@ -288,6 +290,8 @@ protected:
 			switch (states.states[1]) {
 			case CSVState::INVALID: {
 				auto start_of_value = result.last_position;
+				auto cur_col_id = result.cur_col_id;
+				auto chunk_col_id = result.chunk_col_id;
 				if (T::InvalidState(result)) {
 					// if we got here, we have work to do
 					// 1. Set buffer and position to where things went wrong
@@ -308,11 +312,12 @@ protected:
 					    NewLineIdentifier::CARRY_ON) {
 						--result.current_line_position.end.buffer_pos;
 					}
-					result.current_errors.Insert(UNTERMINATED_QUOTES, 0, 0, start_of_value);
+					result.current_errors.Insert(UNTERMINATED_QUOTES, cur_col_id, chunk_col_id, start_of_value);
 					result.current_errors.HandleErrors(result);
 					++result.number_of_rows;
 					bytes_read = iterator.pos.buffer_pos - start_pos;
 				}
+				lines_read++;
 				if (result.number_of_rows >= result.result_size) {
 					return;
 				}
