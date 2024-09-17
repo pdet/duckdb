@@ -17,6 +17,35 @@
 namespace duckdb {
 
 class CSVFileScan;
+
+//! Class that keeps track of line starts, used for line size verification
+class LinePosition {
+public:
+	LinePosition() {
+	}
+	LinePosition(idx_t buffer_idx_p, idx_t buffer_pos_p, idx_t buffer_size_p)
+	    : buffer_pos(buffer_pos_p), buffer_size(buffer_size_p), buffer_idx(buffer_idx_p) {
+	}
+
+	idx_t operator-(const LinePosition &other) const {
+		if (other.buffer_idx == buffer_idx) {
+			return buffer_pos - other.buffer_pos;
+		}
+		return other.buffer_size - other.buffer_pos + buffer_pos;
+	}
+
+	bool operator==(const LinePosition &other) const {
+		return buffer_pos == other.buffer_pos && buffer_idx == other.buffer_idx && buffer_size == other.buffer_size;
+	}
+
+	idx_t GetGlobalPosition(idx_t requested_buffer_size, bool first_char_nl = false) const {
+		return requested_buffer_size * buffer_idx + buffer_pos + first_char_nl;
+	}
+	idx_t buffer_pos = 0;
+	idx_t buffer_size = 0;
+	idx_t buffer_idx = 0;
+};
+
 class ScannerResult {
 public:
 	ScannerResult(CSVStates &states, CSVStateMachine &state_machine, idx_t result_size);
@@ -48,6 +77,9 @@ public:
 	//! Variable to keep track if we are in a comment row. Hence won't add it
 	bool comment = false;
 	idx_t quoted_position = 0;
+
+	LinePosition last_position;
+	idx_t buffer_size;
 
 	//! Size of the result
 	const idx_t result_size;
@@ -142,6 +174,8 @@ protected:
 	//! Initializes the scanner
 	virtual void Initialize();
 
+	void FindNewLine(ScannerResult result);
+
 	inline static bool ContainsZeroByte(uint64_t v) {
 		return (v - UINT64_C(0x0101010101010101)) & ~(v)&UINT64_C(0x8080808080808080);
 	}
@@ -167,8 +201,6 @@ protected:
 					// if we got here, we have work to do
 					// 1. Set buffer and position to where things went wrong
 					// 2. Figure out new line
-					result.iterator.pos.buffer_pos = result.last_position.buffer_pos;
-					result.iterator.pos.buffer_idx = result.last_position.buffer_idx;
 				}
 				iterator.pos.buffer_pos++;
 				bytes_read = iterator.pos.buffer_pos - start_pos;
@@ -315,6 +347,8 @@ protected:
 
 	//! Finalizes the process of the chunk
 	virtual void FinalizeChunkProcess();
+
+	void SkipUntilNewLine();
 
 	//! Internal function for parse chunk
 	template <class T>

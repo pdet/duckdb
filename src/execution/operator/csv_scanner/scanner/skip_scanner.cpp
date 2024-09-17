@@ -36,8 +36,9 @@ bool SkipResult::AddRow(SkipResult &result, const idx_t buffer_pos) {
 	return false;
 }
 
-void SkipResult::InvalidState(SkipResult &result) {
+bool SkipResult::InvalidState(SkipResult &result) {
 	// nop
+	return false;
 }
 
 bool SkipResult::EmptyLine(SkipResult &result, const idx_t buffer_pos) {

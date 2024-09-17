@@ -28,7 +28,7 @@ public:
 	//! Adds a Row to the result
 	static inline bool AddRow(SkipResult &result, const idx_t buffer_pos);
 	//! Behavior when hitting an invalid state
-	static inline void InvalidState(SkipResult &result);
+	static inline bool InvalidState(SkipResult &result);
 	//! Handles EmptyLine states
 	static inline bool EmptyLine(SkipResult &result, const idx_t buffer_pos);
 	//! Handles QuotedNewline State
