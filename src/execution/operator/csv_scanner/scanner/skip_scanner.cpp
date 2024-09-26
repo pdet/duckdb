@@ -69,14 +69,17 @@ void SkipScanner::Initialize() {
 void SkipScanner::FinalizeChunkProcess() {
 	// We continue skipping until we skipped enough rows, or we have nothing else to read.
 	while (!FinishedFile() && result.row_count < result.rows_to_skip) {
-		if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer) {
+		if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer &&
+		    !states.IsQuotedCurrent()) {
 			cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
 			if (cur_buffer_handle) {
-				throw InternalException("oh no 2");
+				const auto error = CSVError::BufferTooSmall(state_machine->options);
+				error_handler->Error(error, true);
 			}
 		} else {
 			cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
 		}
+		has_new_line = false;
 		if (cur_buffer_handle) {
 			iterator.pos.buffer_pos = 0;
 			buffer_handle_ptr = cur_buffer_handle->Ptr();

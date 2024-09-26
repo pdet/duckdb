@@ -226,6 +226,21 @@ CSVError CSVError::HeaderSniffingError(const CSVReaderOptions &options, const ve
 	return CSVError(error.str(), SNIFFING, {});
 }
 
+CSVError CSVError::BufferTooSmall(const CSVReaderOptions &options) {
+	std::ostringstream error;
+	// 1. Which file
+	error << "Error when parsing file \"" << options.file_path << "\"." << '\n';
+	// 2. What's the error
+	error << "In DuckDB, the buffer size of the CSV Buffer must be bigger than the largest line of the CSV File"
+	      << '\n';
+	error << "Currently, the buffer size is set to: " << options.buffer_size << '\n';
+	// 3. How to fix it
+	error << "To read this file, increase the buffer size to the appropriate value. (e.g., buffer_size = 64000000)"
+	      << '\n';
+	error << "Notice that changing the buffer size can drastically change performance and minimal memory requirements.";
+	return CSVError(error.str(), LINE_OVER_BUFFER_SIZE, {});
+}
+
 CSVError CSVError::SniffingError(const CSVReaderOptions &options, const string &search_space) {
 	std::ostringstream error;
 	// 1. Which file

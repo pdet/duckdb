@@ -137,15 +137,18 @@ void ColumnCountScanner::FinalizeChunkProcess() {
 	// We run until we have a full chunk, or we are done scanning
 	while (!FinishedFile() && result.result_position < result.result_size && !result.error) {
 		if (iterator.pos.buffer_pos == cur_buffer_handle->actual_size) {
-			if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer) {
+			if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer &&
+			    !states.IsQuotedCurrent()) {
 				cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
-				if (!cur_buffer_handle) {
-					throw InternalException("oh no 1");
+				if (cur_buffer_handle) {
+					const auto error = CSVError::BufferTooSmall(state_machine->options);
+					error_handler->Error(error, true);
 				}
 			} else {
 				// Move to next buffer
 				cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
 			}
+			has_new_line = false;
 			if (!cur_buffer_handle) {
 				buffer_handle_ptr = nullptr;
 				if (states.EmptyLine() || states.NewRow() || states.IsCurrentNewRow() || states.IsNotSet()) {

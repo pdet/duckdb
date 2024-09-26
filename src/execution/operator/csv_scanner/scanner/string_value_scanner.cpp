@@ -1506,12 +1506,8 @@ void StringValueScanner::SetStart() {
 			}
 			if (iterator.pos.buffer_pos == cur_buffer_handle->actual_size ||
 			    scan_finder->iterator.GetBufferIdx() > iterator.GetBufferIdx()) {
-				// If things go terribly wrong, we never loop indefinitely.
-				iterator.pos.buffer_idx = scan_finder->iterator.pos.buffer_idx;
-				iterator.pos.buffer_pos = scan_finder->iterator.pos.buffer_pos;
-				result.last_position = {iterator.pos.buffer_idx, iterator.pos.buffer_pos, result.buffer_size};
-				iterator.done = scan_finder->iterator.done;
-				return;
+				const auto error = CSVError::BufferTooSmall(state_machine->options);
+				error_handler->Error(error, true);
 			}
 		}
 	} while (!line_found);
@@ -1550,7 +1546,8 @@ void StringValueScanner::FinalizeChunkProcess() {
 		    scanner_idx != NumericLimits<idx_t>::Maximum() && !states.IsQuotedCurrent()) {
 			auto nxt_buffer = buffer_manager->GetBuffer(iterator.pos.buffer_idx + 1);
 			if (nxt_buffer) {
-				throw InternalException("oh no");
+				const auto error = CSVError::BufferTooSmall(state_machine->options);
+				error_handler->Error(error, true);
 			}
 		}
 		bool moved = MoveToNextBuffer();
@@ -1590,7 +1587,8 @@ void StringValueScanner::FinalizeChunkProcess() {
 			    scanner_idx != NumericLimits<idx_t>::Maximum() && !states.IsQuotedCurrent()) {
 				auto nxt_buffer = buffer_manager->GetBuffer(iterator.pos.buffer_idx + 1);
 				if (nxt_buffer) {
-					throw InternalException("oh no");
+					const auto error = CSVError::BufferTooSmall(state_machine->options);
+					error_handler->Error(error, true);
 				}
 			}
 			MoveToNextBuffer();
