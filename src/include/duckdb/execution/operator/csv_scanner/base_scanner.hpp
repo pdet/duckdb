@@ -36,6 +36,7 @@ public:
 	}
 	static inline bool UnsetComment(ScannerResult &result, idx_t buffer_pos) {
 		result.comment = false;
+		result.has_comment = true;
 		return false;
 	}
 	static inline bool IsCommentSet(const ScannerResult &result) {
@@ -47,6 +48,7 @@ public:
 	bool escaped = false;
 	//! Variable to keep track if we are in a comment row. Hence won't add it
 	bool comment = false;
+	bool has_comment = false;
 	idx_t quoted_position = 0;
 
 	//! Size of the result
@@ -135,6 +137,11 @@ protected:
 
 	//! If this scanner has been initialized
 	bool initialized = false;
+
+	bool at_the_start = false;
+
+	bool has_new_line = false;
+
 	//! How many lines were read by this scanner
 	idx_t lines_read = 0;
 	idx_t bytes_read = 0;
@@ -168,6 +175,7 @@ protected:
 				bytes_read = iterator.pos.buffer_pos - start_pos;
 				return;
 			case CSVState::RECORD_SEPARATOR:
+				has_new_line = true;
 				if (states.states[0] == CSVState::RECORD_SEPARATOR || states.states[0] == CSVState::NOT_SET) {
 					if (T::EmptyLine(result, iterator.pos.buffer_pos)) {
 						iterator.pos.buffer_pos++;
@@ -176,7 +184,6 @@ protected:
 						return;
 					}
 					lines_read++;
-
 				} else if (states.states[0] != CSVState::CARRIAGE_RETURN) {
 					if (T::IsCommentSet(result)) {
 						if (T::UnsetComment(result, iterator.pos.buffer_pos)) {
@@ -198,6 +205,7 @@ protected:
 				iterator.pos.buffer_pos++;
 				break;
 			case CSVState::CARRIAGE_RETURN:
+				has_new_line = true;
 				if (states.states[0] == CSVState::RECORD_SEPARATOR || states.states[0] == CSVState::NOT_SET) {
 					if (T::EmptyLine(result, iterator.pos.buffer_pos)) {
 						iterator.pos.buffer_pos++;
@@ -314,6 +322,9 @@ protected:
 	template <class T>
 	void ParseChunkInternal(T &result) {
 		if (!initialized) {
+			if (iterator.pos.buffer_pos < CSVBuffer::CSV_MINIMUM_BUFFER_SIZE) {
+				at_the_start = true;
+			}
 			Initialize();
 			initialized = true;
 		}

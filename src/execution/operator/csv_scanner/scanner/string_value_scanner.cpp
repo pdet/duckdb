@@ -1481,9 +1481,9 @@ void StringValueScanner::SetStart() {
 			// When Null Padding, we assume we start from the correct new-line
 			return;
 		}
-		scan_finder =
-		    make_uniq<StringValueScanner>(0U, buffer_manager, state_machine, make_shared_ptr<CSVErrorHandler>(true),
-		                                  csv_file_scan, false, iterator, result_size);
+		scan_finder = make_uniq<StringValueScanner>(NumericLimits<idx_t>::Maximum(), buffer_manager, state_machine,
+		                                            make_shared_ptr<CSVErrorHandler>(true), csv_file_scan, false,
+		                                            iterator, result_size);
 		auto &tuples = scan_finder->ParseChunk();
 		line_found = true;
 		if (tuples.number_of_rows != 1 ||
@@ -1495,6 +1495,7 @@ void StringValueScanner::SetStart() {
 			if (scan_finder->previous_buffer_handle) {
 				if (scan_finder->iterator.pos.buffer_pos >= scan_finder->previous_buffer_handle->actual_size &&
 				    scan_finder->previous_buffer_handle->is_last_buffer) {
+					has_new_line = true;
 					iterator.pos.buffer_idx = scan_finder->iterator.pos.buffer_idx;
 					iterator.pos.buffer_pos = scan_finder->iterator.pos.buffer_pos;
 					result.last_position = {iterator.pos.buffer_idx, iterator.pos.buffer_pos, result.buffer_size};
@@ -1516,6 +1517,7 @@ void StringValueScanner::SetStart() {
 	iterator.pos.buffer_idx = scan_finder->result.current_line_position.begin.buffer_idx;
 	iterator.pos.buffer_pos = scan_finder->result.current_line_position.begin.buffer_pos;
 	result.last_position = {iterator.pos.buffer_idx, iterator.pos.buffer_pos, result.buffer_size};
+	has_new_line = true;
 }
 
 void StringValueScanner::FinalizeChunkProcess() {
@@ -1542,6 +1544,10 @@ void StringValueScanner::FinalizeChunkProcess() {
 		// Move to next buffer
 		if (!cur_buffer_handle) {
 			return;
+		}
+		if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer &&
+		    scanner_idx != NumericLimits<idx_t>::Maximum()) {
+			throw InternalException("oh no");
 		}
 		bool moved = MoveToNextBuffer();
 		if (cur_buffer_handle) {
@@ -1576,6 +1582,10 @@ void StringValueScanner::FinalizeChunkProcess() {
 		// 2) If a boundary is not set
 		// We read until the chunk is complete, or we have nothing else to read.
 		while (!FinishedFile() && result.number_of_rows < result.result_size) {
+			if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer &&
+			    scanner_idx != NumericLimits<idx_t>::Maximum()) {
+				throw InternalException("oh no");
+			}
 			MoveToNextBuffer();
 			if (result.number_of_rows >= result.result_size) {
 				return;

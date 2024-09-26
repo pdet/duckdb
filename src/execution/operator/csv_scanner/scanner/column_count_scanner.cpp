@@ -137,6 +137,9 @@ void ColumnCountScanner::FinalizeChunkProcess() {
 	// We run until we have a full chunk, or we are done scanning
 	while (!FinishedFile() && result.result_position < result.result_size && !result.error) {
 		if (iterator.pos.buffer_pos == cur_buffer_handle->actual_size) {
+			if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer) {
+				throw InternalException("oh no 1");
+			}
 			// Move to next buffer
 			cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
 			if (!cur_buffer_handle) {

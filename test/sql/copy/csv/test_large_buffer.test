@@ -1,0 +1,38 @@
+# name: test/sql/copy/csv/test_large_buffer.test
+# description: Test larger than 32 Mb Buffer
+# group: [csv]
+
+statement ok
+PRAGMA enable_verification
+
+# Lets make each line 100 mb
+# With 20 lines
+statement ok
+copy (select 1 as col_1, repeat('a', 50000000) col_2, repeat('a', 50000000) col_3 , 'four' as col_4 from range(0,20)) to 'big_line.csv';
+
+# This will fail because the sniffer can't handle lines over a buffer size.
+#statement error
+#create table t as FROM 'big_line.csv'
+#----
+#It was not possible to automatically detect the CSV Parsing dialect/types
+
+# If we skip the sniffer, this should also fail
+statement error
+create table t as FROM read_csv('big_line.csv', auto_detect = false, columns = {'col_1': 'INTEGER','col_2': 'VARCHAR','col_3': 'VARCHAR','col_4': 'VARCHAR'}, header = 1)
+----
+bla
+
+# This will fail because the sniffer doesn't know what to do with it
+statement error
+create table t as FROM read_csv('big_line.csv', max_line_size=200000000)
+----
+Error when sniffing file "big_line.csv".
+
+# We have our 20 lines, yay
+query I
+select count(*) from t
+----
+20
+
+statement ok
+DROP TABLE t

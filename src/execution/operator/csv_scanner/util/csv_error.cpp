@@ -34,7 +34,7 @@ void CSVErrorHandler::ThrowError(const CSVError &csv_error) {
 		throw ConversionException(error.str());
 	case COLUMN_NAME_TYPE_MISMATCH:
 		throw BinderException(error.str());
-	case NULLPADDED_QUOTED_NEW_VALUE:
+	case NULL_PADDED_QUOTED_NEW_VALUE:
 		throw ParameterNotAllowedException(error.str());
 	default:
 		throw InvalidInputException(error.str());
@@ -293,7 +293,7 @@ CSVError CSVError::NullPaddingFail(const CSVReaderOptions &options, LinesPerBoun
 	      << '\n';
 	// What were the options
 	error << options.ToString(current_path);
-	return CSVError(error.str(), NULLPADDED_QUOTED_NEW_VALUE, error_info);
+	return CSVError(error.str(), NULL_PADDED_QUOTED_NEW_VALUE, error_info);
 }
 
 CSVError CSVError::UnterminatedQuotesError(const CSVReaderOptions &options, idx_t current_column,
@@ -355,7 +355,7 @@ bool CSVErrorHandler::PrintLineNumber(const CSVError &error) const {
 	case TOO_FEW_COLUMNS:
 	case TOO_MANY_COLUMNS:
 	case MAXIMUM_LINE_SIZE:
-	case NULLPADDED_QUOTED_NEW_VALUE:
+	case NULL_PADDED_QUOTED_NEW_VALUE:
 	case INVALID_UNICODE:
 		return true;
 	default:

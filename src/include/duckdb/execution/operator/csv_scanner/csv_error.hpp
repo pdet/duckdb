@@ -44,8 +44,9 @@ enum CSVErrorType : uint8_t {
 	UNTERMINATED_QUOTES = 4,       //! If a quote is not terminated
 	SNIFFING = 5,          //! If something went wrong during sniffing and was not possible to find suitable candidates
 	MAXIMUM_LINE_SIZE = 6, //! Maximum line size was exceeded by a line in the CSV File
-	NULLPADDED_QUOTED_NEW_VALUE = 7, //! If the null_padding option is set, and we have quoted new values in parallel
-	INVALID_UNICODE = 8              //! If we have invalid unicode values
+	NULL_PADDED_QUOTED_NEW_VALUE = 7, //! If the null_padding option is set, and we have quoted new values in parallel
+	INVALID_UNICODE = 8,              //! If we have invalid unicode values
+	LINE_OVER_BUFFER_SIZE = 9         //! If the line size is bigger than the buffer size.
 };
 
 class CSVError {
