@@ -1463,6 +1463,7 @@ void StringValueScanner::SetStart() {
 		if (result.store_line_size) {
 			result.error_handler.NewMaxLineSize(iterator.pos.buffer_pos);
 		}
+		has_new_line = iterator.pos.buffer_pos > 0;
 		return;
 	}
 	if (state_machine->options.IgnoreErrors()) {
@@ -1546,8 +1547,11 @@ void StringValueScanner::FinalizeChunkProcess() {
 			return;
 		}
 		if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer &&
-		    scanner_idx != NumericLimits<idx_t>::Maximum()) {
-			throw InternalException("oh no");
+		    scanner_idx != NumericLimits<idx_t>::Maximum() && !states.IsQuotedCurrent()) {
+			auto nxt_buffer = buffer_manager->GetBuffer(iterator.pos.buffer_idx + 1);
+			if (nxt_buffer) {
+				throw InternalException("oh no");
+			}
 		}
 		bool moved = MoveToNextBuffer();
 		if (cur_buffer_handle) {
@@ -1583,8 +1587,11 @@ void StringValueScanner::FinalizeChunkProcess() {
 		// We read until the chunk is complete, or we have nothing else to read.
 		while (!FinishedFile() && result.number_of_rows < result.result_size) {
 			if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer &&
-			    scanner_idx != NumericLimits<idx_t>::Maximum()) {
-				throw InternalException("oh no");
+			    scanner_idx != NumericLimits<idx_t>::Maximum() && !states.IsQuotedCurrent()) {
+				auto nxt_buffer = buffer_manager->GetBuffer(iterator.pos.buffer_idx + 1);
+				if (nxt_buffer) {
+					throw InternalException("oh no");
+				}
 			}
 			MoveToNextBuffer();
 			if (result.number_of_rows >= result.result_size) {

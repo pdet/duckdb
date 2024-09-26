@@ -70,9 +70,13 @@ void SkipScanner::FinalizeChunkProcess() {
 	// We continue skipping until we skipped enough rows, or we have nothing else to read.
 	while (!FinishedFile() && result.row_count < result.rows_to_skip) {
 		if (at_the_start && !has_new_line && !result.has_comment && !cur_buffer_handle->is_last_buffer) {
-			throw InternalException("oh no 2");
+			cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
+			if (cur_buffer_handle) {
+				throw InternalException("oh no 2");
+			}
+		} else {
+			cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
 		}
-		cur_buffer_handle = buffer_manager->GetBuffer(++iterator.pos.buffer_idx);
 		if (cur_buffer_handle) {
 			iterator.pos.buffer_pos = 0;
 			buffer_handle_ptr = cur_buffer_handle->Ptr();
