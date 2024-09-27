@@ -86,7 +86,7 @@ struct CSVReaderOptions {
 	//! Maximum CSV line size: specified because if we reach this amount, we likely have wrong delimiters (default: 2MB)
 	//! note that this is the guaranteed line length that will succeed, longer lines may be accepted if slightly above
 	idx_t maximum_line_size = 2097152;
-	//! Whether or not header names shall be normalized
+	//! Whether header names shall be normalized
 	bool normalize_names = false;
 	//! True, if column with that index must skip null check
 	unordered_set<string> force_not_null_names;
@@ -98,7 +98,7 @@ struct CSVReaderOptions {
 	idx_t sample_size_chunks = 20480 / sniff_size;
 	//! Consider all columns to be of type varchar
 	bool all_varchar = false;
-	//! Whether or not to automatically detect dialect and datatypes
+	//! Whether to automatically detect dialect and datatypes
 	bool auto_detect = true;
 	//! The file path of the CSV file to read
 	string file_path;
@@ -108,10 +108,12 @@ struct CSVReaderOptions {
 	idx_t buffer_size = CSVBuffer::CSV_BUFFER_SIZE;
 	//! Decimal separator when reading as numeric
 	string decimal_separator = ".";
-	//! Whether or not to pad rows that do not have enough columns with NULL values
+	//! Whether to pad rows that do not have enough columns with NULL values
 	bool null_padding = false;
 	//! If we should attempt to run parallel scanning over one file
 	bool parallel = true;
+	//! If this CSV File should try to self correct itself (i.e., missing columns and what-not.
+	bool self_correct = false;
 
 	//! User defined parameters for the csv function concatenated on a string
 	string user_defined_parameters;

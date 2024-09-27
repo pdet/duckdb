@@ -593,6 +593,8 @@ void CSVReaderOptions::FromNamedParameters(named_parameter_map_t &in, ClientCont
 			all_varchar = BooleanValue::Get(kv.second);
 		} else if (loption == "normalize_names") {
 			normalize_names = BooleanValue::Get(kv.second);
+		} else if(loption == "self_correct") {
+			self_correct = BooleanValue::Get(kv.second);
 		} else {
 			SetReadOption(loption, kv.second, name_list);
 		}

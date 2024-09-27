@@ -7,7 +7,7 @@
 #include "duckdb/common/string_util.hpp"
 #include "duckdb/common/union_by_name.hpp"
 #include "duckdb/execution/operator/csv_scanner/global_csv_state.hpp"
-#include "duckdb/execution/operator/csv_scanner/csv_error.hpp"
+#include "duckdb/execution/operator/csv_scanner/error/csv_error.hpp"
 #include "duckdb/execution/operator/csv_scanner/csv_sniffer.hpp"
 #include "duckdb/execution/operator/persistent/csv_rejects_table.hpp"
 #include "duckdb/function/function_set.hpp"

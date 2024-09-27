@@ -11,7 +11,7 @@
 #include "duckdb/execution/operator/csv_scanner/csv_buffer_manager.hpp"
 #include "duckdb/execution/operator/csv_scanner/scanner_boundary.hpp"
 #include "duckdb/execution/operator/csv_scanner/csv_state_machine.hpp"
-#include "duckdb/execution/operator/csv_scanner/csv_error.hpp"
+#include "duckdb/execution/operator/csv_scanner/error/csv_error.hpp"
 #include "duckdb/common/helper.hpp"
 
 namespace duckdb {
