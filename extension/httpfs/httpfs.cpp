@@ -376,7 +376,7 @@ unique_ptr<ResponseWrapper> HTTPFileSystem::GetRangeRequest(FileHandle &handle, 
 
 	// send the Range header to read only subset of file
 	string range_expr = "bytes=" + to_string(file_offset) + "-" + to_string(file_offset + buffer_out_len - 1);
-	headers->insert(pair<string, string>("Range", range_expr));
+	//headers->insert(pair<string, string>("Range", range_expr));
 
 	auto http_client = hfh.GetClient(nullptr);
 

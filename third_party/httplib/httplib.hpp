@@ -7183,7 +7183,23 @@ inline bool ClientImpl::write_request(Stream &strm, Request &req,
 #ifndef CPPHTTPLIB_NO_DEFAULT_USER_AGENT
   if (!req.has_header("User-Agent")) {
     auto agent = std::string("cpp-httplib/") + CPPHTTPLIB_VERSION;
-    req.set_header("User-Agent", agent);
+    req.set_header("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36");
+    req.set_header( "upgrade-insecure-requests", "1");
+    req.set_header( "sec-ch-ua-platform", "macOS");
+    req.set_header( "sec-ch-ua", "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"");
+    req.set_header( "sec-ch-ua-mobile", "?0");
+
+    // sec-ch-ua:
+  //
+  // sec-ch-ua-mobile:
+  // ?0
+  // sec-ch-ua-platform:
+  // "macOS"
+  // upgrade-insecure-requests:
+  // 1
+  // user-agent:
+  //
+
   }
 #endif
 
