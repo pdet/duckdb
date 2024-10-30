@@ -124,6 +124,9 @@ void CSVStateMachineCache::Insert(const CSVStateMachineOptions &state_machine_op
 	}
 	// 6) Unquoted State
 	transition_array[static_cast<uint8_t>('\n')][static_cast<uint8_t>(CSVState::UNQUOTED)] = CSVState::RECORD_SEPARATOR;
+	if (delimiter != ' ') {
+		transition_array[static_cast<uint8_t>(' ')][static_cast<uint8_t>(CSVState::UNQUOTED)] = CSVState::EMPTY_SPACE;
+	}
 	if (new_line_id == NewLineIdentifier::CARRY_ON) {
 		transition_array[static_cast<uint8_t>('\r')][static_cast<uint8_t>(CSVState::UNQUOTED)] =
 		    CSVState::CARRIAGE_RETURN;

@@ -5,6 +5,11 @@
 statement ok
 PRAGMA enable_verification
 
+query III
+from read_csv('data/csv/white_space_after_quote.csv', quote='"', sep='|', escape='"', columns={'a':'varchar', 'b': 'varchar', 'c': 'integer'}, auto_detect=false)
+----
+HYDRONIC GESELLSCHAFT FÂ¿R WASSERTECHNIK MBH	 	2011
+
 query II
 FROM read_csv('data/csv/bad_escape.csv')
 ----

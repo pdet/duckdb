@@ -28,6 +28,10 @@ public:
 		}
 		result.quoted = true;
 	}
+
+	static inline void UnsetQuoted(ScannerResult &result, idx_t unquoted_position) {
+		result.unquoted_position = unquoted_position;
+	}
 	static inline void SetEscaped(ScannerResult &result) {
 		result.escaped = true;
 	}
@@ -48,6 +52,7 @@ public:
 	//! Variable to keep track if we are in a comment row. Hence won't add it
 	bool comment = false;
 	idx_t quoted_position = 0;
+	idx_t unquoted_position = 0;
 
 	//! Size of the result
 	const idx_t result_size;
@@ -252,6 +257,11 @@ protected:
 					iterator.pos.buffer_pos++;
 				}
 			} break;
+			case CSVState::UNQUOTED: {
+				T::UnsetQuoted(result,iterator.pos.buffer_pos+1);
+				iterator.pos.buffer_pos++;
+				break;
+			}
 			case CSVState::ESCAPE:
 				T::SetEscaped(result);
 				iterator.pos.buffer_pos++;

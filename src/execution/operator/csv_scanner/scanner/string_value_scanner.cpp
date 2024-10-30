@@ -489,7 +489,7 @@ void StringValueResult::AddQuotedValue(StringValueResult &result, const idx_t bu
 			}
 		}
 		if (!result.HandleTooManyColumnsError(result.buffer_ptr + result.quoted_position + 1,
-		                                      buffer_pos - result.quoted_position - 2)) {
+		                                      result.unquoted_position - result.quoted_position - 2)) {
 			// If it's an escaped value we have to remove all the escapes, this is not really great
 			// If we are going to escape, this vector must be a varchar vector
 			if (result.parse_chunk.data[result.chunk_col_id].GetType() != LogicalType::VARCHAR) {
@@ -498,10 +498,9 @@ void StringValueResult::AddQuotedValue(StringValueResult &result, const idx_t bu
 					// We have to write the cast error message.
 					std::ostringstream error;
 					// Casting Error Message
-
 					error << "Could not convert string \""
 					      << std::string(result.buffer_ptr + result.quoted_position + 1,
-					                     buffer_pos - result.quoted_position - 2)
+					                     result.unquoted_position  - result.quoted_position - 2)
 					      << "\" to \'" << LogicalTypeIdToString(result.parse_types[result.chunk_col_id].type_id)
 					      << "\'";
 					auto error_string = error.str();
@@ -512,20 +511,20 @@ void StringValueResult::AddQuotedValue(StringValueResult &result, const idx_t bu
 				result.chunk_col_id++;
 			} else {
 				auto value = StringValueScanner::RemoveEscape(
-				    result.buffer_ptr + result.quoted_position + 1, buffer_pos - result.quoted_position - 2,
+				    result.buffer_ptr + result.quoted_position + 1, result.unquoted_position  - result.quoted_position - 2,
 				    result.state_machine.dialect_options.state_machine_options.escape.GetValue(),
 				    result.parse_chunk.data[result.chunk_col_id]);
 				result.AddValueToVector(value.GetData(), value.GetSize());
 			}
 		}
 	} else {
-		if (buffer_pos < result.last_position.buffer_pos + 2) {
+		if (result.unquoted_position  < result.last_position.buffer_pos + 2) {
 			// empty value
 			auto value = string_t();
 			result.AddValueToVector(value.GetData(), value.GetSize());
 		} else {
 			result.AddValueToVector(result.buffer_ptr + result.quoted_position + 1,
-			                        buffer_pos - result.quoted_position - 2);
+			                        result.unquoted_position  - result.quoted_position - 2);
 		}
 	}
 	result.quoted = false;
