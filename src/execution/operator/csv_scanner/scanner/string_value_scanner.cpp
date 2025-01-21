@@ -1253,6 +1253,7 @@ string_t StringValueScanner::RemoveEscape(const char *str_ptr, idx_t end, char e
 			just_escaped = false;
 		} else {
 			if (just_escaped && !rfc_4180) {
+				bool not_special = str_ptr[cur_pos] != escape &&
 				str_pos++;
 			}
 			just_escaped = false;

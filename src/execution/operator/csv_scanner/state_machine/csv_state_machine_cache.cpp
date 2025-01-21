@@ -228,12 +228,12 @@ void CSVStateMachineCache::Insert(const CSVStateMachineOptions &state_machine_op
 		transition_array[quote][static_cast<uint8_t>(CSVState::UNQUOTED)] = CSVState::QUOTED;
 	}
 	if (state_machine_options.rfc_4180 == false) {
-		if (escape == '\0') {
+		// if (escape == '\0') {
 			// If escape is defined, it limits a bit how relaxed quotes can be in a reliable way.
 			transition_array[quote][static_cast<uint8_t>(CSVState::UNQUOTED)] = CSVState::MAYBE_QUOTED;
-		} else {
-			transition_array[quote][static_cast<uint8_t>(CSVState::UNQUOTED)] = CSVState::QUOTED;
-		}
+		// } else {
+		// 	transition_array[quote][static_cast<uint8_t>(CSVState::UNQUOTED)] = CSVState::QUOTED;
+		// }
 	}
 	if (comment != '\0') {
 		transition_array[comment][static_cast<uint8_t>(CSVState::UNQUOTED)] = CSVState::COMMENT;
