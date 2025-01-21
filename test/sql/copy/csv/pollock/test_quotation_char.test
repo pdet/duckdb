@@ -11,3 +11,9 @@ columns = {'Date':'VARCHAR','TIME':'VARCHAR','Qty':'VARCHAR','PRODUCTID':'VARCHA
 ,'ProductType':'VARCHAR','ProductDescription':'VARCHAR','URL':'VARCHAR','Comments':'VARCHAR'}, auto_detect = false, RFC_4180=FALSE, null_padding = true)
 ----
 31/05/2018	15:30	3	HK-9973	$39.49	Women's Ventilated Hiking Shoes	This lightweight, ventilated version of the best-selling trail hiker features less volume in the forefoot for a more athletic fit. It's also equipped with a grippier outsole that excels in both wet and dry conditions.','https://www.example.com/product/HK_9973.html',	NULL	NULL
+
+query I
+FROM read_csv('data/csv/pollock/row_extra_quote14_col7.csv', delim = ',', escape = '"', quote='"',
+columns = {'URL':'VARCHAR'}, auto_detect = false, RFC_4180=FALSE, null_padding = true)
+----
+"https://www.example.com/product/HK_3372.html
