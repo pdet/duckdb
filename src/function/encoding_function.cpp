@@ -1339,51 +1339,68 @@ static constexpr uint8_t jis_to_utf8[25088] = {
 void DecodeShiftJisToUTF8(const char *source_buffer, idx_t &source_buffer_current_position,
                           const idx_t source_buffer_size, char *target_buffer, idx_t &target_buffer_current_position,
                           const idx_t target_buffer_size, char *remaining_bytes_buffer, idx_t &remaining_bytes_size) {
-	// ShiftJis won't give 4byte UTF8, so max. 3 byte per input char are needed
-	std::string output(3 * input.length(), ' ');
-	size_t indexInput = 0, indexOutput = 0;
-
-	while (indexInput < input.length()) {
-		char arraySection = ((uint8_t)input[indexInput]) >> 4;
-
-		size_t arrayOffset;
-		if (arraySection == 0x8)
-			arrayOffset = 0x100; // these are two-byte shiftjis
-		else if (arraySection == 0x9)
-			arrayOffset = 0x1100;
-		else if (arraySection == 0xE)
-			arrayOffset = 0x2100;
-		else
-			arrayOffset = 0; // this is one byte shiftjis
-
-		// determining real array offset
-		if (arrayOffset) {
-			arrayOffset += (((uint8_t)input[indexInput]) & 0xf) << 8;
-			indexInput++;
-			if (indexInput >= input.length())
-				break;
+	// Shift-Jis won't give 4byte UTF8, so max. 3 byte per input char are need
+	while (source_buffer_current_position < source_buffer_size) {
+		if (target_buffer_current_position == target_buffer_size) {
+			// We are done
+			return;
 		}
-		arrayOffset += (uint8_t)input[indexInput++];
-		arrayOffset <<= 1;
+		const char array_section = static_cast<char>(static_cast<uint8_t>(source_buffer[source_buffer_current_position]) >> 4);
+		size_t array_offset;
+		if (array_section == 0x8) {
+			array_offset = 0x100; // these are two-byte shift-jis
+		} else if (array_section == 0x9) {
+			array_offset = 0x1100;
+		} else if (array_section == 0xE) {
+			array_offset = 0x2100;
+		} else {
+			array_offset = 0; // this is one byte shift-jis
+		}
+		// determining real array offset
+		if (array_offset) {
+			array_offset += (static_cast<uint8_t>(source_buffer[source_buffer_current_position]) & 0xf) << 8;
+			source_buffer_current_position++;
+			if (source_buffer_current_position >= source_buffer_size) {
+				break;
+			}
+		}
+		array_offset += static_cast<uint8_t>(source_buffer[source_buffer_current_position++]);
+		array_offset <<= 1;
 
 		// unicode number is...
-		uint16_t unicodeValue = (jis_to_utf8[arrayOffset] << 8) | jis_to_utf8[arrayOffset + 1];
+		uint16_t unicode_value = (jis_to_utf8[array_offset] << 8) | jis_to_utf8[array_offset + 1];
 
 		// converting to UTF8
-		if (unicodeValue < 0x80) {
-			output[indexOutput++] = unicodeValue;
-		} else if (unicodeValue < 0x800) {
-			output[indexOutput++] = 0xC0 | (unicodeValue >> 6);
-			output[indexOutput++] = 0x80 | (unicodeValue & 0x3f);
+		if (unicode_value < 0x80) {
+			target_buffer[target_buffer_current_position++] = static_cast<char>(unicode_value);
+		} else if (unicode_value < 0x800) {
+			target_buffer[target_buffer_current_position++] = static_cast<char>(0xC0 | (unicode_value >> 6));
+			if (target_buffer_current_position == target_buffer_size) {
+				// We are done, but we have to store one byte for the next chunk!
+				remaining_bytes_buffer[0] = static_cast<char>(0x80 | (unicode_value & 0x3f));
+				remaining_bytes_size = 1;
+				return;
+			}
+			target_buffer[target_buffer_current_position++] = static_cast<char>(0x80 | (unicode_value & 0x3f));
 		} else {
-			output[indexOutput++] = 0xE0 | (unicodeValue >> 12);
-			output[indexOutput++] = 0x80 | ((unicodeValue & 0xfff) >> 6);
-			output[indexOutput++] = 0x80 | (unicodeValue & 0x3f);
+			target_buffer[target_buffer_current_position++] = static_cast<char>(0xE0 | (unicode_value >> 12));
+			if (target_buffer_current_position == target_buffer_size) {
+				// We are done, but we have to store two bytes for the next chunk!
+				remaining_bytes_buffer[0] = static_cast<char>(0x80 | ((unicode_value & 0xfff) >> 6));
+				remaining_bytes_buffer[1] = static_cast<char>(0x80 | (unicode_value & 0x3f));
+				remaining_bytes_size = 2;
+				return;
+			}
+			target_buffer[target_buffer_current_position++] = static_cast<char>(0x80 | ((unicode_value & 0xfff) >> 6));
+			if (target_buffer_current_position == target_buffer_size) {
+				// We are done, but we have to store one byte for the next chunk!
+				remaining_bytes_buffer[0] = static_cast<char>(0x80 | (unicode_value & 0x3f));
+				remaining_bytes_size = 1;
+				return;
+			}
+			target_buffer[target_buffer_current_position++] = static_cast<char>(0x80 | (unicode_value & 0x3f));
 		}
 	}
-
-	output.resize(indexOutput); // remove the unnecessary bytes
-	return output;
 }
 
 void DecodeUTF16ToUTF8(const char *source_buffer, idx_t &source_buffer_current_position, const idx_t source_buffer_size,

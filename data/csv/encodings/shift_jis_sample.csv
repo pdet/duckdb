@@ -1,0 +1,20 @@
+;メールアドレス,オプション1,オプション2,オプション3,パスワード,配信フラグ
+sample.emailonly1@example.com
+sample.emailonly2@example.com
+sample.emailonly3@example.com
+sample.fulldata3@example.com,山田太郎,A00023,正会員,PasssW000D,1
+sample.fulldata4@example.com,山田次郎,B00023,準会員,PasssW000D,1
+sample.suspend@example.com,山田三郎,A00963,休止中,,0
+
+
+;先頭が ; で始まる行はコメントとして扱われます。
+;CSVファイルの文字コードはSJIS（シフトJIS）で保存してください。ダウンロード時の文字コードもSJISになります。
+;セル内に改行が入らないようご注意ください。
+
+;フォーマット
+;A列(1列目),メールアドレス（必須）
+;B列(2列目),オプション項目１（任意）
+;C列(3列目),オプション項目２（任意）
+;D列(4列目),オプション項目３（任意）
+;E列(5列目),アーカイブ閲覧用パスワード（任意、半角英数字記号4～128文字）
+;F列(6列目),メール配信（任意、1または空欄=配信する、0=配信しない）
