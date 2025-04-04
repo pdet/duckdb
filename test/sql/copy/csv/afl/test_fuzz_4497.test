@@ -1,0 +1,77 @@
+# name: test/sql/copy/csv/afl/test_fuzz_4497.test
+# description: fuzzer generated csv files - should not raise internal exception (by failed assertion).
+# group: [afl]
+
+require json
+
+statement ok
+PRAGMA enable_verification
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_0.csv', auto_detect=false, buffer_size=42, columns={'json': 'JSON'}, delim=NULL, rejects_limit=658694493994253607, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_1.csv', auto_detect=false, buffer_size=42, columns={'jsoQ': 'JSON'}, delim=NULL, rejects_limit=658694493994253607, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_2.csv', auto_detect=false, buffer_size=42, columns={'json': 'JSON'}, delim=NULL, rejects_limit=658694493994253607, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_3.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_4.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, allow_quoted_nulls=false, null_padding=false, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_5.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_6.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_7.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_8.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_9.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_10.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_11.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_12.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_13.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/4497/case_14.csv', rejects_limit=42, buffer_size=42, columns={'json': 'JSON'}, comment=NULL, rejects_limit=658694493994253823, store_rejects=true);
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/14003623651_csv_fuzz_error_hangs/case_0.csv', compression='gzip');
+----
+
+statement maybe
+FROM read_csv('data/csv/afl/14003623651_csv_fuzz_error_hangs/case_1.csv', compression='gzip');
+----
+
