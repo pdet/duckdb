@@ -8,10 +8,10 @@ CSVBuffer::CSVBuffer(ClientContext &context, idx_t buffer_size_p, CSVFileHandle 
     : context(context), requested_size(buffer_size_p), can_seek(file_handle.CanSeek()), is_pipe(file_handle.IsPipe()) {
 	AllocateBuffer(buffer_size_p);
 	auto buffer = Ptr();
-	actual_buffer_size = file_handle.Read(buffer, buffer_size_p);
+	actual_buffer_size = file_handle.SendRead(buffer, buffer_size_p);
 	while (actual_buffer_size < buffer_size_p && !file_handle.FinishedReading()) {
 		// We keep reading until this block is full
-		actual_buffer_size += file_handle.Read(&buffer[actual_buffer_size], buffer_size_p - actual_buffer_size);
+		actual_buffer_size += file_handle.SendRead(&buffer[actual_buffer_size], buffer_size_p - actual_buffer_size);
 	}
 	global_csv_start = global_csv_current_position;
 	last_buffer = file_handle.FinishedReading();
@@ -23,10 +23,10 @@ CSVBuffer::CSVBuffer(CSVFileHandle &file_handle, ClientContext &context, idx_t b
       can_seek(file_handle.CanSeek()), is_pipe(file_handle.IsPipe()), buffer_idx(buffer_idx_p) {
 	AllocateBuffer(buffer_size);
 	auto buffer = handle.Ptr();
-	actual_buffer_size = file_handle.Read(handle.Ptr(), buffer_size);
+	actual_buffer_size = file_handle.SendRead(handle.Ptr(), buffer_size);
 	while (actual_buffer_size < buffer_size && !file_handle.FinishedReading()) {
 		// We keep reading until this block is full
-		actual_buffer_size += file_handle.Read(&buffer[actual_buffer_size], buffer_size - actual_buffer_size);
+		actual_buffer_size += file_handle.SendRead(&buffer[actual_buffer_size], buffer_size - actual_buffer_size);
 	}
 	last_buffer = file_handle.FinishedReading();
 }
