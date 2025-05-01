@@ -188,25 +188,25 @@ unique_ptr<DecimalArithmeticBindData> BindDecimalArithmetic(ClientContext &conte
 	auto bind_data = make_uniq<DecimalArithmeticBindData>();
 
 	// get the max width and scale of the input arguments
-	uint8_t max_width = 0, max_scale = 0, max_width_over_scale = 0;
+	uint32_t max_width = 0, max_scale = 0, max_width_over_scale = 0;
 	for (idx_t i = 0; i < arguments.size(); i++) {
 		if (arguments[i]->return_type.id() == LogicalTypeId::UNKNOWN) {
 			continue;
 		}
-		uint8_t width, scale;
+		uint32_t width, scale;
 		auto can_convert = arguments[i]->return_type.GetDecimalProperties(width, scale);
 		if (!can_convert) {
 			throw InternalException("Could not convert type %s to a decimal.", arguments[i]->return_type.ToString());
 		}
-		max_width = MaxValue<uint8_t>(width, max_width);
-		max_scale = MaxValue<uint8_t>(scale, max_scale);
-		max_width_over_scale = MaxValue<uint8_t>(width - scale, max_width_over_scale);
+		max_width = MaxValue<uint32_t>(width, max_width);
+		max_scale = MaxValue<uint32_t>(scale, max_scale);
+		max_width_over_scale = MaxValue<uint32_t>(width - scale, max_width_over_scale);
 	}
 	D_ASSERT(max_width > 0);
-	uint8_t required_width = MaxValue<uint8_t>(max_scale + max_width_over_scale, max_width);
+	uint32_t required_width = MaxValue<uint32_t>(max_scale + max_width_over_scale, max_width);
 	if (!IS_MODULO) {
 		// for addition/subtraction, we add 1 to the width to ensure we don't overflow
-		required_width = NumericCast<uint8_t>(required_width + 1);
+		required_width = NumericCast<uint32_t>(required_width + 1);
 		if (required_width > Decimal::MAX_WIDTH_INT64 && max_width <= Decimal::MAX_WIDTH_INT64) {
 			// we don't automatically promote past the hugeint boundary to avoid the large hugeint performance penalty
 			bind_data->check_overflow = true;
@@ -225,7 +225,7 @@ unique_ptr<DecimalArithmeticBindData> BindDecimalArithmetic(ClientContext &conte
 		// first check if the cast is necessary
 		// if the argument has a matching scale and internal type as the output type, no casting is necessary
 		auto &argument_type = arguments[i]->return_type;
-		uint8_t width, scale;
+		uint32_t width, scale;
 		argument_type.GetDecimalProperties(width, scale);
 		if (scale == DecimalType::GetScale(result_type) && argument_type.InternalType() == result_type.InternalType()) {
 			bound_function.arguments[i] = argument_type;
@@ -796,13 +796,13 @@ unique_ptr<FunctionData> BindDecimalMultiply(ClientContext &context, ScalarFunct
 
 	auto bind_data = make_uniq<DecimalArithmeticBindData>();
 
-	uint8_t result_width = 0, result_scale = 0;
-	uint8_t max_width = 0;
+	uint32_t result_width = 0, result_scale = 0;
+	uint32_t max_width = 0;
 	for (idx_t i = 0; i < arguments.size(); i++) {
 		if (arguments[i]->return_type.id() == LogicalTypeId::UNKNOWN) {
 			continue;
 		}
-		uint8_t width, scale;
+		uint32_t width, scale;
 		auto can_convert = arguments[i]->return_type.GetDecimalProperties(width, scale);
 		if (!can_convert) {
 			throw InternalException("Could not convert type %s to a decimal?", arguments[i]->return_type.ToString());
@@ -838,7 +838,7 @@ unique_ptr<FunctionData> BindDecimalMultiply(ClientContext &context, ScalarFunct
 		if (argument_type.InternalType() == result_type.InternalType()) {
 			bound_function.arguments[i] = argument_type;
 		} else {
-			uint8_t width, scale;
+			uint32_t width, scale;
 			if (!argument_type.GetDecimalProperties(width, scale)) {
 				scale = 0;
 			}

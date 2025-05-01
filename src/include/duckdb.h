@@ -334,8 +334,8 @@ typedef struct {
 
 //! Decimals are composed of a width and a scale, and are stored in a hugeint
 typedef struct {
-	uint8_t width;
-	uint8_t scale;
+	uint32_t width;
+	uint32_t scale;
 	duckdb_hugeint value;
 } duckdb_decimal;
 

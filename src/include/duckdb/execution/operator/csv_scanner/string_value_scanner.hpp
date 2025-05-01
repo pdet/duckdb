@@ -166,8 +166,8 @@ struct ParseTypeInfo {
 	bool validate_utf8;
 	LogicalTypeId type_id;
 	PhysicalType internal_type;
-	uint8_t scale;
-	uint8_t width;
+	uint32_t scale;
+	uint32_t width;
 };
 
 class StringValueResult : public ScannerResult {

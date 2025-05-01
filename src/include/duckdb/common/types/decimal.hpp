@@ -17,32 +17,38 @@ struct DecimalWidth {};
 
 template <>
 struct DecimalWidth<int16_t> {
-	static constexpr uint8_t max = 4;
+	static constexpr uint32_t max = 4;
 };
 
 template <>
 struct DecimalWidth<int32_t> {
-	static constexpr uint8_t max = 9;
+	static constexpr uint32_t max = 9;
 };
 
 template <>
 struct DecimalWidth<int64_t> {
-	static constexpr uint8_t max = 18;
+	static constexpr uint32_t max = 18;
 };
 
 template <>
 struct DecimalWidth<hugeint_t> {
-	static constexpr uint8_t max = 38;
+	static constexpr uint32_t max = 38;
+};
+
+template <>
+struct DecimalWidth<string_t> {
+	static constexpr uint32_t max = 1262612;
 };
 
 //! The Decimal class is a static class that holds helper functions for the Decimal type
 class Decimal {
 public:
-	static constexpr uint8_t MAX_WIDTH_INT16 = DecimalWidth<int16_t>::max;
-	static constexpr uint8_t MAX_WIDTH_INT32 = DecimalWidth<int32_t>::max;
-	static constexpr uint8_t MAX_WIDTH_INT64 = DecimalWidth<int64_t>::max;
-	static constexpr uint8_t MAX_WIDTH_INT128 = DecimalWidth<hugeint_t>::max;
-	static constexpr uint8_t MAX_WIDTH_DECIMAL = MAX_WIDTH_INT128;
+	static constexpr uint32_t MAX_WIDTH_INT16 = DecimalWidth<int16_t>::max;
+	static constexpr uint32_t MAX_WIDTH_INT32 = DecimalWidth<int32_t>::max;
+	static constexpr uint32_t MAX_WIDTH_INT64 = DecimalWidth<int64_t>::max;
+	static constexpr uint32_t MAX_WIDTH_INT128 = DecimalWidth<hugeint_t>::max;
+	static constexpr uint32_t MAX_WIDTH_VARINT = DecimalWidth<string_t>::max;
+	static constexpr uint32_t MAX_WIDTH_DECIMAL = MAX_WIDTH_VARINT;
 
 public:
 	static string ToString(int16_t value, uint8_t width, uint8_t scale);

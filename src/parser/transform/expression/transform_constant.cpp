@@ -66,8 +66,8 @@ unique_ptr<ConstantExpression> Transformer::TransformValue(duckdb_libpgquery::PG
 		if (try_cast_as_decimal && decimal_position.IsValid() &&
 		    str_val.GetSize() - num_underscores < Decimal::MAX_WIDTH_DECIMAL + decimal_offset) {
 			// figure out the width/scale based on the decimal position
-			auto width = NumericCast<uint8_t>(str_val.GetSize() - 1 - num_underscores);
-			auto scale = NumericCast<uint8_t>(width - decimal_position.GetIndex() + num_integer_underscores);
+			auto width = NumericCast<uint32_t>(str_val.GetSize() - 1 - num_underscores);
+			auto scale = NumericCast<uint32_t>(width - decimal_position.GetIndex() + num_integer_underscores);
 			if (val.val.str[0] == '-') {
 				width--;
 			}

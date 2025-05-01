@@ -1,0 +1,9 @@
+# name: test/sql/types/varint/test_decimal_varint.test
+# description: Test decimals using varint as a physical type
+# group: [varint]
+
+statement ok
+PRAGMA enable_verification
+
+statement ok
+create table t (a decimal (100,10));

@@ -232,7 +232,7 @@ void SetArrowFormat(DuckDBArrowSchemaHolder &root_holder, ArrowSchema &child, co
 		child.format = "tin";
 		break;
 	case LogicalTypeId::DECIMAL: {
-		uint8_t width, scale, bit_width;
+		uint32_t width, scale, bit_width;
 		switch (type.InternalType()) {
 		case PhysicalType::INT16:
 		case PhysicalType::INT32:
