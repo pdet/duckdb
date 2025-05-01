@@ -150,7 +150,7 @@ bool ExtraTypeInfo::EqualsInternal(ExtraTypeInfo *other_p) const {
 DecimalTypeInfo::DecimalTypeInfo() : ExtraTypeInfo(ExtraTypeInfoType::DECIMAL_TYPE_INFO) {
 }
 
-DecimalTypeInfo::DecimalTypeInfo(uint8_t width_p, uint8_t scale_p)
+DecimalTypeInfo::DecimalTypeInfo(uint32_t width_p, uint32_t scale_p)
     : ExtraTypeInfo(ExtraTypeInfoType::DECIMAL_TYPE_INFO), width(width_p), scale(scale_p) {
 	D_ASSERT(width_p >= scale_p);
 }

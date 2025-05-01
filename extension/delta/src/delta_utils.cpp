@@ -34,7 +34,7 @@ unique_ptr<SchemaVisitor::FieldList> SchemaVisitor::VisitSnapshotSchema(ffi::Sha
 }
 
 void SchemaVisitor::VisitDecimal(SchemaVisitor *state, uintptr_t sibling_list_id, ffi::KernelStringSlice name,
-                                 uint8_t precision, uint8_t scale) {
+                                 uint8_t precision, uint32_t scale) {
 	state->AppendToList(sibling_list_id, name, LogicalType::DECIMAL(precision, scale));
 }
 

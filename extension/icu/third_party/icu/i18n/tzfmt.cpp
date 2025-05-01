@@ -192,7 +192,7 @@ public:
     virtual ~GMTOffsetField();
 
     static GMTOffsetField* createText(const UnicodeString& text, UErrorCode& status);
-    static GMTOffsetField* createTimeField(FieldType type, uint8_t width, UErrorCode& status);
+    static GMTOffsetField* createTimeField(FieldType type, uint32_t width, UErrorCode& status);
     static UBool isValid(FieldType type, int32_t width);
     static FieldType getTypeByLetter(UChar ch);
 
@@ -244,7 +244,7 @@ GMTOffsetField::createText(const UnicodeString& text, UErrorCode& status) {
 }
 
 GMTOffsetField*
-GMTOffsetField::createTimeField(FieldType type, uint8_t width, UErrorCode& status) {
+GMTOffsetField::createTimeField(FieldType type, uint32_t width, UErrorCode& status) {
     U_ASSERT(type != TEXT);
     if (U_FAILURE(status)) {
         return NULL;

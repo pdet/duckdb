@@ -26,7 +26,7 @@ double duckdb_uhugeint_to_double(duckdb_uhugeint val) {
 	return Uhugeint::Cast<double>(internal);
 }
 
-static duckdb_decimal to_decimal_cast(double val, uint8_t width, uint8_t scale) {
+static duckdb_decimal to_decimal_cast(double val, uint32_t width, uint32_t scale) {
 	if (width > duckdb::Decimal::MAX_WIDTH_INT64) {
 		return duckdb::TryCastToDecimalCInternal<double, duckdb::ToCDecimalCastWrapper<hugeint_t>>(val, width, scale);
 	}
@@ -39,7 +39,7 @@ static duckdb_decimal to_decimal_cast(double val, uint8_t width, uint8_t scale) 
 	return duckdb::TryCastToDecimalCInternal<double, duckdb::ToCDecimalCastWrapper<int16_t>>(val, width, scale);
 }
 
-duckdb_decimal duckdb_double_to_decimal(double val, uint8_t width, uint8_t scale) {
+duckdb_decimal duckdb_double_to_decimal(double val, uint32_t width, uint32_t scale) {
 	if (scale > width || width > duckdb::Decimal::MAX_WIDTH_INT128) {
 		return duckdb::FetchDefaultValue::Operation<duckdb_decimal>();
 	}

@@ -110,14 +110,14 @@ shared_ptr<ExtraTypeInfo> ArrayTypeInfo::Deserialize(Deserializer &deserializer)
 
 void DecimalTypeInfo::Serialize(Serializer &serializer) const {
 	ExtraTypeInfo::Serialize(serializer);
-	serializer.WritePropertyWithDefault<uint8_t>(200, "width", width);
-	serializer.WritePropertyWithDefault<uint8_t>(201, "scale", scale);
+	serializer.WritePropertyWithDefault<uint32_t>(200, "width", width);
+	serializer.WritePropertyWithDefault<uint32_t>(201, "scale", scale);
 }
 
 shared_ptr<ExtraTypeInfo> DecimalTypeInfo::Deserialize(Deserializer &deserializer) {
 	auto result = duckdb::shared_ptr<DecimalTypeInfo>(new DecimalTypeInfo());
-	deserializer.ReadPropertyWithDefault<uint8_t>(200, "width", result->width);
-	deserializer.ReadPropertyWithDefault<uint8_t>(201, "scale", result->scale);
+	deserializer.ReadPropertyWithDefault<uint32_t>(200, "width", result->width);
+	deserializer.ReadPropertyWithDefault<uint32_t>(201, "scale", result->scale);
 	return std::move(result);
 }
 

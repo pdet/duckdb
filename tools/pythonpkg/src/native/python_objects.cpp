@@ -145,7 +145,7 @@ static bool WidthFitsInDecimal(int32_t width) {
 }
 
 template <class OP>
-Value PyDecimalCastSwitch(PyDecimal &decimal, uint8_t width, uint8_t scale) {
+Value PyDecimalCastSwitch(PyDecimal &decimal, uint32_t width, uint32_t scale) {
 	if (width > DecimalWidth<int64_t>::max) {
 		return OP::template Operation<hugeint_t>(decimal.signed_value, decimal.digits, width, scale);
 	}
@@ -176,7 +176,7 @@ Value PyDecimal::ToDuckValue() {
 	}
 	switch (exponent_type) {
 	case PyDecimalExponentType::EXPONENT_SCALE: {
-		uint8_t scale = exponent_value;
+		uint32_t scale = exponent_value;
 		D_ASSERT(WidthFitsInDecimal(width));
 		if (scale > width) {
 			// Values like '0.001'
@@ -188,7 +188,7 @@ Value PyDecimal::ToDuckValue() {
 		return PyDecimalCastSwitch<PyDecimalScaleConverter>(*this, width, scale);
 	}
 	case PyDecimalExponentType::EXPONENT_POWER: {
-		uint8_t scale = exponent_value;
+		uint32_t scale = exponent_value;
 		width += scale;
 		if (!WidthFitsInDecimal(width)) {
 			return CastToDouble(obj);

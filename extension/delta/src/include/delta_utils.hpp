@@ -33,7 +33,7 @@ private:
 	}
 
 	static void VisitDecimal(SchemaVisitor *state, uintptr_t sibling_list_id, ffi::KernelStringSlice name,
-	                         uint8_t precision, uint8_t scale);
+	                         uint8_t precision, uint32_t scale);
 	static uintptr_t MakeFieldList(SchemaVisitor *state, uintptr_t capacity_hint);
 	static void VisitStruct(SchemaVisitor *state, uintptr_t sibling_list_id, ffi::KernelStringSlice name,
 	                        uintptr_t child_list_id);

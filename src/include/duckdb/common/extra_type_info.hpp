@@ -67,10 +67,10 @@ protected:
 };
 
 struct DecimalTypeInfo : public ExtraTypeInfo {
-	DecimalTypeInfo(uint8_t width_p, uint8_t scale_p);
+	DecimalTypeInfo(uint32_t width_p, uint32_t scale_p);
 
-	uint8_t width;
-	uint8_t scale;
+	uint32_t width;
+	uint32_t scale;
 
 public:
 	void Serialize(Serializer &serializer) const override;

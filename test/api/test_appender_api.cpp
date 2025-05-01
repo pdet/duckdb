@@ -7,7 +7,7 @@ using namespace duckdb;
 using namespace std;
 
 template <class SRC>
-void TestAppendingSingleDecimalValue(SRC value, Value expected_result, uint8_t width, uint8_t scale) {
+void TestAppendingSingleDecimalValue(SRC value, Value expected_result, uint32_t width, uint32_t scale) {
 	auto db = make_uniq<DuckDB>(nullptr);
 	auto conn = make_uniq<Connection>(*db);
 	duckdb::unique_ptr<Appender> appender;

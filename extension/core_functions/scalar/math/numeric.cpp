@@ -356,7 +356,7 @@ unique_ptr<FunctionData> BindGenericRoundFunctionDecimal(ClientContext &context,
 
 struct CeilDecimalOperator {
 	template <class T, class POWERS_OF_TEN_CLASS>
-	static void Operation(DataChunk &input, uint8_t scale, Vector &result) {
+	static void Operation(DataChunk &input, uint32_t scale, Vector &result) {
 		T power_of_ten = UnsafeNumericCast<T>(POWERS_OF_TEN_CLASS::POWERS_OF_TEN[scale]);
 		UnaryExecutor::Execute<T, T>(input.data[0], result, input.size(), [&](T input) {
 			if (input <= 0) {
@@ -409,7 +409,7 @@ struct FloorOperator {
 
 struct FloorDecimalOperator {
 	template <class T, class POWERS_OF_TEN_CLASS>
-	static void Operation(DataChunk &input, uint8_t scale, Vector &result) {
+	static void Operation(DataChunk &input, uint32_t scale, Vector &result) {
 		T power_of_ten = UnsafeNumericCast<T>(POWERS_OF_TEN_CLASS::POWERS_OF_TEN[scale]);
 		UnaryExecutor::Execute<T, T>(input.data[0], result, input.size(), [&](T input) {
 			if (input < 0) {
@@ -463,7 +463,7 @@ struct TruncOperator {
 
 struct TruncDecimalOperator {
 	template <class T, class POWERS_OF_TEN_CLASS>
-	static void Operation(DataChunk &input, uint8_t scale, Vector &result) {
+	static void Operation(DataChunk &input, uint32_t scale, Vector &result) {
 		T power_of_ten = UnsafeNumericCast<T>(POWERS_OF_TEN_CLASS::POWERS_OF_TEN[scale]);
 		UnaryExecutor::Execute<T, T>(input.data[0], result, input.size(), [&](T input) {
 			//	Always floor
@@ -545,7 +545,7 @@ struct RoundOperator {
 
 struct RoundDecimalOperator {
 	template <class T, class POWERS_OF_TEN_CLASS>
-	static void Operation(DataChunk &input, uint8_t scale, Vector &result) {
+	static void Operation(DataChunk &input, uint32_t scale, Vector &result) {
 		T power_of_ten = UnsafeNumericCast<T>(POWERS_OF_TEN_CLASS::POWERS_OF_TEN[scale]);
 		T addition = power_of_ten / 2;
 		// regular round rounds towards the nearest number

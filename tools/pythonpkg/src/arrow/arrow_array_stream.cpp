@@ -299,8 +299,8 @@ py::object GetScalar(Value &constant, const string &timezone_config, const Arrow
 			throw NotImplementedException("Unsupported precision for Arrow Decimal Type.");
 		}
 
-		uint8_t width;
-		uint8_t scale;
+		uint32_t width;
+		uint32_t scale;
 		constant.type().GetDecimalProperties(width, scale);
 		// pyarrow only allows 'decimal.Decimal' to be used to construct decimal scalars such as 0.05
 		auto val = import_cache.decimal.Decimal()(constant.ToString());

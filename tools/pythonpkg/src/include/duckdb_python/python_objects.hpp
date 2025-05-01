@@ -59,7 +59,7 @@ struct PyDecimal {
 
 	struct PyDecimalScaleConverter {
 		template <typename T, typename = std::enable_if<std::numeric_limits<T>::is_integer, T>>
-		static Value Operation(bool signed_value, vector<uint8_t> &digits, uint8_t width, uint8_t scale) {
+		static Value Operation(bool signed_value, vector<uint8_t> &digits, uint32_t width, uint32_t scale) {
 			T value = 0;
 			for (auto it = digits.begin(); it != digits.end(); it++) {
 				value = value * 10 + *it;
@@ -73,7 +73,7 @@ struct PyDecimal {
 
 	struct PyDecimalPowerConverter {
 		template <typename T, typename = std::enable_if<std::numeric_limits<T>::is_integer, T>>
-		static Value Operation(bool signed_value, vector<uint8_t> &digits, uint8_t width, uint8_t scale) {
+		static Value Operation(bool signed_value, vector<uint8_t> &digits, uint32_t width, uint32_t scale) {
 			T value = 0;
 			for (auto &digit : digits) {
 				value = value * 10 + digit;

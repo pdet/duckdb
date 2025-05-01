@@ -221,7 +221,7 @@ static bool TransformNumerical(yyjson_val *vals[], Vector &result, const idx_t c
 }
 
 template <class T>
-static bool TransformDecimal(yyjson_val *vals[], Vector &result, const idx_t count, uint8_t width, uint8_t scale,
+static bool TransformDecimal(yyjson_val *vals[], Vector &result, const idx_t count, uint32_t width, uint32_t scale,
                              JSONTransformOptions &options) {
 	auto data = FlatVector::GetData<T>(result);
 	auto &validity = FlatVector::Validity(result);

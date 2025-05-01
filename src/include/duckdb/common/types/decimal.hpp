@@ -51,9 +51,9 @@ public:
 	static constexpr uint32_t MAX_WIDTH_DECIMAL = MAX_WIDTH_VARINT;
 
 public:
-	static string ToString(int16_t value, uint8_t width, uint8_t scale);
-	static string ToString(int32_t value, uint8_t width, uint8_t scale);
-	static string ToString(int64_t value, uint8_t width, uint8_t scale);
-	static string ToString(hugeint_t value, uint8_t width, uint8_t scale);
+	static string ToString(int16_t value, uint32_t width, uint32_t scale);
+	static string ToString(int32_t value, uint32_t width, uint32_t scale);
+	static string ToString(int64_t value, uint32_t width, uint32_t scale);
+	static string ToString(hugeint_t value, uint32_t width, uint32_t scale);
 };
 } // namespace duckdb

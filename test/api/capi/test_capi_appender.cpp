@@ -47,7 +47,7 @@ void AssertDecimalValueMatches(duckdb::unique_ptr<CAPIResult> &result, duckdb_de
 }
 
 template <class TYPE, duckdb_state APPEND_FUNC(duckdb_appender, TYPE)>
-void TestAppendingSingleDecimalValue(TYPE value, duckdb_decimal expected, uint8_t width, uint8_t scale) {
+void TestAppendingSingleDecimalValue(TYPE value, duckdb_decimal expected, uint32_t width, uint32_t scale) {
 	// Set the width and scale of the expected value
 	expected.width = width;
 	expected.scale = scale;

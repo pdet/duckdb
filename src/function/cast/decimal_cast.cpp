@@ -37,7 +37,7 @@ struct DecimalScaleInput {
 	    : result(result_p), vector_cast_data(result, parameters), factor(factor_p) {
 	}
 	DecimalScaleInput(Vector &result_p, LIMIT_TYPE limit_p, FACTOR_TYPE factor_p, CastParameters &parameters,
-	                  uint8_t source_width_p, uint8_t source_scale_p)
+	                  uint32_t source_width_p, uint32_t source_scale_p)
 	    : result(result_p), vector_cast_data(result, parameters), limit(limit_p), factor(factor_p),
 	      source_width(source_width_p), source_scale(source_scale_p) {
 	}
@@ -46,8 +46,8 @@ struct DecimalScaleInput {
 	VectorTryCastData vector_cast_data;
 	LIMIT_TYPE limit;
 	FACTOR_TYPE factor;
-	uint8_t source_width;
-	uint8_t source_scale;
+	uint32_t source_width;
+	uint32_t source_scale;
 };
 
 struct DecimalScaleUpOperator {
@@ -228,13 +228,13 @@ static bool DecimalDecimalCastSwitch(Vector &source, Vector &result, idx_t count
 }
 
 struct DecimalCastInput {
-	DecimalCastInput(Vector &result_p, uint8_t width_p, uint8_t scale_p)
+	DecimalCastInput(Vector &result_p, uint32_t width_p, uint32_t scale_p)
 	    : result(result_p), width(width_p), scale(scale_p) {
 	}
 
 	Vector &result;
-	uint8_t width;
-	uint8_t scale;
+	uint32_t width;
+	uint32_t scale;
 };
 
 struct StringCastFromDecimalOperator {

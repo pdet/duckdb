@@ -599,7 +599,7 @@ Value Value::DECIMAL(int64_t value, uint32_t width, uint32_t scale) {
 		result.value_.hugeint = value;
 		break;
 	default:
-		result.value_info_ = make_shared_ptr<StringValueInfo>(std::move(value));
+		result.value_info_ = make_shared_ptr<StringValueInfo>(to_string(value));
 		break;
 	}
 	result.type_.Verify();
@@ -619,7 +619,7 @@ Value Value::DECIMAL(string_t value, uint32_t width, uint32_t scale) {
 	D_ASSERT(0);
 	D_ASSERT(width >= Decimal::MAX_WIDTH_INT128 && width <= Decimal::MAX_WIDTH_VARINT);
 	Value result(LogicalType::DECIMAL(width, scale));
-	result.value_info_ = make_shared_ptr<StringValueInfo>(std::move(value));
+	result.value_info_ = make_shared_ptr<StringValueInfo>(value.GetString());
 	result.is_null = false;
 	return result;
 }

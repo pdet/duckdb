@@ -23,7 +23,7 @@ private:
 	static const uint64_t BITPACK_MASKS_SIZE;
 	static const uint8_t BITPACK_DLEN;
 
-	static void CheckWidth(const uint8_t width) {
+	static void CheckWidth(const uint32_t width) {
 		if (width >= BITPACK_MASKS_SIZE) {
 			throw InvalidInputException("The width (%d) of the bitpacked data exceeds the supported max width (%d), "
 			                            "the file might be corrupted.",

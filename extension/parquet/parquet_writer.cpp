@@ -602,11 +602,11 @@ struct NumericStatsUnifier : public BaseNumericStatsUnifier<T> {
 
 template <class T>
 struct DecimalStatsUnifier : public NumericStatsUnifier<T> {
-	DecimalStatsUnifier(uint8_t width, uint8_t scale) : width(width), scale(scale) {
+	DecimalStatsUnifier(uint32_t width, uint32_t scale) : width(width), scale(scale) {
 	}
 
-	uint8_t width;
-	uint8_t scale;
+	uint32_t width;
+	uint32_t scale;
 
 	string StatsToString(const string &stats) override {
 		if (stats.empty()) {

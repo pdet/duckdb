@@ -133,7 +133,7 @@ duckdb_logical_type duckdb_create_map_type(duckdb_logical_type key_type, duckdb_
 	return reinterpret_cast<duckdb_logical_type>(mtype);
 }
 
-duckdb_logical_type duckdb_create_decimal_type(uint8_t width, uint8_t scale) {
+duckdb_logical_type duckdb_create_decimal_type(uint32_t width, uint32_t scale) {
 	return reinterpret_cast<duckdb_logical_type>(new duckdb::LogicalType(duckdb::LogicalType::DECIMAL(width, scale)));
 }
 
@@ -153,7 +153,7 @@ void duckdb_destroy_logical_type(duckdb_logical_type *type) {
 	}
 }
 
-uint8_t duckdb_decimal_width(duckdb_logical_type type) {
+uint32_t duckdb_decimal_width(duckdb_logical_type type) {
 	if (!AssertLogicalTypeId(type, duckdb::LogicalTypeId::DECIMAL)) {
 		return 0;
 	}
@@ -161,7 +161,7 @@ uint8_t duckdb_decimal_width(duckdb_logical_type type) {
 	return duckdb::DecimalType::GetWidth(logical_type);
 }
 
-uint8_t duckdb_decimal_scale(duckdb_logical_type type) {
+uint32_t duckdb_decimal_scale(duckdb_logical_type type) {
 	if (!AssertLogicalTypeId(type, duckdb::LogicalTypeId::DECIMAL)) {
 		return 0;
 	}
