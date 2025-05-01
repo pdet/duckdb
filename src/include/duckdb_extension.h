@@ -254,8 +254,8 @@ typedef struct {
 	duckdb_logical_type (*duckdb_create_enum_type)(const char **member_names, idx_t member_count);
 	duckdb_logical_type (*duckdb_create_decimal_type)(uint8_t width, uint8_t scale);
 	duckdb_type (*duckdb_get_type_id)(duckdb_logical_type type);
-	uint8_t (*duckdb_decimal_width)(duckdb_logical_type type);
-	uint8_t (*duckdb_decimal_scale)(duckdb_logical_type type);
+	uint32_t (*duckdb_decimal_width)(duckdb_logical_type type);
+	uint32_t (*duckdb_decimal_scale)(duckdb_logical_type type);
 	duckdb_type (*duckdb_decimal_internal_type)(duckdb_logical_type type);
 	duckdb_type (*duckdb_enum_internal_type)(duckdb_logical_type type);
 	uint32_t (*duckdb_enum_dictionary_size)(duckdb_logical_type type);

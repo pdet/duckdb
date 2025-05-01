@@ -52,7 +52,7 @@ typedef struct {
 	duckdb_hugeint (*duckdb_double_to_hugeint)(double val);
 	double (*duckdb_uhugeint_to_double)(duckdb_uhugeint val);
 	duckdb_uhugeint (*duckdb_double_to_uhugeint)(double val);
-	duckdb_decimal (*duckdb_double_to_decimal)(double val, uint8_t width, uint8_t scale);
+	duckdb_decimal (*duckdb_double_to_decimal)(double val, uint32_t width, uint32_t scale);
 	double (*duckdb_decimal_to_double)(duckdb_decimal val);
 	duckdb_state (*duckdb_prepare)(duckdb_connection connection, const char *query,
 	                               duckdb_prepared_statement *out_prepared_statement);
@@ -189,10 +189,10 @@ typedef struct {
 	duckdb_logical_type (*duckdb_create_struct_type)(duckdb_logical_type *member_types, const char **member_names,
 	                                                 idx_t member_count);
 	duckdb_logical_type (*duckdb_create_enum_type)(const char **member_names, idx_t member_count);
-	duckdb_logical_type (*duckdb_create_decimal_type)(uint8_t width, uint8_t scale);
+	duckdb_logical_type (*duckdb_create_decimal_type)(uint32_t width, uint32_t scale);
 	duckdb_type (*duckdb_get_type_id)(duckdb_logical_type type);
-	uint8_t (*duckdb_decimal_width)(duckdb_logical_type type);
-	uint8_t (*duckdb_decimal_scale)(duckdb_logical_type type);
+	uint32_t (*duckdb_decimal_width)(duckdb_logical_type type);
+	uint32_t (*duckdb_decimal_scale)(duckdb_logical_type type);
 	duckdb_type (*duckdb_decimal_internal_type)(duckdb_logical_type type);
 	duckdb_type (*duckdb_enum_internal_type)(duckdb_logical_type type);
 	uint32_t (*duckdb_enum_dictionary_size)(duckdb_logical_type type);

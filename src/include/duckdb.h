@@ -1495,7 +1495,7 @@ If the conversion fails because the double value is too big, or the width/scale 
 * @param val The double value.
 * @return The converted `duckdb_decimal` element.
 */
-DUCKDB_C_API duckdb_decimal duckdb_double_to_decimal(double val, uint8_t width, uint8_t scale);
+DUCKDB_C_API duckdb_decimal duckdb_double_to_decimal(double val, uint32_t width, uint32_t scale);
 
 /*!
 Converts a duckdb_decimal object (as obtained from a `DUCKDB_TYPE_DECIMAL` column) into a double.
@@ -2683,7 +2683,7 @@ The resulting type should be destroyed with `duckdb_destroy_logical_type`.
 * @param scale The scale of the decimal type
 * @return The logical type.
 */
-DUCKDB_C_API duckdb_logical_type duckdb_create_decimal_type(uint8_t width, uint8_t scale);
+DUCKDB_C_API duckdb_logical_type duckdb_create_decimal_type(uint32_t width, uint32_t scale);
 
 /*!
 Retrieves the enum `duckdb_type` of a `duckdb_logical_type`.
@@ -2699,7 +2699,7 @@ Retrieves the width of a decimal type.
 * @param type The logical type object
 * @return The width of the decimal type
 */
-DUCKDB_C_API uint8_t duckdb_decimal_width(duckdb_logical_type type);
+DUCKDB_C_API uint32_t duckdb_decimal_width(duckdb_logical_type type);
 
 /*!
 Retrieves the scale of a decimal type.
@@ -2707,7 +2707,7 @@ Retrieves the scale of a decimal type.
 * @param type The logical type object
 * @return The scale of the decimal type
 */
-DUCKDB_C_API uint8_t duckdb_decimal_scale(duckdb_logical_type type);
+DUCKDB_C_API uint32_t duckdb_decimal_scale(duckdb_logical_type type);
 
 /*!
 Retrieves the internal storage type of a decimal type.
