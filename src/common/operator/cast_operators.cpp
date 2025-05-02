@@ -1869,6 +1869,12 @@ bool TryCastToDecimal::Operation(string_t input, hugeint_t &result, CastParamete
 }
 
 template <>
+bool TryCastToDecimal::Operation(string_t input, string_t &result, CastParameters &parameters, uint32_t width,
+                                 uint32_t scale) {
+	return TryDecimalStringCast<string_t>(input, result, parameters, width, scale);
+}
+
+template <>
 bool TryCastToDecimalCommaSeparated::Operation(string_t input, int16_t &result, CastParameters &parameters,
                                                uint32_t width, uint32_t scale) {
 	return TryDecimalStringCast<int16_t, ','>(input, result, parameters, width, scale);

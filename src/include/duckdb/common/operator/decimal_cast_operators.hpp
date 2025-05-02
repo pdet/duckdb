@@ -53,7 +53,6 @@ DUCKDB_API bool TryCastToDecimal::Operation(bool input, int64_t &result, CastPar
 template <>
 DUCKDB_API bool TryCastToDecimal::Operation(bool input, hugeint_t &result, CastParameters &parameters, uint32_t width,
                                             uint32_t scale);
-
 template <>
 bool TryCastFromDecimal::Operation(int16_t input, bool &result, CastParameters &parameters, uint32_t width,
                                    uint32_t scale);
@@ -66,6 +65,7 @@ bool TryCastFromDecimal::Operation(int64_t input, bool &result, CastParameters &
 template <>
 bool TryCastFromDecimal::Operation(hugeint_t input, bool &result, CastParameters &parameters, uint32_t width,
                                    uint32_t scale);
+
 
 //===--------------------------------------------------------------------===//
 // Cast Decimal <-> int8_t
@@ -431,6 +431,9 @@ template <>
 DUCKDB_API bool TryCastToDecimal::Operation(string_t input, hugeint_t &result, CastParameters &parameters,
                                             uint32_t width, uint32_t scale);
 template <>
+DUCKDB_API bool TryCastToDecimal::Operation(string_t input, hugeint_t &result, CastParameters &parameters,
+                                            uint32_t width, uint32_t scale);
+template <>
 DUCKDB_API bool TryCastToDecimalCommaSeparated::Operation(string_t input, int16_t &result, CastParameters &parameters,
                                                           uint32_t width, uint32_t scale);
 template <>
@@ -442,7 +445,9 @@ DUCKDB_API bool TryCastToDecimalCommaSeparated::Operation(string_t input, int64_
 template <>
 DUCKDB_API bool TryCastToDecimalCommaSeparated::Operation(string_t input, hugeint_t &result, CastParameters &parameters,
                                                           uint32_t width, uint32_t scale);
-
+template <>
+DUCKDB_API bool TryCastToDecimalCommaSeparated::Operation(string_t input, string_t &result, CastParameters &parameters,
+                                                          uint32_t width, uint32_t scale);
 struct StringCastFromDecimal {
 	template <class SRC>
 	static inline string_t Operation(SRC input, uint32_t width, uint32_t scale, Vector &result) {
@@ -680,6 +685,32 @@ bool TryDecimalStringCast(const char *string_ptr, idx_t string_size, T &result, 
 	state.should_round = false;
 	state.limit = UnsafeNumericCast<T>(DecimalCastTraits<T>::POWERS_OF_TEN_CLASS::POWERS_OF_TEN[width]);
 	if (!TryIntegerCast<DecimalCastData<T>, true, true, DecimalCastOperation, false, decimal_separator>(
+	        string_ptr, string_size, state, false)) {
+		string_t value(string_ptr, (uint32_t)string_size);
+		string error = StringUtil::Format("Could not convert string \"%s\" to DECIMAL(%d,%d)", value.GetString(),
+		                                  (int)width, (int)scale);
+		HandleCastError::AssignError(error, parameters);
+		return false;
+	}
+	result = state.result;
+	return true;
+}
+
+template < char decimal_separator = '.'>
+bool TryDecimalStringCast(const char *string_ptr, idx_t string_size, string_t &result, CastParameters &parameters,
+                          uint32_t width, uint32_t scale) {
+	DecimalCastData<string_t> state;
+	state.result = 0;
+	state.width = width;
+	state.scale = scale;
+	state.digit_count = 0;
+	state.decimal_count = 0;
+	state.excessive_decimals = 0;
+	state.exponent_type = ExponentType::NONE;
+	state.round_set = false;
+	state.should_round = false;
+	// state.limit = UnsafeNumericCast<string_t>(DecimalCastTraits<string_t>::POWERS_OF_TEN_CLASS::POWERS_OF_TEN[width]);
+	if (!TryIntegerCast<DecimalCastData<string_t>, true, true, DecimalCastOperation, false, decimal_separator>(
 	        string_ptr, string_size, state, false)) {
 		string_t value(string_ptr, (uint32_t)string_size);
 		string error = StringUtil::Format("Could not convert string \"%s\" to DECIMAL(%d,%d)", value.GetString(),

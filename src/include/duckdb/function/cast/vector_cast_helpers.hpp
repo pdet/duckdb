@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "duckdb/common/types/varint.hpp"
+
 #include "duckdb/function/cast/default_casts.hpp"
 #include "duckdb/common/vector_operations/unary_executor.hpp"
 #include "duckdb/common/vector_operations/general_cast.hpp"
@@ -18,7 +20,7 @@
 
 namespace duckdb {
 
-template <class OP>
+	template <class OP>
 struct VectorStringCastOperator {
 	template <class INPUT_TYPE, class RESULT_TYPE>
 	static RESULT_TYPE Operation(INPUT_TYPE input, ValidityMask &mask, idx_t idx, void *dataptr) {
@@ -176,6 +178,9 @@ struct VectorCastHelpers {
 			return TemplatedDecimalCast<T, int64_t, TryCastToDecimal>(source, result, count, parameters, width, scale);
 		case PhysicalType::INT128:
 			return TemplatedDecimalCast<T, hugeint_t, TryCastToDecimal>(source, result, count, parameters, width,
+			                                                            scale);
+		case PhysicalType::VARCHAR:
+			return TemplatedDecimalCast<T, string_t, TryCastToDecimal>(source, result, count, parameters, width,
 			                                                            scale);
 		default:
 			throw InternalException("Unimplemented internal type for decimal");

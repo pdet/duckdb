@@ -7,3 +7,6 @@ PRAGMA enable_verification
 
 statement ok
 create table t (a decimal (100,10));
+
+statement ok
+insert into t values ('10000000.10')
