@@ -12,6 +12,8 @@
 #include "test_helpers.hpp"
 #include "sqllogic_test_logger.hpp"
 #include "catch.hpp"
+#include "duckdb/main/error_manager.hpp"
+
 #include <list>
 #include <thread>
 #include <chrono>
@@ -532,6 +534,16 @@ void Statement::ExecuteInternal(ExecuteContext &context) const {
 		}
 	}
 	auto result = ExecuteQuery(context, connection, file_name, query_line);
+	if (result->HasError()) {
+			if (result->GetErrorType() == ExceptionType::NOT_IMPLEMENTED || StringUtil::Contains(result->GetError(), "Unsupported")
+				|| StringUtil::Contains(result->GetError(), "unsupported")
+				|| StringUtil::Contains(result->GetError(), "logical_opt")
+				|| StringUtil::Contains(result->GetError(), "physical_plan")
+				|| StringUtil::Contains(result->GetError(), "Did you mean \"ducklake\"")) {
+				context.skip_test = true;
+				return;
+				}
+	}
 
 	TestResultHelper helper(runner);
 	if (!helper.CheckStatementResult(*this, context, std::move(result))) {

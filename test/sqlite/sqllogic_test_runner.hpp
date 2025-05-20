@@ -65,7 +65,7 @@ public:
 	bool InLoop() {
 		return !active_loops.empty();
 	}
-	void ExecuteCommand(unique_ptr<Command> command);
+	bool ExecuteCommand(unique_ptr<Command> command);
 	void Reconnect();
 	void StartLoop(LoopDefinition loop);
 	void EndLoop();

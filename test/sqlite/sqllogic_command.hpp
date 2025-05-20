@@ -39,6 +39,7 @@ struct ExecuteContext {
 	string sql_query;
 	string error_file;
 	int error_line;
+	bool skip_test = false;
 };
 
 struct Condition {
