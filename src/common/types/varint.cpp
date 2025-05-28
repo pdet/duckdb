@@ -1,3 +1,4 @@
+#include "duckdb/common/varint.hpp"
 #include "duckdb/common/types/varint.hpp"
 #include "duckdb/common/exception/conversion_exception.hpp"
 #include "duckdb/common/numeric_utils.hpp"
@@ -337,5 +338,69 @@ bool Varint::VarintToDouble(const string_t &blob, double &result, bool &strict) 
 	}
 	return true;
 }
+
+
+//===--------------------------------------------------------------------===//
+// varint_t operators
+//===--------------------------------------------------------------------===//
+string varint_t::ToString() const {
+	return Varint::VarIntToVarchar(value);
+}
+
+bool varint_t::operator==(const varint_t &rhs) const {
+	// We first check if size is a match
+	if (value.GetSize() != rhs.value.GetSize()) {
+		return false;
+	}
+	// Now we check if the data is the same
+	return value.GetData() == rhs.value.GetData();
+
+}
+bool varint_t::operator!=(const varint_t &rhs) const{
+	// We first check if sizes don't match
+	if (value.GetSize() != rhs.value.GetSize()) {
+		return true;
+	}
+	// Now we check if the data is the same
+	return value.GetData() != rhs.value.GetData();
+}
+
+bool varint_t::operator<(const varint_t &rhs) const{
+
+}
+
+bool varint_t::operator<=(const varint_t &rhs) const {
+	const auto lhs_ptr = value.GetData();
+	const auto rhs_ptr = rhs.value.GetData();
+	// We first check if numbers are positive or negative
+	const bool is_lhs_negative = (lhs_ptr[0] & 0x80) == 0;
+	const bool is_rhs_negative = (rhs_ptr[0] & 0x80) == 0;
+	if (is_lhs_negative == true && is_rhs_negative == false) {
+		return true;
+	} else if (is_lhs_negative == false && is_rhs_negative == true) {
+		return false;
+	} else if (is_lhs_negative == true && is_rhs_negative == true) {
+		//
+	} else {
+
+	}
+	// We first check if sizes don't match
+	if (value.GetSize() != rhs.value.GetSize()) {
+		return true;
+	}
+	// Now we check if the data is the same
+
+
+}
+
+bool varint_t::operator>(const varint_t &rhs) const{
+
+
+}
+bool varint_t::operator>=(const varint_t &rhs) const{
+
+
+}
+
 
 } // namespace duckdb
