@@ -474,35 +474,52 @@ varint_t::operator int64_t() const {
 	return VarIntToInt<int64_t>(*this);
 }
 
+template <class T>
+bool VarintToInteger(varint_t &input, T &result) {
+	if (input < NumericLimits<T>::Minimum() || input > NumericLimits<T>::Maximum()) {
+		return false;
+	}
+}
+
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, int8_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, int16_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, int32_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, int64_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, uint8_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, uint16_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, uint32_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, uint64_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, hugeint_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, uhugeint_t &result) {
+	return VarintToInteger(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, float &result) {
