@@ -92,60 +92,59 @@ public:
 	DUCKDB_API static string VarcharToVarInt(const string_t &value);
 	//! ----------------------------------- Double Cast ----------------------------------- //
 	DUCKDB_API static bool VarintToDouble(const string_t &blob, double &result, bool &strict);
-
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, int8_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, int16_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, int32_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, int64_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, uint8_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, uint16_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, uint32_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, uint64_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, hugeint_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, uhugeint_t &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, float &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, double &result);
-	template <>
-	DUCKDB_API bool Varint::TryCast(varint_t input, long double &result);
-
-	template <>
-	bool Varint::TryConvert(int8_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(int16_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(int32_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(int64_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(uint8_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(uint16_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(uint32_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(uint64_t value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(float value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(double value, varint_t &result);
-	template <>
-	bool Varint::TryConvert(long double value, varint_t &result);
-	template <>
-
-	bool Varint::TryConvert(const char *value, varint_t &result);
 };
+
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, int8_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, int16_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, int32_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, int64_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, uint8_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, uint16_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, uint32_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, uint64_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, hugeint_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, uhugeint_t &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, float &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, double &result);
+template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, long double &result);
+
+template <>
+bool Varint::TryConvert(int8_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(int16_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(int32_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(int64_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(uint8_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(uint16_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(uint32_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(uint64_t value, varint_t &result);
+template <>
+bool Varint::TryConvert(float value, varint_t &result);
+template <>
+bool Varint::TryConvert(double value, varint_t &result);
+template <>
+bool Varint::TryConvert(long double value, varint_t &result);
+template <>
+bool Varint::TryConvert(const char *value, varint_t &result);
 
 //! ----------------------------------- (u)Integral Cast ----------------------------------- //
 struct IntCastToVarInt {

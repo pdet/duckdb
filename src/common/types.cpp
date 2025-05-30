@@ -641,6 +641,7 @@ bool LogicalType::IsIntegral() const {
 	case LogicalTypeId::UINTEGER:
 	case LogicalTypeId::UBIGINT:
 	case LogicalTypeId::HUGEINT:
+	case LogicalTypeId::VARINT:
 	case LogicalTypeId::UHUGEINT:
 		return true;
 	default:
@@ -677,6 +678,7 @@ bool LogicalType::IsNumeric(const LogicalTypeId type) {
 	case LogicalTypeId::UINTEGER:
 	case LogicalTypeId::UBIGINT:
 	case LogicalTypeId::UHUGEINT:
+	case LogicalTypeId::VARINT:
 		return true;
 	default:
 		return false;

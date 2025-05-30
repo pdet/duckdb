@@ -16,6 +16,8 @@
 #include "duckdb/common/types/value.hpp"
 #include "duckdb/common/types/vector.hpp"
 #include <cmath>
+#include "duckdb/common/varint.hpp"
+#include "duckdb/common/types/varint.hpp"
 
 namespace duckdb {
 
@@ -583,6 +585,128 @@ bool TryCastWithOverflowCheck(float value, uhugeint_t &result) {
 template <>
 bool TryCastWithOverflowCheck(double value, uhugeint_t &result) {
 	return Uhugeint::TryConvert(std::nearbyint(value), result);
+}
+
+//===--------------------------------------------------------------------===//
+// Cast VARINT -> Numeric
+//===--------------------------------------------------------------------===//
+template <>
+bool TryCastWithOverflowCheck(varint_t value, int8_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, int16_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, int32_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, int64_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, uint8_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, uint16_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, uint32_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, uint64_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, hugeint_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, float &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, double &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, uhugeint_t &result) {
+	return Varint::TryCast(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(varint_t value, varint_t &result) {
+	result = value;
+	return true;
+}
+
+//===--------------------------------------------------------------------===//
+// Cast Numeric -> VARINT
+//===--------------------------------------------------------------------===//
+template <>
+bool TryCastWithOverflowCheck(int8_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(int16_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(int32_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(int64_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(uint8_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(uint16_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(uint32_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(uint64_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(float value, varint_t &result) {
+	return Varint::TryConvert(std::nearbyintf(value), result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(double value, varint_t &result) {
+	return Varint::TryConvert(std::nearbyint(value), result);
 }
 
 struct NumericTryCastToBit {

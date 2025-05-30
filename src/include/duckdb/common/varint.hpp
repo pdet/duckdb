@@ -12,7 +12,6 @@
 #include "duckdb/common/string.hpp"
 #include <stdint.h>
 
-#include <utility>
 #include "duckdb/common/typedefs.hpp"
 #include "duckdb/common/types/string_type.hpp"
 
@@ -43,37 +42,36 @@ public:
 	DUCKDB_API bool operator>=(const varint_t &rhs) const;
 
 	// // arithmetic operators
-	// DUCKDB_API varint_t operator+(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator-(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator*(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator/(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator%(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator-() const;
-	//
-	// // bitwise operators
-	// DUCKDB_API varint_t operator>>(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator<<(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator&(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator|(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator^(const varint_t &rhs) const;
-	// DUCKDB_API varint_t operator~() const;
-	//
-	// // in-place operators
-	// DUCKDB_API varint_t &operator+=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator-=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator*=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator/=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator%=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator>>=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator<<=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator&=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator|=(const varint_t &rhs);
-	// DUCKDB_API varint_t &operator^=(const varint_t &rhs);
-	//
-	// // boolean operators
-	// DUCKDB_API explicit operator bool() const;
-	// DUCKDB_API bool operator!() const;
-	//
+	DUCKDB_API varint_t operator+(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator-(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator*(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator/(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator%(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator-() const;
+
+	// bitwise operators
+	DUCKDB_API varint_t operator>>(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator<<(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator&(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator|(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator^(const varint_t &rhs) const;
+	DUCKDB_API varint_t operator~() const;
+
+	// in-place operators
+	DUCKDB_API varint_t &operator+=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator-=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator*=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator/=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator%=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator>>=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator<<=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator&=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator|=(const varint_t &rhs);
+	DUCKDB_API varint_t &operator^=(const varint_t &rhs);
+
+	// boolean operators
+	DUCKDB_API explicit operator bool() const;
+	DUCKDB_API bool operator!() const;
 
 	// cast operators
 	DUCKDB_API explicit operator uint8_t() const;
@@ -84,7 +82,7 @@ public:
 	DUCKDB_API explicit operator int16_t() const;
 	DUCKDB_API explicit operator int32_t() const;
 	DUCKDB_API explicit operator int64_t() const;
-	// DUCKDB_API operator uhugeint_t() const; // NOLINT: Allow implicit conversion from `hugeint_t`
+	DUCKDB_API operator uhugeint_t() const; // NOLINT: Allow implicit conversion from `hugeint_t`
 };
 
 } // namespace duckdb
