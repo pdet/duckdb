@@ -596,8 +596,47 @@ bool Varint::TryConvert(uint64_t value, varint_t &result) {
 }
 
 template <>
+bool Varint::TryConvert(uhugeint_t value, varint_t &result) {
+	uint32_t data_byte_size;
+	if (value.upper != NumericLimits<uint64_t>::Maximum()) {
+		data_byte_size = (value.upper == 0) ? 0 : static_cast<uint32_t>(std::ceil(std::log2(value.upper + 1) / 8.0));
+	} else {
+		data_byte_size = static_cast<uint32_t>(std::ceil(std::log2(value.upper) / 8.0));
+	}
+
+	uint32_t upper_byte_size = data_byte_size;
+	if (data_byte_size > 0) {
+		// If we have at least one byte on the upper side, the bottom side is complete
+		data_byte_size += 8;
+	} else {
+		if (value.lower != NumericLimits<uint64_t>::Maximum()) {
+			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower + 1) / 8.0));
+		} else {
+			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower) / 8.0));
+		}
+	}
+	if (data_byte_size == 0) {
+		data_byte_size++;
+	}
+	uint32_t blob_size = data_byte_size + Varint::VARINT_HEADER_SIZE;
+	result.value.reserve(blob_size);
+	auto writable_blob = &result.value[0];
+	Varint::SetHeader(writable_blob, data_byte_size, false);
+
+	// Add data bytes to the blob, starting off after header bytes
+	idx_t wb_idx = Varint::VARINT_HEADER_SIZE;
+	for (int i = static_cast<int>(upper_byte_size) - 1; i >= 0; --i) {
+		writable_blob[wb_idx++] = static_cast<char>(value.upper >> i * 8 & 0xFF);
+	}
+	for (int i = static_cast<int>(data_byte_size - upper_byte_size) - 1; i >= 0; --i) {
+		writable_blob[wb_idx++] = static_cast<char>(value.lower >> i * 8 & 0xFF);
+	}
+	return true;
+}
+
+template <>
 bool Varint::TryConvert(hugeint_t value, varint_t &result) {
-		// Determine if the number is negative
+	// Determine if the number is negative
 	bool is_negative = value.upper >> 63 & 1;
 	if (is_negative) {
 		// We must check if it's -170141183460469231731687303715884105728, since it's not possible to negate it
@@ -665,48 +704,6 @@ bool Varint::TryConvert(hugeint_t value, varint_t &result) {
 		}
 	}
 	return true;
-
-
-}
-
-template <>
-bool Varint::TryConvert(uhugeint_t value, varint_t &result) {
-	uint32_t data_byte_size;
-	if (value.upper != NumericLimits<uint64_t>::Maximum()) {
-		data_byte_size =
-		    (value.upper == 0) ? 0 : static_cast<uint32_t>(std::ceil(std::log2(value.upper + 1) / 8.0));
-	} else {
-		data_byte_size = static_cast<uint32_t>(std::ceil(std::log2(value.upper) / 8.0));
-	}
-
-	uint32_t upper_byte_size = data_byte_size;
-	if (data_byte_size > 0) {
-		// If we have at least one byte on the upper side, the bottom side is complete
-		data_byte_size += 8;
-	} else {
-		if (value.lower != NumericLimits<uint64_t>::Maximum()) {
-			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower + 1) / 8.0));
-		} else {
-			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower) / 8.0));
-		}
-	}
-	if (data_byte_size == 0) {
-		data_byte_size++;
-	}
-	uint32_t blob_size = data_byte_size + Varint::VARINT_HEADER_SIZE;
-	result.value.reserve(blob_size);
-	auto writable_blob = &result.value[0];
-	Varint::SetHeader(writable_blob, data_byte_size, false);
-
-	// Add data bytes to the blob, starting off after header bytes
-	idx_t wb_idx = Varint::VARINT_HEADER_SIZE;
-	for (int i = static_cast<int>(upper_byte_size) - 1; i >= 0; --i) {
-		writable_blob[wb_idx++] = static_cast<char>(value.upper >> i * 8 & 0xFF);
-	}
-	for (int i = static_cast<int>(data_byte_size - upper_byte_size) - 1; i >= 0; --i) {
-		writable_blob[wb_idx++] = static_cast<char>(value.lower >> i * 8 & 0xFF);
-	}
-	return true;
 }
 
 template <class T>
@@ -761,15 +758,20 @@ bool Varint::TryConvert(float value, varint_t &result) {
 template <>
 bool Varint::TryConvert(double value, varint_t &result) {
 	return DoubleToVarint(value, result);
-
 }
 template <>
 bool Varint::TryConvert(long double value, varint_t &result) {
 	return DoubleToVarint(value, result);
-
 }
 template <>
 bool Varint::TryConvert(const char *value, varint_t &result) {
+	idx_t start_pos, end_pos;
+	bool is_negative, is_zero;
+	if (!VarcharFormatting(value, start_pos, end_pos, is_negative, is_zero)) {
+		return false;
+	}
+	result.value = VarcharToVarInt(value);
+	return true;
 }
 
 } // namespace duckdb
