@@ -339,68 +339,142 @@ bool Varint::VarintToDouble(const string_t &blob, double &result, bool &strict) 
 	return true;
 }
 
-
 //===--------------------------------------------------------------------===//
 // varint_t operators
 //===--------------------------------------------------------------------===//
+varint_t::varint_t(int64_t numeric_value) {
+	const bool is_negative = numeric_value < 0;
+	// Determine the number of data bytes
+	uint64_t abs_value;
+	if (is_negative) {
+		if (numeric_value == std::numeric_limits<int64_t>::min()) {
+			abs_value = static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1;
+		} else {
+			abs_value = static_cast<uint64_t>(std::abs(static_cast<int64_t>(numeric_value)));
+		}
+	} else {
+		abs_value = static_cast<uint64_t>(numeric_value);
+	}
+	uint32_t data_byte_size;
+	if (abs_value != NumericLimits<uint64_t>::Maximum()) {
+		data_byte_size = (abs_value == 0) ? 1 : static_cast<uint32_t>(std::ceil(std::log2(abs_value + 1) / 8.0));
+	} else {
+		data_byte_size = static_cast<uint32_t>(std::ceil(std::log2(abs_value) / 8.0));
+	}
+
+	uint32_t blob_size = data_byte_size + Varint::VARINT_HEADER_SIZE;
+	value.reserve(blob_size);
+	Varint::SetHeader(&value[0], data_byte_size, is_negative);
+	// Add data bytes to the blob, starting off after header bytes
+	idx_t wb_idx = Varint::VARINT_HEADER_SIZE;
+	for (int i = static_cast<int>(data_byte_size) - 1; i >= 0; --i) {
+		if (is_negative) {
+			value[wb_idx++] = static_cast<char>(~(abs_value >> i * 8 & 0xFF));
+		} else {
+			value[wb_idx++] = static_cast<char>(abs_value >> i * 8 & 0xFF);
+		}
+	}
+}
 string varint_t::ToString() const {
 	return Varint::VarIntToVarchar(value);
 }
 
 bool varint_t::operator==(const varint_t &rhs) const {
-	// We first check if size is a match
-	if (value.GetSize() != rhs.value.GetSize()) {
-		return false;
-	}
-	// Now we check if the data is the same
-	return value.GetData() == rhs.value.GetData();
-
+	return value == rhs.value;
 }
-bool varint_t::operator!=(const varint_t &rhs) const{
-	// We first check if sizes don't match
-	if (value.GetSize() != rhs.value.GetSize()) {
-		return true;
-	}
-	// Now we check if the data is the same
-	return value.GetData() != rhs.value.GetData();
+bool varint_t::operator!=(const varint_t &rhs) const {
+	return value != rhs.value;
 }
 
-bool varint_t::operator<(const varint_t &rhs) const{
-
+bool varint_t::operator<(const varint_t &rhs) const {
+	return value < rhs.value;
 }
 
 bool varint_t::operator<=(const varint_t &rhs) const {
-	const auto lhs_ptr = value.GetData();
-	const auto rhs_ptr = rhs.value.GetData();
-	// We first check if numbers are positive or negative
-	const bool is_lhs_negative = (lhs_ptr[0] & 0x80) == 0;
-	const bool is_rhs_negative = (rhs_ptr[0] & 0x80) == 0;
-	if (is_lhs_negative == true && is_rhs_negative == false) {
-		return true;
-	} else if (is_lhs_negative == false && is_rhs_negative == true) {
-		return false;
-	} else if (is_lhs_negative == true && is_rhs_negative == true) {
-		//
+	return value <= rhs.value;
+}
+
+bool varint_t::operator>(const varint_t &rhs) const {
+	return value > rhs.value;
+}
+bool varint_t::operator>=(const varint_t &rhs) const {
+	return value >= rhs.value;
+}
+
+void Varint::ReadHeader(const uint8_t *data, uint8_t &number_of_bytes, bool &is_negative) {
+
+	uint32_t header = (static_cast<uint32_t>(data[0]) << 16) | (static_cast<uint32_t>(data[1]) << 8) |
+	                  (static_cast<uint32_t>(data[2]));
+
+	is_negative = (header & 0x00800000) == 0;
+	if (is_negative) {
+		header = ~header;
+	}
+	header &= 0x007FFFFF;
+	number_of_bytes = static_cast<uint8_t>(header);
+}
+
+template <class T>
+T VarIntToInt(const varint_t &varint) {
+	const auto *data = reinterpret_cast<const uint8_t *>(varint.value[0]);
+	uint8_t data_byte_size;
+	bool is_negative;
+
+	// Read the header to get sign and size info
+	Varint::ReadHeader(data, data_byte_size, is_negative);
+
+	// Sanity check
+	if (data_byte_size + Varint::VARINT_HEADER_SIZE > varint.value.size()) {
+		throw InvalidInputException("Invalid varint: inconsistent size");
+	}
+
+	uint64_t abs_value = 0;
+	for (idx_t i = 0; i < data_byte_size; ++i) {
+		uint8_t byte = data[Varint::VARINT_HEADER_SIZE + i];
+		if (is_negative) {
+			byte = ~byte;
+		}
+		abs_value = (abs_value << 8) | byte;
+	}
+
+	if (is_negative) {
+		if (abs_value > static_cast<uint64_t>(std::numeric_limits<T>::max()) + 1) {
+			throw OutOfRangeException("Negative varint too small for type");
+		}
+		return static_cast<T>(-static_cast<int64_t>(abs_value));
 	} else {
-
+		if (abs_value > static_cast<uint64_t>(std::numeric_limits<T>::max())) {
+			throw OutOfRangeException("Positive varint too large for type");
+		}
+		return static_cast<T>(abs_value);
 	}
-	// We first check if sizes don't match
-	if (value.GetSize() != rhs.value.GetSize()) {
-		return true;
-	}
-	// Now we check if the data is the same
-
-
 }
-
-bool varint_t::operator>(const varint_t &rhs) const{
-
-
+varint_t::operator uint8_t() const {
+	return VarIntToInt<uint8_t>(*this);
 }
-bool varint_t::operator>=(const varint_t &rhs) const{
-
-
+varint_t::operator uint16_t() const {
+	return VarIntToInt<uint16_t>(*this);
 }
-
+varint_t::operator uint32_t() const {
+	return VarIntToInt<uint32_t>(*this);
+}
+varint_t::operator uint64_t() const {
+	return VarIntToInt<uint64_t>(*this);
+}
+varint_t::operator int8_t() const {
+	return VarIntToInt<int8_t>(*this);
+}
+varint_t::operator int16_t() const {
+	return VarIntToInt<int16_t>(*this);
+}
+varint_t::operator int32_t() const {
+	return VarIntToInt<int32_t>(*this);
+}
+varint_t::operator int64_t() const {
+	return VarIntToInt<int64_t>(*this);
+}
+// varint_t::operator hugeint_t() const {
+// 	return {static_cast<int64_t>(this->upper), this->lower};
+// }
 
 } // namespace duckdb

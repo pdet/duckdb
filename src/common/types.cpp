@@ -222,7 +222,7 @@ const vector<LogicalType> LogicalType::Numeric() {
 	                             LogicalType::BIGINT,    LogicalType::HUGEINT,   LogicalType::FLOAT,
 	                             LogicalType::DOUBLE,    LogicalTypeId::DECIMAL, LogicalType::UTINYINT,
 	                             LogicalType::USMALLINT, LogicalType::UINTEGER,  LogicalType::UBIGINT,
-	                             LogicalType::UHUGEINT};
+	                             LogicalType::UHUGEINT,  LogicalType::VARINT};
 	return types;
 }
 
@@ -230,7 +230,7 @@ const vector<LogicalType> LogicalType::Integral() {
 	vector<LogicalType> types = {LogicalType::TINYINT,   LogicalType::SMALLINT, LogicalType::INTEGER,
 	                             LogicalType::BIGINT,    LogicalType::HUGEINT,  LogicalType::UTINYINT,
 	                             LogicalType::USMALLINT, LogicalType::UINTEGER, LogicalType::UBIGINT,
-	                             LogicalType::UHUGEINT};
+	                             LogicalType::UHUGEINT,  LogicalType::VARINT};
 	return types;
 }
 

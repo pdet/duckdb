@@ -1,4 +1,5 @@
 #include "duckdb/common/enum_util.hpp"
+#include "duckdb/common/varint.hpp"
 #include "duckdb/common/operator/add.hpp"
 #include "duckdb/common/operator/multiply.hpp"
 #include "duckdb/common/operator/numeric_binary_operators.hpp"
@@ -1009,6 +1010,8 @@ static scalar_function_t GetBinaryFunctionIgnoreZero(PhysicalType type) {
 		return BinaryScalarFunctionIgnoreZero<float, float, float, OP>;
 	case PhysicalType::DOUBLE:
 		return BinaryScalarFunctionIgnoreZero<double, double, double, OP>;
+	case PhysicalType::VARCHAR:
+		return BinaryScalarFunctionIgnoreZero<varint_t, varint_t, varint_t, OP>;
 	default:
 		throw NotImplementedException("Unimplemented type for GetScalarUnaryFunction");
 	}
