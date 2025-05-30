@@ -12,8 +12,8 @@
 #include "duckdb/common/string.hpp"
 #include <stdint.h>
 
-#include "duckdb/common/typedefs.hpp"
-#include "duckdb/common/types/string_type.hpp"
+// #include "duckdb/common/typedefs.hpp"
+// #include "duckdb/common/types/string_type.hpp"
 
 namespace duckdb {
 

@@ -18,6 +18,7 @@
 #undef max
 
 #include <limits>
+#include "duckdb/common/varint.hpp"
 
 namespace duckdb {
 
@@ -73,6 +74,30 @@ struct NumericLimits<uhugeint_t> {
 	}
 	static constexpr idx_t Digits() {
 		return 39;
+	}
+};
+
+template <>
+struct NumericLimits<varint_t> {
+	static varint_t Minimum() {
+		// FIXME: should we actually cap these comparisons?
+		return {};
+		// return {"-9999999999999999999999999999999999999999999999999999999999999999"};
+	};
+	static varint_t Maximum() {
+		// FIXME: should we actually cap these comparisons?
+		return {};
+		// return {"9999999999999999999999999999999999999999999999999999999999999999"};
+	};
+	static constexpr bool IsSigned() {
+		return true;
+	}
+	static constexpr bool IsIntegral() {
+		return true;
+	}
+	static constexpr idx_t Digits() {
+		// We use 3 bytes for data_byte_size because this allows us to represent 2^(2ˆ23) values
+		return 1262612;
 	}
 };
 

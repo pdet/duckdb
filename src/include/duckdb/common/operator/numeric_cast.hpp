@@ -590,6 +590,11 @@ bool TryCastWithOverflowCheck(double value, uhugeint_t &result) {
 //===--------------------------------------------------------------------===//
 // Cast VARINT -> Numeric
 //===--------------------------------------------------------------------===//
+// template <>
+// bool TryCastWithOverflowCheck(varint_t value, bool &result) {
+// 	return Varint::TryCast(value, result);
+// }
+
 template <>
 bool TryCastWithOverflowCheck(varint_t value, int8_t &result) {
 	return Varint::TryCast(value, result);
@@ -707,6 +712,16 @@ bool TryCastWithOverflowCheck(float value, varint_t &result) {
 template <>
 bool TryCastWithOverflowCheck(double value, varint_t &result) {
 	return Varint::TryConvert(std::nearbyint(value), result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(hugeint_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
+}
+
+template <>
+bool TryCastWithOverflowCheck(uhugeint_t value, varint_t &result) {
+	return Varint::TryConvert(value, result);
 }
 
 struct NumericTryCastToBit {
