@@ -597,10 +597,116 @@ bool Varint::TryConvert(uint64_t value, varint_t &result) {
 
 template <>
 bool Varint::TryConvert(hugeint_t value, varint_t &result) {
+		// Determine if the number is negative
+	bool is_negative = value.upper >> 63 & 1;
+	if (is_negative) {
+		// We must check if it's -170141183460469231731687303715884105728, since it's not possible to negate it
+		// without overflowing
+		if (value == NumericLimits<hugeint_t>::Minimum()) {
+			varint_t cast_value;
+			uhugeint_t u_int_value {0x8000000000000000, 0};
+			Varint::TryConvert(u_int_value, cast_value);
+			// We have to do all the bit flipping.
+			auto writable_value_ptr = &result.value[0];
+			result.value.resize(cast_value.value.size());
+			Varint::SetHeader(writable_value_ptr, cast_value.value.size() - Varint::VARINT_HEADER_SIZE, is_negative);
+			for (idx_t i = Varint::VARINT_HEADER_SIZE; i < cast_value.value.size(); i++) {
+				writable_value_ptr[i] = static_cast<char>(~cast_value.value[i]);
+			}
+			return true;
+		}
+		value = -value;
+	}
+	// Determine the number of data bytes
+	uint64_t abs_value_upper = static_cast<uint64_t>(value.upper);
+
+	uint32_t data_byte_size;
+	if (abs_value_upper != NumericLimits<uint64_t>::Maximum()) {
+		data_byte_size =
+		    (abs_value_upper == 0) ? 0 : static_cast<uint32_t>(std::ceil(std::log2(abs_value_upper + 1) / 8.0));
+	} else {
+		data_byte_size = static_cast<uint32_t>(std::ceil(std::log2(abs_value_upper) / 8.0));
+	}
+
+	uint32_t upper_byte_size = data_byte_size;
+	if (data_byte_size > 0) {
+		// If we have at least one byte on the upper side, the bottom side is complete
+		data_byte_size += 8;
+	} else {
+		if (value.lower != NumericLimits<uint64_t>::Maximum()) {
+			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower + 1) / 8.0));
+		} else {
+			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower) / 8.0));
+		}
+	}
+
+	if (data_byte_size == 0) {
+		data_byte_size++;
+	}
+	uint32_t blob_size = data_byte_size + Varint::VARINT_HEADER_SIZE;
+	result.value.reserve(blob_size);
+	auto writable_blob = &result.value[0];
+	Varint::SetHeader(writable_blob, data_byte_size, is_negative);
+
+	// Add data bytes to the blob, starting off after header bytes
+	idx_t wb_idx = Varint::VARINT_HEADER_SIZE;
+	for (int i = static_cast<int>(upper_byte_size) - 1; i >= 0; --i) {
+		if (is_negative) {
+			writable_blob[wb_idx++] = static_cast<char>(~(abs_value_upper >> i * 8 & 0xFF));
+		} else {
+			writable_blob[wb_idx++] = static_cast<char>(abs_value_upper >> i * 8 & 0xFF);
+		}
+	}
+	for (int i = static_cast<int>(data_byte_size - upper_byte_size) - 1; i >= 0; --i) {
+		if (is_negative) {
+			writable_blob[wb_idx++] = static_cast<char>(~(value.lower >> i * 8 & 0xFF));
+		} else {
+			writable_blob[wb_idx++] = static_cast<char>(value.lower >> i * 8 & 0xFF);
+		}
+	}
+	return true;
+
+
 }
 
 template <>
 bool Varint::TryConvert(uhugeint_t value, varint_t &result) {
+	uint32_t data_byte_size;
+	if (value.upper != NumericLimits<uint64_t>::Maximum()) {
+		data_byte_size =
+		    (value.upper == 0) ? 0 : static_cast<uint32_t>(std::ceil(std::log2(value.upper + 1) / 8.0));
+	} else {
+		data_byte_size = static_cast<uint32_t>(std::ceil(std::log2(value.upper) / 8.0));
+	}
+
+	uint32_t upper_byte_size = data_byte_size;
+	if (data_byte_size > 0) {
+		// If we have at least one byte on the upper side, the bottom side is complete
+		data_byte_size += 8;
+	} else {
+		if (value.lower != NumericLimits<uint64_t>::Maximum()) {
+			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower + 1) / 8.0));
+		} else {
+			data_byte_size += static_cast<uint32_t>(std::ceil(std::log2(value.lower) / 8.0));
+		}
+	}
+	if (data_byte_size == 0) {
+		data_byte_size++;
+	}
+	uint32_t blob_size = data_byte_size + Varint::VARINT_HEADER_SIZE;
+	result.value.reserve(blob_size);
+	auto writable_blob = &result.value[0];
+	Varint::SetHeader(writable_blob, data_byte_size, false);
+
+	// Add data bytes to the blob, starting off after header bytes
+	idx_t wb_idx = Varint::VARINT_HEADER_SIZE;
+	for (int i = static_cast<int>(upper_byte_size) - 1; i >= 0; --i) {
+		writable_blob[wb_idx++] = static_cast<char>(value.upper >> i * 8 & 0xFF);
+	}
+	for (int i = static_cast<int>(data_byte_size - upper_byte_size) - 1; i >= 0; --i) {
+		writable_blob[wb_idx++] = static_cast<char>(value.lower >> i * 8 & 0xFF);
+	}
+	return true;
 }
 
 template <>
