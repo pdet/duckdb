@@ -92,6 +92,11 @@ bool TryCast::Operation(bool input, uhugeint_t &result, bool strict) {
 }
 
 template <>
+bool TryCast::Operation(bool input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<bool, varint_t>(input, result, strict);
+}
+
+template <>
 bool TryCast::Operation(bool input, uint8_t &result, bool strict) {
 	return NumericTryCast::Operation<bool, uint8_t>(input, result, strict);
 }
@@ -157,6 +162,11 @@ bool TryCast::Operation(int8_t input, hugeint_t &result, bool strict) {
 template <>
 bool TryCast::Operation(int8_t input, uhugeint_t &result, bool strict) {
 	return NumericTryCast::Operation<int8_t, uhugeint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(int8_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<int8_t, varint_t>(input, result, strict);
 }
 
 template <>
@@ -228,6 +238,11 @@ bool TryCast::Operation(int16_t input, uhugeint_t &result, bool strict) {
 }
 
 template <>
+bool TryCast::Operation(int16_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<int16_t, varint_t>(input, result, strict);
+}
+
+template <>
 bool TryCast::Operation(int16_t input, uint8_t &result, bool strict) {
 	return NumericTryCast::Operation<int16_t, uint8_t>(input, result, strict);
 }
@@ -293,6 +308,11 @@ bool TryCast::Operation(int32_t input, hugeint_t &result, bool strict) {
 template <>
 bool TryCast::Operation(int32_t input, uhugeint_t &result, bool strict) {
 	return NumericTryCast::Operation<int32_t, uhugeint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(int32_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<int32_t, varint_t>(input, result, strict);
 }
 
 template <>
@@ -364,6 +384,11 @@ bool TryCast::Operation(int64_t input, uhugeint_t &result, bool strict) {
 }
 
 template <>
+bool TryCast::Operation(int64_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<int64_t, varint_t>(input, result, strict);
+}
+
+template <>
 bool TryCast::Operation(int64_t input, uint8_t &result, bool strict) {
 	return NumericTryCast::Operation<int64_t, uint8_t>(input, result, strict);
 }
@@ -429,6 +454,11 @@ bool TryCast::Operation(hugeint_t input, hugeint_t &result, bool strict) {
 template <>
 bool TryCast::Operation(hugeint_t input, uhugeint_t &result, bool strict) {
 	return NumericTryCast::Operation<hugeint_t, uhugeint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(hugeint_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<hugeint_t, varint_t>(input, result, strict);
 }
 
 template <>
@@ -530,6 +560,74 @@ bool TryCast::Operation(uhugeint_t input, double &result, bool strict) {
 }
 
 //===--------------------------------------------------------------------===//
+// Cast varint_t -> Numeric
+//===--------------------------------------------------------------------===//
+template <>
+bool TryCast::Operation(varint_t input, bool &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, bool>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, int8_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, int8_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, int16_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, int16_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, int32_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, int32_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, int64_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, int64_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, varint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, hugeint_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, hugeint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, uint8_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, uint8_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, uint16_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, uint16_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, uint32_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, uint32_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, uint64_t &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, uint64_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, float &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, float>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(varint_t input, double &result, bool strict) {
+	return NumericTryCast::Operation<varint_t, double>(input, result, strict);
+}
+
+//===--------------------------------------------------------------------===//
 // Cast uint8_t -> Numeric
 //===--------------------------------------------------------------------===//
 template <>
@@ -565,6 +663,11 @@ bool TryCast::Operation(uint8_t input, hugeint_t &result, bool strict) {
 template <>
 bool TryCast::Operation(uint8_t input, uhugeint_t &result, bool strict) {
 	return NumericTryCast::Operation<uint8_t, uhugeint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(uint8_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<uint8_t, varint_t>(input, result, strict);
 }
 
 template <>
@@ -636,6 +739,11 @@ bool TryCast::Operation(uint16_t input, uhugeint_t &result, bool strict) {
 }
 
 template <>
+bool TryCast::Operation(uint16_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<uint16_t, varint_t>(input, result, strict);
+}
+
+template <>
 bool TryCast::Operation(uint16_t input, uint8_t &result, bool strict) {
 	return NumericTryCast::Operation<uint16_t, uint8_t>(input, result, strict);
 }
@@ -701,6 +809,11 @@ bool TryCast::Operation(uint32_t input, hugeint_t &result, bool strict) {
 template <>
 bool TryCast::Operation(uint32_t input, uhugeint_t &result, bool strict) {
 	return NumericTryCast::Operation<uint32_t, uhugeint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(uint32_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<uint32_t, varint_t>(input, result, strict);
 }
 
 template <>
@@ -772,6 +885,11 @@ bool TryCast::Operation(uint64_t input, uhugeint_t &result, bool strict) {
 }
 
 template <>
+bool TryCast::Operation(uint64_t input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<uint64_t, varint_t>(input, result, strict);
+}
+
+template <>
 bool TryCast::Operation(uint64_t input, uint8_t &result, bool strict) {
 	return NumericTryCast::Operation<uint64_t, uint8_t>(input, result, strict);
 }
@@ -840,6 +958,11 @@ bool TryCast::Operation(float input, uhugeint_t &result, bool strict) {
 }
 
 template <>
+bool TryCast::Operation(float input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<float, varint_t>(input, result, strict);
+}
+
+template <>
 bool TryCast::Operation(float input, uint8_t &result, bool strict) {
 	return NumericTryCast::Operation<float, uint8_t>(input, result, strict);
 }
@@ -905,6 +1028,11 @@ bool TryCast::Operation(double input, hugeint_t &result, bool strict) {
 template <>
 bool TryCast::Operation(double input, uhugeint_t &result, bool strict) {
 	return NumericTryCast::Operation<double, uhugeint_t>(input, result, strict);
+}
+
+template <>
+bool TryCast::Operation(double input, varint_t &result, bool strict) {
+	return NumericTryCast::Operation<double, varint_t>(input, result, strict);
 }
 
 template <>
@@ -1466,6 +1594,12 @@ bool CastFromBitToNumeric::Operation(string_t input, uhugeint_t &result, CastPar
 	return (true);
 }
 
+template <>
+bool CastFromBitToNumeric::Operation(string_t input, varint_t &result, CastParameters &parameters) {
+	D_ASSERT(0);
+	return true;
+}
+
 //===--------------------------------------------------------------------===//
 // Cast From UUID
 //===--------------------------------------------------------------------===//
@@ -1861,6 +1995,12 @@ bool TryCast::Operation(string_t input, uhugeint_t &result, bool strict) {
 		return false;
 	}
 	result = state.result;
+	return true;
+}
+
+template <>
+bool TryCast::Operation(string_t input, varint_t &result, bool strict) {
+	D_ASSERT(0);
 	return true;
 }
 
