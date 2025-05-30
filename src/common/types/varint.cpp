@@ -709,14 +709,64 @@ bool Varint::TryConvert(uhugeint_t value, varint_t &result) {
 	return true;
 }
 
+template <class T>
+bool DoubleToVarint(T double_value, varint_t &result) {
+	// Check if we can cast it
+	if (!std::isfinite(double_value)) {
+		// We can't cast inf -inf nan
+		return false;
+	}
+	// Determine if the number is negative
+	bool is_negative = double_value < 0;
+	// Determine the number of data bytes
+	double abs_value = std::abs(double_value);
+	if (abs_value == 0) {
+		// Return Value 0
+		uint32_t blob_size = 1 + Varint::VARINT_HEADER_SIZE;
+		result.value.resize(blob_size);
+		auto writable_blob = &result.value[0];
+		Varint::SetHeader(writable_blob, 1, false);
+		writable_blob[3] = 0;
+		return true;
+	}
+	vector<char> value;
+	while (abs_value > 0) {
+		double quotient = abs_value / 256;
+		double truncated = floor(quotient);
+		uint8_t byte = static_cast<uint8_t>(abs_value - truncated * 256);
+		abs_value = truncated;
+		if (is_negative) {
+			value.push_back(static_cast<char>(~byte));
+		} else {
+			value.push_back(static_cast<char>(byte));
+		}
+	}
+	uint32_t data_byte_size = static_cast<uint32_t>(value.size());
+	uint32_t blob_size = data_byte_size + Varint::VARINT_HEADER_SIZE;
+	result.value.resize(blob_size);
+	auto writable_blob = &result.value[0];
+	Varint::SetHeader(writable_blob, data_byte_size, is_negative);
+	// Add data bytes to the blob, starting off after header bytes
+	idx_t blob_string_idx = value.size() - 1;
+	for (idx_t i = Varint::VARINT_HEADER_SIZE; i < blob_size; i++) {
+		writable_blob[i] = value[blob_string_idx--];
+	}
+	return true;
+}
+
 template <>
 bool Varint::TryConvert(float value, varint_t &result) {
+	return DoubleToVarint(value, result);
 }
 template <>
 bool Varint::TryConvert(double value, varint_t &result) {
+	return DoubleToVarint(value, result);
+
 }
 template <>
 bool Varint::TryConvert(long double value, varint_t &result) {
+	return DoubleToVarint(value, result);
+
 }
 template <>
 bool Varint::TryConvert(const char *value, varint_t &result) {
