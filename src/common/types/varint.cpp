@@ -447,6 +447,9 @@ bool VarintToInteger(varint_t &input, T &result) {
 	if (input < NumericLimits<T>::Minimum() || input > NumericLimits<T>::Maximum()) {
 		return false;
 	}
+	// Cast it
+	result = Varint::Cast<T>(input);
+	return true;
 }
 
 template <>
@@ -489,14 +492,44 @@ template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, uhugeint_t &result) {
 	return VarintToInteger(input, result);
 }
+
+template <class T>
+bool VarintToFloatingPoint(varint_t &input, T &result) {
+	result = 0;
+
+	auto blob_ptr = &input.value[0];
+
+	// Determine if the number is negative
+	bool is_negative = (blob_ptr[0] & 0x80) == 0;
+	idx_t byte_pos = 0;
+	for (idx_t i = input.value.size() - 1; i > 2; i--) {
+		if (is_negative) {
+			result += static_cast<uint8_t>(~blob_ptr[i]) * pow(256, static_cast<double>(byte_pos));
+		} else {
+			result += static_cast<uint8_t>(blob_ptr[i]) * pow(256, static_cast<double>(byte_pos));
+		}
+		byte_pos++;
+	}
+
+	if (is_negative) {
+		result *= -1;
+	}
+	if (!std::isfinite(result)) {
+		return false;
+	}
+	return true;
+}
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, float &result) {
+	return VarintToFloatingPoint(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, double &result) {
+	return VarintToFloatingPoint(input, result);
 }
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, long double &result) {
+	return VarintToFloatingPoint(input, result);
 }
 
 template <class T>
@@ -769,5 +802,85 @@ varint_t::varint_t(hugeint_t input) {
 varint_t::varint_t(uhugeint_t input) {
 	Varint::TryConvert(input, *this);
 }
+
+	// // arithmetic operators
+	varint_t varint_t::operator+(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator-(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator*(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator/(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator%(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator-() const{
+		return *this;
+	}
+
+	// bitwise operators
+	varint_t varint_t::operator>>(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator<<(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator&(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator|(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator^(const varint_t &rhs) const{
+		return *this;
+	}
+	varint_t varint_t::operator~() const{
+		return *this;
+	}
+
+	// in-place operators
+	varint_t &varint_t::operator+=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator-=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator*=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator/=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator%=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator>>=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator<<=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator&=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator|=(const varint_t &rhs){
+return *this;
+	}
+	varint_t &varint_t::operator^=(const varint_t &rhs) {
+				return *this;
+	}
+
+	// boolean operators
+	varint_t::operator bool() const {
+	return true;
+}
+	bool varint_t::operator!() const {
+		return true;
+	}
 
 } // namespace duckdb

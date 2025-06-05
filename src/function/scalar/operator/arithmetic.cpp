@@ -1011,8 +1011,8 @@ static scalar_function_t GetBinaryFunctionIgnoreZero(PhysicalType type) {
 		return BinaryScalarFunctionIgnoreZero<float, float, float, OP>;
 	case PhysicalType::DOUBLE:
 		return BinaryScalarFunctionIgnoreZero<double, double, double, OP>;
-	// case PhysicalType::VARCHAR:
-	// 	return BinaryScalarFunctionIgnoreZero<varint_t, varint_t, varint_t, OP>;
+	case PhysicalType::VARCHAR:
+		return BinaryScalarFunctionIgnoreZero<varint_t, varint_t, varint_t, OP>;
 	default:
 		throw NotImplementedException("Unimplemented type for GetScalarUnaryFunction");
 	}
