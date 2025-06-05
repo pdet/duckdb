@@ -342,39 +342,7 @@ bool Varint::VarintToDouble(const string_t &blob, double &result, bool &strict) 
 //===--------------------------------------------------------------------===//
 // varint_t operators
 //===--------------------------------------------------------------------===//
-varint_t::varint_t(int64_t numeric_value) {
-	const bool is_negative = numeric_value < 0;
-	// Determine the number of data bytes
-	uint64_t abs_value;
-	if (is_negative) {
-		if (numeric_value == std::numeric_limits<int64_t>::min()) {
-			abs_value = static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1;
-		} else {
-			abs_value = static_cast<uint64_t>(std::abs(static_cast<int64_t>(numeric_value)));
-		}
-	} else {
-		abs_value = static_cast<uint64_t>(numeric_value);
-	}
-	uint32_t data_byte_size;
-	if (abs_value != NumericLimits<uint64_t>::Maximum()) {
-		data_byte_size = (abs_value == 0) ? 1 : static_cast<uint32_t>(std::ceil(std::log2(abs_value + 1) / 8.0));
-	} else {
-		data_byte_size = static_cast<uint32_t>(std::ceil(std::log2(abs_value) / 8.0));
-	}
 
-	uint32_t blob_size = data_byte_size + Varint::VARINT_HEADER_SIZE;
-	value.reserve(blob_size);
-	Varint::SetHeader(&value[0], data_byte_size, is_negative);
-	// Add data bytes to the blob, starting off after header bytes
-	idx_t wb_idx = Varint::VARINT_HEADER_SIZE;
-	for (int i = static_cast<int>(data_byte_size) - 1; i >= 0; --i) {
-		if (is_negative) {
-			value[wb_idx++] = static_cast<char>(~(abs_value >> i * 8 & 0xFF));
-		} else {
-			value[wb_idx++] = static_cast<char>(abs_value >> i * 8 & 0xFF);
-		}
-	}
-}
 string varint_t::ToString() const {
 	return Varint::VarIntToVarchar(value);
 }
@@ -789,6 +757,17 @@ bool Varint::TryConvert(const char *value, varint_t &result) {
 	}
 	result.value = VarcharToVarInt(value);
 	return true;
+}
+
+varint_t::varint_t(int64_t numeric_value) {
+	Varint::TryConvert(numeric_value, *this);
+}
+varint_t::varint_t(hugeint_t input) {
+	Varint::TryConvert(input, *this);
+}
+
+varint_t::varint_t(uhugeint_t input) {
+	Varint::TryConvert(input, *this);
 }
 
 } // namespace duckdb

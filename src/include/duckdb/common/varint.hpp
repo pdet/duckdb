@@ -12,6 +12,8 @@
 #include "duckdb/common/string.hpp"
 #include <stdint.h>
 
+#include "hugeint.hpp"
+
 // #include "duckdb/common/typedefs.hpp"
 // #include "duckdb/common/types/string_type.hpp"
 
@@ -22,7 +24,10 @@ public:
 	string value;
 
 public:
-	DUCKDB_API explicit varint_t(int64_t value);
+	DUCKDB_API varint_t(int64_t value);
+	DUCKDB_API varint_t(hugeint_t value);
+	DUCKDB_API varint_t(uhugeint_t value);
+
 	varint_t() = default;
 	explicit varint_t(string value) : value(std::move(value)) {
 	}
