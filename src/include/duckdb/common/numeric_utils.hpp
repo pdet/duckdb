@@ -30,6 +30,11 @@ struct MakeSigned<uhugeint_t> {
 	using type = hugeint_t;
 };
 
+template <>
+struct MakeSigned<varint_t> {
+	using type = varint_t;
+};
+
 template <class T>
 struct MakeUnsigned {
 	using type = typename std::make_unsigned<T>::type;
@@ -43,6 +48,11 @@ struct MakeUnsigned<hugeint_t> {
 template <>
 struct MakeUnsigned<uhugeint_t> {
 	using type = uhugeint_t;
+};
+
+template <>
+struct MakeUnsigned<varint_t> {
+	using type = varint_t;
 };
 
 template <class TO, class FROM>

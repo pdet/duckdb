@@ -803,84 +803,84 @@ varint_t::varint_t(uhugeint_t input) {
 	Varint::TryConvert(input, *this);
 }
 
-	// // arithmetic operators
-	varint_t varint_t::operator+(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator-(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator*(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator/(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator%(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator-() const{
-		return *this;
-	}
+// // arithmetic operators
+varint_t varint_t::operator+(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator-(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator*(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator/(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator%(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator-() const {
+	return *this;
+}
 
-	// bitwise operators
-	varint_t varint_t::operator>>(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator<<(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator&(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator|(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator^(const varint_t &rhs) const{
-		return *this;
-	}
-	varint_t varint_t::operator~() const{
-		return *this;
-	}
+// bitwise operators
+varint_t varint_t::operator>>(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator<<(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator&(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator|(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator^(const varint_t &rhs) const {
+	return *this;
+}
+varint_t varint_t::operator~() const {
+	return *this;
+}
 
-	// in-place operators
-	varint_t &varint_t::operator+=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator-=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator*=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator/=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator%=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator>>=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator<<=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator&=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator|=(const varint_t &rhs){
-return *this;
-	}
-	varint_t &varint_t::operator^=(const varint_t &rhs) {
-				return *this;
-	}
+// in-place operators
+varint_t &varint_t::operator+=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator-=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator*=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator/=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator%=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator>>=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator<<=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator&=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator|=(const varint_t &rhs) {
+	return *this;
+}
+varint_t &varint_t::operator^=(const varint_t &rhs) {
+	return *this;
+}
 
-	// boolean operators
-	varint_t::operator bool() const {
+// boolean operators
+varint_t::operator bool() const {
 	return true;
 }
-	bool varint_t::operator!() const {
-		return true;
-	}
+bool varint_t::operator!() const {
+	return true;
+}
 
 } // namespace duckdb

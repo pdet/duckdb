@@ -304,6 +304,9 @@ void GetBitStringAggregate(const LogicalType &type, AggregateFunctionSet &bitstr
 	case LogicalType::UHUGEINT: {
 		return BindBitString<uhugeint_t>(bitstring_agg, type.id());
 	}
+	case LogicalType::VARINT: {
+		return BindBitString<varint_t>(bitstring_agg, type.id());
+	}
 	default:
 		throw InternalException("Unimplemented bitstring aggregate");
 	}

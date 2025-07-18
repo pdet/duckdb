@@ -54,6 +54,10 @@ static scalar_function_t GetScalarIntegerFunction(PhysicalType type) {
 	case PhysicalType::UINT128:
 		function = &ScalarFunction::BinaryFunction<uhugeint_t, uhugeint_t, uhugeint_t, OP>;
 		break;
+	case PhysicalType::VARCHAR:
+		function = &ScalarFunction::BinaryFunction<varint_t, varint_t, varint_t, OP>;
+		break;
+
 	default:
 		throw NotImplementedException("Unimplemented type for GetScalarBinaryFunction: %s", TypeIdToString(type));
 	}

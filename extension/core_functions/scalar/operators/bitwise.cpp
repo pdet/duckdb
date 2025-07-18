@@ -79,6 +79,9 @@ static scalar_function_t GetScalarIntegerBinaryFunction(const LogicalType &type)
 	case LogicalTypeId::UHUGEINT:
 		function = &ScalarFunction::BinaryFunction<uhugeint_t, uhugeint_t, uhugeint_t, OP>;
 		break;
+	case LogicalTypeId::VARINT:
+		function = &ScalarFunction::BinaryFunction<varint_t, varint_t, varint_t, OP>;
+		break;
 	default:
 		throw NotImplementedException("Unimplemented type for GetScalarIntegerBinaryFunction");
 	}

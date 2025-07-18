@@ -38,6 +38,8 @@ static AggregateFunction GetBitfieldUnaryAggregate(LogicalType type) {
 		return AggregateFunction::UnaryAggregate<BitState<uint64_t>, uint64_t, uint64_t, OP>(type, type);
 	case LogicalTypeId::UHUGEINT:
 		return AggregateFunction::UnaryAggregate<BitState<uhugeint_t>, uhugeint_t, uhugeint_t, OP>(type, type);
+	case LogicalTypeId::VARINT:
+		return AggregateFunction::UnaryAggregate<BitState<varint_t>, varint_t, varint_t, OP>(type, type);
 	default:
 		throw InternalException("Unimplemented bitfield type for unary aggregate");
 	}

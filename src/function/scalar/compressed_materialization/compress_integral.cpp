@@ -36,6 +36,14 @@ struct TemplatedIntegralCompress<uhugeint_t, RESULT_TYPE> {
 	}
 };
 
+template <class RESULT_TYPE>
+struct TemplatedIntegralCompress<varint_t, RESULT_TYPE> {
+	static inline RESULT_TYPE Operation(const varint_t &input, const varint_t &min_val) {
+		D_ASSERT(min_val <= input);
+		return UnsafeNumericCast<RESULT_TYPE>((input - min_val));
+	}
+};
+
 template <class INPUT_TYPE, class RESULT_TYPE>
 static void IntegralCompressFunction(DataChunk &args, ExpressionState &state, Vector &result) {
 	D_ASSERT(args.ColumnCount() == 2);
@@ -94,6 +102,8 @@ static scalar_function_t GetIntegralCompressFunctionInputSwitch(const LogicalTyp
 		return GetIntegralCompressFunctionResultSwitch<uint64_t>(input_type, result_type);
 	case LogicalTypeId::UHUGEINT:
 		return GetIntegralCompressFunctionResultSwitch<uhugeint_t>(input_type, result_type);
+	case LogicalTypeId::VARINT:
+		return GetIntegralCompressFunctionResultSwitch<varint_t>(input_type, result_type);
 	default:
 		throw InternalException("Unexpected input type in GetIntegralCompressFunctionInputSwitch");
 	}

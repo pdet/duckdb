@@ -104,6 +104,9 @@ template <>
 std::string NumericHelper::ToString(uhugeint_t value);
 
 template <>
+std::string NumericHelper::ToString(varint_t value);
+
+template <>
 string_t NumericHelper::FormatSigned(hugeint_t value, Vector &vector);
 
 struct DecimalToString {

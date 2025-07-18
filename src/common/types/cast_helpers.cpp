@@ -209,6 +209,11 @@ std::string NumericHelper::ToString(uhugeint_t value) {
 }
 
 template <>
+std::string NumericHelper::ToString(varint_t value) {
+	return value.ToString();
+}
+
+template <>
 int DecimalToString::DecimalLength(hugeint_t value, uint8_t width, uint8_t scale) {
 	D_ASSERT(value > NumericLimits<hugeint_t>::Minimum());
 	int negative;

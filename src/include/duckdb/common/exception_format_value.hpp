@@ -15,6 +15,8 @@
 
 namespace duckdb {
 
+struct varint_t;
+
 // Helper class to support custom overloading
 // Escaping " and quoting the value with "
 class SQLIdentifier {
@@ -64,6 +66,7 @@ public:
 	static ExceptionFormatValue CreateFormatValue(T value) {
 		return int64_t(value);
 	}
+
 	static string Format(const string &msg, std::vector<ExceptionFormatValue> &values);
 };
 
@@ -81,6 +84,8 @@ template <>
 DUCKDB_API ExceptionFormatValue ExceptionFormatValue::CreateFormatValue(double value);
 template <>
 DUCKDB_API ExceptionFormatValue ExceptionFormatValue::CreateFormatValue(string value);
+template <>
+DUCKDB_API ExceptionFormatValue ExceptionFormatValue::CreateFormatValue(varint_t value);
 template <>
 DUCKDB_API ExceptionFormatValue ExceptionFormatValue::CreateFormatValue(const char *value);
 template <>
