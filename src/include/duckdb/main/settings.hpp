@@ -218,6 +218,17 @@ struct ArrowOutputListViewSetting {
 	static Value GetSetting(const ClientContext &context);
 };
 
+struct ArrowOutputVersionSetting {
+	using RETURN_TYPE = string;
+	static constexpr const char *Name = "arrow_output_version";
+	static constexpr const char *Description =
+	    "Whether strings should be produced by DuckDB in Utf8View format instead of Utf8";
+	static constexpr const char *InputType = "VARCHAR";
+	static void SetGlobal(DatabaseInstance *db, DBConfig &config, const Value &parameter);
+	static void ResetGlobal(DatabaseInstance *db, DBConfig &config);
+	static Value GetSetting(const ClientContext &context);
+};
+
 struct AsofLoopJoinThresholdSetting {
 	using RETURN_TYPE = idx_t;
 	static constexpr const char *Name = "asof_loop_join_threshold";
@@ -437,6 +448,20 @@ struct DefaultSecretStorageSetting {
 	static constexpr const char *InputType = "VARCHAR";
 	static void SetGlobal(DatabaseInstance *db, DBConfig &config, const Value &parameter);
 	static void ResetGlobal(DatabaseInstance *db, DBConfig &config);
+	static Value GetSetting(const ClientContext &context);
+};
+
+struct DisableDatabaseInvalidationSetting {
+	using RETURN_TYPE = bool;
+	static constexpr const char *Name = "disable_database_invalidation";
+	static constexpr const char *Description =
+	    "Disables invalidating the database instance when encountering a fatal error. Should be used with great care, "
+	    "as DuckDB cannot guarantee correct behavior after a fatal error.";
+	static constexpr const char *InputType = "BOOLEAN";
+	static void SetGlobal(DatabaseInstance *db, DBConfig &config, const Value &parameter);
+	static void ResetGlobal(DatabaseInstance *db, DBConfig &config);
+	static bool OnGlobalSet(DatabaseInstance *db, DBConfig &config, const Value &input);
+	static bool OnGlobalReset(DatabaseInstance *db, DBConfig &config);
 	static Value GetSetting(const ClientContext &context);
 };
 
