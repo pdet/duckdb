@@ -27,6 +27,7 @@ public:
 	DUCKDB_API varint_t(int64_t value);
 	DUCKDB_API varint_t(hugeint_t value);
 	DUCKDB_API varint_t(uhugeint_t value);
+	DUCKDB_API varint_t(string_t value);
 
 	varint_t() = default;
 	explicit varint_t(string value) : value(std::move(value)) {

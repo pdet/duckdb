@@ -704,8 +704,7 @@ Value Vector::GetValueInternal(const Vector &v_p, idx_t index_p) {
 		return Value::BLOB(const_data_ptr_cast(str.GetData()), str.GetSize());
 	}
 	case LogicalTypeId::VARINT: {
-		auto str = reinterpret_cast<string_t *>(data)[index];
-		return Value::VARINT(const_data_ptr_cast(str.GetData()), str.GetSize());
+		return Value::VARINT(reinterpret_cast<varint_t *>(data)[index]);
 	}
 	case LogicalTypeId::AGGREGATE_STATE: {
 		auto str = reinterpret_cast<string_t *>(data)[index];
@@ -2100,7 +2099,7 @@ string_t StringVector::AddStringOrBlob(Vector &vector, string_t data) {
 }
 
 string_t StringVector::EmptyString(Vector &vector, idx_t len) {
-	D_ASSERT(vector.GetType().InternalType() == PhysicalType::VARCHAR);
+	D_ASSERT(vector.GetType().InternalType() == PhysicalType::VARCHAR || vector.GetType().InternalType() == PhysicalType::VARINT);
 	if (len <= string_t::INLINE_LENGTH) {
 		return string_t(UnsafeNumericCast<uint32_t>(len));
 	}

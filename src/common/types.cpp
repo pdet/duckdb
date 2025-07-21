@@ -114,11 +114,12 @@ PhysicalType LogicalType::GetInternalType() {
 			                        width, DecimalType::MaxWidth());
 		}
 	}
+	case LogicalTypeId::VARINT:
+		return PhysicalType::VARINT;
 	case LogicalTypeId::VARCHAR:
 	case LogicalTypeId::CHAR:
 	case LogicalTypeId::BLOB:
 	case LogicalTypeId::BIT:
-	case LogicalTypeId::VARINT:
 		return PhysicalType::VARCHAR;
 	case LogicalTypeId::INTERVAL:
 		return PhysicalType::INTERVAL;
@@ -277,6 +278,8 @@ string TypeIdToString(PhysicalType type) {
 		return "UINT64";
 	case PhysicalType::INT128:
 		return "INT128";
+	case PhysicalType::VARINT:
+		return "VARINT";
 	case PhysicalType::UINT128:
 		return "UINT128";
 	case PhysicalType::FLOAT:
@@ -337,6 +340,8 @@ idx_t GetTypeIdSize(PhysicalType type) {
 		return sizeof(string_t);
 	case PhysicalType::INTERVAL:
 		return sizeof(interval_t);
+	case PhysicalType::VARINT:
+		return sizeof(varint_t);
 	case PhysicalType::STRUCT:
 	case PhysicalType::UNKNOWN:
 	case PhysicalType::ARRAY:

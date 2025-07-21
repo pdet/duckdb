@@ -891,6 +891,13 @@ Value Value::VARINT(const string &data) {
 	return result;
 }
 
+	Value Value::VARINT(const varint_t &data) {
+	Value result(LogicalType::VARINT);
+	result.is_null = false;
+	result.value_info_ = make_shared_ptr<StringValueInfo>(data.value);
+	return result;
+}
+
 Value Value::BLOB(const string &data) {
 	Value result(LogicalType::BLOB);
 	result.is_null = false;
@@ -1138,8 +1145,12 @@ T Value::GetValueInternal() const {
 	case LogicalTypeId::DOUBLE:
 		return Cast::Operation<double, T>(value_.double_);
 	case LogicalTypeId::VARCHAR:
-	case LogicalTypeId::VARINT:
 		return Cast::Operation<string_t, T>(StringValue::Get(*this).c_str());
+	case LogicalTypeId::VARINT: {
+		auto a = StringValue::Get(*this);
+		varint_t res (a);
+		return Cast::Operation<varint_t, T>(res);
+	}
 	case LogicalTypeId::INTERVAL:
 		return Cast::Operation<interval_t, T>(value_.interval);
 	case LogicalTypeId::DECIMAL:

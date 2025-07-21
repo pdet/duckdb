@@ -54,7 +54,7 @@ static scalar_function_t GetScalarIntegerFunction(PhysicalType type) {
 	case PhysicalType::UINT128:
 		function = &ScalarFunction::BinaryFunction<uhugeint_t, uhugeint_t, uhugeint_t, OP>;
 		break;
-	case PhysicalType::VARCHAR:
+	case PhysicalType::VARINT:
 		function = &ScalarFunction::BinaryFunction<varint_t, varint_t, varint_t, OP>;
 		break;
 
@@ -1021,7 +1021,7 @@ static scalar_function_t GetBinaryFunctionIgnoreZero(PhysicalType type) {
 		return BinaryScalarFunctionIgnoreZero<float, float, float, OP>;
 	case PhysicalType::DOUBLE:
 		return BinaryScalarFunctionIgnoreZero<double, double, double, OP>;
-	case PhysicalType::VARCHAR:
+	case PhysicalType::VARINT:
 		return BinaryScalarFunctionIgnoreZero<varint_t, varint_t, varint_t, OP>;
 	default:
 		throw NotImplementedException("Unimplemented type for GetScalarUnaryFunction");

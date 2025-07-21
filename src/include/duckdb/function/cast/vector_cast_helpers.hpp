@@ -153,6 +153,14 @@ struct VectorCastHelpers {
 		return true;
 	}
 
+	template <class SRC, class OP>
+	static bool VarintCast(Vector &source, Vector &result, idx_t count, CastParameters &parameters) {
+		D_ASSERT(result.GetType().InternalType() == PhysicalType::VARINT);
+		UnaryExecutor::GenericExecute<SRC, varint_t, VectorStringCastOperator<OP>>(source, result, count,
+		                                                                           (void *)&result);
+		return true;
+	}
+
 	template <class SRC, class T, class OP>
 	static bool TemplatedDecimalCast(Vector &source, Vector &result, idx_t count, CastParameters &parameters,
 	                                 uint8_t width, uint8_t scale) {

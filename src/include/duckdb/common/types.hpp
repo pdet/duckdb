@@ -175,7 +175,7 @@ enum class PhysicalType : uint8_t {
 	UNKNOWN = 205, // Unknown physical type of user defined types
 	/// Boolean as 1 bit, LSB bit-packed ordering
 	BIT = 206,
-
+	VARINT = 207, // Signed variable integer type
 	INVALID = 255
 };
 

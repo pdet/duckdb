@@ -237,29 +237,29 @@ BoundCastInfo Varint::NumericToVarintCastSwitch(const LogicalType &source) {
 	// now switch on the result type
 	switch (source.id()) {
 	case LogicalTypeId::TINYINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<int8_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<int8_t, IntCastToVarInt>);
 	case LogicalTypeId::UTINYINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<uint8_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<uint8_t, IntCastToVarInt>);
 	case LogicalTypeId::SMALLINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<int16_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<int16_t, IntCastToVarInt>);
 	case LogicalTypeId::USMALLINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<uint16_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<uint16_t, IntCastToVarInt>);
 	case LogicalTypeId::INTEGER:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<int32_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<int32_t, IntCastToVarInt>);
 	case LogicalTypeId::UINTEGER:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<uint32_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<uint32_t, IntCastToVarInt>);
 	case LogicalTypeId::BIGINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<int64_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<int64_t, IntCastToVarInt>);
 	case LogicalTypeId::UBIGINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<uint64_t, IntCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<uint64_t, IntCastToVarInt>);
 	case LogicalTypeId::UHUGEINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<uhugeint_t, HugeintCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<uhugeint_t, HugeintCastToVarInt>);
 	case LogicalTypeId::FLOAT:
 		return BoundCastInfo(&VectorCastHelpers::TryCastStringLoop<float, string_t, TryCastToVarInt>);
 	case LogicalTypeId::DOUBLE:
 		return BoundCastInfo(&VectorCastHelpers::TryCastStringLoop<double, string_t, TryCastToVarInt>);
 	case LogicalTypeId::HUGEINT:
-		return BoundCastInfo(&VectorCastHelpers::StringCast<hugeint_t, HugeintCastToVarInt>);
+		return BoundCastInfo(&VectorCastHelpers::VarintCast<hugeint_t, HugeintCastToVarInt>);
 	case LogicalTypeId::DECIMAL:
 	default:
 		return DefaultCasts::TryVectorNullCast;

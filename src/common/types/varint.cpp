@@ -807,7 +807,11 @@ varint_t::varint_t(uhugeint_t input) {
 	Varint::TryConvert(input, *this);
 }
 
-// // arithmetic operators
+varint_t::varint_t(string_t input) {
+	value = input.GetString();
+}
+
+// arithmetic operators
 varint_t varint_t::operator+(const varint_t &rhs) const {
 	return *this;
 }

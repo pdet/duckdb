@@ -1656,6 +1656,11 @@ date_t Cast::Operation(string_t input) {
 	return Date::FromCString(input.GetData(), input.GetSize());
 }
 
+template <>
+varint_t Cast::Operation(string_t input) {
+	return varint_t(input.GetString());
+}
+
 //===--------------------------------------------------------------------===//
 // Cast To Time
 //===--------------------------------------------------------------------===//

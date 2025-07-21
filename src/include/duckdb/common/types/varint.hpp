@@ -151,7 +151,7 @@ bool Varint::TryConvert(const char *value, varint_t &result);
 //! ----------------------------------- (u)Integral Cast ----------------------------------- //
 struct IntCastToVarInt {
 	template <class SRC>
-	static inline string_t Operation(SRC input, Vector &result) {
+	static inline varint_t Operation(SRC input, Vector &result) {
 		return IntToVarInt(result, input);
 	}
 };
@@ -159,7 +159,7 @@ struct IntCastToVarInt {
 //! ----------------------------------- (u)HugeInt Cast ----------------------------------- //
 struct HugeintCastToVarInt {
 	template <class SRC>
-	static inline string_t Operation(SRC input, Vector &result) {
+	static inline varint_t Operation(SRC input, Vector &result) {
 		throw InternalException("Unsupported type for cast to VARINT");
 	}
 };
