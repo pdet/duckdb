@@ -353,6 +353,12 @@ bool TryCastWithOverflowCheck(bool input, uhugeint_t &result) {
 	return true;
 }
 
+template <>
+bool TryCastWithOverflowCheck(bool input, varint_t &result) {
+	result = input ? 1 : 0;
+	return true;
+}
+
 //===--------------------------------------------------------------------===//
 // Cast Numeric -> hugeint
 //===--------------------------------------------------------------------===//
@@ -590,10 +596,10 @@ bool TryCastWithOverflowCheck(double value, uhugeint_t &result) {
 //===--------------------------------------------------------------------===//
 // Cast VARINT -> Numeric
 //===--------------------------------------------------------------------===//
-// template <>
-// bool TryCastWithOverflowCheck(varint_t value, bool &result) {
-// 	return Varint::TryCast(value, result);
-// }
+template <>
+bool TryCastWithOverflowCheck(varint_t value, bool &result) {
+	return Varint::TryCast(value, result);
+}
 
 template <>
 bool TryCastWithOverflowCheck(varint_t value, int8_t &result) {

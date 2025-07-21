@@ -1138,6 +1138,7 @@ T Value::GetValueInternal() const {
 	case LogicalTypeId::DOUBLE:
 		return Cast::Operation<double, T>(value_.double_);
 	case LogicalTypeId::VARCHAR:
+	case LogicalTypeId::VARINT:
 		return Cast::Operation<string_t, T>(StringValue::Get(*this).c_str());
 	case LogicalTypeId::INTERVAL:
 		return Cast::Operation<interval_t, T>(value_.interval);
@@ -1274,6 +1275,11 @@ timestamp_tz_t Value::GetValue() const {
 template <>
 dtime_tz_t Value::GetValue() const {
 	return GetValueInternal<dtime_tz_t>();
+}
+
+template <>
+varint_t Value::GetValue() const {
+	return GetValueInternal<varint_t>();
 }
 
 template <>

@@ -453,6 +453,10 @@ bool VarintToInteger(varint_t &input, T &result) {
 }
 
 template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, bool &result) {
+	return VarintToInteger(input, result);
+}
+template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, int8_t &result) {
 	return VarintToInteger(input, result);
 }

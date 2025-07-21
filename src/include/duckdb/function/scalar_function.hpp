@@ -281,6 +281,9 @@ public:
 		case LogicalTypeId::DOUBLE:
 			function = &ScalarFunction::UnaryFunction<double, TR, OP>;
 			break;
+		case LogicalTypeId::VARINT:
+			function = &ScalarFunction::UnaryFunction<varint_t, TR, OP>;
+			break;
 		default:
 			throw InternalException("Unimplemented type for GetScalarUnaryFunctionFixedReturn");
 		}

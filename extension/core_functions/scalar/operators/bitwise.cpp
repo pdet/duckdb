@@ -39,6 +39,9 @@ static scalar_function_t GetScalarIntegerUnaryFunction(const LogicalType &type) 
 	case LogicalTypeId::UHUGEINT:
 		function = &ScalarFunction::UnaryFunction<uhugeint_t, uhugeint_t, OP>;
 		break;
+	case LogicalTypeId::VARINT:
+		function = &ScalarFunction::UnaryFunction<varint_t, varint_t, OP>;
+		break;
 	default:
 		throw NotImplementedException("Unimplemented type for GetScalarIntegerUnaryFunction");
 	}

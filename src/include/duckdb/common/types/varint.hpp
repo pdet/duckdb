@@ -95,6 +95,8 @@ public:
 };
 
 template <>
+DUCKDB_API bool Varint::TryCast(varint_t input, bool &result);
+template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, int8_t &result);
 template <>
 DUCKDB_API bool Varint::TryCast(varint_t input, int16_t &result);

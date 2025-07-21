@@ -116,8 +116,8 @@ template <>
 DUCKDB_API bool TryCast::Operation(bool input, float &result, bool strict);
 template <>
 DUCKDB_API bool TryCast::Operation(bool input, double &result, bool strict);
-template <>
-DUCKDB_API bool TryCast::Operation(bool input, varint_t &result, bool strict);
+// template <>
+// DUCKDB_API bool TryCast::Operation(bool input, varint_t &result, bool strict);
 
 //===--------------------------------------------------------------------===//
 // Cast int8_t -> Numeric
