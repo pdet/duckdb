@@ -2,8 +2,6 @@
 # description: String slicing test
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE strings(s VARCHAR, off INTEGER, length INTEGER);
 

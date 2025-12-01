@@ -2,8 +2,6 @@
 # description: Error thrown in CREATE TABLE AS
 # group: [pedro]
 
-
-
 statement ok
 CREATE OR REPLACE TABLE t0 AS ((SELECT 1) UNION ALL ((SELECT 2) INTERSECT ALL (SELECT 2)));
 

@@ -2,8 +2,6 @@
 # description: Test FROM first
 # group: [parser]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

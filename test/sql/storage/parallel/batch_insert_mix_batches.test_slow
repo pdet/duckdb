@@ -18,7 +18,6 @@ COPY (FROM range(400000, 700000) tbl(i)) TO '__TEST_DIR__/mix_batches_odd.parque
 statement ok
 COPY (FROM range(700000, 1000000) tbl(i)) TO '__TEST_DIR__/mix_batches_odd_again.parquet' (ROW_GROUP_SIZE 99979)
 
-
 # create views that read the batches
 statement ok
 CREATE VIEW v1 AS SELECT * FROM parquet_scan(['__TEST_DIR__/mix_batches_small.parquet', '__TEST_DIR__/mix_batches_large.parquet', '__TEST_DIR__/mix_batches_odd.parquet',  '__TEST_DIR__/mix_batches_odd_again.parquet'])
@@ -179,7 +178,6 @@ statement ok
 CREATE OR REPLACE VIEW v3 AS FROM v1 WHERE (i//10000)%2=0 OR (i>200000 AND i < 400000) OR (i>600000 AND i < 800000);
 
 endloop
-
 
 statement ok
 CREATE TABLE integers4(i INTEGER)

@@ -2,8 +2,6 @@
 # description: Issue #5782: Test leading zeros auto-detect
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE leading_zeros AS SELECT * FROM read_csv_auto('{DATA_DIR}/csv/leading_zeros.csv')
 

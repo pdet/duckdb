@@ -2,8 +2,6 @@
 # description: Issue 17310 - Casting issue from float64 to decimal
 # group: [general]
 
-
-
 # should not error
 query I
 select try_cast('nan'::double as decimal(18,2));

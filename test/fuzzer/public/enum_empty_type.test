@@ -2,8 +2,6 @@
 # description: Test creating an enum with empty strings
 # group: [public]
 
-
-
 statement ok
 CREATE TYPE c AS ENUM('');
 

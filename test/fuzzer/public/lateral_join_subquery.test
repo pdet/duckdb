@@ -2,8 +2,6 @@
 # description: Subqueries in the join condition of lateral joins
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE t1 (c1 INT);
 

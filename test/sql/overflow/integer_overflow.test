@@ -2,8 +2,6 @@
 # description: Test handling of integer overflow in arithmetic
 # group: [overflow]
 
-
-
 # addition
 # tinyint
 statement ok

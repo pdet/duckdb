@@ -2,8 +2,6 @@
 # description: current_schemas null input
 # group: [sqlsmith]
 
-
-
 statement ok
 CREATE TABLE booleans(bool BOOLEAN);
 

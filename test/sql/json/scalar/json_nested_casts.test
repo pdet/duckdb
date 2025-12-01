@@ -6,8 +6,6 @@ require json
 
 require notwindows
 
-
-
 # list with varchar to json
 statement ok
 create table t2(blobs json[])
@@ -280,7 +278,6 @@ select bool,
 from test_all_types()
 ----
 
-
 statement ok
 create table all_types_json as
 select bool::JSON as bool,
@@ -371,7 +368,6 @@ query I nosort q0
 select * from roundtrip
 ----
 
-
 # also check that we handle vector types properly
 foreach all_flat true false
 
@@ -379,21 +375,17 @@ query I nosort q1
 select v from test_vector_types(null::int[], all_flat=${all_flat}) tbl(v)
 ----
 
-
 query I nosort q1
 select v::JSON::INT[] from test_vector_types(null::int[], all_flat=${all_flat}) tbl(v)
 ----
-
 
 query I nosort q2
 select v from test_vector_types(NULL::ROW(i INTEGER, j VARCHAR), all_flat=${all_flat}) tbl(v)
 ----
 
-
 query I nosort q2
 select v::JSON::ROW(i INTEGER, j VARCHAR) from test_vector_types(NULL::ROW(i INTEGER, j VARCHAR), all_flat=${all_flat}) tbl(v)
 ----
-
 
 endloop
 

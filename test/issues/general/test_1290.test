@@ -2,8 +2,6 @@
 # description: Issue 1290: FULL JOIN reports missing values for join key
 # group: [general]
 
-
-
 statement ok
 create table a as select 42 as i, 80 as j;
 

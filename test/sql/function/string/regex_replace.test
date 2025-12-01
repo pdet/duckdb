@@ -2,8 +2,6 @@
 # description: regex replace test
 # group: [string]
 
-
-
 # standard replace
 query T
 SELECT regexp_replace('foobarbaz', 'b..', 'X')

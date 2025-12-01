@@ -2,8 +2,6 @@
 # description: Test SEMI JOIN with USING clause
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 (c01 INT, c02 STRING);
 
@@ -18,7 +16,6 @@ FROM (
 	USING ( c02 ) ) ;
 ----
 Ambiguous column reference
-
 
 query III
 SELECT t1.c02, t2.c02, ta04.c02

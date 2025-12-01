@@ -2,8 +2,6 @@
 # description: Test casting to TIMESTAMP WITH TIME ZONE from any unit
 # group: [timestamp]
 
-
-
 require icu
 
 foreach infinity_string infinity -infinity

@@ -2,14 +2,11 @@
 # description: Issue #6341: No rows returned in LEFT JOIN with < or > against table having no rows
 # group: [left_outer]
 
-
-
 statement ok
 CREATE TABLE foo (ts TIMESTAMP);
 
 statement ok
 CREATE TABLE bar (ts TIMESTAMP);
-
 
 statement ok
 INSERT INTO foo VALUES ('2023-01-01 00:00:00');

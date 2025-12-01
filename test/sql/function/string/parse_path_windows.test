@@ -2,8 +2,6 @@
 # description: test parse path functions in windows
 # group: [string]
 
-
-
 require windows
 
 # all separators option
@@ -49,7 +47,6 @@ SELECT parse_path();
 ----
 Binder Error: No function matches the given name and argument types 'parse_path()'. You might need to add explicit type casts.
 
-
 # test parse_dirname
 # all separators option
 query T
@@ -88,7 +85,6 @@ SELECT parse_dirname();
 ----
 Binder Error: No function matches the given name and argument types 'parse_dirname()'.
 
-
 # test parse_dirpath
 # all separators option
 query T
@@ -126,7 +122,6 @@ statement error
 SELECT parse_dirpath();
 ----
 Binder Error: No function matches the given name and argument types 'parse_dirpath()'.
-
 
 # test parse_filename
 # all separators option

@@ -2,8 +2,6 @@
 # description: ENUM types in duckdb_types() function
 # group: [enum]
 
-
-
 query II
 SELECT type_name, logical_type FROM duckdb_types() WHERE NOT internal
 ----

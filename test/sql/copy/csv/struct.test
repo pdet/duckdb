@@ -2,8 +2,6 @@
 # description: Verify that we can sniff a struct string properly
 # group: [csv]
 
-
-
 query I
 FROM '{DATA_DIR}/csv/struct.csv'
 ----

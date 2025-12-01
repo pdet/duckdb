@@ -2,8 +2,6 @@
 # description: Various CSV reader error messages
 # group: [csv]
 
-
-
 # Test columns error
 
 statement error

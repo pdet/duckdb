@@ -2,8 +2,6 @@
 # description: Test pivot with an empty enum
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE t1 (c01 INT);
 

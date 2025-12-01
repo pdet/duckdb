@@ -2,8 +2,6 @@
 # description: Test keywords in expressions
 # group: [keywords]
 
-
-
 statement ok
 CREATE SCHEMA "SCHEMA";
 

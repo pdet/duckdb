@@ -19,7 +19,6 @@ query II
 select round(nr_bytes / 1048576), loaded from duckdb_external_file_cache() order by location;
 ----
 
-
 # for now, caching is only triggered when prefetching (mainly used for remote files), so let's force it
 statement ok
 set prefetch_all_parquet_files=true;
@@ -93,7 +92,6 @@ set enable_external_file_cache=false;
 query II
 select round(nr_bytes / 1048576), loaded from duckdb_external_file_cache() order by location;
 ----
-
 
 # test that we notice cache invalidation by rapidly overwriting
 statement ok

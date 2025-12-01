@@ -43,7 +43,6 @@ statement ok
 FROM
   data;
 
-
 statement ok
   SELECT
   *,

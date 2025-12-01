@@ -2,8 +2,6 @@
 # description: Test long value with escapes
 # group: [csv]
 
-
-
 statement ok
 create table integers(i int);
 

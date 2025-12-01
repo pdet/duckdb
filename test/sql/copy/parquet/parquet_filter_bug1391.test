@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 CREATE VIEW tbl AS SELECT * FROM PARQUET_SCAN('{DATA_DIR}/parquet-testing/filter_bug1391.parquet');
 
@@ -37,5 +35,4 @@ AND Parentnamevalidto >= '2017-03-01'
 AND CustomerCode = 'CODE';
 ----
 8722
-
 

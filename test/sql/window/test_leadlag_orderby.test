@@ -2,8 +2,6 @@
 # description: Test secondary ordering of LEAD/LAG
 # group: [window]
 
-
-
 query IIIII
 SELECT 
 	i,

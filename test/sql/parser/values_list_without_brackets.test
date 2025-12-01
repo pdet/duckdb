@@ -2,8 +2,6 @@
 # description: Test values list without brackets
 # group: [parser]
 
-
-
 query I
 SELECT * FROM values (42) t;
 ----

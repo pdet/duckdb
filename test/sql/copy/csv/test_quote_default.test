@@ -2,8 +2,6 @@
 # description: Test quote and escape are set as default quoted option
 # group: [csv]
 
-
-
 query II
 from read_csv('{DATA_DIR}/csv/test_default_option.csv', columns = {'a':'varchar', 'b':'integer'}, auto_detect = false, header = true) where b = 1
 ----

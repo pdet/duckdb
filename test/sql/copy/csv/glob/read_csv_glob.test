@@ -2,8 +2,6 @@
 # description: Test globbing CSVs
 # group: [glob]
 
-
-
 query IIIII
 select typeof(#1),typeof(#2),typeof(#3),typeof(#4),typeof(#5) FROM read_csv('{DATA_DIR}/csv/per_thread/*.csv') limit 1
 ----
@@ -151,7 +149,6 @@ query I
 SELECT COUNT(*) FROM glob(['{DATA_DIR}/csv/glob/*/*.csv'])
 ----
 5
-
 
 query I
 SELECT COUNT(*) FROM glob(['{DATA_DIR}/csv/glob/*/*.csv', '{DATA_DIR}/csv/glob/*/*.csv'])

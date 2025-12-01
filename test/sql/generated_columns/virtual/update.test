@@ -2,8 +2,6 @@
 # description: Test that all types of update statements work
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE test (
     foo INTEGER,

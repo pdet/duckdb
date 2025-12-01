@@ -2,8 +2,6 @@
 # description: Extract function statistics
 # group: [time]
 
-
-
 statement ok
 CREATE TABLE times(i TIME)
 

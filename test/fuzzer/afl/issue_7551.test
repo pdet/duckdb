@@ -2,8 +2,6 @@
 # description: Issue #7551 - Segmentation fault on SELECT
 # group: [afl]
 
-
-
 # FIXME - internal exception is thrown
 mode skip
 

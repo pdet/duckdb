@@ -2,8 +2,6 @@
 # description: Issue 5896: json_group_array() does not respect filter clauses
 # group: [general]
 
-
-
 # the problem was actually that all aggregate modifiers were ignored for non-aggregate functions
 
 # distinct modifier
@@ -52,7 +50,6 @@ statement error
 SELECT unnest([42, 42] ORDER BY x);
 ----
 Invalid Input Error: "DISTINCT", "FILTER", and "ORDER BY" are not applicable to "UNNEST"
-
 
 statement error
 SELECT unnest([42, 42]) FILTER (WHERE (x > 3));

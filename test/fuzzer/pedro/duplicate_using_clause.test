@@ -2,8 +2,6 @@
 # description: Issue #4561: Binding assertion error
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t1(c0 INT);
 

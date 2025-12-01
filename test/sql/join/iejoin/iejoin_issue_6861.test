@@ -2,8 +2,6 @@
 # description: Issue #6861: Index out of bound for all-NULL case.
 # group: [iejoin]
 
-
-
 statement ok
 CREATE TABLE test(x INT);
 

@@ -2,8 +2,6 @@
 # description: Recursive CTEs with an error thrown in the pipelines
 # group: [cte]
 
-
-
 statement ok
 CREATE TABLE tag(id int, name string, subclassof int);
 

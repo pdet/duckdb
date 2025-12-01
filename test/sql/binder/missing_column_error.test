@@ -2,8 +2,6 @@
 # description: Correctly report missing column errors instead of lateral joins
 # group: [binder]
 
-
-
 statement ok
 create table customers (name varchar, age integer, something_easy_to_type_wrong integer, city varchar);
 

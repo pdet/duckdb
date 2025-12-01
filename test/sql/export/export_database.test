@@ -124,7 +124,6 @@ SELECT * FROM "view.with-symbols" ORDER BY 1
 ----
 1
 
-
 query TT
 SELECT "table ""."."col "".", "col ""." FROM "table "".";
 ----
@@ -145,7 +144,6 @@ statement ok
 CREATE SCHEMA s1;
 CREATE SCHEMA s2;
 
-
 statement ok
 CREATE TABLE table01(i INTEGER, j INTEGER);
 CREATE TABLE s1.table01(i INTEGER, j INTEGER);
@@ -155,7 +153,6 @@ statement ok
 INSERT INTO table01 VALUES (1, 1), (2, 2);
 INSERT INTO s1.table01 VALUES (3, 3), (4, 4);
 INSERT INTO s2.table01 VALUES (5, 5), (6, 6);
-
 
 query II
 SELECT * FROM table01 ORDER BY i;

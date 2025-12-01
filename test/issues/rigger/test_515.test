@@ -2,8 +2,6 @@
 # description: Issue 515
 # group: [rigger]
 
-
-
 # Query with a negative shift predicate yields an incorrect result
 statement ok
 CREATE TABLE t0(c0 INT);

@@ -2,8 +2,6 @@
 # description: Test correct column name output in read_csv functions
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE t1 AS SELECT * FROM read_csv_auto('{DATA_DIR}/csv/test/issue2518.csv', header=False, columns={'rsID':'INT', 'CHR': 'VARCHAR', 'POS': 'INT','REFB': 'VARCHAR','ALTB':'VARCHAR'}, auto_detect = false)
 
@@ -37,7 +35,6 @@ SELECT rsID, chr, pos, refb, altb FROM t2
 1090	8	402108	C	G,T
 11	7	11364201	C	T
 1184	6	187649	T	A,C,G
-
 
 statement ok
 CREATE TABLE t3 AS SELECT * FROM read_csv_auto('{DATA_DIR}/csv/test/issue2518.csv', columns={'rsID':'INT', 'CHR': 'VARCHAR', 'POS': 'INT','REFB': 'VARCHAR','ALTB':'VARCHAR'}, auto_detect = false)

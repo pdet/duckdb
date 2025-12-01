@@ -2,8 +2,6 @@
 # description: Suffix test
 # group: [string]
 
-
-
 # Short string (4bytes)
 query T
 SELECT suffix('abcd', 'd')

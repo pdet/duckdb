@@ -2,8 +2,6 @@
 # description: Test time limits
 # group: [time]
 
-
-
 query I
 select time '23:59:59.999999'
 ----

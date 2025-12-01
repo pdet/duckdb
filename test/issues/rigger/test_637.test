@@ -2,8 +2,6 @@
 # description: Issue 637
 # group: [rigger]
 
-
-
 # SELECT with RIGHT JOIN causes an assertion failure 'Assertion `!finalized' failed'
 statement ok
 CREATE TABLE t0(c0 VARCHAR);

@@ -8,7 +8,6 @@ PRAGMA enable_profiling()
 ----
 Parser Error: syntax error at or near ")"
 
-
 statement error
 PRAGMA enable_profiling='unsupported'
 ----

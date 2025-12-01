@@ -2,8 +2,6 @@
 # description: Issue 1091: INTERNAL error with insert and delete in same transaction
 # group: [general]
 
-
-
 statement ok
 CREATE SEQUENCE elems_seq;
 

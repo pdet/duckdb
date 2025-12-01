@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # empty file
 query I
 select * from '{DATA_DIR}/json/empty.ndjson'

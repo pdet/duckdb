@@ -2,8 +2,6 @@
 # description: UNICODE test
 # group: [string]
 
-
-
 # test on scalars
 query IIIIII
 select UNICODE(NULL), UNICODE(''), UNICODE('$'), UNICODE('¢'), UNICODE('€'), UNICODE('𐍈')

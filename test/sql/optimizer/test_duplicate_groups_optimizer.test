@@ -14,8 +14,6 @@ insert into t1 values (1, 1);
 statement ok
 insert into t2 values (1);
 
-
-
 query III
 select
 	col1,
@@ -30,7 +28,6 @@ group by rollup(col1, col2, col3) order by 1, 2 ,3;
 1	1	NULL
 1	NULL	NULL
 NULL	NULL	NULL
-
 
 query III
 select
@@ -50,7 +47,6 @@ NULL	1	1
 NULL	1	NULL
 NULL	NULL	1
 NULL	NULL	NULL
-
 
 query III
 select
@@ -86,7 +82,6 @@ group by col1, col3;
 ----
 logical_opt	<REGEX>:.*Groups: col1.*
 
-
 statement ok
 create table t3 (a int, b int, c int);
 
@@ -116,5 +111,4 @@ NULL	2	NULL
 NULL	NULL	1
 NULL	NULL	2
 NULL	NULL	NULL
-
 

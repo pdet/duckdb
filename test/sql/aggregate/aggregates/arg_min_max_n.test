@@ -2,8 +2,6 @@
 # description: Test for arg_max with N
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE t1 (val VARCHAR, arg INT);
 
@@ -33,7 +31,6 @@ query I
 SELECT arg_max(even_groups, i, 3) FROM t2;
 ----
 [4, 3, 2]
-
 
 # Test limits
 

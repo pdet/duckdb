@@ -2,8 +2,6 @@
 # description: Test LIMIT with full outer joins
 # group: [order]
 
-
-
 query I
 SELECT * FROM range(5) UNION ALL SELECT * FROM range(5) LIMIT 7
 ----

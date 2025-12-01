@@ -28,7 +28,6 @@ SELECT list_inner_product(l, [1, 2, 3]) FROM lists;
 -14.0
 NULL
 
-
 statement error
 SELECT list_inner_product([1, NULL, 3]::${type}[], [1, 2, 3]::${type}[]);
 ----

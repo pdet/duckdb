@@ -2,8 +2,6 @@
 # description: Rounding half up in float => decimal casts
 # group: [cast]
 
-
-
 # PG does NOT use statistical ("Banker's") rounding for floating point => decimal
 
 foreach src FLOAT DOUBLE

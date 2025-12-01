@@ -2,8 +2,6 @@
 # description: Test exponents in cast
 # group: [cast]
 
-
-
 statement error
 SELECT CAST('e1' AS INTEGER);
 ----

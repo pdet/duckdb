@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_duplicates_issue.test
 # group: [upsert]
 
-
-
 require parquet
 
 statement ok

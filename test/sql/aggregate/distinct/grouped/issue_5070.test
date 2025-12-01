@@ -1,8 +1,6 @@
 # name: test/sql/aggregate/distinct/grouped/issue_5070.test
 # group: [grouped]
 
-
-
 statement ok
 pragma verify_parallelism
 

@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query I
 FROM '{DATA_DIR}/parquet-testing/bigdecimal.parquet'
 ----

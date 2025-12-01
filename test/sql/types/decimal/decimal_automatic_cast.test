@@ -2,8 +2,6 @@
 # description: Test automatic decimal casting
 # group: [decimal]
 
-
-
 query I
 SELECT [1.33, 10.0]
 ----

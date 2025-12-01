@@ -6,8 +6,6 @@ mode skip
 
 require httpfs
 
-
-
 statement ok
 CREATE TABLE hits
 (

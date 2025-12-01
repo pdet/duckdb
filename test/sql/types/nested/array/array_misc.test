@@ -5,8 +5,6 @@ require json
 
 require parquet
 
-
-
 statement ok
 PRAGMA verify_external
 

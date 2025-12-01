@@ -2,8 +2,6 @@
 # description: Test union of VALUES
 # group: [setops]
 
-
-
 statement ok
 CREATE VIEW vals AS SELECT * FROM (VALUES (1, 10), (2, 5), (3, 4)) tbl(i, j);
 

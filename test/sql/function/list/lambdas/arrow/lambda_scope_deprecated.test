@@ -2,8 +2,6 @@
 # description: Test the scoping of lambda variables.
 # group: [arrow]
 
-
-
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'
 

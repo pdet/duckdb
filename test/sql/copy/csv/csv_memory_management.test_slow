@@ -2,8 +2,6 @@
 # description: Test the CSV Buffer Manager under strict memory limit conditions
 # group: [csv]
 
-
-
 statement ok
 SET memory_limit='512MB';
 

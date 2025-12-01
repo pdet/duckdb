@@ -7,8 +7,6 @@
 # 2) Run the script in scripts/generate_storage_version.py
 # 3) Commit the newly generated database file in test/sql/storage_version/storage_version.db
 
-
-
 load test/sql/storage_version/storage_version.db readonly
 
 statement ok

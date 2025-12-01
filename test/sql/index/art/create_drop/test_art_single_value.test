@@ -2,8 +2,6 @@
 # description: Test an ART containing a single value
 # group: [create_drop]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER)
 

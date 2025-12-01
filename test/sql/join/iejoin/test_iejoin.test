@@ -2,8 +2,6 @@
 # description: Test IEJoin
 # group: [iejoin]
 
-
-
 statement ok
 SET merge_join_threshold=0
 

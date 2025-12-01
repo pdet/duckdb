@@ -2,8 +2,6 @@
 # description: Test collation of non-varchar columns
 # group: [collate]
 
-
-
 statement ok
 PRAGMA default_collation=NOCASE;
 

@@ -2,8 +2,6 @@
 # description: Test MERGE issue when condition is in parenthesis
 # group: [merge]
 
-
-
 statement ok
 CREATE TABLE my_timeseries (ts TIMESTAMP, x DOUBLE PRECISION, y DOUBLE PRECISION);
 

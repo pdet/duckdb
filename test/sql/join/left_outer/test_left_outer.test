@@ -2,8 +2,6 @@
 # description: Test LEFT OUTER JOIN
 # group: [left_outer]
 
-
-
 statement ok
 pragma verify_external
 

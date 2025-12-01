@@ -2,8 +2,6 @@
 # description: Test nested types as keys for maps
 # group: [map]
 
-
-
 # Nested keys (list) successful
 query I
 SELECT MAP(

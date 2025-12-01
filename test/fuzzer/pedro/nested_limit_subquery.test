@@ -2,8 +2,6 @@
 # description: Test correlated limit
 # group: [pedro]
 
-
-
 query I
 SELECT 1 FROM (SELECT 1) t0(c0) WHERE (SELECT c0);
 ----

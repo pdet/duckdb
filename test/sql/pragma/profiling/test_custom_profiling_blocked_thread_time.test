@@ -4,8 +4,6 @@
 
 require json
 
-
-
 statement ok
 PRAGMA threads = 4;
 

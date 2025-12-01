@@ -2,8 +2,6 @@
 # description: Test ATTACH with expressions in the parameter list
 # group: [attach]
 
-
-
 statement ok
 SET VARIABLE db_type='DUCKDB'
 

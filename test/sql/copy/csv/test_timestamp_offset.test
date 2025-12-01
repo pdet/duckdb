@@ -2,8 +2,6 @@
 # description: Test CSV with a timestamp with timestamp offset
 # group: [csv]
 
-
-
 query II
 SELECT col1, typeof(col1) FROM '{DATA_DIR}/csv/test/timestampoffset.csv' t1(col1);
 ----

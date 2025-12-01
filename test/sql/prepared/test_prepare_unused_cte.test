@@ -2,8 +2,6 @@
 # description: Test binding unreferenced CTE parameters
 # group: [prepared]
 
-
-
 statement ok
 CREATE TABLE "user" (name string);
 

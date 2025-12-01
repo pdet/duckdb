@@ -2,8 +2,6 @@
 # description: Test STRUCT distinctions
 # group: [struct]
 
-
-
 foreach type <numeric>
 
 # Constant single integer column distinct
@@ -79,7 +77,6 @@ query T
 SELECT {'x': 'duck'} IS NOT DISTINCT FROM {'x': 'duck'}
 ----
 true
-
 
 query T
 SELECT {'x': 'duck'} IS NOT DISTINCT FROM NULL

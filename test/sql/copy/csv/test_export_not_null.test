@@ -2,8 +2,6 @@
 # description: Test Export function that is not null
 # group: [csv]
 
-
-
 statement ok
 begin transaction;
 

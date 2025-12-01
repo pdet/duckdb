@@ -2,8 +2,6 @@
 # description: Test usage of the INF value
 # group: [float]
 
-
-
 foreach type FLOAT DOUBLE
 
 foreach key UNIQUE CHECK(1)

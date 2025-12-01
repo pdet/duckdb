@@ -2,8 +2,6 @@
 # description: cast strings into (nested) list structures
 # group: [cast]
 
-
-
 #               Basic tests:
 # ---------------------------------------------------
 
@@ -97,7 +95,6 @@ SELECT CAST('[[ [🦆, 🦆, 🦆]], [[duck, db, 🦆], [🦆]], [[🦆, duck, d
 ----
 [[[🦆, 🦆, 🦆]], [[duck, db, 🦆], [🦆]], [[🦆, duck, db]]]
 
-
 #               Cast from table
 # ---------------------------------------------------
 statement  ok
@@ -155,7 +152,6 @@ SELECT col1::INT[] FROM tbl;
 [345, 67865, 44, 4]
 [5, 6, 7]
 
-
 # ---------------------------------------------------
 statement ok
 CREATE TABLE doubleNested (col1 VARCHAR);
@@ -169,7 +165,6 @@ SELECT col1::INT[][] FROM doubleNested;
 [[1, 2], [2]]
 [[345], [67865, 44, 4]]
 [[5], [6, 7]]
-
 
 # ---------------------------------------------------
 statement  ok
@@ -229,7 +224,6 @@ SELECT CAST($$[']', "hello", "world"]$$ AS VARCHAR[]);
 ----
 [']', hello, world]
 
-
 #               Test for whitespaces
 # ---------------------------------------------------
 query I
@@ -256,7 +250,6 @@ query I
 SELECT CAST($$[    [ "   hello"]  ,["            world"        ],[ "!        "           ]      ]$$ AS VARCHAR[][]);
 ----
 [['   hello'], ['            world'], ['!        ']]
-
 
 #               Empty list
 # ---------------------------------------------------
@@ -285,7 +278,6 @@ query I
 SELECT '[[1, 2, 3], [], NULL, [NULL], [4, NULL]]'::INT[][];
 ----
 [[1, 2, 3], [], NULL, [NULL], [4, NULL]]
-
 
 #               NULL values
 # ------------------------------67---------------------
@@ -331,7 +323,6 @@ query I
 SELECT CAST('[ [[12,13,14], NULL], [[4]], NULL, [[2, NULL, 1, 0], [99]] ]' AS INT[][][]);
 ----
 [[[12, 13, 14], NULL], [[4]], NULL, [[2, NULL, 1, 0], [99]]]
-
 
 #               Try Cast
 # ---------------------------------------------------
@@ -399,7 +390,6 @@ statement error
 SELECT CAST('[[[[[]][3][[]][][[[][]]]]]' AS INT[][][][]);
 ----
 
-
 #               Test WHERE clause
 # ---------------------------------------------------
 query I
@@ -418,7 +408,6 @@ SELECT cast(col1 as int[]) FROM tbl WHERE LEN(cast(col1 as int[])) < 4;
 ----
 [1, 2, 2]
 [5, 6, 7]
-
 
 #               Lists of structs:
 # ---------------------------------------------------
@@ -448,7 +437,6 @@ query I
 SELECT '[{a: hii}, {a: "{" }]'::STRUCT(a VARCHAR)[] FROM struct_tbl1;
 ----
 [{'a': hii}, {'a': '{'}]
-
 
 # ---------------------------------------------------
 statement ok

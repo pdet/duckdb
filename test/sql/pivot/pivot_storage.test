@@ -5,8 +5,6 @@
 # load the DB from disk
 load __TEST_DIR__/pivot_storage.db
 
-
-
 statement ok
 CREATE OR REPLACE TABLE monthly_sales(empid INT, amount INT, month TEXT);
 

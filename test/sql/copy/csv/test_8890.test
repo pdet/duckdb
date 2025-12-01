@@ -2,8 +2,6 @@
 # description: Test CSV works for #8890
 # group: [csv]
 
-
-
 query IIII
 select
     field1,

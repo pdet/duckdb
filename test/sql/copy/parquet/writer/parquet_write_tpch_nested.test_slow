@@ -12,7 +12,6 @@ CREATE SCHEMA tpch;
 statement ok
 CALL dbgen(sf=0.1, schema='tpch');
 
-
 # transform lineitem into a list of structs
 statement ok
 CREATE VIEW lineitem_array_view AS SELECT LIST({'l_orderkey': l_orderkey,

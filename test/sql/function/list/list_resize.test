@@ -2,8 +2,6 @@
 # description: test for list_resize()
 # group: [list]
 
-
-
 query I
 SELECT list_resize([1, 2, 4], 2);
 ----
@@ -213,7 +211,6 @@ select list_resize([{'i': 1,'j': [2, 3]}, NULL, {'i': 1, 'j': [2, 3]}], 6, NULL)
 statement ok
 SELECT list_resize(range(10000), 4000);
 
-
 statement ok
 SELECT list_resize([1, 2, 3], 4000);
 
@@ -236,7 +233,6 @@ SELECT list_resize(a, b) FROM bool_table;
 [true]
 [false, true]
 [true, true, NULL]
-
 
 query I
 SELECT list_resize([true], 2);
@@ -289,7 +285,6 @@ execute ${q}([1, 2, 3], 1.4);
 
 statement ok
 execute ${q}([2], 2::TINYINT);
-
 
 statement error
 execute ${q}([1, 2, 3], -1);

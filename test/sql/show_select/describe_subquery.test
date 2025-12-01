@@ -2,8 +2,6 @@
 # description: Test describe in subquery
 # group: [show_select]
 
-
-
 query I
 SELECT column_name FROM (DESCRIBE SELECT 42 AS a)
 ----

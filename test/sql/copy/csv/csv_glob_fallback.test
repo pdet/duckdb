@@ -2,8 +2,6 @@
 # description: Test glob fallback (#4699)
 # group: [csv]
 
-
-
 query III
 SELECT * FROM '{DATA_DIR}/csv/[avalon]_daily-avg.csv'
 ----

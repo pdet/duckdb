@@ -2,8 +2,6 @@
 # description: Test decimal-decimal overflow cast
 # group: [decimal]
 
-
-
 # casting 1.0 from various width/scales to different width/scales
 # these should all work
 query IIII

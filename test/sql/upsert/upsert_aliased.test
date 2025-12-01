@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_aliased.test
 # group: [upsert]
 
-
-
 statement ok
 create table tbl (
 	i integer,

@@ -19,7 +19,6 @@ SELECT * FROM summary((SELECT * FROM a))
 [1.0, 10.0]	1.0	10.0
 [42.0, 420.0]	42.0	420.0
 
-
 statement ok
 pragma threads=4
 

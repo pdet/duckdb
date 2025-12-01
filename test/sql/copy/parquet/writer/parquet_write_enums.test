@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 # standard enum
 statement ok
 CREATE TYPE mood AS ENUM ('joy', 'ok', 'happy');

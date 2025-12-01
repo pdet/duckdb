@@ -2,8 +2,6 @@
 # description: Test time bucket functionality
 # group: [date]
 
-
-
 statement ok
 CREATE TABLE dates(w INTERVAL, d DATE, shift INTERVAL, origin DATE);
 

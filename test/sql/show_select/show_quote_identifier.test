@@ -2,8 +2,6 @@
 # description: Test show with a quote in an identifier
 # group: [show_select]
 
-
-
 statement ok
 CREATE TABLE "s1"".tbl"(i INT);
 

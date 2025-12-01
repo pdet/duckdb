@@ -2,8 +2,6 @@
 # description: Test common aggregate
 # group: [expression]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

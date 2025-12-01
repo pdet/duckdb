@@ -4,12 +4,6 @@
 
 require parquet
 
-
-
-
-
-
-
 query I
 SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/decimal/fixed_length_decimal.parquet')
 ----
@@ -66,7 +60,6 @@ SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/decimal/fixed_length_deci
 23.00
 24.00
 
-
 # yay NULLs
 query I
 SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/decimal/decimal_dc.parquet') limit 10
@@ -81,7 +74,6 @@ NULL
 NULL
 NULL
 NULL
-
 
 query IIIII
 SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/decimal/pandas_decimal.parquet') limit 10

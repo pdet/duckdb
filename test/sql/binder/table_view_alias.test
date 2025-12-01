@@ -2,8 +2,6 @@
 # description: Test table/view aliasing
 # group: [binder]
 
-
-
 statement ok
 CREATE SCHEMA s1;
 

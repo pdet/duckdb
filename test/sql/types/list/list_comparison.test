@@ -2,8 +2,6 @@
 # description: Test LIST comparisons
 # group: [list]
 
-
-
 # Constant single integer column comparisons
 query T
 SELECT [1] < [2]

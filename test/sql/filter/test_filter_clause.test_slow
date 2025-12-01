@@ -2,8 +2,6 @@
 # description: Test aggregation with filter clause
 # group: [filter]
 
-
-
 statement ok
 create temporary table t as select range i, mod(range,10) j,mod(range,10)*10000000 k from range(1000);
 
@@ -251,7 +249,6 @@ group by j ORDER BY j;
 8	NULL
 9	NULL
 
-
 query II
  SELECT
   sum(i) AS unfiltered,
@@ -409,7 +406,6 @@ group by k ORDER BY k;
 8	NULL
 9	NULL
 
-
 # use correlated expression inside the filter itself
 query I
     SELECT
@@ -448,7 +444,6 @@ select count (a) filter (where a>10 and a < 15), count (b) filter (where b betwe
 0	10	10	10	0
 4	90	0	90	0
 0	900	90	900	0
-
 
 #Filter with some more complex aggregates: COVAR_POP (multiple input columns), STRING_AGG (strings) and ARRAY_AGG (lists)
 query II
@@ -500,7 +495,6 @@ Saving Private Ryan	[Matt Damon]
 Team America	[Matt Damon]
 The Martian	[Matt Damon]
 
-
 query II
 SELECT
 	title,
@@ -516,7 +510,6 @@ ORDER BY
 Saving Private Ryan	Matt Damon
 Team America	Matt Damon
 The Martian	Matt Damon
-
 
 #DISTINCT aggregates
 statement ok

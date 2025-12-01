@@ -2,8 +2,6 @@
 # description: Extract milliseconds from timestamp
 # group: [timestamp]
 
-
-
 statement ok
 CREATE TABLE timestamps(i TIMESTAMP);
 

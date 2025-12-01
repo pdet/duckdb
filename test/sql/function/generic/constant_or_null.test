@@ -2,8 +2,6 @@
 # description: Test constant or null
 # group: [generic]
 
-
-
 query II
 SELECT constant_or_null(1, NULL), constant_or_null(1, 10)
 ----

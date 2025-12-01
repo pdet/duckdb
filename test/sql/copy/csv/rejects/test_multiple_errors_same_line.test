@@ -190,7 +190,6 @@ SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 0	3	59	59	1	name	UNQUOTED VALUE	"oogie boogie"bla,bla, 2023-01-02, 5	Value with unterminated quote found.
 0	3	59	77	2	age	CAST	"oogie boogie"bla,bla, 2023-01-02, 5	Error when converting column "age". Could not convert string "bla" to 'INTEGER'
 
-
 statement ok
 DROP TABLE reject_errors;
 
@@ -230,7 +229,6 @@ SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
 0	3	59	59	1	name	UNQUOTED VALUE	"oogie boogieoogie boogieoogie boogieoogie boogie"bla,4, 2023-01-02, 5	Value with unterminated quote found.
 0	3	59	59	NULL	NULL	LINE SIZE OVER MAXIMUM	"oogie boogieoogie boogieoogie boogieoogie boogie"bla,4, 2023-01-02, 5	Maximum line size of 40 bytes exceeded. Actual Size:70 bytes.
-
 
 statement ok
 DROP TABLE reject_errors;
@@ -284,7 +282,6 @@ FROM read_csv('{DATA_DIR}/csv/rejects/multiple_errors/invalid_utf_less.csv',
 ----
 oogie boogie	3	2023-01-01	2
 
-
 query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
@@ -303,7 +300,6 @@ FROM read_csv('{DATA_DIR}/csv/rejects/multiple_errors/invalid_utf_max_line.csv',
     store_rejects = true, auto_detect=false, header = 1, max_line_size=40, strict_mode=True);
 ----
 oogie boogie	3	2023-01-01	2
-
 
 query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position, error_message;
@@ -325,7 +321,6 @@ FROM read_csv('{DATA_DIR}/csv/rejects/multiple_errors/invalid_utf_more.csv',
 ----
 oogie boogie	3	2023-01-01	2
 
-
 query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;
 ----
@@ -344,7 +339,6 @@ FROM read_csv('{DATA_DIR}/csv/rejects/multiple_errors/invalid_utf_unquoted.csv',
     store_rejects = true, auto_detect=false, header = 1, max_line_size=40, strict_mode=true);
 ----
 oogie	 boogie	3	2023-01-01	2
-
 
 query IIIIIIIII rowsort
 SElECT * EXCLUDE (scan_id)  FROM reject_errors ORDER BY byte_position;

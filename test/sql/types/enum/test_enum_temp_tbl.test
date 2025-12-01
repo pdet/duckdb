@@ -2,8 +2,6 @@
 # description: ENUM types used in temporary table
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
 

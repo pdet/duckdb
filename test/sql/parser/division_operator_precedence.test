@@ -2,8 +2,6 @@
 # description: Test division operator precedence
 # group: [parser]
 
-
-
 # division operator precedence
 query I
 SELECT 6 * 1 / 2

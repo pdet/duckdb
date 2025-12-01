@@ -2,8 +2,6 @@
 # description: Maintain PREPARE parameter types
 # group: [prepared]
 
-
-
 statement ok
 prepare v1 as select cast(111 as short) * $1;
 

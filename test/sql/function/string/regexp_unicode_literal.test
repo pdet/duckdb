@@ -2,8 +2,6 @@
 # description: Issue #10058: Regex match turns non-breakable space into regular space
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE data(wsc INT, zipcode VARCHAR)
 
@@ -46,7 +44,6 @@ from data
 where regexp_matches(zipcode, '^00\x{00A0}001$')
 and regexp_matches(zipcode, '^00\x{0020}001$')
 ----
-
 
 statement error
 select regexp_matches(zipcode, '^00\x{FFFFFFFF}001$') from data

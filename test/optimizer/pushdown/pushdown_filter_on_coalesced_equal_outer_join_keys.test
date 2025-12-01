@@ -4,7 +4,6 @@
 
 # enable query verification
 
-
 statement ok
 CREATE TABLE t1 AS FROM VALUES
 (1),

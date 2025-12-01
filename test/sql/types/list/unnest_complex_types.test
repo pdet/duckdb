@@ -2,8 +2,6 @@
 # description: Test UNNEST of complex types
 # group: [list]
 
-
-
 # varchars
 query III
 SELECT id, UNNEST(i), UNNEST(j) FROM (VALUES (3, ['hello', NULL, 'world'], [NULL])) tbl(id, i, j)
@@ -116,7 +114,6 @@ SELECT id, UNNEST(i) FROM (VALUES (1, [[1,2], [3, 4]]::INT[2][]), (2, [[5, NULL]
 4	[9, 10]
 4	NULL
 4	[11, 12]
-
 
 # arrays in structs
 query III

@@ -27,7 +27,6 @@ SELECT gamma(-0.1)
 ----
 -10.686287021193193
 
-
 query I
 SELECT gamma(2)
 ----
@@ -92,7 +91,6 @@ query I
 SELECT lgamma(10)
 ----
 12.801827480081467
-
 
 query I
 SELECT lgamma(2::tinyint)

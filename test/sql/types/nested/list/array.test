@@ -2,8 +2,6 @@
 # description: Test ARRAY syntax
 # group: [list]
 
-
-
 # scalar array syntax
 query IIII
 SELECT ARRAY[1,2], ARRAY[NULL], ARRAY['hello', 'world'], ARRAY[]
@@ -89,7 +87,6 @@ SELECT UNNEST(ARRAY[[1, 2], [3, 4]]::VARCHAR[])
 ----
 [1, 2]
 [3, 4]
-
 
 query I
 SELECT ARRAY[[1, 2], [3, 4]]::VARCHAR

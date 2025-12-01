@@ -4,8 +4,6 @@
 
 require notmusl
 
-
-
 statement ok
 CREATE TABLE array_tbl(c50 INTEGER[2][]);
 

@@ -2,8 +2,6 @@
 # description: Intersect correlated subquery
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c1 TINYINT);
 

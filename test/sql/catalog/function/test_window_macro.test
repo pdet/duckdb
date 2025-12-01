@@ -2,8 +2,6 @@
 # description: Test macro expansion for window functions
 # group: [function]
 
-
-
 # Windowed aggregate macro
 statement ok
 CREATE OR REPLACE MACRO my_agg(x) AS SUM(CASE WHEN x THEN 1 END);

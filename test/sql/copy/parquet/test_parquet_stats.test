@@ -26,7 +26,6 @@ query I nosort empty
 explain select * from parquet_scan('{DATA_DIR}/parquet-testing/userdata1.parquet') where id > 1000;
 ----
 
-
 # verify min/max stats on double cols work
 query I nosort empty
 explain select * from parquet_scan('{DATA_DIR}/parquet-testing/userdata1.parquet') where salary < 12380;
@@ -72,7 +71,6 @@ explain select * from parquet_scan('{DATA_DIR}/parquet-testing/data-types.parque
 #explain select * from parquet_scan('{DATA_DIR}/parquet-testing/userdata1.parquet') where country > 'Zimbabwe';
 #----
 
-
 # see if stats work correctly for globs
 
 query I nosort nostats
@@ -92,7 +90,6 @@ explain select time from parquet_scan('{DATA_DIR}/parquet-testing/timestamp*.par
 
 statement ok
 select time from parquet_scan('{DATA_DIR}/parquet-testing/timestamp*.parquet') where time > '2020-10-06'
-
 
 # but now we should have them
 query I nosort empty

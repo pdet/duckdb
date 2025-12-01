@@ -2,8 +2,6 @@
 # description: Issue 592
 # group: [rigger]
 
-
-
 # Expression with LIKE and comparison causes an assertion failure
 statement ok
 CREATE TABLE t0(c0 VARCHAR);

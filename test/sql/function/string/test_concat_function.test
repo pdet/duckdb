@@ -2,8 +2,6 @@
 # description: CONCAT test
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE strings(a STRING, b STRING)
 

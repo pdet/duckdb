@@ -21,12 +21,9 @@ statement ok
 INSERT INTO cards_tbl values (1, 'ace', 'spades'),   (11,'jack', 'spades' ),
 (12, 'queen', 'spades' ),    (13, 'king', 'spades');
 
-
-
 statement ok
 CREATE MACRO card_select(_val_min:=1, _val_max:=1,  _name:='%', _suit:='%')
 as TABLE SELECT * FROM  cards_tbl WHERE val>=_val_min AND val<=_val_max AND name like  _name AND suit like _suit;
-
 
 # try out macro with default args
 query I
@@ -60,7 +57,6 @@ SELECT * FROM card_select(_name:='king', _val_max:=13, _suit:='hearts', _val_min
 ----
 13	king	hearts
 
-
 # try a macro again  with regular args and default args
 statement ok
 CREATE MACRO card_select_args(_val_min, _val_max,  _name:='%', _suit:='%')
@@ -71,7 +67,6 @@ statement error
 SELECT * FROM  card_select_args(_name:='king',1, 13);
 ----
 
-
 # correct arg order
 query I
 SELECT suit FROM card_select_args(1, 13, _name:='king' ) ORDER BY suit;
@@ -81,8 +76,6 @@ diamonds
 hearts
 spades
 
-
-
 # create macro without any args
 statement ok
 CREATE MACRO card_dfl() as TABLE SELECT DISTINCT suit FROM cards_tbl where suit='hearts';
@@ -91,8 +84,6 @@ query I
 SELECT * FROM card_dfl();
 ----
 hearts
-
-
 
 # check order by , limit with expressions
 statement ok
@@ -116,7 +107,6 @@ SELECT * FROM sc2(50.0, 2);
 hearts
 spades
 
-
 statement ok
 CREATE MACRO sc3(col) AS TABLE SELECT DISTINCT ON (col) col FROM cards_tbl ORDER BY col;
 
@@ -136,7 +126,6 @@ diamonds
 hearts
 spades
 
-
 # create macro with non existing table
 statement error
 CREATE MACRO card_no_tbl() as TABLE SELECT * FROM suit_tbl;
@@ -148,7 +137,6 @@ statement error
 CREATE MACRO card_select_args(_val_min, _name:='%', _suit:='%', _val_max)
 as TABLE SELECT * FROM  cards_tbl WHERE val>=_val_min AND val<=_val_max AND name like  _name AND suit like _suit;
 ----
-
 
 # positional parameter repeated
 statement error

@@ -35,7 +35,6 @@ insert into tbl VALUES
 	(2, 'b')	-- conflict (existing + inner)
 ON CONFLICT (number) DO UPDATE SET str = excluded.str || 'e';
 
-
 query II rowsort
 select * from tbl;
 ----

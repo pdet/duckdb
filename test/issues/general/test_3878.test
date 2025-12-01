@@ -2,8 +2,6 @@
 # description: Issue 3878: Small create table issues
 # group: [general]
 
-
-
 #statement error
 #create table ups (primary key(x));
 #

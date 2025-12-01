@@ -1,8 +1,6 @@
 # name: test/sql/generated_columns/virtual/group_by.test
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE tbl (
     foo INTEGER,

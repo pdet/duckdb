@@ -6,8 +6,6 @@ require no_extension_autoloading "FIXME: Unimplemented type for cast (TIMESTAMP 
 
 require icu
 
-
-
 query I
 SELECT COUNT(*)
 FROM range(

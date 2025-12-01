@@ -2,8 +2,6 @@
 # description: Test selecting a view through a qualified reference
 # group: [select]
 
-
-
 statement ok
 CREATE SCHEMA s;
 

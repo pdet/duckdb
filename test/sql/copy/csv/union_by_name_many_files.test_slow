@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 create or replace table orders(m int,v int,j int);
 

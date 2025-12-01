@@ -2,8 +2,6 @@
 # description: Test approx_count_distinct operator
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 

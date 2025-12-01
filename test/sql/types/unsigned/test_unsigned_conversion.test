@@ -2,8 +2,6 @@
 # description: Test unsigned conversion
 # group: [unsigned]
 
-
-
 # Numbers that fit the unsigned types
 query III
 SELECT '7'::UTINYINT, '130'::UTINYINT, '255'::UTINYINT
@@ -72,7 +70,6 @@ query II
 SELECT '0'::UTINYINT, '-0'::UTINYINT
 ----
 0	0
-
 
 # cast various types to unsigned
 query IIIIII
@@ -499,7 +496,6 @@ SELECT (10)::UBIGINT::BIGINT
 ----
 10
 
-
 statement error
 SELECT (9223372036854775807)::BIGINT::USMALLINT
 ----
@@ -525,7 +521,6 @@ query I
 SELECT (9223372036854775808)::UHUGEINT::UBIGINT
 ----
 9223372036854775808
-
 
 # Cast Decimal to Unsigned Values
 query I

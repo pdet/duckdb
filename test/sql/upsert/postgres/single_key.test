@@ -1,8 +1,6 @@
 # name: test/sql/upsert/postgres/single_key.test
 # group: [postgres]
 
-
-
 # insert...on conflict do unique index inference
 
 statement ok

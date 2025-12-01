@@ -2,8 +2,6 @@
 # description: Test errors_as_json setting
 # group: [settings]
 
-
-
 statement ok
 SET errors_as_json=true
 

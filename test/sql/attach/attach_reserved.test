@@ -2,8 +2,6 @@
 # description: Test ATTACH of reserved names
 # group: [attach]
 
-
-
 # attach a new database called temp
 statement ok
 ATTACH DATABASE '__TEST_DIR__/temp.db';

@@ -2,8 +2,6 @@
 # description: Issue #5984 (25): C/C++ API missing backslash interpretation
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c0 INT);
 

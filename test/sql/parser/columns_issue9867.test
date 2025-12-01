@@ -2,8 +2,6 @@
 # description: Issue #9867 - COLUMNS(table_name.*) is broken when there are joins
 # group: [parser]
 
-
-
 statement ok
 CREATE TABLE df1 AS
   SELECT

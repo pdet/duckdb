@@ -3,8 +3,6 @@
 
 load __TEST_DIR__/temp_array_storage_2.db
 
-
-
 statement ok
 pragma preserve_insertion_order=true
 

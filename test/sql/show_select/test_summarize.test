@@ -2,8 +2,6 @@
 # description: Test summarize command
 # group: [show_select]
 
-
-
 statement ok
 CREATE TABLE types(i INTEGER, j VARCHAR, k HUGEINT, d DOUBLE, e BLOB);
 

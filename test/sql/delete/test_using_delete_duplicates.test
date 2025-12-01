@@ -65,7 +65,6 @@ DELETE FROM integers USING range(100) RETURNING *;
 query I nosort delte_result_1
 select * from integers_copy;
 
-
 statement ok
 create or replace table t1 as select range%10 a from range(1000);
 
@@ -82,7 +81,6 @@ delete from t2 using t1 where a=b returning *;
 query I nosort delete_result_small
 select * from t2_copy;
 ----
-
 
 statement ok
 create or replace table t1 as select range%10 a from range(100);
@@ -106,7 +104,6 @@ delete from t2 using t1 where a=b returning *;
 query I nosort delete_result_small_2
 select * from t2_copy
 ----
-
 
 statement ok
 create or replace table t1 as select range%1000 a from range(100_000);

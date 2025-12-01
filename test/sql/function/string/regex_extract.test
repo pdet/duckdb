@@ -2,8 +2,6 @@
 # description: regex extract test
 # group: [string]
 
-
-
 query T
 SELECT regexp_extract('foobarbaz', 'b..')
 ----

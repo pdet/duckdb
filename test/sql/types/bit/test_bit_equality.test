@@ -2,8 +2,6 @@
 # description: BIT equality
 # group: [bit]
 
-
-
 query I
 select bitstring('1', 6) from range(100000) group by 1;
 ----

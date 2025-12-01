@@ -19,8 +19,6 @@ def generate_header(f):
 
 require parquet
 
-
-
 '''
     )
 
@@ -128,6 +126,5 @@ f = open("test_parquet_reader.test", "w")
 
 generate_header(f)
 generate_body(f)
-
 
 f.close()

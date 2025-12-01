@@ -2,8 +2,6 @@
 # description: Test CSV Sniffer header detection over files with an empty header
 # group: [csv]
 
-
-
 loop i 1 5
 
 query IIIII

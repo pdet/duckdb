@@ -2,8 +2,6 @@
 # description: Issue 624
 # group: [rigger]
 
-
-
 # ALTER TABLE results in an assertion failure 'Assertion `expr.return_type == vector.type' failed'
 statement ok
 CREATE TABLE t0(c0 INT, c1 VARCHAR);

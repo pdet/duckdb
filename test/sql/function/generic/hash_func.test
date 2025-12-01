@@ -120,7 +120,6 @@ SELECT HASH(m) FROM maps
 query I nosort map_hashes
 SELECT HASH(m) FROM map_as_list
 
-
 # Enums
 statement ok
 CREATE TYPE resistor AS ENUM (

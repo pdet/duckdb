@@ -2,8 +2,6 @@
 # description: Issue 14244 - 'with recursive cte' within a function bleeds into subsequent 'with recursive cte'
 # group: [general]
 
-
-
 statement ok
 create or replace function fun() as table (
   with recursive cte(i) as (

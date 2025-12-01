@@ -2,16 +2,12 @@
 # description: Test CSVs delimiter with two bytes
 # group: [multidelimiter]
 
-
-
-
 query II
 FROM read_csv('{DATA_DIR}/csv/multidelimiter/aa_delim_small.csv', delim = 'aa', header = False,  buffer_size = 8)
 ----
 1	2
 1	a2
 1ab	2
-
 
 loop buffer_size 9 13
 
@@ -112,7 +108,6 @@ FROM read_csv('{DATA_DIR}/csv/multidelimiter/aa_delim_quoted_2.csv', delim = 'aa
 1a	a2
 
 endloop
-
 
 query IIII
 FROM read_csv('{DATA_DIR}/csv/multidelimiter/many_bytes.csv', delim = '\|', header = False)

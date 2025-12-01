@@ -2,8 +2,6 @@
 # description: Test USING joins
 # group: [inner]
 
-
-
 # create tables
 statement ok
 CREATE TABLE t1 (a INTEGER, b INTEGER, c INTEGER);

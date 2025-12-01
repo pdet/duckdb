@@ -513,7 +513,6 @@ SELECT list_reduce(l, lambda x, y: x * y, initial) FROM cast_test;
 0.0
 63.0
 
-
 # Test errors with incompatible types
 statement error
 SELECT list_reduce([1, 2, 3], lambda x, y: x + y, [1, 2]);

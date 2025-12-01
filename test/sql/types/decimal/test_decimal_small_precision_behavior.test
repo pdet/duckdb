@@ -1,8 +1,6 @@
 # name: test/sql/types/decimal/test_decimal_small_precision_behavior.test
 # group: [decimal]
 
-
-
 query I
 select '1.023450000001'::DECIMAL(5,4)
 ----

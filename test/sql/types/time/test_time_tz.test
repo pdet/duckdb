@@ -2,8 +2,6 @@
 # description: Test Time With Time Zone
 # group: [time]
 
-
-
 query I
 select timetz '02:30:00';
 ----

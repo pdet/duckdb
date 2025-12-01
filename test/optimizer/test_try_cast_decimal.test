@@ -2,8 +2,6 @@
 # description: Test try cast inconsistency
 # group: [optimizer]
 
-
-
 statement ok
 CREATE  TABLE  t0(c0 INT , c1 BOOLEAN , PRIMARY KEY(c0));
 

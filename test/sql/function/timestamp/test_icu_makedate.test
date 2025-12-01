@@ -4,8 +4,6 @@
 
 require icu
 
-
-
 # Normalise the testing locale
 statement ok
 SET Calendar = 'gregorian';

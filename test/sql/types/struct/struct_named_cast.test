@@ -2,8 +2,6 @@
 # description: Test struct named casts
 # group: [struct]
 
-
-
 query I
 SELECT {'a': 42, 'b': 84}::STRUCT(b INT, a INT)
 ----

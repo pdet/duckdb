@@ -6,8 +6,6 @@ require skip_reload
 
 require notmingw
 
-
-
 statement ok
 LOAD '__BUILD_DIRECTORY__/test/extension/loadable_extension_demo.duckdb_extension';
 
@@ -111,7 +109,6 @@ SELECT 1::BOUNDED(900000000000000000)
 ----
 BOUNDED type modifier must be integer
 
-
 # MinMax Type
 # This is similar to bounded, except it uses a custom bind function to enforce the min/max values at construction time
 statement ok
@@ -154,8 +151,6 @@ statement error
 SELECT 10::MINMAX(15, 10);
 ----
 Binder Error: MINMAX type min value must be less than max value
-
-
 
 # Test with creating an index
 statement ok

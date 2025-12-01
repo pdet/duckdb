@@ -2,8 +2,6 @@
 # description: Test subqueries
 # group: [scalar]
 
-
-
 query I
 SELECT 1+(SELECT 1)
 ----

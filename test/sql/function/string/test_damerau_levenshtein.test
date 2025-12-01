@@ -2,9 +2,6 @@
 # description: Test damerau_levenshtein function
 # group: [string]
 
-
-
-
 # normal queries
 query I
 SELECT damerau_levenshtein('out', 'out')
@@ -146,7 +143,6 @@ SELECT damerau_levenshtein(NULL, '')
 ----
 NULL
 
-
 statement error
 SELECT damerau_levenshtein('one', 'two', 'three')
 ----
@@ -158,7 +154,6 @@ SELECT damerau_levenshtein('one')
 statement error
 SELECT damerau_levenshtein()
 ----
-
 
 statement ok
 CREATE TABLE strings(s VARCHAR)
@@ -220,7 +215,6 @@ SELECT damerau_levenshtein(s, '') FROM strings ORDER BY s
 5
 6
 
-
 statement ok
 DROP TABLE strings
 
@@ -264,7 +258,6 @@ query I
 SELECT damerau_levenshtein(s, '')  FROM strings
 ----
 NULL
-
 
 statement ok
 DROP TABLE strings
@@ -310,7 +303,6 @@ SELECT damerau_levenshtein('null', s)  FROM strings
 ----
 4
 
-
 statement ok
 DROP TABLE strings
 
@@ -332,7 +324,6 @@ INSERT INTO strings VALUES 	('identical', 'identical'), ('dientical', 'identical
 							(NULL, 'test'), ('test', NULL),
 							('four', ''), ('', 'four'),
 							(NULL, ''), ('', NULL)
-
 
 query I
 SELECT damerau_levenshtein(s_left, s_right) FROM strings

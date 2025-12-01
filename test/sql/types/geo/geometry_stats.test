@@ -58,4 +58,3 @@ select stats(g) from t1 limit 1;
 ----
 [Extent: [X: [-2.000000, 4.000000], Y: [-2.000000, 4.000000], Z: [-10.000000, 3.000000], M: [1.000000, 10.000000]], Types: [point, linestring_z, polygon_m, multilinestring_zm]][Has Null: false, Has No Null: true][Approx Unique: 6]
 
-

@@ -73,7 +73,6 @@ SELECT * EXCLUDE (scan_id) FROM reject_errors order by all;
 0	2768	22131	22138	5	NULL	TOO MANY COLUMNS	1,2,3,4,5,6	Expected Number of Columns: 4 Found: 5
 0	2768	22131	22140	6	NULL	TOO MANY COLUMNS	1,2,3,4,5,6	Expected Number of Columns: 4 Found: 6
 
-
 # Different Buffer Sizes
 loop buffer_size 10 15
 

@@ -1,8 +1,6 @@
 # name: test/sql/types/struct/struct_contains.test
 # group: [struct]
 
-
-
 # ==========================================================
 # Unnamed struct
 # ==========================================================

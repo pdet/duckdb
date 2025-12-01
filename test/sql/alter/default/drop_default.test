@@ -2,8 +2,6 @@
 # description: Test ALTER TABLE DROP DEFAULT
 # group: [default]
 
-
-
 statement ok
 CREATE TABLE data(id INTEGER, x INTEGER);
 

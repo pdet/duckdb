@@ -5,8 +5,6 @@
 # FIXME
 mode skip
 
-
-
 statement ok
 CREATE TABLE all_types("varchar" VARCHAR);
 

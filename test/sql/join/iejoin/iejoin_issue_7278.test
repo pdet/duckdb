@@ -2,8 +2,6 @@
 # description: Issue #7278: Incorrect results (child pipeline / finish event scheduling
 # group: [iejoin]
 
-
-
 statement ok
 SET merge_join_threshold=0
 

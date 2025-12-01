@@ -2,8 +2,6 @@
 # description: Test big list
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE test AS (SELECT range i, 0 as j FROM range(70000));
 

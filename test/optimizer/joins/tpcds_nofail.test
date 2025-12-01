@@ -131,7 +131,6 @@ ORDER BY cs1.product_name,
          cs1.s1,
          cs2.s1;
 
-
 statement ok
 SELECT CASE
 	   WHEN
@@ -200,6 +199,4 @@ SELECT CASE
    END bucket5
 FROM reason
 WHERE r_reason_sk = 1 ;
-
-
 

@@ -1,8 +1,6 @@
 # name: test/sql/catalog/dependencies/rename_view_referenced_by_table_macro.test
 # group: [dependencies]
 
-
-
 # Create a table so our view has something to reference
 statement ok
 create table tbl (a varchar);

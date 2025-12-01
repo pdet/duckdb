@@ -2,8 +2,6 @@
 # description: Test #6390: PIVOT with CTE
 # group: [pivot]
 
-
-
 statement ok
 CREATE TABLE cpb_tbl AS
 WITH CPB(CPDH,NF,JG) AS (
@@ -19,7 +17,6 @@ SELECT 'C2',2010,30
 UNION ALL
 SELECT 'C3',2010,80
 ) FROM CPB;
-
 
 query IIIII rowsort pivot
 pivot cpb_tbl on nf using sum(jg)group by cpdh

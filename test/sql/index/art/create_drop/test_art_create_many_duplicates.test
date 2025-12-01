@@ -2,8 +2,6 @@
 # description: Test ART creation with many duplicates in leaves
 # group: [create_drop]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER)
 

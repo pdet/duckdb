@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query IIIIIII
 select * from '{DATA_DIR}/parquet-testing/enum.parquet';
 ----

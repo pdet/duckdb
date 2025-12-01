@@ -2,8 +2,6 @@
 # description: Test csv header normalization
 # group: [auto]
 
-
-
 query I
 select columns from sniff_csv('{DATA_DIR}/csv/test_commit_rollback.csv',  normalize_names = true)
 ----
@@ -35,12 +33,10 @@ SELECT A, B, C FROM test ORDER BY a;
 statement ok
 DROP TABLE test;
 
-
 query I
 select columns from sniff_csv('{DATA_DIR}/csv/auto/normalize_names_2.csv', normalize_names = true)
 ----
 [{'name': _select, 'type': BIGINT}, {'name': _insert, 'type': VARCHAR}, {'name': _join, 'type': VARCHAR}]
-
 
 # CSV file with keywords in header
 statement ok

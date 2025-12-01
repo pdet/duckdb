@@ -2,8 +2,6 @@
 # description: Test Top N with medium sized data
 # group: [topn]
 
-
-
 statement ok
 CREATE TABLE tbl AS SELECT i, i % 1000 j FROM range(1000000) tbl(i)
 

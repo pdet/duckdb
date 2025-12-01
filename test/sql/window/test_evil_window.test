@@ -2,8 +2,6 @@
 # description: More evil cases
 # group: [window]
 
-
-
 # negative lag
 query II
 select *

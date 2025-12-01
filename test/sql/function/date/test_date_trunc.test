@@ -2,8 +2,6 @@
 # description: Test date truncate functionality
 # group: [date]
 
-
-
 statement ok
 CREATE TABLE dates(d DATE, s VARCHAR);
 

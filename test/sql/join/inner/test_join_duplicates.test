@@ -2,8 +2,6 @@
 # description: Test join with > STANDARD_VECTOR_SIZE duplicates
 # group: [inner]
 
-
-
 statement ok
 pragma verify_external
 

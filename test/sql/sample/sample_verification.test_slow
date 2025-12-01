@@ -2,8 +2,6 @@
 # description: Test SAMPLE keyword
 # group: [sample]
 
-
-
 # verify that it is a sample without replacement (i.e. the same row will never occur more than once in the result)
 loop i 0 10
 

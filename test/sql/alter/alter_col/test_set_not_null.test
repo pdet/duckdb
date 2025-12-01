@@ -4,8 +4,6 @@
 
 # Happy path
 
-
-
 statement ok
 CREATE TABLE t(i INTEGER, j INTEGER)
 

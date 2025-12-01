@@ -2,8 +2,6 @@
 # description: Test the SUM(bool)
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

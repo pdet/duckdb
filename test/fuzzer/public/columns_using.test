@@ -2,8 +2,6 @@
 # description: Test COLUMNS regex in combination with the USING clause for a FULL join
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 (c01 INT);
 

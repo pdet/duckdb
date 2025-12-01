@@ -2,8 +2,6 @@
 # description: Issue 609
 # group: [rigger]
 
-
-
 # Incorrect result for MIN() on expression involving rowid
 statement ok
 CREATE TABLE t0(

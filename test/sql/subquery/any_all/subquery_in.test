@@ -2,8 +2,6 @@
 # description: Test subquery in IN clause
 # group: [any_all]
 
-
-
 statement ok
 CREATE TABLE t0 (c0 TIME,c1 DOUBLE PRECISION);
 

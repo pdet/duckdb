@@ -2,8 +2,6 @@
 # description: Test enum in CASE expressions
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE E1 AS ENUM ('v1', 'v2');
 

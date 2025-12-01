@@ -2,8 +2,6 @@
 # description: Test table AT (TIMESTAMP => ...)
 # group: [parser]
 
-
-
 statement ok
 CREATE TABLE tbl(i INTEGER)
 

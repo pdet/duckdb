@@ -2,8 +2,6 @@
 # description: Test arg_min/arg_max with strings
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 
@@ -71,5 +69,4 @@ SELECT arg_max("${type}", "VARCHAR") FROM tbl EXCEPT SELECT MAX("${type}") FROM 
 ----
 
 endloop
-
 

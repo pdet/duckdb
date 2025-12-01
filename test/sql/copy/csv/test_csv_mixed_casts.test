@@ -82,7 +82,6 @@ FROM read_csv(
 3	5.0
 4	5.555
 
-
 query II
 FROM read_csv(
     '{DATA_DIR}/csv/mixed_decimal.csv',

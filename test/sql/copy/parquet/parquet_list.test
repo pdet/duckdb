@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 # standard list syntax
 query I
 select count(*) from parquet_scan(['{DATA_DIR}/parquet-testing/glob/t1.parquet', '{DATA_DIR}/parquet-testing/glob/t2.parquet']);

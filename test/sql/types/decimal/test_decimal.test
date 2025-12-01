@@ -2,8 +2,6 @@
 # description: Test basic decimals
 # group: [decimal]
 
-
-
 # default decimal type is (18,3)
 query I
 SELECT typeof('0.1'::DECIMAL);

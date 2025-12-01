@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 statement ok
 PRAGMA verify_external
 
@@ -108,7 +106,6 @@ SELECT (g+i)%2 + SUM(i), SUM(i), SUM(g) FROM integers GROUP BY ALL ORDER BY 1
 ----
 
 # multiple groups
-
 
 query IIIII
 SELECT g, i, g%2, SUM(i), SUM(g) FROM integers GROUP BY 1, 2, 3 ORDER BY 1, 2, 3, 4

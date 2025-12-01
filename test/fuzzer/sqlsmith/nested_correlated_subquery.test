@@ -2,8 +2,6 @@
 # description: Test nested correlated subquery
 # group: [sqlsmith]
 
-
-
 statement ok
 CREATE TABLE t(ps_supplycost INT, n_name INT);
 

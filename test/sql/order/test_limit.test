@@ -2,8 +2,6 @@
 # description: Test LIMIT keyword
 # group: [order]
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);
 
@@ -104,7 +102,6 @@ SELECT * FROM integers LIMIT nextval('seq');
 3
 4
 
-
 # non-foldable expression in limit
 statement ok
 SELECT * FROM integers LIMIT RANDOM();
@@ -185,7 +182,6 @@ SELECT * FROM integers as int LIMIT (SELECT NULL)
 4
 5
 
-
 #Subqueries that return negative values
 statement error
 SELECT * FROM integers as int LIMIT (SELECT -1);
@@ -201,8 +197,6 @@ SELECT * FROM integers as int LIMIT (SELECT 'ab');
 # Test use subquery in limit and offset
 statement ok
 CREATE OR REPLACE TABLE t AS SELECT range x FROM range(10);
-
-
 
 query I
 SELECT * FROM t ORDER BY x;

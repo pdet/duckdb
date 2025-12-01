@@ -2,8 +2,6 @@
 # description: Test ORDER BY issue 5293 - New sort code merge logic fails for fixed width strings
 # group: [order]
 
-
-
 statement ok
 create table t1 as from VALUES
 	('A', 1),

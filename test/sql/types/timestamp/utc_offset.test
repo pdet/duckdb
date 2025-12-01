@@ -4,8 +4,6 @@
 
 require icu
 
-
-
 statement ok
 set Calendar='gregorian';
 

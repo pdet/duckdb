@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 copy (select 42 as answer) to '__TEST_DIR__/df.parquet';
 

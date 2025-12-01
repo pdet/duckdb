@@ -2,8 +2,6 @@
 # description: MonetDB Test for grouping sets
 # group: [monetdb]
 
-
-
 statement ok
 CREATE TABLE tbl_ProductSales (ColID int, Product_Category  varchar(64), Product_Name  varchar(64), TotalSales int);
 

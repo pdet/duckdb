@@ -2,8 +2,6 @@
 # description: Predicate expressions should work with multiple chunks
 # group: [iejoin]
 
-
-
 statement ok
 SET merge_join_threshold=0
 

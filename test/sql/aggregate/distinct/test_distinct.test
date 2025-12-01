@@ -2,8 +2,6 @@
 # description: Test DISTINCT keyword
 # group: [distinct]
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);
 

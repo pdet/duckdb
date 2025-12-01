@@ -2,8 +2,6 @@
 # description: Tests updates on a table with virtual columns and indexes
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE tbl_comp (
 	a INT,

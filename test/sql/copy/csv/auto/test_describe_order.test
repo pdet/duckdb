@@ -1,8 +1,6 @@
 # name: test/sql/copy/csv/auto/test_describe_order.test
 # group: [auto]
 
-
-
 statement ok
 create view v as select * from read_csv_auto('{DATA_DIR}/csv/who.csv.gz');
 

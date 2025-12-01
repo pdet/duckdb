@@ -2,8 +2,6 @@
 # description: Test Recursive Common Table Expressions (CTE) with outer joins
 # group: [cte]
 
-
-
 statement ok
 CREATE TABLE v(x INT);
 

@@ -2,8 +2,6 @@
 # description: Test operator precedence
 # group: [parser]
 
-
-
 # basic arithmetic precedence
 query I
 SELECT 2*3+1

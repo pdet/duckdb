@@ -2,8 +2,6 @@
 # description: Join on random condition
 # group: [afl]
 
-
-
 statement ok
 CREATE TABLE t1(c1 INT);
 

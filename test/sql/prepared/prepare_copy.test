@@ -1,8 +1,6 @@
 # name: test/sql/prepared/prepare_copy.test
 # group: [prepared]
 
-
-
 statement ok
 PREPARE q1 AS
 	COPY (

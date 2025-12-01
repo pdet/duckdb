@@ -274,4 +274,3 @@ SELECT concat([42], [84], 'str')
 ----
 an explicit cast is required
 
-

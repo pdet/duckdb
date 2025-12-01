@@ -2,8 +2,6 @@
 # description: Test bug from issue 10273
 # group: [csv]
 
-
-
 query II
 FROM read_csv('{DATA_DIR}/csv/bug_10273.csv', header=0)
 ----

@@ -2,8 +2,6 @@
 # description: Test reading a CSV file with a set encoding
 # group: [csv]
 
-
-
 statement ok
 FROM read_csv('{DATA_DIR}/csv/test/test.csv', encoding = 'utf-8')
 
@@ -427,7 +425,6 @@ z
 ý
 þ
 ÿ
-
 
 query I
 SELECT count (*) FROM read_csv('{DATA_DIR}/csv/encodings/all_utf16.csv', encoding = 'utf-16', header = 0, quote = '', auto_detect = false, columns = {'a':'varchar'}, delim = '')

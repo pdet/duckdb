@@ -2,8 +2,6 @@
 # description: Test pivoting over multiple dimensions
 # group: [pivot]
 
-
-
 statement ok
 CREATE OR REPLACE TABLE sales(empid INT, amount INT, month TEXT, year INT);
 

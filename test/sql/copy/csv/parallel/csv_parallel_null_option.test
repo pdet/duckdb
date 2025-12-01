@@ -4,8 +4,6 @@
 
 # Test read_csv with user defined variable
 
-
-
 statement ok
 pragma threads=4
 

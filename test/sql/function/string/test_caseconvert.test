@@ -2,8 +2,6 @@
 # description: UPPER/LOWER test
 # group: [string]
 
-
-
 # unicode
 query TTTT
 select UPPER('áaaá'), UPPER('ö'), LOWER('S̈'), UPPER('ω')

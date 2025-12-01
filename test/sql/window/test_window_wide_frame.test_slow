@@ -2,8 +2,6 @@
 # description: Test wide temporal range frames
 # group: [window]
 
-
-
 set seed 0.618033
 
 statement ok

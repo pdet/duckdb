@@ -2,8 +2,6 @@
 # description: Test adding the same PRIMARY KEY twice.
 # group: [add_pk]
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)
 

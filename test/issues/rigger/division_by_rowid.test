@@ -2,8 +2,6 @@
 # description: SQLancer bug that detected an error in casting of the result of a sum to double
 # group: [rigger]
 
-
-
 statement ok
 BEGIN TRANSACTION;
 

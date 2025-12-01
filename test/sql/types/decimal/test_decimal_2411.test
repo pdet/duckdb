@@ -2,8 +2,6 @@
 # description: Test bug described on issue 2411
 # group: [decimal]
 
-
-
 statement ok
 CREATE TABLE decimals(i DECIMAL(38,1))
 

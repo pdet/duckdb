@@ -2,8 +2,6 @@
 # description: REPEAT test
 # group: [string]
 
-
-
 # test repeat on NULLs
 query TTT
 select REPEAT(NULL, NULL), REPEAT(NULL, 3), REPEAT('MySQL', NULL)

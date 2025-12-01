@@ -2,14 +2,11 @@
 # description: test ascii() and chr() functions
 # group: [string]
 
-
-
 # Some ascii checks
 query I
 SELECT ascii('x')
 ----
 120
-
 
 query I
 SELECT ASCII('a')

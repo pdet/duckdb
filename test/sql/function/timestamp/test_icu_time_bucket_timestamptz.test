@@ -1274,7 +1274,6 @@ order by
 2000-01-02 15:00:00-08
 2000-01-02 16:00:00-08
 
-
 statement ok
 set TimeZone='UTC';
 
@@ -1313,7 +1312,6 @@ order by origin
 2023-10-06 22:00:00+00
 2023-10-06 23:00:00+00
 2023-10-07 00:00:00+00
-
 
 statement ok
 set TimeZone='America/St_Johns';

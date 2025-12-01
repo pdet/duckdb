@@ -2,8 +2,6 @@
 # description: Test the sha256 function
 # group: [string]
 
-
-
 query II
 SELECT sha256('hello'), sha256(NULL)
 ----

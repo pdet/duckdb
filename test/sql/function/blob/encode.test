@@ -2,8 +2,6 @@
 # description: Test blob encode/decode functions
 # group: [blob]
 
-
-
 # test basic encode/decode usage
 query I
 SELECT encode('ü')
@@ -36,5 +34,4 @@ SELECT decode(encode(a)) || a from (values ('hello'), ('world')) tbl(a);
 ----
 hellohello
 worldworld
-
 

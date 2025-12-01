@@ -4,8 +4,6 @@
 
 require json
 
-
-
 statement ok
 create table t1 as select range + 10 n, range v from range(10)
 

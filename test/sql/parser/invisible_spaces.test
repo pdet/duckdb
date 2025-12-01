@@ -2,8 +2,6 @@
 # description: Test invisible spaces
 # group: [parser]
 
-
-
 # non-breaking space
 query I
 SELECT 42;

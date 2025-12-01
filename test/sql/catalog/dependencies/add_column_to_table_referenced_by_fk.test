@@ -1,8 +1,6 @@
 # name: test/sql/catalog/dependencies/add_column_to_table_referenced_by_fk.test
 # group: [dependencies]
 
-
-
 statement ok
 create table tbl(a varchar primary key);
 

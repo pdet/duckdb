@@ -2,8 +2,6 @@
 # description: Substring test
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE strings(s VARCHAR, off INTEGER);
 
@@ -144,7 +142,6 @@ SELECT array_extract(s, -2147483647) FROM strings
 (empty)
 (empty)
 NULL
-
 
 # Issue #4978 -- Substring overflow 3
 query I

@@ -2,8 +2,6 @@
 # description: Test rewrites of ordered aggregates
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE flights(
 	"year" INTEGER,

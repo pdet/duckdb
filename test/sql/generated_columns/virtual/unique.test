@@ -2,8 +2,6 @@
 # description: Test generated columns with the UNIQUE constraint
 # group: [virtual]
 
-
-
 #Unique constraint not supported yet (SQLite supports it, so it is planned)
 
 # Not supported appended to the column definition

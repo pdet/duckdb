@@ -2,8 +2,6 @@
 # description: Test updates on struct tables
 # group: [struct]
 
-
-
 statement ok
 CREATE TABLE a(b ROW(i INTEGER, j INTEGER));
 

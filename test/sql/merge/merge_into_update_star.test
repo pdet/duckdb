@@ -2,8 +2,6 @@
 # description: Test MERGE INTO UPDATE *
 # group: [merge]
 
-
-
 statement ok
 CREATE TABLE Stock(item_id int, balance int DEFAULT 0);
 

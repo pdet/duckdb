@@ -2,8 +2,6 @@
 # description: Test list_select function
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE integers (i int[])
 

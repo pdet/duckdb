@@ -2,8 +2,6 @@
 # description: Test DEFAULT VALUES insert
 # group: [table]
 
-
-
 statement ok
 create table x (i int default 1, j int default 2)
 

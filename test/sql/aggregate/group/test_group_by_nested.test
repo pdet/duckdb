@@ -7,8 +7,6 @@ require notmusl
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 foreach storage_type VIEW TABLE
 
 # Key is LIST<INTEGER>

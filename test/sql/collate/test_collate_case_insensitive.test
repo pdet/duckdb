@@ -71,7 +71,6 @@ SELECT DISTINCT s FROM collate_test
 ----
 Hallo
 
-
 # LIKE with collation: not yet supported
 # REQUIRE_NO_FAIL(con.Query("DROP TABLE collate_test"));
 # REQUIRE_NO_FAIL(con.Query("CREATE TABLE collate_test(s VARCHAR COLLATE NOCASE)"));

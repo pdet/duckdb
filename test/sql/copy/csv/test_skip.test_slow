@@ -2,11 +2,8 @@
 # description: Test that the skip option works for csv files
 # group: [csv]
 
-
-
 statement ok
 copy (from range(10000)) to '__TEST_DIR__/skip.csv' (HEADER 0);
-
 
 foreach auto_detect true false
 
@@ -134,7 +131,6 @@ insert into t  select '1,2,3' from range(10)
 
 statement ok
 copy t to '__TEST_DIR__/skip_2.csv' (HEADER 0, delim ';');
-
 
 query III
 from read_csv('__TEST_DIR__/skip_2.csv',skip=10000, buffer_size = 26)

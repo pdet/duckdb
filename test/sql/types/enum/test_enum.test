@@ -2,8 +2,6 @@
 # description: ENUM tests
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
 

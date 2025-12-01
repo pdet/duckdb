@@ -2,8 +2,6 @@
 # description: Test IN with a single NULL element
 # group: [prepared]
 
-
-
 statement ok
 create table test(id varchar);
 

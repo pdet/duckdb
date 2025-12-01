@@ -2,8 +2,6 @@
 # description: Percent Rank
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE filenames (filename VARCHAR);
 

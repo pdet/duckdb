@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 foreach type TIMESTAMP TIMESTAMP_MS TIMESTAMP_S
 
 statement ok

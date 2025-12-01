@@ -2,8 +2,6 @@
 # description: Issue #4575: OFFSET query with wrong results
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c0 INT, c1 INT);
 

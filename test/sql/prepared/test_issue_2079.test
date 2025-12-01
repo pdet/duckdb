@@ -2,8 +2,6 @@
 # description: Issue 2079: Type inference for parameterized queries
 # group: [prepared]
 
-
-
 statement ok
 PREPARE v1 AS SELECT ? + 1.0 AS a
 

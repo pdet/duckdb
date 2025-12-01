@@ -32,7 +32,6 @@ select count(*) = (${size} / 25) * ${i} from test WHERE a IS true;
 ----
 true
 
-
 #i
 endloop
 

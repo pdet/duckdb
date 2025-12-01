@@ -2,8 +2,6 @@
 # description: Test positional join in correlated subqueries
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 (c01 INT, c02 STRING);
 

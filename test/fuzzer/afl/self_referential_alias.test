@@ -2,8 +2,6 @@
 # description: Invalid column assertion error
 # group: [afl]
 
-
-
 statement error
 SELECT x x WHERE x = 0;
 ----

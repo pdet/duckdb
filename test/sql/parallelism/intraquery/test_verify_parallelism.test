@@ -2,8 +2,6 @@
 # description: Test force parallelism on small-ish tables (few thousand rows)
 # group: [intraquery]
 
-
-
 statement ok
 PRAGMA threads=4
 

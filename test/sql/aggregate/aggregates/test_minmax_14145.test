@@ -4,8 +4,6 @@
 
 require json
 
-
-
 query IIIIII
 DESCRIBE SELECT max(l) from (select unnest( [{'a':1}::JSON, [2]::JSON ]) as l);
 ----

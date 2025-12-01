@@ -2,8 +2,6 @@
 # description: Test case insensitive binding of columns
 # group: [binder]
 
-
-
 # we can bind case insensitive column names
 
 statement ok

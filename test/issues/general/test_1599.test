@@ -2,8 +2,6 @@
 # description: Issue 1599: Update + Transactions raises RuntimeError: Not implemented Error: operator
 # group: [general]
 
-
-
 statement ok
 start transaction;
 

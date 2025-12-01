@@ -2,8 +2,6 @@
 # description: Usage of STORED generated column
 # group: [stored]
 
-
-
 statement error
 CREATE TABLE tbl (
 	price INTEGER,

@@ -2,8 +2,6 @@
 # description: Issue #3373: heap-use-after-free at string_type.hpp:76:10
 # group: [fuzz]
 
-
-
 statement ok
 CREATE TABLE i_class_id AS
 	SELECT

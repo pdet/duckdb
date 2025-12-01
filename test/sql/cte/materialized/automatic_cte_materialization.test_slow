@@ -4,8 +4,6 @@
 
 require tpch
 
-
-
 statement ok
 PRAGMA explain_output='OPTIMIZED_ONLY'
 

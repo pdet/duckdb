@@ -2,9 +2,6 @@
 # description: Test force_quote
 # group: [csv]
 
-
-
-
 # create a table
 statement ok
 CREATE TABLE test (col_a INTEGER, col_b VARCHAR(10), col_c VARCHAR(10));
@@ -62,7 +59,6 @@ SELECT * FROM test2
 8	test	tea
 0	NULL	test
 1	NULL	test
-
 
 # test using a column in FORCE_QUOTE that is not set as output, but that is a column of the table
 statement error

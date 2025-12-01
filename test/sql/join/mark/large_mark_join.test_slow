@@ -52,5 +52,4 @@ WHERE NOT(depdelay < ANY (
 ));
 ----
 
-
 endloop

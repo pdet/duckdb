@@ -18,7 +18,6 @@ WHERE id1=10;
 ----
 logical_opt	<REGEX>:.*UNNEST.*SEQ_SCAN.*Filters.*
 
-
 query II
 EXPLAIN WITH tmp AS (
       SELECT id1, generate_subscripts(somelist, 1) AS index, UNNEST(somelist) AS element

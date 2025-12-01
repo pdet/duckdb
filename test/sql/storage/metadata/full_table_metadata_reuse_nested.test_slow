@@ -19,7 +19,6 @@ CREATE TABLE complex_nested2 AS FROM complex_nested
 statement ok
 COMMIT
 
-
 loop i 1 10
 
 statement ok

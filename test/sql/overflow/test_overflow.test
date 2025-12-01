@@ -2,8 +2,6 @@
 # description: Test handling of overflows in basic types
 # group: [overflow]
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);
 

@@ -16,7 +16,6 @@ EXECUTE v1(['hello', 'world'])
 ----
 hello
 
-
 query I
 EXECUTE v1(NULL::INT[])
 ----

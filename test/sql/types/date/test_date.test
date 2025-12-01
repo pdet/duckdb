@@ -2,8 +2,6 @@
 # description: Test basic DATE functionality
 # group: [date]
 
-
-
 # create and insert into table
 statement ok
 CREATE TABLE dates(i DATE)

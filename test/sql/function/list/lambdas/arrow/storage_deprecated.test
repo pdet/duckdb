@@ -4,8 +4,6 @@
 
 load __TEST_DIR__/lambda_storage.db
 
-
-
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'
 

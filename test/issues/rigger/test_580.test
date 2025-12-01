@@ -2,8 +2,6 @@
 # description: Issue 580
 # group: [rigger]
 
-
-
 # SUBSTRING with an invalid start position causes a segmentation fault #580
 query T
 SELECT SUBSTRING(0::VARCHAR, 3, 0)

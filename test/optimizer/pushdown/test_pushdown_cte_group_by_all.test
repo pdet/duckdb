@@ -10,7 +10,6 @@ select i, i % 10 as group_1;
 statement ok
 pragma explain_output='optimized_only';
 
-
 query II
 explain
 with my_cte as (
@@ -27,7 +26,6 @@ where
 ----
 logical_opt	<REGEX>:.*Filters:.*
 
-
 query II
 explain
 with my_cte as (
@@ -43,7 +41,6 @@ where
  group_1 = 2;
 ----
 logical_opt	<REGEX>:.*Filters:.*
-
 
 query II
 explain

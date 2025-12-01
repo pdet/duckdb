@@ -2,8 +2,6 @@
 # description: Issue 5664: Create type from non-existing type causes INTERNAL Error
 # group: [general]
 
-
-
 # create a type with a non-existant type as source
 statement error
 CREATE TYPE alias as BLOBL;

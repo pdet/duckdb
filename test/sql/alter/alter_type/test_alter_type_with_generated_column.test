@@ -2,8 +2,6 @@
 # description: Test ALTER TABLE ALTER TYPE with Generated Column
 # group: [alter_type]
 
-
-
 statement ok
 CREATE TABLE test(i AS (1), j INTEGER)
 

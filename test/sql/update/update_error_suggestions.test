@@ -2,8 +2,6 @@
 # description: Test suggestions on UPDATE statement
 # group: [update]
 
-
-
 statement ok
 CREATE TABLE tbl(mycol INTEGER)
 

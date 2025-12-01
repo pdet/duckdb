@@ -2,8 +2,6 @@
 # description: Test sniff_csv function with user set options
 # group: [csv]
 
-
-
 # requires notwindows because tests will return \r\n to be used in the parameters
 require notwindows
 
@@ -44,7 +42,6 @@ query IIIIIIIIIIII
 FROM sniff_csv('{DATA_DIR}/csv/real/lineitem_sample.csv', names=['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16']);
 ----
 |	(empty)	(empty)	\n	(empty)	0	0	[{'name': c1, 'type': BIGINT}, {'name': c2, 'type': BIGINT}, {'name': c3, 'type': BIGINT}, {'name': c4, 'type': BIGINT}, {'name': c5, 'type': BIGINT}, {'name': c6, 'type': DOUBLE}, {'name': c7, 'type': DOUBLE}, {'name': c8, 'type': DOUBLE}, {'name': c9, 'type': VARCHAR}, {'name': c10, 'type': VARCHAR}, {'name': c11, 'type': DATE}, {'name': c12, 'type': DATE}, {'name': c13, 'type': DATE}, {'name': c14, 'type': VARCHAR}, {'name': c15, 'type': VARCHAR}, {'name': c16, 'type': VARCHAR}]	%Y-%m-%d	NULL	NULL	FROM read_csv('{DATA_DIR}/csv/real/lineitem_sample.csv', auto_detect=false, delim='|', quote='', escape='', new_line='\n', skip=0, comment='', header=false, columns={'c1': 'BIGINT', 'c2': 'BIGINT', 'c3': 'BIGINT', 'c4': 'BIGINT', 'c5': 'BIGINT', 'c6': 'DOUBLE', 'c7': 'DOUBLE', 'c8': 'DOUBLE', 'c9': 'VARCHAR', 'c10': 'VARCHAR', 'c11': 'DATE', 'c12': 'DATE', 'c13': 'DATE', 'c14': 'VARCHAR', 'c15': 'VARCHAR', 'c16': 'VARCHAR'}, dateformat='%Y-%m-%d');
-
 
 query IIIIIIIIIIIIIIII
 FROM read_csv('{DATA_DIR}/csv/real/lineitem_sample.csv', auto_detect=false, delim='|', quote='"', escape='"', new_line='\n', skip=0, header=false, columns={'c1': 'BIGINT', 'c2': 'BIGINT', 'c3': 'BIGINT', 'c4': 'BIGINT', 'c5': 'BIGINT', 'c6': 'DOUBLE', 'c7': 'DOUBLE', 'c8': 'DOUBLE', 'c9': 'VARCHAR', 'c10': 'VARCHAR', 'c11': 'DATE', 'c12': 'DATE', 'c13': 'DATE', 'c14': 'VARCHAR', 'c15': 'VARCHAR', 'c16': 'VARCHAR'}, dateformat='%Y-%m-%d') limit 1;

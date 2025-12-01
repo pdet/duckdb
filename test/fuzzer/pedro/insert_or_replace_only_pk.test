@@ -2,8 +2,6 @@
 # description: Insert or replace with only columns that are part of the primary key constraint
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t2 (c1 INT PRIMARY KEY);
 

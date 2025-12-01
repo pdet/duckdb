@@ -164,7 +164,6 @@ SELECT TerritoryID, AVG(Bonus)as a, SUM(SalesYTD) as b FROM Sales.SalesPerson GR
 10	5150.0000000000000000	4116871.2277
 NULL	0.00000000000000000000	1252127.9471
 
-
 query R
 SELECT AVG(DISTINCT ListPrice) FROM Production.Product;
 ----
@@ -390,7 +389,6 @@ Information Services	Ajenstat	38.4615	2009-01-17	2009-01-17
 Information Services	Wilson	38.4615	2009-01-22	2009-01-22
 Information Services	Conroy	39.6635	2009-02-04	2009-02-04
 Information Services	Trenary	50.4808	2008-12-11	2008-12-11
-
 
 query IIIRRR
 SELECT BusinessEntityID, DATEPART('QUARTER', QuotaDate) AS Quarter, YEAR(QuotaDate) AS SalesYear, SalesQuota AS QuotaThisQuarter, SalesQuota - FIRST_VALUE(SalesQuota) OVER (PARTITION BY BusinessEntityID, YEAR(QuotaDate) ORDER BY DATEPART('QUARTER',QuotaDate) ) AS DifferenceFromFirstQuarter, SalesQuota - LAST_VALUE(SalesQuota) OVER (PARTITION BY BusinessEntityID, YEAR(QuotaDate) ORDER BY DATEPART('QUARTER', QuotaDate) RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING ) AS DifferenceFromLastQuarter FROM Sales.SalesPersonQuotaHistory WHERE YEAR(QuotaDate) > 2005 AND BusinessEntityID BETWEEN 274 AND 275 ORDER BY BusinessEntityID, SalesYear, Quarter;

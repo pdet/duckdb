@@ -2,8 +2,6 @@
 # description: Test binding lambda functions containing a STRUCT with an alias.
 # group: [list]
 
-
-
 # Test TableFunctionBinder::BindColumnReference.
 
 query I

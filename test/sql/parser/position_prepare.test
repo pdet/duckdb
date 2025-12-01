@@ -2,8 +2,6 @@
 # description: Test prepared statement parameters in POSITION
 # group: [parser]
 
-
-
 statement ok
 PREPARE v1 AS SELECT POSITION(? in ?)
 

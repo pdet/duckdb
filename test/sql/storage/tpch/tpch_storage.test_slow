@@ -99,7 +99,6 @@ SELECT MIN(l_comment), MAX(l_comment), COUNT(l_comment) FROM lineitem;
 ----
  Tiresias 	zzle? furiously iro	6001215
 
-
 query IIII
 SELECT MIN(p_partkey), MAX(p_partkey), AVG(p_partkey), COUNT(p_partkey) FROM part;
 ----

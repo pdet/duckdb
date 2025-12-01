@@ -13,7 +13,6 @@ SELECT FIRST(u), LAST(u) FROM tbl1;
 ----
 1	baz
 
-
 query II
 SELECT union_tag(u), max(u) FROM tbl1 GROUP BY union_tag(u);
 ----

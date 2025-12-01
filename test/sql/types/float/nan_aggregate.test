@@ -2,8 +2,6 @@
 # description: Test NaN and inf as aggregate groups
 # group: [float]
 
-
-
 # grouping by inf and nan
 foreach type FLOAT DOUBLE
 

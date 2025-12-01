@@ -2,8 +2,6 @@
 # description: Test large storage with string compression (many row groups)
 # group: [string]
 
-
-
 foreach compression fsst dictionary dict_fsst
 
 statement ok

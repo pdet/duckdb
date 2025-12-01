@@ -2,8 +2,6 @@
 # description: regex escape test
 # group: [string]
 
-
-
 # test the example
 query T
 SELECT regexp_escape('https://duckdb.org');

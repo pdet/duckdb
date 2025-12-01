@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 # multiple correlated columns and strings
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER, str VARCHAR);

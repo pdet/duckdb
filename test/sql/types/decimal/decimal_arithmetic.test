@@ -2,8 +2,6 @@
 # description: Test basic decimals
 # group: [decimal]
 
-
-
 # negate
 query II
 SELECT -('0.1'::DECIMAL), -('-0.1'::DECIMAL)

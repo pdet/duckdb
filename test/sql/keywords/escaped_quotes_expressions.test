@@ -2,8 +2,6 @@
 # description: Test escaped quotes in expressions
 # group: [keywords]
 
-
-
 statement ok
 CREATE SCHEMA "SCH""EMA";
 

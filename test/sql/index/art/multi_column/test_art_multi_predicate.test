@@ -2,8 +2,6 @@
 # description: Test a point lookup with multiple predicates
 # group: [multi_column]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER)
 

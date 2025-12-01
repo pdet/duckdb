@@ -2,8 +2,6 @@
 # description: Binder issue when using GROUP BY ALL together
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0(c1 INT);
 

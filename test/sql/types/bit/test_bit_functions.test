@@ -2,8 +2,6 @@
 # description: BIT tests
 # group: [bit]
 
-
-
 statement ok
 CREATE TABLE bits (b bit);
 
@@ -151,7 +149,6 @@ SELECT bit_count(b) FROM bits
 3
 7
 8
-
 
 # **** POSITION ****
 query I

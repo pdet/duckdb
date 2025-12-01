@@ -8,7 +8,6 @@ CREATE TABLE integers(i integer);
 statement ok
 CREATE INDEX i_index ON integers(i);
 
-
 # Node7 Leaf Insertion and Deletion Coverage.
 loop i 0 7
 

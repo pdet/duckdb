@@ -2,8 +2,6 @@
 # description: Test subqueries on ANY join with correlated lists
 # group: [complex]
 
-
-
 statement ok
 CREATE TABLE lists(l INTEGER[]);
 

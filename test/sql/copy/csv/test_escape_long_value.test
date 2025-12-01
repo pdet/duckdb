@@ -2,9 +2,6 @@
 # description: Test long value with escapes
 # group: [csv]
 
-
-
-
 loop buffer_size 28 50
 
 statement ok

@@ -4,8 +4,6 @@
 
 # Basic compatibility tests
 
-
-
 query I
 select '340282366920938463463374607431768211455'::UHUGEINT::bignum
 ----

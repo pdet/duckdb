@@ -2,8 +2,6 @@
 # description: Issue #4570: Missing error message at subquery
 # group: [pedro]
 
-
-
 statement error
 WITH t2 AS (SELECT 3 WHERE count(*) FILTER (1)) SELECT 0 FROM t2
 ----

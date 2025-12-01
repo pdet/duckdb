@@ -2,8 +2,6 @@
 # description: Test skewness aggregate
 # group: [aggregates]
 
-
-
 #Corner cases
 statement error
 select skewness()

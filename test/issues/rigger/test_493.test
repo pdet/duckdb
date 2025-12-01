@@ -2,8 +2,6 @@
 # description: Issue 493
 # group: [rigger]
 
-
-
 # SIMILAR TO results in an 'Unknown error -1'
 query T
 SELECT '' SIMILAR TO '';

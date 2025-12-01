@@ -2,8 +2,6 @@
 # description: Issue #9308: wrong result: NOT EXISTS predicate with correlated non-equality comparison
 # group: [exists]
 
-
-
 statement ok
 create or replace table t1(c1 int64);
 

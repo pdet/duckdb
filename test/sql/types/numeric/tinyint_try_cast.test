@@ -2,8 +2,6 @@
 # description: Tinyint try cast
 # group: [numeric]
 
-
-
 # tinyint casts
 statement ok
 CREATE TABLE tinyints AS SELECT i::TINYINT i FROM (VALUES (-128), (0), (127)) tbl(i)

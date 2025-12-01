@@ -2,8 +2,6 @@
 # description: Test full outer join with caches
 # group: [full_outer]
 
-
-
 statement ok
 pragma verify_external
 

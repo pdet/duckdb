@@ -80,7 +80,6 @@ statement error
 SELECT '${prefix}_1_0'::INT
 ----
 
-
 # Property check! 
 foreach binary 1 01 00 0_0 10 10101 1001 0001 1111 1111_1111 01111111111111111111111111111111 01111111_11111111_11111111_11111111
 
@@ -95,7 +94,6 @@ FROM binary_string
 true
 
 endloop
-
 
 # Test limits
 query I
@@ -149,6 +147,5 @@ query I
 SELECT '${prefix}1111111111111111111111111111111111111111111111111111111111111111'::UINT64
 ----
 18446744073709551615
-
 
 endloop

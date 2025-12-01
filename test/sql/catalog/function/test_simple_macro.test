@@ -2,8 +2,6 @@
 # description: Test Simple Macro
 # group: [function]
 
-
-
 statement ok
 CREATE TABLE integers (a INT)
 

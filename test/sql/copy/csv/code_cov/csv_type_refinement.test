@@ -2,8 +2,6 @@
 # description: Tests to enforce codecov in csv type refinement sniffing
 # group: [code_cov]
 
-
-
 query I
 select count(*) from read_csv_auto('{DATA_DIR}/csv/borked_date.csv', header = 0)
 ----

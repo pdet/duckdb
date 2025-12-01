@@ -2,8 +2,6 @@
 # description: basic tests for the hive partition auto detection
 # group: [partitioned]
 
-
-
 # create a table
 statement ok
 CREATE TABLE t AS SELECT i%2 AS year, i%3 AS month, i%4 AS c, i%5 AS d FROM RANGE(0,20) tbl(i);
@@ -200,7 +198,6 @@ select alias(columns(*)) from read_parquet(['{TEMP_DIR}/parquet_partition_2/**',
 ----
 c	d
 
-
 #	with partition columns written
 #	test a csv partition by year
 statement ok
@@ -294,8 +291,6 @@ query IIII
 select alias(columns(*)) from read_csv_auto(['{TEMP_DIR}/csv_partition_2/**', '{TEMP_DIR}/bad_file.csv'], names=['a','b','c','d']) LIMIT 1;
 ----
 a	b	c	d
-
-
 
 # same tests with parquet
 require parquet

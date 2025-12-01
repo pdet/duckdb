@@ -2,8 +2,6 @@
 # description: Test TIMESTAMP types
 # group: [timestamp]
 
-
-
 statement ok
 CREATE TABLE IF NOT EXISTS timestamp (sec TIMESTAMP_S, milli TIMESTAMP_MS,micro TIMESTAMP_US, nano TIMESTAMP_NS );
 
@@ -32,13 +30,11 @@ SELECT micro::TIMESTAMP_S, micro::TIMESTAMP_MS,micro::TIMESTAMP_NS from timestam
 ----
 2008-01-01 00:00:02	2008-01-01 00:00:01.889	2008-01-01 00:00:01.88926
 
-
 statement ok
 INSERT INTO timestamp VALUES ('2008-01-01 00:00:51','2008-01-01 00:00:01.894','2008-01-01 00:00:01.99926','2008-01-01 00:00:01.999268321' )
 
 statement ok
 INSERT INTO timestamp VALUES ('2008-01-01 00:00:11','2008-01-01 00:00:01.794','2008-01-01 00:00:01.98926','2008-01-01 00:00:01.899268321' )
-
 
 # Overflow from US to NS
 statement error
@@ -228,8 +224,6 @@ query T
 select '2008-01-01 00:00:11'::TIMESTAMP_US = '2008-01-01 00:00:11'::TIMESTAMP_S
 ----
 true
-
-
 
 query T
 select '2008-01-01 00:00:11.1'::TIMESTAMP_US = '2008-01-01 00:00:11'::TIMESTAMP_MS

@@ -2,8 +2,6 @@
 # description: Issue 2496: Incorrect Struct Sorting Order on Ties
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE list_str AS
 SELECT * FROM (VALUES

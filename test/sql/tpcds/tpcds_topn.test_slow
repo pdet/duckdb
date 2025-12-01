@@ -4,8 +4,6 @@
 
 require tpcds
 
-
-
 statement ok
 CALL dsdgen(sf=1);
 

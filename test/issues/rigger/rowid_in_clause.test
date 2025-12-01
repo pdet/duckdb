@@ -2,8 +2,6 @@
 # description: SQLancer bug that detected an error in the IN-clause simplification when different types were used
 # group: [rigger]
 
-
-
 statement ok
 CREATE TABLE t0(c0 VARCHAR);
 

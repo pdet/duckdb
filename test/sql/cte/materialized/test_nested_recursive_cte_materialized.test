@@ -2,8 +2,6 @@
 # description: Test Nested Recursive Common Table Expressions (CTE)
 # group: [materialized]
 
-
-
 query I
 WITH RECURSIVE t(x) AS MATERIALIZED
 (

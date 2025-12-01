@@ -10,8 +10,6 @@ PRAGMA disable_checkpoint_on_shutdown
 statement ok
 PRAGMA wal_autocheckpoint='1TB';
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER);
 
@@ -32,5 +30,4 @@ statement error
 INSERT INTO test VALUES (2, 2)
 ----
 <REGEX>:Constraint Error.*Duplicate key "j: 2" violates primary key constraint.*
-
 

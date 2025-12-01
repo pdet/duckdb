@@ -2,8 +2,6 @@
 # description: Test overflow in various decimal computations involving a table
 # group: [decimal]
 
-
-
 statement ok
 CREATE TABLE decimals(d DECIMAL(18,1))
 

@@ -2,8 +2,6 @@
 # description: Use complex types in ALL clause
 # group: [pedro]
 
-
-
 # cast from struct to int not supported
 statement error
 VALUES((0, 0) = ALL(SELECT 2));

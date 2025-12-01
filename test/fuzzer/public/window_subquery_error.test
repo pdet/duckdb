@@ -2,8 +2,6 @@
 # description: Test window function with a subquery that generates an error message
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 (c01 INT, c02 STRING);
 

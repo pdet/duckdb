@@ -2,8 +2,6 @@
 # description: ENUM types used in table tests
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
 
@@ -230,7 +228,6 @@ SELECT TRY_CAST ('bla' as mood)
 ----
 NULL
 
-
 # Create an enum
 statement ok
 create type breed AS ENUM ('Maltese', 'Shi-tzu', 'Samoyed', 'Robot');
@@ -271,7 +268,6 @@ CREATE TABLE midenum_t2 (
 
 statement ok
 INSERT INTO midenum_t2 VALUES ('0')
-
 
 # Test Large Enums
 statement ok

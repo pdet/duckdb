@@ -2,8 +2,6 @@
 # description: Statistical rounding in float => int casts
 # group: [cast]
 
-
-
 # PG uses statistical ("Banker's") rounding for floating point => integer
 
 foreach src FLOAT DOUBLE

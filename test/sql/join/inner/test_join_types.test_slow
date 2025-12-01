@@ -2,8 +2,6 @@
 # description: Test joins with different types
 # group: [inner]
 
-
-
 statement ok
 pragma verify_external
 

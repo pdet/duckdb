@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 # we run this twice, once with multi threading and once without
 loop i 0 2
 

@@ -2,8 +2,6 @@
 # description: Extract function
 # group: [time]
 
-
-
 query I
 select epoch(TIME '14:21:13')
 ----

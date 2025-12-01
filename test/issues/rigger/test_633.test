@@ -2,8 +2,6 @@
 # description: Issue 633
 # group: [rigger]
 
-
-
 # Query using LEFT() results in a segmentation fault
 statement ok
 CREATE TABLE t0(c0 BOOL);

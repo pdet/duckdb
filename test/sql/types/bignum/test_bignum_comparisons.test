@@ -2,8 +2,6 @@
 # description: Comparison testing for bignum type
 # group: [bignum]
 
-
-
 # Create table with a variety of bignums
 statement ok
 CREATE TABLE bignum_comparisons(a bignum);

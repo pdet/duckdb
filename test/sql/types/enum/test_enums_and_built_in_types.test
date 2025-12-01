@@ -4,8 +4,6 @@
 
 load :memory:
 
-
-
 statement error
 CREATE TYPE "integer" AS ENUM ('1', '2', '3');
 ----

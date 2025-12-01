@@ -2,8 +2,6 @@
 # description: Table functions
 # group: [table_function]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER);
 

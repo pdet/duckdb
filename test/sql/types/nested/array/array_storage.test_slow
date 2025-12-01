@@ -3,8 +3,6 @@
 
 load __TEST_DIR__/temp_array_storage.db
 
-
-
 statement ok
 CREATE TABLE t1(i INT, a INT[3]);
 
@@ -25,7 +23,6 @@ SELECT * EXCLUDE additional_block_ids FROM pragma_storage_info('t1');
 0	a	1	[1, 1]		0	INTEGER		0	3	Uncompressed	[Min: 1, Max: 3][Has Null: false, Has No Null: true]	false	true	1	0	(empty)
 0	i	0	[0, 0]		0	VALIDITY	0	1	Constant		[Has Null: false, Has No Null: true]					false	true	-1	0	(empty)
 0	i	0	[0]			0	INTEGER		0	1	Constant		[Min: 1, Max: 1][Has Null: false, Has No Null: true]	false	true	-1	0	(empty)
-
 
 statement ok
 INSERT INTO t1 SELECT * FROM (VALUES(2, [4, NULL, 6]::INT[3]));
@@ -49,7 +46,6 @@ SELECT * FROM t1 ORDER BY i;
 3	NULL
 4	[7, 8, 9]
 
-
 query IIII rowsort
 SELECT * FROM t1 as a JOIN t1 as b ON (a.a IS DISTINCT FROM b.a) ORDER BY a.i, b.i;
 ----
@@ -66,7 +62,6 @@ SELECT * FROM t1 as a JOIN t1 as b ON (a.a IS DISTINCT FROM b.a) ORDER BY a.i, b
 4	[7, 8, 9]	2	[4, NULL, 6]
 4	[7, 8, 9]	3	NULL
 
-
 query II
 SELECT * FROM t1 WHERE a = array_value(1,2,3);
 ----
@@ -77,12 +72,10 @@ SELECT * FROM t1 WHERE a[1] = 4;
 ----
 2	[4, NULL, 6]
 
-
 query II
 SELECT * FROM t1 LIMIT 1 OFFSET 1;
 ----
 2	[4, NULL, 6]
-
 
 # Now try with > than vector size elements
 

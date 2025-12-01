@@ -98,7 +98,6 @@ select chr(2*16*256+1*256+2*16+11) collate da  =chr(12*16+5) collate da;
 ----
 True
 
-
 query I
 select icu_sort_key(chr(2*16*256+1*256+2*16+11),'da')=icu_sort_key(chr(12*16+5),'da');
 ----

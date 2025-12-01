@@ -2,8 +2,6 @@
 # description: Test CREATE TABLE AS SELECT (CTAS) statements
 # group: [create]
 
-
-
 statement ok
 CREATE TABLE tbl1 AS SELECT 1;
 
@@ -75,7 +73,6 @@ SELECT * FROM tbl4;
 ----
 1	hello
 
-
 statement ok
 CREATE OR REPLACE TABLE tbl4(col1, col2) AS SELECT 2, 'duck';
 
@@ -83,7 +80,6 @@ query II
 SELECT * FROM tbl4;
 ----
 2	duck
-
 
 statement ok
 CREATE TABLE IF NOT EXISTS tbl5(col1, col2) AS SELECT 3, 'database';

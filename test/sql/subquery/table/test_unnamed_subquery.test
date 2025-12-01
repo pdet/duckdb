@@ -2,8 +2,6 @@
 # description: Test unnamed subqueries
 # group: [table]
 
-
-
 query I
 SELECT a FROM (SELECT 42 a)
 ----

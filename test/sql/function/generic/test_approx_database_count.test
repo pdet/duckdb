@@ -2,8 +2,6 @@
 # description: Test the approx_database_count table function.
 # group: [generic]
 
-
-
 statement ok
 ATTACH '__TEST_DIR__/board1.db' AS b1;
 

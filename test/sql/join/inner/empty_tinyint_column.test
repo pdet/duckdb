@@ -2,8 +2,6 @@
 # description: Internal error on join of empty tinyint column
 # group: [inner]
 
-
-
 statement ok
 CREATE TABLE t1(c0 INT4, c1 VARCHAR);
 

@@ -2,8 +2,6 @@
 # description: tests for regexp_extract_all struct multi-match variant
 # group: [string]
 
-
-
 query I
 SELECT regexp_extract_all('Peter:33 Paul:14', '(\w+):(\d+)', ['name','num']) AS res;
 ----
@@ -174,7 +172,6 @@ query I
 SELECT regexp_extract_all('a 2b 14m', '(\d+)?([a-z]+)', ['g1','g2']) AS res;
 ----
 [{'g1': NULL, 'g2': a}, {'g1': 2, 'g2': b}, {'g1': 14, 'g2': m}]
-
 
 query I
 SELECT regexp_extract_all('AbCdE', '([[:lower:]]+)C([[:lower:]]+)', ['g1','g2']) AS res;

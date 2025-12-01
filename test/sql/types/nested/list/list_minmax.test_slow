@@ -2,8 +2,6 @@
 # description: Test lists with aggregations
 # group: [list]
 
-
-
 statement ok
 CREATE VIEW million_lists AS
 SELECT [(i+1) % 998513, i+1] as l FROM range(999983) tbl(i);

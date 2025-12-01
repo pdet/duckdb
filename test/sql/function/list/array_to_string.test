@@ -2,8 +2,6 @@
 # description: Test array_to_string function
 # group: [list]
 
-
-
 query I
 SELECT array_to_string([1,2,3], '')
 ----
@@ -23,7 +21,6 @@ query I
 SELECT array_to_string([1, 2, 3], NULL)
 ----
 1,2,3
-
 
 query I
 SELECT array_to_string([], '-')

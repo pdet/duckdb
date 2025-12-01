@@ -2,8 +2,6 @@
 # description: Test creates alias for struct type
 # group: [alias]
 
-
-
 statement ok
 CREATE TYPE POINT AS STRUCT(i INTEGER, j INTEGER);
 

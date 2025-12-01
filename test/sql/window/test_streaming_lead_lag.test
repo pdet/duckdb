@@ -2,8 +2,6 @@
 # description: Streaming window functions
 # group: [window]
 
-
-
 statement ok
 PRAGMA explain_output = PHYSICAL_ONLY;
 

@@ -2,8 +2,6 @@
 # description: Issue #10260: MATERIALIZED causes Binder Error: table has duplicate column name
 # group: [materialized]
 
-
-
 statement ok
 CREATE TABLE T0(C1 INT);
 

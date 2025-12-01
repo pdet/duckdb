@@ -2,8 +2,6 @@
 # description: Test LIMIT keyword {% | PERCENT}
 # group: [order]
 
-
-
 query I
 SELECT COUNT(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM range(1000000) LIMIT 10%) LIMIT 10%) LIMIT 10%)
 ----

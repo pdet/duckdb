@@ -2,8 +2,6 @@
 # description: Test integer division setting
 # group: [settings]
 
-
-
 query I
 SELECT 1/2
 ----

@@ -117,7 +117,6 @@ query I
 select * from (select * from (select 43) tbl(i) ANTI JOIN (select 42) tbl2(u) on (i=u)) tbl(i) where i=42;
 ----
 
-
 statement ok
 create table t2 as select range a, range+8 b from range(11);
 
@@ -135,7 +134,6 @@ query II
 explain select a from (select * from t2 semi join (select * from t3 where 1 = 0) tt0 on (t2.a = tt0.b)) tmp1 ANTI JOIN (select * from t3 semi join (select * from t4) tt1 on (t3.a = tt1.b)) tmp2 on (tmp1.a=tmp2.a);
 ----
 logical_opt	<!REGEX>:.*(SEMI|ANTI).*
-
 
 # with complex join condition, answer is still correct
 query II no_sort no_filter

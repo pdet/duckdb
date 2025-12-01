@@ -30,7 +30,6 @@ SELECT registration_dttm, id, first_name, birthdate, salary FROM parquet_scan('{
 ----
 2016-02-03 04:33:04	42	Todd	12/19/1999	284728.990000
 
-
 query I
 SELECT COUNT(*) FROM parquet_scan('{DATA_DIR}/parquet-testing/userdata1.parquet') where id = 42
 ----
@@ -79,7 +78,6 @@ SELECT COUNT(*) FROM parquet_scan('{DATA_DIR}/parquet-testing/userdata1.parquet'
 ----
 10
 
-
 query I
 SELECT last_name FROM parquet_scan('{DATA_DIR}/parquet-testing/userdata1.parquet') where first_name > 'Mark' and country > 'Germany' and salary > 0 order by last_name limit 10
 ----
@@ -93,7 +91,6 @@ Alvarez
 Alvarez
 Arnold
 Arnold
-
 
 query I
 SELECT length(l_comment) FROM parquet_scan('{DATA_DIR}/parquet-testing/lineitem-top10000.gzip.parquet') where l_orderkey = 1 order by l_comment

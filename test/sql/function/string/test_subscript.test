@@ -2,8 +2,6 @@
 # description: Substring test
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE strings(s VARCHAR, off INTEGER);
 

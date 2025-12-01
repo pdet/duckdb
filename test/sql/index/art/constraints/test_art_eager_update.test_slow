@@ -2,8 +2,6 @@
 # description: Test ART BIGINT key type
 # group: [constraints]
 
-
-
 statement ok
 CREATE OR REPLACE TABLE t (
 	s UUID,

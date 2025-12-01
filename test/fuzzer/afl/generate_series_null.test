@@ -2,8 +2,6 @@
 # description: Fuzzer: NULL in generate series
 # group: [afl]
 
-
-
 query I
 SELECT c0 FROM generate_series(NULL) t3(c0);
 ----

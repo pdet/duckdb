@@ -2,8 +2,6 @@
 # description: CSV reader projection pushdown
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE tbl(i INT, j VARCHAR, k DATE);
 

@@ -2,8 +2,6 @@
 # description: ENUM tests
 # group: [enum]
 
-
-
 statement error
 CREATE TYPE type_a AS ENUM (SELECT '1', '2');
 ----
@@ -124,5 +122,4 @@ query I
 SELECT enum_first('1'::number_enum);
 ----
 3
-
 

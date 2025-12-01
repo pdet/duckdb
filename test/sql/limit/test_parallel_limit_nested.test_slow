@@ -2,8 +2,6 @@
 # description: Test parallel limit execution with basic nested types
 # group: [limit]
 
-
-
 statement ok
 PRAGMA threads=8
 

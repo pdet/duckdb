@@ -63,7 +63,6 @@ SELECT 'MULTIPOINT(EMPTY, 2 2, EMPTY)'::GEOMETRY::VARCHAR;
 ----
 MULTIPOINT (EMPTY, 2 2, EMPTY)
 
-
 # Z/M/ZM coordinates
 statement ok
 create table t3(id INT, g GEOMETRY);

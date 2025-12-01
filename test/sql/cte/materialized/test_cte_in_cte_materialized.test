@@ -2,8 +2,6 @@
 # description: Test Nested Common Table Expressions (CTE)
 # group: [materialized]
 
-
-
 statement ok
 create table a(i integer);
 

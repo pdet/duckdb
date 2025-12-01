@@ -2,8 +2,6 @@
 # description: Test ANY with lists
 # group: [list]
 
-
-
 # scalar lists
 query I
 SELECT 1=ALL([1, 2, 3]);

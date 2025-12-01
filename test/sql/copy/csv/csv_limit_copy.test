@@ -2,9 +2,6 @@
 # description: CSV limit copy
 # group: [csv]
 
-
-
-
 statement ok
 CREATE TABLE integers AS FROM range(1000000) t(i);
 

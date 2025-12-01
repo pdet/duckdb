@@ -2,8 +2,6 @@
 # description: Test the DROP INDEX statement
 # group: [create_drop]
 
-
-
 statement ok
 CREATE TABLE A (A1 INTEGER,A2 VARCHAR, A3 INTEGER)
 

@@ -5,8 +5,6 @@ require ram 8gb
 
 # Test large arrays (> VECTOR_SIZE elements)
 
-
-
 statement ok
 PRAGMA verify_external
 

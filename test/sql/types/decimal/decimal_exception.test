@@ -2,8 +2,6 @@
 # description: Test casting to decimal, if it does not fit it should throw
 # group: [decimal]
 
-
-
 statement error
 select cast('9.99' as decimal(1,0));
 ----
@@ -33,7 +31,6 @@ statement error
 select cast(9.5 as decimal(1,0));
 ----
 Casting value "9.5" to type DECIMAL(1,0) failed: value is out of range!
-
 
 statement error
 select cast(-9.99 as decimal(1,0));

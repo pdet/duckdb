@@ -1,8 +1,6 @@
 # name: test/sql/types/union/union_validity.test
 # group: [union]
 
-
-
 statement ok
 CREATE TABLE tbl (u UNION(a INT, b VARCHAR));
 
@@ -22,5 +20,4 @@ NULL	NULL
 a	1
 a	NULL
 b	NULL
-
 

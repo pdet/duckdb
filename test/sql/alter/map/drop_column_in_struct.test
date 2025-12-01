@@ -32,7 +32,6 @@ ALTER TABLE test DROP COLUMN s.value
 ----
 Catalog Error: Cannot drop field 'value' from column 's' - it's not a struct
 
-
 # drop a column from the struct inside the 'value'
 statement ok
 ALTER TABLE test DROP COLUMN s.value.j

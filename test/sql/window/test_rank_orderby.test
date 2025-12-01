@@ -2,8 +2,6 @@
 # description: Test argument ordering for RANK and PERCENT_RANK
 # group: [window]
 
-
-
 query IIII
 SELECT 
 	i,

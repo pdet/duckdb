@@ -44,7 +44,6 @@ INSERT INTO t1(c0) VALUES (E'\\xabcd');
 statement ok
 INSERT INTO t1(c0) VALUES (CAST('' AS BLOB));
 
-
 query III
 SELECT t0.c0, t1.c0, (t1.c0)>=(CAST(t0.c0 AS BLOB)) FROM t0, t1 WHERE ((t1.c0)>=(CAST(t0.c0 AS BLOB))) ORDER BY ALL;
 ----
@@ -79,10 +78,7 @@ SELECT t0.c0, t1.c0, (t1.c0)>=(CAST(t0.c0 AS BLOB)) FROM t0, t1 WHERE ((t1.c0)>=
 00000000000000000000000000000101	x48656C6C6F	1
 00000000000000000000000000000101	\xABcd	1
 
-
-
 ## original issue
-
 
 statement ok
 CREATE OR REPLACE TABLE  t1(c0 BLOB);

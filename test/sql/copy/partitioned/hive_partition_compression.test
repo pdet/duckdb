@@ -2,8 +2,6 @@
 # description: Test we can round-trip partitioned compressed Parquet files
 # group: [partitioned]
 
-
-
 require parquet
 
 statement ok

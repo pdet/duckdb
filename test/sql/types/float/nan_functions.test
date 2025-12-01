@@ -2,8 +2,6 @@
 # description: Test functions on NaN values
 # group: [float]
 
-
-
 foreach type FLOAT DOUBLE
 
 # nextafter
@@ -26,7 +24,6 @@ query I
 SELECT nextafter('-inf'::${type}, '-inf'::${type})
 ----
 -inf
-
 
 query I
 SELECT nextafter('nan'::${type}, '-inf'::${type})

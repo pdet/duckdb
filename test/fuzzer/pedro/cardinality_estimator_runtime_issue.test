@@ -2,8 +2,6 @@
 # description: Issue #4682: Cardinality estimator runtime issue
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 AS (SELECT 2);
 

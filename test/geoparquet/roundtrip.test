@@ -22,8 +22,6 @@ TO '__TEST_DIR__/data-point-out.parquet' (FORMAT PARQUET)
 query II nosort point_result
 SELECT col, geometry FROM '__TEST_DIR__/data-point-out.parquet'
 
-
-
 #------------------------------------------------------------------------------
 # Test linestrings
 #------------------------------------------------------------------------------
@@ -42,8 +40,6 @@ TO '__TEST_DIR__/data-linestring-out.parquet' (FORMAT PARQUET)
 # Test that the data is the same
 query II nosort linestring_result
 SELECT col, geometry FROM '__TEST_DIR__/data-linestring-out.parquet'
-
-
 
 #------------------------------------------------------------------------------
 # Test polygons
@@ -64,8 +60,6 @@ TO '__TEST_DIR__/data-polygon-out.parquet' (FORMAT PARQUET)
 query II nosort polygon_result
 SELECT col, geometry FROM '__TEST_DIR__/data-polygon-out.parquet'
 
-
-
 #------------------------------------------------------------------------------
 # Test multipoints
 #------------------------------------------------------------------------------
@@ -84,8 +78,6 @@ TO '__TEST_DIR__/data-multipoint-out.parquet' (FORMAT PARQUET)
 # Test that the data is the same
 query II nosort multipoint_result
 SELECT col, geometry FROM '__TEST_DIR__/data-multipoint-out.parquet'
-
-
 
 #------------------------------------------------------------------------------
 # Test multilinestrings
@@ -106,8 +98,6 @@ TO '__TEST_DIR__/data-multilinestring-out.parquet' (FORMAT PARQUET)
 query II nosort multilinestring_result
 SELECT col, geometry FROM '__TEST_DIR__/data-multilinestring-out.parquet'
 
-
-
 #------------------------------------------------------------------------------
 # Test multipolygons
 #------------------------------------------------------------------------------
@@ -126,7 +116,6 @@ TO '__TEST_DIR__/data-multipolygon-out.parquet' (FORMAT PARQUET)
 # Test that the data is the same
 query II nosort multipolygon_result
 SELECT col, geometry FROM '__TEST_DIR__/data-multipolygon-out.parquet'
-
 
 #------------------------------------------------------------------------------
 # Inspect metadata

@@ -2,8 +2,6 @@
 # description: Test various ops involving intervals
 # group: [interval]
 
-
-
 statement ok
 CREATE TABLE interval (t INTERVAL);
 

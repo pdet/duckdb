@@ -2,8 +2,6 @@
 # description: Issue #12863 - INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS doesn't list foreign keys when declaration case doesn't match reference case
 # group: [table_function]
 
-
-
 statement ok
 CREATE TABLE a (ID int PRIMARY KEY);
 

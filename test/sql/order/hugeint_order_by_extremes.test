@@ -2,8 +2,6 @@
 # description: Issue #3471: Select fails when ordering on hugeint column
 # group: [order]
 
-
-
 statement ok
 CREATE TABLE test (a hugeint);
 

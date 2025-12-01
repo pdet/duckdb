@@ -2,8 +2,6 @@
 # description: Test equal period timestamp diffs across the Unix epoch
 # group: [timestamp]
 
-
-
 query III
 SELECT 
 	start_ts, 

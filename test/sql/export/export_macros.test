@@ -5,8 +5,6 @@
 statement ok
 set enable_macro_dependencies=true;
 
-
-
 statement ok
 BEGIN TRANSACTION
 

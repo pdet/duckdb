@@ -2,8 +2,6 @@
 # description: Test string casts
 # group: [cast]
 
-
-
 query TTT
 SELECT (1=1)::VARCHAR, (1=0)::VARCHAR, NULL::BOOLEAN::VARCHAR
 ----

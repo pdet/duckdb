@@ -2,8 +2,6 @@
 # description: ENUM within schema
 # group: [enum]
 
-
-
 statement ok
 CREATE SCHEMA s1;
 

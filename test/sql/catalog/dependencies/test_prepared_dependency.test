@@ -4,7 +4,6 @@
 
 require skip_reload
 
-
 # prepared statements and dependencies
 # dependency on a bound table
 statement ok con1

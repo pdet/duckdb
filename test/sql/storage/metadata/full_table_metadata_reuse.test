@@ -19,7 +19,6 @@ CREATE TABLE little_tbl(i INT);
 statement ok
 COMMIT
 
-
 loop i 1 10
 
 statement ok

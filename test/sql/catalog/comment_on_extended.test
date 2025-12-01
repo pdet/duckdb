@@ -84,7 +84,6 @@ select comment from duckdb_tables() where table_name='t2';
 ----
 yet another very gezellige table 2
 
-
 ### Index with fully qualified name
 statement ok
 COMMENT ON INDEX db1.s1.test_index IS 'very gezellige index 1'

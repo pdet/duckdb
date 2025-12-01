@@ -2,8 +2,6 @@
 # description: Test structs with aggregations
 # group: [struct]
 
-
-
 foreach type <integral>
 
 statement ok

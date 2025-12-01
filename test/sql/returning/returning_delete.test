@@ -19,7 +19,6 @@ WHERE a < 5 RETURNING a, b, c;
 3	-2	-3
 4	-2	-3
 
-
 # returning 1 named column
 query I
 DELETE FROM table1
@@ -41,15 +40,12 @@ WHERE a=8 AND b=-2 AND c=-3 RETURNING *, c, b, a;
 ----
 8	-2	-3	-3	-2	8
 
-
 # returning column names out of order
 query III
 DELETE FROM table1
 WHERE a=9 RETURNING c, b, a;
 ----
 -3	-2	9
-
-
 
 # returning column names out of order with alias's
 query III
@@ -60,7 +56,6 @@ WHERE a>=10 AND a <=13  RETURNING c as aliasc, a as aliasa, b as aliasb;
 -3	11	-2
 -3	12	-2
 -3	13	-2
-
 
 # returning expression with aggregate function at top level is not allowed
 statement error
@@ -83,7 +78,6 @@ WHERE a=10
 RETURNING 'duckdb';
 ----
 
-
 # returning a literal where a row matches
 query I
 DELETE FROM table1
@@ -92,14 +86,12 @@ RETURNING 'duckdb';
 ----
 duckdb
 
-
 # Set up tables for Joins
 statement ok
 CREATE TABLE table2 (a2 INTEGER, b2 INTEGER, c2 INTEGER);
 
 statement ok
 CREATE TABLE table3 (a3 INTEGER, b3 INTEGER, c3 INTEGER);
-
 
 statement ok
 INSERT INTO table2 VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (100, 100, 100), (200, 200, 200);
@@ -131,7 +123,6 @@ INSERT INTO table4 VALUES (1, 0, 2), (2, 0, 1), (3, 0, 0);
 statement ok
 INSERT INTO table5 VALUES (1, 0, 0), (2, 0, 0), (3, 0, 1), (4, 0, 1), (5, 0, 2), (6, 0, 2);
 
-
 # another join with SUM and GROUP by
 query III
 DELETE FROM table4
@@ -139,7 +130,6 @@ WHERE a4 IN (SELECT sum(a5) FROM table5 GROUP BY c5)
 RETURNING *;
 ----
 3	0	0
-
 
 # update using a window function
 #query III
@@ -151,7 +141,6 @@ RETURNING *;
 #1	1	2
 #2	2	1
 #3	3	0
-
 
 # subquery not allowed in returning statement
 statement error
@@ -170,7 +159,6 @@ query I
 DELETE FROM table4 WHERE a4 = 2 RETURNING CASE WHEN b4=1 THEN a4 ELSE b4 END;
 ----
 0
-
 
 # drop temporary tables
 statement ok
@@ -241,7 +229,6 @@ RETURNING *;
 ----
 1	4
 
-
 # recreate table1 for test maintainability.
 statement ok
 DROP TABLE table1;
@@ -256,7 +243,6 @@ query I
 SELECT count(*) FROM table1;
 ----
 4000
-
 
 # the following two tests test that all inserts get streamed back to the returning statement
 # the order of the changed rows does not always reflect the order they were updated in. Therefore

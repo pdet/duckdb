@@ -4,7 +4,6 @@
 
 require skip_reload
 
-
 # dependency on a sequence in a default value
 statement ok con1
 CREATE SEQUENCE seq

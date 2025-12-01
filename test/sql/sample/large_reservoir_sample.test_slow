@@ -2,8 +2,6 @@
 # description: Test reservoir sample crash on large data sets
 # group: [sample]
 
-
-
 statement ok
 create table integers as from range(1000000);
 

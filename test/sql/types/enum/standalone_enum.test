@@ -2,8 +2,6 @@
 # description: Test stand-alone enums
 # group: [enum]
 
-
-
 query I
 SELECT 'hello'::ENUM('world', 'hello');
 ----

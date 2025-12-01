@@ -2,8 +2,6 @@
 # description: Test the columns expression in the WHERE clause
 # group: [parser]
 
-
-
 statement ok
 CREATE TABLE tbl(col1 INTEGER, col2 INTEGER, col3 INTEGER);
 

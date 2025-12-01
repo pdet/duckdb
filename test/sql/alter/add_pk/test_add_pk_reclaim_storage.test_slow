@@ -10,8 +10,6 @@ PRAGMA disable_checkpoint_on_shutdown
 statement ok
 PRAGMA wal_autocheckpoint='1TB';
 
-
-
 statement ok
 SET force_compression='uncompressed';
 

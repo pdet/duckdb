@@ -2,8 +2,6 @@
 # description: Test approx quantile operator
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 
@@ -31,7 +29,6 @@ SELECT CASE
 	  FROM (SELECT approx_quantile(r, 0.5) as approx_quantile ,quantile(r,0.5) as true_quantile FROM quantile) AS T
 ----
 1
-
 
 query I
 SELECT CASE

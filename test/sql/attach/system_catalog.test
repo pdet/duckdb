@@ -2,8 +2,6 @@
 # description: Test interactions with the SYSTEM catalog
 # group: [attach]
 
-
-
 # cannot detach system/temp catalogs
 statement error
 DETACH DATABASE system

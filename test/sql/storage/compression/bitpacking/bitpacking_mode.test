@@ -15,7 +15,6 @@ PRAGMA force_bitpacking_mode='xxx'
 ----
 Unrecognized option
 
-
 foreach mode auto constant constant_delta delta_for for
 
 statement ok

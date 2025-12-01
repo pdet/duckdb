@@ -2,8 +2,6 @@
 # description: Test joins with few matches which should result in cache usage
 # group: [inner]
 
-
-
 statement ok
 pragma verify_external
 

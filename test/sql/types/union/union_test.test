@@ -28,7 +28,6 @@ SELECT u.i FROM tbl;
 1
 NULL
 
-
 query I
 SELECT union_tag(u) FROM tbl;
 ----

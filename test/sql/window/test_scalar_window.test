@@ -2,8 +2,6 @@
 # description: Most scalar window functions
 # group: [window]
 
-
-
 # test scalar window functions
 query I
 SELECT row_number() OVER ()

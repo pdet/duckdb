@@ -2,8 +2,6 @@
 # description: ALIAS tests
 # group: [alias]
 
-
-
 statement ok
 CREATE TYPE alias AS VARCHAR;
 

@@ -15,7 +15,6 @@ SELECT typeof(first(column0)), typeof(first(column1)), COUNT(*), SUM(column0), M
 ----
 BIGINT	VARCHAR	11044	11044	2
 
-
 query IIIIIIIIIIII
 SELECT * EXCLUDE (scan_id) FROM reject_scans order by all;
 ----
@@ -122,7 +121,6 @@ drop table reject_errors;
 
 statement ok
 drop table reject_scans;
-
 
 # Test giving the name of an existing table to the errors table
 statement ok

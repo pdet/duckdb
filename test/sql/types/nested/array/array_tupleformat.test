@@ -1,8 +1,6 @@
 # name: test/sql/types/nested/array/array_tupleformat.test
 # group: [array]
 
-
-
 statement ok
 PRAGMA verify_external
 
@@ -45,7 +43,6 @@ SELECT DISTINCT * FROM t3;
 NULL
 [[1, NULL], [NULL, 2]]
 [[3, NULL], [NULL, 4]]
-
 
 statement ok
 CREATE TABLE t4(i VARCHAR[][2])

@@ -17,7 +17,6 @@ ids as (
 insert into t(ts_start, ts_stop, id)
   select d.x, null, i.y from dates d, ids i;
 
-
 # this is hard to test but basically you need to make sure that the left child of the hash
 # join is a projection, and the right is a sequential scan.
 # the child of the projection is then the window and sequential scan

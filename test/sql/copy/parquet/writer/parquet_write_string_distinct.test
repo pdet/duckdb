@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 COPY (SELECT 'hello' FROM range(10)) TO '__TEST_DIR__/string_dict.parquet';
 

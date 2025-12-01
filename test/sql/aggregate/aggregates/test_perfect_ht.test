@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 statement ok
 PRAGMA perfect_ht_threshold=20;
 

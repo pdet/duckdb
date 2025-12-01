@@ -4,7 +4,6 @@
 
 require autocomplete
 
-
 statement ok
 CALL check_peg_parser($TEST_PEG_PARSER$INSERT INTO test VALUES         (MAP {ROW(3,3): ROW(1, 1)}),    (MAP {ROW(4,4): ROW(2, 2)})$TEST_PEG_PARSER$);
 

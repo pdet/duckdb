@@ -1,8 +1,6 @@
 # name: test/sql/table_function/duckdb_functions_window.test
 # group: [table_function]
 
-
-
 # FIXME: fix this later when Window functions are actual catalog entries, with the function_type = 'window'
 
 query IIII

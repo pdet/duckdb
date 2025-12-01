@@ -2,8 +2,6 @@
 # description: Test bug from issue 9952
 # group: [csv]
 
-
-
 statement error
 FROM read_csv('{DATA_DIR}/csv/num.tsv.gz',quote = '"')
 ----

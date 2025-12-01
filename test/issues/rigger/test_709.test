@@ -2,8 +2,6 @@
 # description: Issue 709
 # group: [rigger]
 
-
-
 statement ok
 CREATE TABLE t0(c0 DATETIME DEFAULT(0.45428781614730807), c1 DATE, PRIMARY KEY(c1));
 

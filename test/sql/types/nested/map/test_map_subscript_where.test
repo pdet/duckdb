@@ -39,7 +39,6 @@ select id, v_map[array_sort(k, 'DESC', 'NULLS LAST')[1]] from t2 where id > 3 li
 8	36.000
 9	40.000
 
-
 statement ok
 CREATE table tbl (key INT, val VARCHAR);
 

@@ -2,8 +2,6 @@
 # description: Test lateral joins with macros
 # group: [lateral]
 
-
-
 statement ok
 CREATE FUNCTION my_func(x) AS (x + x)
 

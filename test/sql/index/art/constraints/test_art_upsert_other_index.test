@@ -4,8 +4,6 @@
 
 # Original issue: 2382
 
-
-
 statement ok
 CREATE TABLE kvp (
 	"key" VARCHAR PRIMARY KEY,

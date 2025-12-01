@@ -96,7 +96,6 @@ bla	1
 bla	2
 bla	3
 
-
 query IIIIIIII rowsort
 SELECT regexp_replace(file_path, '\\', '/', 'g'), line, column_idx, column_name, error_type, csv_line,line_byte_position, byte_position
 FROM reject_scans inner join reject_errors on (reject_scans.scan_id = reject_errors.scan_id and reject_scans.file_id = reject_errors.file_id);

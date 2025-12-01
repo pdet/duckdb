@@ -2,8 +2,6 @@
 # description: Test ATTACH with table info
 # group: [attach]
 
-
-
 # attach a new database
 statement ok
 ATTACH DATABASE ':memory:' AS new_database;

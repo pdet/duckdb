@@ -2,8 +2,6 @@
 # description: Test to reach Disk Reaload call in the csv buffer manager for codecov
 # group: [code_cov]
 
-
-
 statement ok
 CREATE TABLE t1 AS select i, (i+1) as j from range(0,300000) tbl(i)
 

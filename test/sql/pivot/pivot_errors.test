@@ -2,8 +2,6 @@
 # description: Test pivot errors
 # group: [pivot]
 
-
-
 statement ok
 CREATE TABLE test(i INT, j VARCHAR);
 

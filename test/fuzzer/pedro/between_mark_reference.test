@@ -2,8 +2,6 @@
 # description: Test deletions with USING clause
 # group: [pedro]
 
-
-
 query I
 SELECT 1 WHERE '23:' > ALL(SELECT '0') BETWEEN false AND true;
 ----

@@ -2,8 +2,6 @@
 # description: Test ORDER BY range mapping of order expressions using statistics
 # group: [order]
 
-
-
 # cast to utinyint
 foreach type <integral>
 

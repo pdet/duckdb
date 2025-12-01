@@ -2,8 +2,6 @@
 # description: Show table should respect current scope
 # group: [attach]
 
-
-
 statement ok
 ATTACH DATABASE ':memory:' AS db1;
 

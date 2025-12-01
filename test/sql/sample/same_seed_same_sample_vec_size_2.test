@@ -16,7 +16,6 @@ SELECT COUNT(*), min(x) FROM test TABLESAMPLE system (25 PERCENT) REPEATABLE (42
 
 endloop
 
-
 loop i 0 20
 
 query II

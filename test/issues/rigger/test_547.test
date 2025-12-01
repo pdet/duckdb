@@ -2,8 +2,6 @@
 # description: Issue 547
 # group: [rigger]
 
-
-
 # Query with SIMILAR TO results in 'Assertion `strlen(dataptr) == length' failed'
 statement ok
 CREATE TABLE t0(c0 INT);

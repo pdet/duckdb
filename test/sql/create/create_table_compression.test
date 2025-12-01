@@ -8,8 +8,6 @@ require block_size 262144
 
 require skip_reload
 
-
-
 statement ok
 CREATE TABLE T (a INTEGER USING COMPRESSION RLE)
 

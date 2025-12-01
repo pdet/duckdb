@@ -2,8 +2,6 @@
 # description: Coverage tests for AsOf Joins
 # group: [asof]
 
-
-
 statement ok
 pragma verify_external
 
@@ -46,7 +44,6 @@ INSERT INTO skewed_probe
 		'1990-03-21 13:00:01'::TIMESTAMP + INTERVAL (range) MINUTE AS begin,
 		3::INTEGER AS key,
 	FROM range(0, 10000000);
-
 
 # Early finish to some left partition scans: Highly skewed data
 query II

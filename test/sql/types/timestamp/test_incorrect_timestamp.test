@@ -2,8 +2,6 @@
 # description: Test out of range/incorrect timestamp formats
 # group: [timestamp]
 
-
-
 statement ok
 CREATE TABLE timestamp(t TIMESTAMP)
 

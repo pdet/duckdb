@@ -17,7 +17,6 @@ INSERT INTO test_table_raw VALUES
 statement ok
 CREATE TABLE test_table(id VARCHAR PRIMARY KEY, name VARCHAR);
 
-
 # Insert aggregated data
 statement error
 INSERT INTO test_table

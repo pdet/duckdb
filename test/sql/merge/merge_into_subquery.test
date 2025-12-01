@@ -2,8 +2,6 @@
 # description: Test MERGE INTO with subqueries
 # group: [merge]
 
-
-
 statement ok
 CREATE TABLE Totals(item_id int, balance int);
 

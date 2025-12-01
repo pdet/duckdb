@@ -2,8 +2,6 @@
 # description: Test aggregation/group by statements
 # group: [grouped]
 
-
-
 statement ok
 pragma verify_parallelism
 

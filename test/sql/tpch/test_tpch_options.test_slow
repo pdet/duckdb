@@ -71,8 +71,6 @@ select count(*) from supplier
 statement ok
 CALL dbgen(sf=1, children =100, step = 1);
 
-
-
 query III
 select n_nationkey, n_name, n_regionkey from nation
 ----
@@ -114,7 +112,6 @@ select n_nationkey, n_name, n_regionkey from nation
 22	RUSSIA	3
 23	UNITED KINGDOM	3
 24	UNITED STATES	1
-
 
 # Loop through the number of children
 loop i 50 110
@@ -180,5 +177,4 @@ select count (*) from (SELECT * FROM db1.test_schema.${tpch_tbl} EXCEPT SELECT *
 0
 
 endloop
-
 

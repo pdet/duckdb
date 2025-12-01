@@ -3,8 +3,6 @@
 
 load __TEST_DIR__/test_struct_pushdown.test
 
-
-
 statement ok
 CREATE TABLE test_structs(i STRUCT(a integer, b bool));
 
@@ -20,7 +18,6 @@ query I
 SELECT * FROM test_structs WHERE i.a < 2;
 ----
 {'a': 1, 'b': true}
-
 
 query II
 EXPLAIN SELECT * FROM test_structs WHERE i.a > 2;
@@ -85,7 +82,6 @@ SELECT * FROM string_structs WHERE s.a = 'foo';
 {'a': foo, 'b': bar}
 {'a': foo, 'b': NULL}
 
-
 # Large collection of structs
 statement ok
 CREATE TABLE large_structs(i STRUCT(a integer, b bool));
@@ -109,8 +105,6 @@ query III
 SELECT MIN(i.a), MAX(i.a), COUNT(*) FROM large_structs WHERE i.a > 150000;
 ----
 150001	200000	50000
-
-
 
 # Nested structs
 statement ok
@@ -153,7 +147,6 @@ query I
 SELECT * FROM nested_structs WHERE s.d.f = 'bar';
 ----
 {'a': {'b': 3, 'c': true}, 'd': {'e': 4, 'f': bar}}
-
 
 # Parquet test
 require parquet
@@ -237,6 +230,4 @@ query II
 SELECT min(s.i), max(s.i) FROM read_parquet('__TEST_DIR__/large.parquet') WHERE s.i >= 500 AND s.i < 5000;
 ----
 500	4999
-
-
 

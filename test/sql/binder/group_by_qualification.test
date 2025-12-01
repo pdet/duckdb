@@ -2,8 +2,6 @@
 # description: Issue #8740 - Error when not using fully qualified field name on select AND group by
 # group: [binder]
 
-
-
 statement ok
 CREATE SCHEMA IF NOT EXISTS prd;
 

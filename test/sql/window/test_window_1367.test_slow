@@ -2,8 +2,6 @@
 # description: Performance test from Issue #1367
 # group: [window]
 
-
-
 statement ok
 create table data(id integer, value integer, primary key(id));
 

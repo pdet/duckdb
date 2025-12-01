@@ -2,8 +2,6 @@
 # description: Contains test with UTF8
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE strings(s VARCHAR);
 

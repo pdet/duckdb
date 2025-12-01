@@ -2,8 +2,6 @@
 # description: Test parallel UNION
 # group: [setops]
 
-
-
 statement ok
 PRAGMA threads=4
 

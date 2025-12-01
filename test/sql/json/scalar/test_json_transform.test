@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # aliases
 query T
 select from_json('42', '"UBIGINT"')

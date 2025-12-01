@@ -2,11 +2,8 @@
 # description: Issue 5614:
 # group: [general]
 
-
-
 statement ok
 create table t0 as select (UNNEST(['hello', 'duckdb', 'duck LORD', 'lord duck'])) as column0;
-
 
 # create the alias but use the column name
 query III

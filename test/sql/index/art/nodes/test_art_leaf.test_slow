@@ -2,8 +2,6 @@
 # description: Test ART leaf containing duplicates on multi column table
 # group: [nodes]
 
-
-
 statement ok
 CREATE TABLE integers AS SELECT range a, 1 AS b, 1 AS c FROM range(1024)
 

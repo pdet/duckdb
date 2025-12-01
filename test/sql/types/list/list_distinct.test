@@ -2,8 +2,6 @@
 # description: Test LIST distinctions
 # group: [list]
 
-
-
 # Constant single integer column distinctions
 query T
 SELECT [1] IS NOT DISTINCT FROM [2]
@@ -341,7 +339,6 @@ CREATE VIEW list_of_struct AS SELECT * FROM (VALUES
 	([{'x': 'duck', 'y': 1}, {'x': 'goose', 'y': 2}], NULL),
 	(NULL, NULL)
 	) tbl(l, r);
-
 
 query T
 SELECT l IS NOT DISTINCT FROM r FROM list_of_struct

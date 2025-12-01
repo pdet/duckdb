@@ -45,4 +45,3 @@ SELECT id, payload FROM test1;
 ----
 1	row 1 from test 2
 
-

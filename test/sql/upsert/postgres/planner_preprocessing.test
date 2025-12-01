@@ -1,8 +1,6 @@
 # name: test/sql/upsert/postgres/planner_preprocessing.test
 # group: [postgres]
 
-
-
 # ******************************************************************
 # *                                                                *
 # * Test inheritance (example taken from tutorial)                 *
@@ -40,7 +38,6 @@ insert into cities values ('Las Vegas', 2.583E+5, 2174);
 
 statement ok
 insert into cities values ('Mariposa', 1200, 1953);
-
 
 statement ok
 insert into capitals values ('Sacramento', 3.694E+5, 30, 'CA');
@@ -118,7 +115,6 @@ drop table capitals;
 statement ok
 drop table cities;
 
-
 # Make sure a table named excluded is handled properly
 
 statement ok
@@ -150,7 +146,6 @@ Ambiguous reference to table "excluded"
 # clean up
 statement ok
 drop table excluded;
-
 
 # check that references to columns after dropped columns are handled correctly
 
@@ -200,7 +195,6 @@ insert into dropcol(key, keep1, keep2) values(1, '5', 5) on conflict(key)
     do update set keep1 = dropcol.keep1, keep2 = dropcol.keep2
     returning *;
 ;
-
 
 statement ok
 DROP TABLE dropcol;

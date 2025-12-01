@@ -2,8 +2,6 @@
 # description: Test the thousands separator option
 # group: [csv]
 
-
-
 # Test NULL
 statement ok
 FROM read_csv('{DATA_DIR}/csv/thousands_separator/simple.csv', thousands = NULL, delim = NULL)
@@ -110,7 +108,6 @@ lorenzo	300000.2	amsterdam
 lorry	300000000.4	amsterdam
 helly	50.0	amsterdam
 patrick	9999999999.2	amsterdam
-
 
 query III
 FROM read_csv('{DATA_DIR}/csv/thousands_separator/multi_column_quote.csv', thousands = ',')

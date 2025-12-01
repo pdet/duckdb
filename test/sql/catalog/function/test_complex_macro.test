@@ -2,8 +2,6 @@
 # description: Test Complex Macro
 # group: [function]
 
-
-
 statement ok
 CREATE TABLE integers (a INT)
 

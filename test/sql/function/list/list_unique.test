@@ -4,8 +4,6 @@
 
 # test null or empty
 
-
-
 query I
 SELECT list_unique(NULL)
 ----

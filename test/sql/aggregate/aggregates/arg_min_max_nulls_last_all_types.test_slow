@@ -2,8 +2,6 @@
 # description: Test the ARG_MIN_NULLS_LAST and ARG_MAX_NULLS_LAST overloads with all types
 # group: [aggregates]
 
-
-
 statement ok
 create table all_types as from test_all_types()
 

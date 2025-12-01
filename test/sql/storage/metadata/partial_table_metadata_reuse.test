@@ -16,7 +16,6 @@ INSERT INTO bigtbl FROM range(1000000)
 statement ok
 COMMIT
 
-
 loop i 1 10
 
 statement ok

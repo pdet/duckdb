@@ -2,8 +2,6 @@
 # description: Test big append
 # group: [append]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

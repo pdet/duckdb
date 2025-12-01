@@ -272,7 +272,6 @@ COPY abac_tbl FROM '{DATA_DIR}/csv/multidelimiter/abac.csv' (DELIMITER 'aaaaaaaa
 ----
 The delimiter option cannot exceed a size of 4 bytes.
 
-
 # query I
 # COPY abac_tbl FROM '{DATA_DIR}/csv/multidelimiter/abac.csv' (QUOTE 'BLABLABLA', AUTO_DETECT FALSE);
 # ----

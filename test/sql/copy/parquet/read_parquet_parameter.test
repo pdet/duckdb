@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 PREPARE v1 AS SELECT * FROM parquet_scan($1) ORDER BY 1
 

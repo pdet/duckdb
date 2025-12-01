@@ -2,8 +2,6 @@
 # description: Test _ and like unicode characters
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE t0 (c0 VARCHAR);
 

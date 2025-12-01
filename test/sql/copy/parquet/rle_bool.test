@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query IIIII
 SELECT * FROM '{DATA_DIR}/parquet-testing/arrow/datapage_v2.snappy.parquet'
 ----

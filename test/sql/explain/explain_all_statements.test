@@ -2,8 +2,6 @@
 # description: Test explain on various statements
 # group: [explain]
 
-
-
 statement ok
 explain PRAGMA enable_verification
 

@@ -2,9 +2,6 @@
 # description: Test copy with a GZIP stream
 # group: [csv]
 
-
-
-
 statement ok
 CREATE TABLE lineitem(l_orderkey INT NOT NULL,
                       l_partkey INT NOT NULL,

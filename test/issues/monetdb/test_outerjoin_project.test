@@ -2,8 +2,6 @@
 # description: MonetDB Test: outerjoin_project.Bug-3725.sql
 # group: [monetdb]
 
-
-
 statement ok
 create table a (a integer);
 

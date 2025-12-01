@@ -2,8 +2,6 @@
 # description: Issue 527
 # group: [rigger]
 
-
-
 # Query with JOIN and WHERE condition unexpectedly fetches a value not present in the table
 statement ok
 CREATE TABLE t0(c0 INT);

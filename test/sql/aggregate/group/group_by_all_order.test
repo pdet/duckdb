@@ -2,8 +2,6 @@
 # description: Test GROUP BY ALL with ORDER BY
 # group: [group]
 
-
-
 statement ok
 PRAGMA verify_external
 

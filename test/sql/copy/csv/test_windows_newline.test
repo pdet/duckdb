@@ -2,8 +2,6 @@
 # description: Test Windows Newlines with a long file
 # group: [csv]
 
-
-
 # many strings with windows newlines
 # load CSV file into a table
 statement ok

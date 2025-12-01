@@ -2,8 +2,6 @@
 # description: Test arithmetic with huge integers
 # group: [hugeint]
 
-
-
 # negation
 query II
 SELECT -(100::HUGEINT), -(-(50::HUGEINT));
@@ -222,7 +220,6 @@ statement error
 SELECT -170141183460469231731687303715884105728 + -1;
 ----
 Out of Range Error: Overflow in addition of INT128 (-170141183460469231731687303715884105728 + -1)!
-
 
 statement error
 SELECT 170141183460469231731687303715884105727 + 1;

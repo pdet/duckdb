@@ -2,8 +2,6 @@
 # description: Issue 16662 - Unexpected binder error when using a CTE multiple times
 # group: [general]
 
-
-
 statement ok
 CREATE VIEW
   "tbl1" AS

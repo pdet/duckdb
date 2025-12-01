@@ -28,7 +28,6 @@ CALL check_peg_parser($TEST_PEG_PARSER$CREATE TABLE numerics(i NUMERIC(), j NUME
 statement ok
 CALL check_peg_parser($TEST_PEG_PARSER$CREATE TYPE bla AS ENUM ();$TEST_PEG_PARSER$);
 
-
 statement ok
 CALL check_peg_parser($TEST_PEG_PARSER$CREATE TYPE type_int AS ENUM ('a','b');$TEST_PEG_PARSER$);
 

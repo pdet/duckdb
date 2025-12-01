@@ -2,8 +2,6 @@
 # description: Test IEJoin
 # group: [iejoin]
 
-
-
 statement ok
 PRAGMA explain_output = PHYSICAL_ONLY;
 

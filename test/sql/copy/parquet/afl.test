@@ -6,8 +6,6 @@ mode skip
 
 require parquet
 
-
-
 foreach i 1 2 6
 
 statement error
@@ -17,9 +15,7 @@ Invalid dictionary page header
 
 endloop
 
-
 foreach i 3 4 5 7
-
 
 statement error
 select * from parquet_scan('{DATA_DIR}/parquet-testing/afl/3.parquet')

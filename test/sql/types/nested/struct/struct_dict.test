@@ -2,8 +2,6 @@
 # description: Test dict syntax for structs
 # group: [struct]
 
-
-
 query I
 SELECT {'i': 1, 'j': 2};
 ----

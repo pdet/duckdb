@@ -2,8 +2,6 @@
 # description: regexp_replace
 # group: [duckfuzz]
 
-
-
 statement error
 SELECT regexp_extract('foobarbaz', 'B..', 0, NULL);
 ----

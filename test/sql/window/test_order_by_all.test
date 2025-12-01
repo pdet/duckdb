@@ -2,8 +2,6 @@
 # description: Window Order By All
 # group: [window]
 
-
-
 statement error
 SELECT i, j, ROW_NUMBER() OVER (ORDER BY ALL) AS rn
 FROM (

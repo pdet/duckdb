@@ -2,8 +2,6 @@
 # description: Issue 603
 # group: [rigger]
 
-
-
 # BETWEEN with COLLATE NOACCENT.NOCASE expression results in a segfault/ASan failure
 statement ok
 CREATE TABLE t0(c0 DATE, c1 VARCHAR);

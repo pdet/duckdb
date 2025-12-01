@@ -2,8 +2,6 @@
 # description: Test correlated subqueries based on TPC-DS
 # group: [scalar]
 
-
-
 statement ok
 CREATE TABLE item(i_manufact INTEGER)
 

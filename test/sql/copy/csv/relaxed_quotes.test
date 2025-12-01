@@ -2,8 +2,6 @@
 # description: Test relaxed quote reading
 # group: [csv]
 
-
-
 query IIII
 from read_csv('{DATA_DIR}/csv/unescaped_quotes/stops.csv');
 ----
@@ -50,7 +48,6 @@ from read_csv('{DATA_DIR}/csv/unescaped_quotes/unescaped_quote.csv', strict_mode
 5	pedro "pdet" holanda
 6	pedro "pdet" holanda
 
-
 loop buffer_size 30 35
 
 query II
@@ -89,7 +86,6 @@ drop table t
 statement ok
 create table t as from read_csv('{DATA_DIR}/csv/unescaped_quotes/unescaped_quote_new_line_rn.csv', strict_mode=false, buffer_size = 30, header = 0, parallel = false)
 
-
 query I
 FROM read_csv('{DATA_DIR}/csv/unescaped_quotes/end_quote.csv', columns = {'a':'varchar'}, header = false, quote = '"', strict_mode = false)
 ----
@@ -101,7 +97,6 @@ FROM read_csv('{DATA_DIR}/csv/unescaped_quotes/end_quote.csv', columns = {'a':'v
 ----
 Pedro "the" legend
 Pedro "the
-
 
 query I
 FROM read_csv('{DATA_DIR}/csv/unescaped_quotes/end_quote_2.csv', columns = {'a':'varchar'}, header = false, quote = '"', strict_mode = false)

@@ -2,8 +2,6 @@
 # description: Test format
 # group: [string]
 
-
-
 # format without format specifiers
 query TT
 SELECT format('hello'), format(NULL)

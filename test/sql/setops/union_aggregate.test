@@ -2,8 +2,6 @@
 # description: Test UNION aggregate
 # group: [setops]
 
-
-
 query I
 SELECT COUNT(*) FROM range(1)
 UNION ALL SELECT COUNT(*) FROM range(1)

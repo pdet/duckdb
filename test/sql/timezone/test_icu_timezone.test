@@ -971,7 +971,6 @@ SELECT '2023-03-26 12:00:00+00'::TIMESTAMPTZ, '2023-04-21 12:00:00+00'::TIMESTAM
 ----
 2023-03-26 15:00:00+03	2023-04-21 15:00:00+03
 
-
 # Greenland 2023 time zone change
 statement ok
 SET TimeZone = 'America/Nuuk';
@@ -991,7 +990,6 @@ query II
 SELECT '2024-03-31 00:59:00-01'::TIMESTAMPTZ, '2024-03-31 01:00:00-01'::TIMESTAMPTZ;
 ----
 2024-03-31 00:59:00-01	2024-03-31 01:00:00-01
-
 
 # 2024a
 # Kazakhstan unifies on UTC+5 beginning 2024-03-01.

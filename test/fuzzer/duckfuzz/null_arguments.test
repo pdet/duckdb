@@ -24,7 +24,6 @@ SELECT NULL FROM read_ndjson_auto(NULL, timestamp_format := 5469, "compression" 
 statement ok
 COPY (VALUES (NULL), (NULL)) TO '__TEST_DIR__/test_null_args.parquet' (FORMAT PARQUET);
 
-
 statement error
 SELECT NULL FROM read_parquet('__TEST_DIR__/test_null_args.parquet', filename = NULL);
 ----

@@ -2,8 +2,6 @@
 # description: Recursive CTEs with an error thrown in the pipelines
 # group: [cte]
 
-
-
 statement ok
 CREATE TABLE tbl(a int);
 
@@ -170,8 +168,6 @@ INSERT INTO edges VALUES  (0,4), (4,0),
 						  (3,4), (4,3),
 						  (2,5), (5,2);
 
-
-
 query II
 WITH RECURSIVE cc(node, comp) USING KEY (node) AS (
 	SELECT n.node, n.node AS comp
@@ -247,7 +243,6 @@ v1	5
 v2	3
 v3	4
 v4	6
-
 
 # more rows than STANDARD_CHUNK_SIZE
 query I
@@ -333,7 +328,6 @@ SELECT * FROM tbl
 5	3
 5	4
 5	5
-
 
 query II
 WITH RECURSIVE tbl(a,b) USING KEY (a) AS (SELECT 1, 1 UNION SELECT a, b+1 FROM tbl WHERE b < 5),

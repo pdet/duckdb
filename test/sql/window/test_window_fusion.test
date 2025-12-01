@@ -2,8 +2,6 @@
 # description: Prefix sort fusion
 # group: [window]
 
-
-
 # Subset of lineitem with only two partitions
 statement ok
 create table lineitem (

@@ -2,8 +2,6 @@
 # description: Test arithmetic with unsigned huge integers
 # group: [uhugeint]
 
-
-
 # negation
 query II
 SELECT ~(-50::UHUGEINT), -(-(50::UHUGEINT));

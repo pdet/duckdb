@@ -2,8 +2,6 @@
 # description: Test ANY_VALUE with non-inlined strings
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE tbl(a INTEGER, b VARCHAR)
 

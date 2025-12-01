@@ -2,8 +2,6 @@
 # description: Test clean-up of inserts and mixed deletes
 # group: [transactions]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

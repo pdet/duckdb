@@ -2,8 +2,6 @@
 # description: Test VARIANT distinctions
 # group: [variant]
 
-
-
 # Constant single integer column distinctions
 query T
 SELECT [1]::VARIANT IS NOT DISTINCT FROM [2]
@@ -342,7 +340,6 @@ CREATE VIEW list_of_struct AS SELECT COLUMNS(*)::VARIANT FROM (VALUES
 	(NULL, NULL)
 	) tbl(l, r);
 
-
 query T
 SELECT l IS NOT DISTINCT FROM r FROM list_of_struct
 ----
@@ -457,7 +454,6 @@ query T
 SELECT {'x': 'duck'}::VARIANT IS NOT DISTINCT FROM {'x': 'duck'}
 ----
 true
-
 
 query T
 SELECT {'x': 'duck'}::VARIANT IS NOT DISTINCT FROM NULL

@@ -19,7 +19,6 @@ from read_csv('{DATA_DIR}/csv/test/invalid_utf.csv',columns = {'col1': 'VARCHAR'
 ----
 Invalid unicode (byte sequence mismatch) detected.
 
-
 statement error
 from read_csv('{DATA_DIR}/csv/test/invalid_utf.csv',columns = {'col1': 'VARCHAR','col2': 'VARCHAR','col3': 'VARCHAR'}, auto_detect=false, header = 0, delim = ',')
 ----
@@ -184,7 +183,6 @@ valid	valid	valid
 valid	valid	valid
 valid	valid	valid
 valid	valid	valid
-
 
 # We get a casting error
 statement error

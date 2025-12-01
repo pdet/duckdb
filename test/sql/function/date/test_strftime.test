@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 # simple single specifier
 query I
 SELECT strftime(DATE '1992-01-01', '%Y');

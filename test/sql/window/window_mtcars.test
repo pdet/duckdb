@@ -2,8 +2,6 @@
 # description: Test window function without
 # group: [window]
 
-
-
 statement ok
 CREATE TABLE mtcars (mpg DECIMAL, cyl INTEGER, disp DECIMAL, hp INTEGER, drat DECIMAL, wt DECIMAL, qsec DECIMAL, vs INTEGER, am INTEGER, gear INTEGER, carb INTEGER);
 

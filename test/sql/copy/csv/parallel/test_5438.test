@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # force parallelism of the queries
 statement ok
 PRAGMA verify_parallelism

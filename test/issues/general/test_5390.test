@@ -2,8 +2,6 @@
 # description: Issue 5390: Segmentation fault with ROWID and LEFT/RIGHT JOIN
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t0(c0 INT);
 
@@ -62,7 +60,6 @@ SELECT *
     LEFT JOIN t0 ON t1.rowid = t0.rowid
     WHERE 1 BETWEEN 2 AND t1.rowid;
 ----
-
 
 query II
 SELECT *

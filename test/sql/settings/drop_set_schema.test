@@ -5,8 +5,6 @@
 # So we have to exclude this test from Force Restart runs
 require skip_reload
 
-
-
 # Create a new schema
 statement ok
 create schema my_schema;

@@ -2,8 +2,6 @@
 # description: Issue 1248: Segmentation fault on subselects with "recursive"
 # group: [general]
 
-
-
 statement error
 with test(round) as (
     select 0

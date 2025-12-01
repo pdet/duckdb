@@ -2,8 +2,6 @@
 # description: STRUCT comparison semantics with NULLs
 # group: [struct]
 
-
-
 # Integer STRUCTs with NULLs in various positions
 statement ok
 CREATE VIEW struct_int AS

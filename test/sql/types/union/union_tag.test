@@ -33,7 +33,6 @@ SELECT u FROM tbl1;
 text
 2.0
 
-
 query I
 SELECT union_tag(u) FROM tbl1 WHERE u = (1::UNION(a INT, b FLOAT, c VARCHAR));
 ----

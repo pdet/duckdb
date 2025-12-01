@@ -2,8 +2,6 @@
 # description: Test generated columns with the PRIMARY KEY constraint
 # group: [virtual]
 
-
-
 # Not supported appended to the column definition
 statement error
 CREATE TABLE unit (

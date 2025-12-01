@@ -2,8 +2,6 @@
 # description: Read a CSV with a null byte
 # group: [csv]
 
-
-
 query III
 select * from '{DATA_DIR}/csv/nullbyte.csv';
 ----

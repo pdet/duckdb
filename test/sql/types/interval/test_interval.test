@@ -2,8 +2,6 @@
 # description: Test basic interval usage
 # group: [interval]
 
-
-
 # 2 years
 query T
 SELECT INTERVAL '2 years'

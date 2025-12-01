@@ -2,8 +2,6 @@
 # description: Test bug described on issue 2411
 # group: [date]
 
-
-
 statement ok
 CREATE TABLE dates(i DATE)
 

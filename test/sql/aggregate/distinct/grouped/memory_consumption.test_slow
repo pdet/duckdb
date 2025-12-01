@@ -3,8 +3,6 @@
 
 require tpch
 
-
-
 statement ok
 pragma verify_parallelism
 

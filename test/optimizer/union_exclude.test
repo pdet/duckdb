@@ -48,7 +48,6 @@ with t as (select * from test_df_a UNION select * from test_df_b) select * exclu
 7076	2017-07-31
 7076	2017-07-31
 
-
 statement ok
 create table t1 as select 1 a, range b from range(100);
 

@@ -2,8 +2,6 @@
 # description: Test unnest with arrays
 # group: [array]
 
-
-
 query I
 SELECT UNNEST(array_value(1, 2, NULL, 4, 5));
 ----

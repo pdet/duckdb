@@ -8,7 +8,6 @@ ATTACH '__TEST_DIR__/read_duckdb_schema.db' AS rd
 statement ok
 CREATE SCHEMA rd.s1;
 
-
 statement ok
 CREATE SCHEMA rd.s2;
 

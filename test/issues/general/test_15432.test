@@ -2,8 +2,6 @@
 # description: Issue 15432 - Regression bug (V1.1.4 vs V1.0 and V1.0): binder error references non-existent call to sum()
 # group: [general]
 
-
-
 statement ok
 CREATE OR REPLACE function transpose(lst) AS (
 	SELECT list_transform(range(1, 1 + length(lst[1])),

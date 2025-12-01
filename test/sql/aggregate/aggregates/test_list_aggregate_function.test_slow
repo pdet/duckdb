@@ -2,8 +2,6 @@
 # description: Test the list aggregate function for all data types
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 

@@ -2,8 +2,6 @@
 # description: Test null type
 # group: [types]
 
-
-
 query T
 create table null_table (i "null")
 

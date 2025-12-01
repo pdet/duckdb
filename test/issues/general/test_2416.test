@@ -2,8 +2,6 @@
 # description: Issue 2416: Segmentation fault on macro creation
 # group: [general]
 
-
-
 query I
 select list_extract(null, null);
 ----

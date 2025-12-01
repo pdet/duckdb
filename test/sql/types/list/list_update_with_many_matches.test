@@ -2,8 +2,6 @@
 # description: Test update on a list column with several matches (due to a cross product)
 # group: [list]
 
-
-
 statement ok
 create table lists(id int, i int[]);
 

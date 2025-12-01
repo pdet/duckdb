@@ -13,7 +13,6 @@ CREATE OR REPLACE TABLE BaseData AS (
       '60' as foo3
 );
 
-
 # Original query
 query III
 WITH

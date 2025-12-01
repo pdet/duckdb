@@ -2,8 +2,6 @@
 # description: Lateral join in update clause
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c1 INT);
 

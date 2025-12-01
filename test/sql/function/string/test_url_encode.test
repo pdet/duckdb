@@ -2,8 +2,6 @@
 # description: Test url_encode/url_decode
 # group: [string]
 
-
-
 query II
 SELECT url_encode(''), url_decode('')
 ----

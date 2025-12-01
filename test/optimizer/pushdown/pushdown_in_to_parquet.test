@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 create table t1 as select range::VARCHAR a from range(1000);
 

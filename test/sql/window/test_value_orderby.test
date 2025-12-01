@@ -2,8 +2,6 @@
 # description: Secondary orderings of XXX_VALUE functions.
 # group: [window]
 
-
-
 query IIIII
 SELECT 
 	i,

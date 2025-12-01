@@ -2,8 +2,6 @@
 # description: Issue 3822: Array_slice in macro type error
 # group: [general]
 
-
-
 statement ok
 CREATE MACRO pyfloats_to_floats(x) AS (CAST(string_split(x[2:-2], ',') AS FLOAT4[]))
 

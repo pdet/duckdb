@@ -32,7 +32,6 @@ select count(*) filter (where a IS false) = (${size} / 25) * ${i} from test WHER
 ----
 true
 
-
 #i
 endloop
 

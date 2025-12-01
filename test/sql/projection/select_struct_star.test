@@ -2,8 +2,6 @@
 # description: SELECT struct.*;
 # group: [projection]
 
-
-
 # create table
 statement ok
 CREATE TABLE test(a STRUCT(i INT, j INT));

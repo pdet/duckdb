@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # some larger-than-vector-size tests
 query I
 select count(*) from json_each(range(3000));
@@ -165,7 +163,6 @@ WHERE fullkey!=(path || CASE WHEN TRY_CAST(key AS UBIGINT) IS NOT NULL THEN '['|
                             ELSE '.'||key END);
 ----
 
-
 query IIIII
 SELECT j2.rowid, jx.rowid, fullkey, path, key
 FROM j2, json_each(j2.json) AS jx
@@ -173,13 +170,11 @@ WHERE fullkey!=(path || CASE WHEN TRY_CAST(key AS UBIGINT) IS NOT NULL THEN '['|
                             ELSE '.'||key END);
 ----
 
-
 query IIIII
 SELECT j2.rowid, jx.rowid, fullkey, path, key
 FROM j2, json_each(j2.json) AS jx
 WHERE jx.json<>j2.json;
 ----
-
 
 query IIIII
 SELECT j2.rowid, jx.rowid, fullkey, path, key
@@ -187,20 +182,17 @@ FROM j2, json_tree(j2.json) AS jx
 WHERE jx.json<>j2.json;
 ----
 
-
 query IIIII
 SELECT j2.rowid, jx.rowid, fullkey, path, key
 FROM j2, json_each(j2.json) AS jx
 WHERE jx.value<>jx.atom AND type NOT IN ('ARRAY','OBJECT');
 ----
 
-
 query IIIII
 SELECT j2.rowid, jx.rowid, fullkey, path, key
 FROM j2, json_tree(j2.json) AS jx
 WHERE jx.value<>jx.atom AND type NOT IN ('ARRAY','OBJECT');
 ----
-
 
 ### JSON101-13 ###
 statement ok
@@ -511,14 +503,12 @@ query II rowsort q1
 SELECT a.value, b.value FROM b LEFT JOIN a ON a.value = b.value;
 ----
 
-
 query II rowsort q1
 SELECT a.value, b.value
   FROM json_each('["a", "c", null]') AS b
        LEFT JOIN
        json_each('["a", "b", null]') AS a ON a.value = b.value;
 ----
-
 
 query II rowsort q1
 SELECT a.value, b.value
@@ -527,14 +517,12 @@ SELECT a.value, b.value
        json_each('["a", "c", null]') AS b ON a.value = b.value;
 ----
 
-
 query II rowsort q1
 SELECT a.value, b.value
   FROM json_each('["a", "b", null]') AS a
        RIGHT JOIN
        b ON a.value = b.value;
 ----
-
 
 query II rowsort q1
 SELECT a.value, b.value
@@ -673,7 +661,6 @@ query I
 SELECT * FROM t6 WHERE 1 IN (SELECT value FROM json_each(x));
 ----
 
-
 statement ok
 DROP TABLE t6;
 
@@ -706,7 +693,6 @@ SELECT * FROM t
  WHERE(EXISTS(SELECT 1 FROM json_each(t.json,'$.foo') j
                WHERE j.value = 'meep'));
 ----
-
 
 statement ok
 INSERT INTO t VALUES('{"xyzzy":null}');

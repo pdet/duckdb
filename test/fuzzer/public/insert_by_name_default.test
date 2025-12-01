@@ -2,8 +2,6 @@
 # description: Insert by name + default values
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE t0(i INT)
 

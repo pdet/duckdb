@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 CREATE TABLE test_structs(id INT, s STRUCT(a integer, b bool));
 

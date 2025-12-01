@@ -2,8 +2,6 @@
 # description: Fuzzer #29: test abs overflow
 # group: [sqlsmith]
 
-
-
 # test abs function on extremes
 
 statement ok

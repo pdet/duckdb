@@ -2,8 +2,6 @@
 # description: Issue #10074 - CTE returns wrong column name
 # group: [cte]
 
-
-
 statement ok
 create table t as with q(id,s) as (values(1,42)),
 a(s)as materialized(select 42)

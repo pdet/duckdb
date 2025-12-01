@@ -19,7 +19,6 @@ query II nosort result
 from '{DATA_DIR}/parquet-testing/variant_partial_shredded4.parquet';
 ----
 
-
 query II nosort result
 from '{DATA_DIR}/parquet-testing/variant_partial_shredded5.parquet';
 ----

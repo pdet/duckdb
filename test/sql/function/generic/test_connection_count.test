@@ -2,8 +2,6 @@
 # description: Test the connection_count table function.
 # group: [generic]
 
-
-
 statement ok con1
 BEGIN
 

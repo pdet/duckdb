@@ -2,8 +2,6 @@
 # description: Issue 503
 # group: [rigger]
 
-
-
 # RIGHT JOIN with a predicate that compares two integer columns results in an 'Unhandled type' error
 statement ok
 CREATE TABLE t0(c0 INT);

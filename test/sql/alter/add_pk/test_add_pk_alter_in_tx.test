@@ -2,8 +2,6 @@
 # description: Test altering a different constraint in the transaction.
 # group: [add_pk]
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)
 

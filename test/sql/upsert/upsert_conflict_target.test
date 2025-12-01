@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_conflict_target.test
 # group: [upsert]
 
-
-
 statement ok
 CREATE OR REPLACE TABLE tbl (a INT, b INT, c INT, PRIMARY KEY (a, b));
 

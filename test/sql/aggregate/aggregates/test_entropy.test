@@ -2,8 +2,6 @@
 # description: Test entropy function
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 

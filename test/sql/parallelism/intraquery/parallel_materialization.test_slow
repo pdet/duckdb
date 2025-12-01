@@ -2,8 +2,6 @@
 # description: Test parallel materialization of results
 # group: [intraquery]
 
-
-
 statement ok
 PRAGMA threads=4
 

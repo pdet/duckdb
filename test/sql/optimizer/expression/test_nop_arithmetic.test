@@ -2,8 +2,6 @@
 # description: Test NOP arithmetic expressions
 # group: [expression]
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER)
 

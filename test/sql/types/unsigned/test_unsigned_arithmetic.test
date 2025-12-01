@@ -2,8 +2,6 @@
 # description: Test various operations with unsigned
 # group: [unsigned]
 
-
-
 statement ok
 CREATE TABLE unsigned(a UTINYINT,b USMALLINT, c UINTEGER, d UBIGINT);
 
@@ -15,7 +13,6 @@ select * from unsigned;
 ----
 1	1	1	1
 2	2	2	2
-
 
 # Test arithmetic
 # Addition
@@ -87,7 +84,6 @@ SELECT 100::UTINYINT // 20::UBIGINT, 90::UTINYINT // 20::UBIGINT
 ----
 5	4
 
-
 # division by zero
 query I
 SELECT 100::UTINYINT // 0::UTINYINT
@@ -99,7 +95,6 @@ query II
 SELECT 100::UTINYINT % 20::UTINYINT, 90::UTINYINT % 20::UTINYINT
 ----
 0	10
-
 
 # modulo by zero
 query I

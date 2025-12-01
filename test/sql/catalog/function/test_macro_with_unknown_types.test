@@ -2,8 +2,6 @@
 # description: Test MACRO binding with unknown parameter types.
 # group: [function]
 
-
-
 statement ok
 CREATE TEMP MACRO m1(x, y) AS (
     SELECT list_has_all(x, y) AND list_has_all(y, x)

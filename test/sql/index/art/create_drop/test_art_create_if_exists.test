@@ -2,8 +2,6 @@
 # description: Test ART creation with the same index already existing
 # group: [create_drop]
 
-
-
 statement ok
 PRAGMA immediate_transaction_mode = True;
 

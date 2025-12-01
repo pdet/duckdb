@@ -2,8 +2,6 @@
 # description: parse path functions test
 # group: [string]
 
-
-
 require notwindows
 
 # all separators option
@@ -107,7 +105,6 @@ statement error
 SELECT parse_path('/path/to', true, 'system');
 ----
 Binder Error: No function matches the given name and argument types 'parse_path(STRING_LITERAL, BOOLEAN, STRING_LITERAL)'.
-
 
 # test parse_dirname
 # all separators option
@@ -308,7 +305,6 @@ statement error
 SELECT parse_dirpath('/path/to', true, 'system');
 ----
 Binder Error: No function matches the given name and argument types 'parse_dirpath(STRING_LITERAL, BOOLEAN, STRING_LITERAL)'.
-
 
 # test parse_filename
 # all separators option, default trim_extension

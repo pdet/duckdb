@@ -2,8 +2,6 @@
 # description: TPC-DS Q49 bug fix for multi-sort window functions
 # group: [window]
 
-
-
 statement ok
 BEGIN TRANSACTION
 

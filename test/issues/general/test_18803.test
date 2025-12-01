@@ -2,8 +2,6 @@
 # description: Issue 18803 - MATERIALIZED CTE with FALSE condition causes incorrect empty result in multi-table JOIN
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t0(c INT)
 

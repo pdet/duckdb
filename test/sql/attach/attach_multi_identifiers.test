@@ -2,8 +2,6 @@
 # description: Test ATTACH with complex identifiers
 # group: [attach]
 
-
-
 statement ok
 ATTACH ':memory:' AS db1;
 

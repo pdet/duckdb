@@ -2,8 +2,6 @@
 # description: Windowed distinct aggregates functionality
 # group: [window]
 
-
-
 query I
 SELECT COUNT(DISTINCT 42) OVER ()
 ----

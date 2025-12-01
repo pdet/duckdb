@@ -29,7 +29,6 @@ skipif threadid>10
 statement ok
 UPDATE integers SET value = value - 1 WHERE i=${threadid}
 
-
 endloop
 
 endloop

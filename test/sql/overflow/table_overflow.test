@@ -171,7 +171,6 @@ SELECT i::TINYINT+120::TINYINT FROM smallints WHERE i=1
 statement ok
 INSERT INTO smallints VALUES (30000);
 
-
 statement error
 SELECT integers1.i::SMALLINT + integers2.i::SMALLINT from smallints integers1, smallints integers2 where integers1.i = integers2.i;
 ----

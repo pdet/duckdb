@@ -2,8 +2,6 @@
 # description: Test correct behavior of parallel limit in the presence of transaction-local data
 # group: [limit]
 
-
-
 statement ok
 PRAGMA threads=8
 

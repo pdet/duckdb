@@ -2,8 +2,6 @@
 # description: Issue 3821: Setting default_collation=NOCASE modifies values of GROUP BY queries
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t AS (SELECT 'hello' AS x UNION ALL SELECT 'WORLD' AS x UNION ALL SELECT 'WoRlD' AS x);
 

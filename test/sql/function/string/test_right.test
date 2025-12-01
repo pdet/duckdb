@@ -2,8 +2,6 @@
 # description: RIGHT test
 # group: [string]
 
-
-
 foreach FUN RIGHT RIGHT_GRAPHEME
 
 # test RIGHT on positive positions

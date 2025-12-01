@@ -48,7 +48,6 @@ WHERE a=5 AND b=-2 AND c=-3 RETURNING *, c, b, a;
 ----
 -5	2	1	1	2	-5
 
-
 # returning column names out of order
 query III
 UPDATE table1

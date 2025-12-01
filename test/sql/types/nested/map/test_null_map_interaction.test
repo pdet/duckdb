@@ -1,8 +1,6 @@
 # name: test/sql/types/nested/map/test_null_map_interaction.test
 # group: [map]
 
-
-
 query I
 SELECT TYPEOF(MAP_KEYS(NULL::MAP(TEXT, BIGINT)));
 ----
@@ -47,7 +45,6 @@ query I
 SELECT TYPEOF(MAP_EXTRACT(NULL, 'a'));
 ----
 "NULL"[]
-
 
 query I
 SELECT TYPEOF(MAP_EXTRACT_VALUE(NULL, 'a'));

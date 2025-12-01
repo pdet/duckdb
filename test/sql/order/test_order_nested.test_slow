@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 # test all integral types and varchar, internal and external
 statement ok
 PRAGMA debug_force_external=true
@@ -732,7 +730,6 @@ NULL
 {'i': NULL, 'j': 1 year}
 {'i': NULL, 'j': 2 years}
 {'i': NULL, 'j': NULL}
-
 
 query T
 SELECT * FROM test10 ORDER BY s DESC

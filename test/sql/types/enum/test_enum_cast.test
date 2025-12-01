@@ -2,8 +2,6 @@
 # description: ENUM tests
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
 
@@ -12,7 +10,6 @@ CREATE TABLE person (
     name text,
     current_mood mood
 );
-
 
 statement ok
 INSERT INTO person VALUES ('Pedro', 'ok'), ('Mark', 'sad'),('Moe', 'happy'), ('Diego', NULL);
@@ -99,7 +96,6 @@ The Pick of Destiny	2006.000000
 Rize of the Fenix	2012.000000
 Post-Apocalypto	2018.000000
 Something Random	NULL
-
 
 statement ok
 CREATE TYPE dates AS ENUM ('2001-01-01');

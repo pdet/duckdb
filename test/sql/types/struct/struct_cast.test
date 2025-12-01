@@ -2,8 +2,6 @@
 # description: Test struct cast
 # group: [struct]
 
-
-
 # constant casts
 query I
 SELECT {'i': 1, 'j': 2}::ROW(i BIGINT, j VARCHAR);
@@ -99,7 +97,6 @@ INSERT INTO nested_structs VALUES
 ({'i': 1, 'j': {'a': 2, 'b': NULL}}),
 ({'i': 1, 'j': NULL}),
 (NULL)
-
 
 query I
 SELECT s::ROW(i BIGINT, j ROW(a BIGINT, b VARCHAR)) FROM nested_structs

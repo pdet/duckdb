@@ -3,7 +3,6 @@
 
 # enable query verification
 
-
 # Basic functionality tests
 
 # Simple cast - VARCHAR keys to VARCHAR values

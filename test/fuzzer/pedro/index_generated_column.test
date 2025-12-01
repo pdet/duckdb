@@ -2,8 +2,6 @@
 # description: Issue #4580: heap-buffer-overflow when creating index on table with generated columns
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c0 INT AS (1), c1 INT);
 

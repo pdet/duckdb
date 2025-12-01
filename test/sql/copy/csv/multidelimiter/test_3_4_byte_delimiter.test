@@ -2,9 +2,6 @@
 # description: Test CSVs delimiter with three bytes
 # group: [multidelimiter]
 
-
-
-
 loop buffer_size 10 15
 
 query II
@@ -75,6 +72,5 @@ FROM read_csv('{DATA_DIR}/csv/multidelimiter/aaaa_delim_rn.csv', delim = 'aaaa',
 1	2
 1	a2
 1ab	2
-
 
 endloop

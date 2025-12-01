@@ -2,8 +2,6 @@
 # description: Test adding the same PRIMARY KEY in two different transactions.
 # group: [add_pk]
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)
 
@@ -42,5 +40,4 @@ statement error
 INSERT INTO test VALUES (1, 1), (1, 1)
 ----
 <REGEX>:Constraint Error.*PRIMARY KEY or UNIQUE constraint violation.*
-
 

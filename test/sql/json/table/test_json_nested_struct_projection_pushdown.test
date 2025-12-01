@@ -4,8 +4,6 @@
 
 require json
 
-
-
 statement ok
 COPY (SELECT {goose: 42, pigeon: 4.2, nested_duck: {nested_nested_duck: {goose: 42, pigeon: 4.2, nested_nested_nested_duck: {goose: 42, pigeon: 4.2}}, goose: 42, pigeon: 4.2}} AS duck) TO '__TEST_DIR__/nested.json'
 

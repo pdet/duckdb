@@ -32,7 +32,6 @@ SELECT array_to_string_comma_default([1, 2, 3], sep:=NULL)
 ----
 1,2,3
 
-
 query I
 SELECT array_to_string_comma_default([], sep:='-')
 ----

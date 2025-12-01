@@ -2,8 +2,6 @@
 # description: Test union limit
 # group: [setops]
 
-
-
 query I
 SELECT 1 UNION ALL SELECT * FROM range(2, 100) UNION ALL SELECT 999 LIMIT 5;
 ----
@@ -43,7 +41,6 @@ when a=0 then 1
 when a=1 then 1
 when a=2 then 1
 when a=3 then 1
-
 
 query I
 SELECT 1
@@ -116,7 +113,6 @@ UNION ALL
 [10000, 10001, 10002]
 [100000, 100001, 100002]
 [1000000, 1000001, 1000002, 1000003]
-
 
 query I
 SELECT 1

@@ -2,8 +2,6 @@
 # description: Extract function
 # group: [date]
 
-
-
 statement ok
 CREATE TABLE dates(i DATE)
 

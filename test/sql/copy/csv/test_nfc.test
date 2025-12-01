@@ -2,8 +2,6 @@
 # description: Test CSV with UTF8 NFC Normalization
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE nfcstrings (s STRING);
 

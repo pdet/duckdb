@@ -2,8 +2,6 @@
 # description: Test complex correlated subquery
 # group: [complex]
 
-
-
 statement ok
 CREATE TABLE t0(c0 INT);
 

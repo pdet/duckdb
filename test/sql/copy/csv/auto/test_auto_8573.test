@@ -2,9 +2,6 @@
 # description: Test read_csv_auto on issue 8573
 # group: [auto]
 
-
-
-
 statement ok
 PRAGMA verify_parallelism
 

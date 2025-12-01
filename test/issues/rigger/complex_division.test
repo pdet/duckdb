@@ -2,8 +2,6 @@
 # description: Division in complex operation
 # group: [rigger]
 
-
-
 statement ok
 SET ieee_floating_point_ops=false;
 
@@ -39,7 +37,6 @@ SELECT c0, c1 FROM t0;
 0.5	NULL
 0.5	NULL
 0.5	NULL
-
 
 query III
 SELECT c0, c1, ((t0.c0)::varchar!~(((t0.c0)/(t0.c1)))::varchar) FROM t0;

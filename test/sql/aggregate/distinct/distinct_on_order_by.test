@@ -2,8 +2,6 @@
 # description: Test DISTINCT ON ORDER BY
 # group: [distinct]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER, k INTEGER);
 

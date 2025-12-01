@@ -2,8 +2,6 @@
 # description: Issue 14540 - INTERNAL Error: Failed to bind column reference(a unnest rewriter fail)
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE QueryRequest AS SELECT * FROM (
   

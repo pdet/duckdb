@@ -2,8 +2,6 @@
 # description: Test insert into statements
 # group: [upsert]
 
-
-
 statement ok
 SET preserve_insertion_order = false;
 

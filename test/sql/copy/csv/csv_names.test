@@ -2,8 +2,6 @@
 # description: Read a CSV with names flags
 # group: [csv]
 
-
-
 # Duplicate names shuold not be accepted
 statement error
 from read_csv('{DATA_DIR}/csv/header_bug.csv', names=['col1', 'col1']) LIMIT 1;
@@ -119,7 +117,6 @@ FROM read_csv('{DATA_DIR}/csv/header_2.csv', names = ['a'])
 ----
 line2	line2_2	line2_3
 line3	line3_2	line3_3
-
 
 query I
 select Columns FROM sniff_csv('{DATA_DIR}/csv/header_2.csv', names = ['a'], header=False)

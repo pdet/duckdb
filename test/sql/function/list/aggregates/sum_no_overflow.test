@@ -2,8 +2,6 @@
 # description: Test the sum_no_overflow aggregate function
 # group: [aggregates]
 
-
-
 statement error
 SELECT sum_no_overflow(42)
 ----

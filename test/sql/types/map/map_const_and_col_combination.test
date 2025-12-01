@@ -2,8 +2,6 @@
 # description: Test MAP creation if one list is a constant and the other list contains columnar data
 # group: [map]
 
-
-
 statement ok
 CREATE TABLE ints (i INT);
 

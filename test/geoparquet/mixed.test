@@ -38,7 +38,6 @@ SELECT * FROM t2;
 query II rowsort result_2
 SELECT * FROM t1;
 
-
 #------------------------------------------------------------------------------
 # Inspect the parquet file
 #------------------------------------------------------------------------------
@@ -48,7 +47,6 @@ SELECT (decode(value)) as col
 FROM parquet_kv_metadata('__TEST_DIR__/t1.parquet');
 ----
 {"version":"1.0.0","primary_column":"geom","columns":{"geom":{"encoding":"WKB","geometry_types":["Point","LineString","Polygon","MultiPoint","MultiLineString","MultiPolygon","GeometryCollection","Point Z"],"bbox":[0.0,0.0,1.0,3.0,3.0,1.0]}}}
-
 
 #------------------------------------------------------------------------------
 # Write with RETURN_STATS

@@ -62,5 +62,3 @@ Wrong encryption key used to open the database file
 statement ok
 ATTACH '__TEST_DIR__/encrypted_aws_key.duckdb' AS encrypted_aws (ENCRYPTION_KEY 'wJalrXUtnFEMI/K7MDENG/bPxRfiCY0000EXAMPLEKEY');
 
-
-

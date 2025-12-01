@@ -2,8 +2,6 @@
 # description: LEFT test
 # group: [string]
 
-
-
 foreach FUN LEFT LEFT_GRAPHEME
 
 # test LEFT on positive positions

@@ -2,8 +2,6 @@
 # description: Test arg_min_null and arg_max_null operator
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 

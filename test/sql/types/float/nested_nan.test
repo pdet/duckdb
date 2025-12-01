@@ -2,8 +2,6 @@
 # description: Test nested nans
 # group: [float]
 
-
-
 query I
 SELECT ['nan'::double]
 ----

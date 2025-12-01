@@ -40,7 +40,6 @@ SELECT MAP { [i]: [i + 1] } FROM range(5) t(i);
 {[3]=[4]}
 {[4]=[5]}
 
-
 statement error
 SELECT MAP { NULL: 'a' || i } FROM range(5) t(i);
 ----

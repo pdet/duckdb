@@ -2,8 +2,6 @@
 # description: test DATE_TRUNC() constant simplifications
 # group: [optimizer]
 
-
-
 statement ok
 PRAGMA explain_output = OPTIMIZED_ONLY;
 

@@ -2,8 +2,6 @@
 # description: Test collations in the LIKE clause
 # group: [collate]
 
-
-
 query I
 SELECT 'a' LIKE 'A' COLLATE NOCASE
 ----

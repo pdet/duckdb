@@ -1,8 +1,6 @@
 # name: test/sql/upsert/no_complex_default.test
 # group: [upsert]
 
-
-
 statement ok
 create or replace table tbl (a integer default 3);
 

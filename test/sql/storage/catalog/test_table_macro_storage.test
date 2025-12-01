@@ -7,7 +7,6 @@ require skip_reload
 # load the DB from disk
 load __TEST_DIR__/macro_storage.db
 
-
 statement ok
 CREATE TABLE test_tbl (id INT, name string, height double);
 
@@ -34,7 +33,6 @@ SELECT * FROM my_seq(0,6);
 0
 3
 6
-
 
 restart 
 
@@ -64,8 +62,6 @@ SELECT * from my_range(2);
 0
 1
 
-
-
 # check the WAL
 restart
 
@@ -82,10 +78,4 @@ SELECT * from my_range(2);
 ----
 0
 1
-
-
-
-
-
-
 

@@ -2,8 +2,6 @@
 # description: Issue 534
 # group: [rigger]
 
-
-
 # UPDATE causes subsequent query to segfault
 statement ok
 CREATE TABLE t0(c0 VARCHAR, c1 DOUBLE UNIQUE);

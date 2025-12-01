@@ -1,8 +1,6 @@
 # name: test/sql/generated_columns/virtual/row_group_fetch.test
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE t1 (
 	tr INTEGER,

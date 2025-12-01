@@ -2,8 +2,6 @@
 # description: Test unnest in subqueries
 # group: [scalar]
 
-
-
 # uncorrelated
 query I
 SELECT (SELECT UNNEST([1]))

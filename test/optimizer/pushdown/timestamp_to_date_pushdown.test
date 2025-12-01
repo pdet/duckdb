@@ -34,7 +34,6 @@ explain select * from t1 where '2024-05-02' == ts::date;
 ----
 physical_plan	<REGEX>:.*SEQ_SCAN.*Filters:.*
 
-
 statement ok
 pragma disable_optimizer;
 
@@ -54,7 +53,6 @@ query II
 explain select count(*) from t1 where ts::date == '2024-05-02' and i > 122880/2;
 ----
 physical_plan	<!REGEX>:.*FILTER.*SEQ_SCAN:.*
-
 
 query I
 select count(*) from t1 where ts::date == '2024-05-02' and i > 1000;

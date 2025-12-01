@@ -2,9 +2,6 @@
 # description: Test copy statement
 # group: [csv]
 
-
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER, c VARCHAR(10));
 

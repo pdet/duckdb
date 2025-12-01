@@ -2,8 +2,6 @@
 # description: Test ORDER BY in AGGREGATE clause
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE integers(grp INTEGER, i INTEGER);
 

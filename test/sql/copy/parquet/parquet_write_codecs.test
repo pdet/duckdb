@@ -4,7 +4,6 @@
 
 require parquet
 
-
 foreach codec UNCOMPRESSED SNAPPY GZIP ZSTD LZ4 LZ4_RAW BROTLI
 
 # codec uncompressed
@@ -23,7 +22,6 @@ statement ok
 FROM "{TEMP_DIR}/userdata-${codec}.parquet";
 
 endloop
-
 
 # unsupported codec
 statement error

@@ -50,7 +50,6 @@ RETURNING *;
 ----
 2	not_john_doe	not_john_new@example.com
 
-
 # FIXME: not consistent
 mode skip
 

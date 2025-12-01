@@ -19,7 +19,6 @@ SELECT COUNT(*) FROM test
 ----
 0
 
-
 # verify that the table is still there after restart
 
 restart

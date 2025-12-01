@@ -70,7 +70,6 @@ SELECT geo_types from parquet_metadata('__TEST_DIR__/test_both.parquet');
 ----
 [point]
 
-
 # V2
 statement ok
 COPY (SELECT 'POINT(1 2)'::GEOMETRY as geometry)

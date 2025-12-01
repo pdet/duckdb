@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_local_no_tuples.test
 # group: [upsert]
 
-
-
 # Table with a constraint
 statement ok
 create table tbl (

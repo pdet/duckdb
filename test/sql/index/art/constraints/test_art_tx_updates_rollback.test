@@ -2,8 +2,6 @@
 # description: Test UPDATE, then ROLLBACK due to a constraint violation.
 # group: [constraints]
 
-
-
 statement ok
 SET immediate_transaction_mode = true;
 

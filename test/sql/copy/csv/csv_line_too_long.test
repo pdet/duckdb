@@ -2,8 +2,6 @@
 # description: Test that verifies that the CSV has long lines and properly errors that
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE T1 (name VARCHAR);
 

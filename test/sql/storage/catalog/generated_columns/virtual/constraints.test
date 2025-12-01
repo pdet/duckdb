@@ -2,8 +2,6 @@
 # description: Constraints combined with generated columns
 # group: [virtual]
 
-
-
 # load the DB from disk
 load __TEST_DIR__/generated_column_storage.db
 

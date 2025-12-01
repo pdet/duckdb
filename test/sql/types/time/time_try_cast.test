@@ -2,8 +2,6 @@
 # description: Test time try cast
 # group: [time]
 
-
-
 # try cast on gibberish
 query I
 select try_cast('' as time)

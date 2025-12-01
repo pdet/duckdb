@@ -2,8 +2,6 @@
 # description: Test aggregates on numeric limits
 # group: [group]
 
-
-
 # TINYINT limits
 statement ok
 CREATE TABLE t(t_k0 TINYINT);

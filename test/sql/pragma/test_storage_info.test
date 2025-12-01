@@ -2,8 +2,6 @@
 # description: Test storage_info pragma
 # group: [pragma]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER)
 

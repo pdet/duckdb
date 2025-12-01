@@ -134,7 +134,6 @@ select log(0.5, 64)
 ----
 -6
 
-
 query I
 select log(0.5, 64)
 ----

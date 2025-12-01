@@ -2,8 +2,6 @@
 # description: Test SHOW DATABASES and USE
 # group: [attach]
 
-
-
 statement ok
 ATTACH DATABASE ':memory:' AS new_database;
 

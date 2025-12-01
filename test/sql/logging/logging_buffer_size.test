@@ -88,7 +88,6 @@ CALL enable_logging(level='trace', storage='file', storage_config={'buffer_size'
 statement ok
 SELECT write_log('hello from the connection log scope', level := 'error', scope := 'connection') from range(0,40*2048);
 
-
 # Try direct flushing 
 
 statement ok
@@ -96,7 +95,6 @@ CALL enable_logging(level='trace', storage='file', storage_config={'buffer_size'
 
 statement ok
 SELECT write_log('hello from the connection log scope', level := 'error', scope := 'connection') from range(0, 2048);
-
 
 # Try weird buffer size
 

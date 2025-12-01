@@ -2,8 +2,6 @@
 # description: Test various huge integer ops
 # group: [hugeint]
 
-
-
 # test storage of the HUGEINT type
 statement ok
 CREATE TABLE hugeints(h HUGEINT);

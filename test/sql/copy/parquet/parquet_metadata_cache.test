@@ -47,7 +47,6 @@ select * from parquet_scan('{TEMP_DIR}/cached.parquet')
 1	20
 2	30
 
-
 # test two files with the same name on different directories
 query II
 select * from parquet_scan('{DATA_DIR}/parquet-testing/glob/t1.parquet')

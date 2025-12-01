@@ -2,8 +2,6 @@
 # description: Issue #4584: In clause optimization error
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0(c0 INT);
 

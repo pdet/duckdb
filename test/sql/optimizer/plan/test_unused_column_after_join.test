@@ -2,8 +2,6 @@
 # description: Test joins with various columns that are only used in the join
 # group: [plan]
 
-
-
 # test columns that are only used in the join (i.e. can be projected out after the join)
 # create tables
 statement ok

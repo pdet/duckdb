@@ -4,8 +4,6 @@
 
 require skip_reload
 
-
-
 query I
 SELECT current_setting('disabled_filesystems')
 ----

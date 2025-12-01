@@ -2,8 +2,6 @@
 # description: Issue 16783 - Anti-join meets INTERNAL Error: Attempted to dereference unique_ptr that is NULL
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t0(c0 FLOAT);
 

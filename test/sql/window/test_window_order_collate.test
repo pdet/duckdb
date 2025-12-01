@@ -2,8 +2,6 @@
 # description: Test collation is honoured by over(partition/order by)
 # group: [window]
 
-
-
 query III rowsort
 select
     *,

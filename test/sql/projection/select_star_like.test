@@ -2,8 +2,6 @@
 # description: SELECT * LIKE
 # group: [projection]
 
-
-
 statement ok
 CREATE TABLE integers(col1 INTEGER, col2 INTEGER, k INTEGER)
 

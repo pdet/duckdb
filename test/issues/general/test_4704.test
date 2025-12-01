@@ -2,8 +2,6 @@
 # description: Issue 4704: Wrong column name was reported with generated column presented
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t0(c0 AS (1), c1 INT NOT NULL)
 

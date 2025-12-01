@@ -2,7 +2,5 @@
 # description: Export an empty database
 # group: [export]
 
-
-
 statement ok
 EXPORT DATABASE '__TEST_DIR__/empty_export' (FORMAT CSV)

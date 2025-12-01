@@ -1,8 +1,6 @@
 # name: test/sql/types/nested/map/test_map_keys.test
 # group: [map]
 
-
-
 # Empty
 query I
 select map_keys(MAP([],[]));

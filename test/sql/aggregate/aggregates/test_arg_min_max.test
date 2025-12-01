@@ -2,8 +2,6 @@
 # description: Test argmin and argmax operator
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 

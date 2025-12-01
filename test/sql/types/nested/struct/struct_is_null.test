@@ -2,8 +2,6 @@
 # description: Test structs with IS NULL
 # group: [struct]
 
-
-
 statement ok
 create table tbl (data struct(str varchar)[]);
 

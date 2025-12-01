@@ -2,8 +2,6 @@
 # description: Test LIST in cross product/nlj
 # group: [list]
 
-
-
 statement ok
 CREATE VIEW v1 AS SELECT * FROM (VALUES (1, [1, 2, 3]), (2, NULL), (3, [NULL, 3, 4])) tbl (a, b);
 

@@ -2,8 +2,6 @@
 # description: Issue 5072: CARDINALITY on NULL map results in non-deterministic result
 # group: [general]
 
-
-
 query I
 SELECT CARDINALITY(CAST(NULL AS MAP(VARCHAR, INT)));
 ----
@@ -58,5 +56,4 @@ statement error
 SELECT CARDINALITY(MAP_FROM_ENTRIES(list)) FROM t1;
 ----
 Invalid Input Error: Map keys can not be NULL
-
 

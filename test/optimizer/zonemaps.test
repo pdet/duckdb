@@ -79,8 +79,6 @@ explain select count(*) from t1 join t2 using (nationkey) where t2.n_name in ( '
 ----
 physical_plan	<REGEX>:.*Filters:.*
 
-
-
 # 5) More General Tests
 statement ok
 CREATE TABLE test(a tinyint, b smallint, c integer, d bigint, e double, f real, g varchar);

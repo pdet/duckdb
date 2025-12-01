@@ -2,8 +2,6 @@
 # description: Test export database
 # group: [export]
 
-
-
 statement ok
 BEGIN TRANSACTION
 

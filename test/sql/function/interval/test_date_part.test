@@ -58,7 +58,6 @@ SELECT date_part('epoch', i) FROM intervals;
 3628800.0
 2066.3434
 
-
 query I
 SELECT date_part(s, i) FROM intervals;
 ----
@@ -66,7 +65,6 @@ SELECT date_part(s, i) FROM intervals;
 2
 42
 34
-
 
 # interval gives errors for date-only parts
 statement error

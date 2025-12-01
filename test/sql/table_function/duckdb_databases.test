@@ -4,8 +4,6 @@
 
 require noforcestorage
 
-
-
 statement ok
 SELECT * FROM duckdb_databases();
 

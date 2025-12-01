@@ -70,4 +70,3 @@ SELECT * FROM test WHERE a=12
 ----
 12	24
 
-

@@ -2,8 +2,6 @@
 # description: Test to reach missing Dialect Detection code.
 # group: [code_cov]
 
-
-
 query I
 SELECT * from read_csv_auto('{DATA_DIR}/csv/escape.csv', escape=']', header = 0)
 ----

@@ -2,8 +2,6 @@
 # description: Test concat of blobs function
 # group: [blob]
 
-
-
 # concat operator works with blobs
 query I
 SELECT blob 'aaa\x80' || blob 'aaa\x80'

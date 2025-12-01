@@ -2,8 +2,6 @@
 # description: Round-trip a single NULL value
 # group: [csv]
 
-
-
 statement ok
 COPY (SELECT NULL) TO '__TEST_DIR__/single_null.csv' (HEADER 0)
 

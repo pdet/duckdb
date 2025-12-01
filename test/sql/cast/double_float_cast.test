@@ -2,8 +2,6 @@
 # description: Test out of range double -> float casts
 # group: [cast]
 
-
-
 statement error
 select 1e308::float;
 ----

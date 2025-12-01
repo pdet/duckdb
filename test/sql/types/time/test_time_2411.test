@@ -2,8 +2,6 @@
 # description: Test bug described on issue 2411
 # group: [time]
 
-
-
 statement ok
 CREATE TABLE times(i TIME)
 

@@ -2,8 +2,6 @@
 # description: Test the columns expression
 # group: [parser]
 
-
-
 statement ok
 CREATE TABLE integers AS SELECT 42 i, 84 j UNION ALL SELECT 13, 14
 

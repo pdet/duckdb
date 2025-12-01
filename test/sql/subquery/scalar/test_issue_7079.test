@@ -27,7 +27,6 @@ CREATE TABLE t AS (
   SELECT [] AS arr 
 );
 
-
 query I
 SELECT array_rv(arr) FROM t ORDER BY arr;
 ----

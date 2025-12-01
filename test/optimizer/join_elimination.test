@@ -2,8 +2,6 @@
 # description: test join elimination
 # group: [optimizer]
 
-
-
 statement ok
 create table a(ida int, valuea int);
 

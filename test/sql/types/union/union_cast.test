@@ -19,7 +19,6 @@ SELECT * FROM tbl1;
 two
 three
 
-
 # Test union -> value cast
 
 # cannot cast union to value in the general case
@@ -34,7 +33,6 @@ SELECT u::varchar FROM tbl1;
 1
 two
 three
-
 
 # Test union -> union cast
 statement ok
@@ -87,7 +85,6 @@ NULL	two		NULL
 1		NULL	NULL
 4		NULL	NULL
 
-
 query I
 SELECT * FROM tbl2
 ----
@@ -117,7 +114,6 @@ NULL
 NULL
 NULL
 NULL
-
 
 query IIII
 SELECT union_tag(u), u.i32, u.str, u.f32 FROM tbl2;
@@ -205,7 +201,6 @@ select [
 [true]
 [true]
 
-
 # Struct member cast resolution
 statement ok
 CREATE TABLE t3 (id integer, u union(s1 struct(f1 varchar, f2 int), s2 struct(b1 varchar)));
@@ -229,7 +224,6 @@ SELECT * FROM t3
 2	{'f1': s1, 'f2': 2}
 3	{'f1': c, 'f2': 3}
 4	{'b1': s2}
-
 
 # More union cast resolution checks
 # Select the member with the lowest implicit cast cost

@@ -2,8 +2,6 @@
 # description: Issue #7880: Group By incremental alias issues
 # group: [binder]
 
-
-
 statement ok
 create table my_functions as select 'my_name' as function_name;
 

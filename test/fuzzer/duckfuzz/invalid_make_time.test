@@ -2,8 +2,6 @@
 # description: Invalid make time
 # group: [duckfuzz]
 
-
-
 statement error
 SELECT make_time(64, 64, 157);
 ----

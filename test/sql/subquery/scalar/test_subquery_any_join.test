@@ -2,8 +2,6 @@
 # description: Test subqueries on ANY join
 # group: [scalar]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

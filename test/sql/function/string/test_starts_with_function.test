@@ -2,8 +2,6 @@
 # description: starts_with function test
 # group: [string]
 
-
-
 # starts_with of various lengths
 query IIIIIIIIII
 SELECT STARTS_WITH('hello world', 'h'),

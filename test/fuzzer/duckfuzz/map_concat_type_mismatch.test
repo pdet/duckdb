@@ -2,8 +2,6 @@
 # description: Type mismatch in map concat
 # group: [duckfuzz]
 
-
-
 statement error
 SELECT map_concat(42, 42);
 ----

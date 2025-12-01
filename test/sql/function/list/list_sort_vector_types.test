@@ -2,8 +2,6 @@
 # description: Test list sort with different vector types
 # group: [list]
 
-
-
 foreach flatten true false
 
 query I rowsort sortintarray

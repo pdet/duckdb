@@ -2,8 +2,6 @@
 # description: Test max "n" aggregate function for multiple types grouped
 # group: [aggregates]
 
-
-
 statement ok
 CREATE MACRO compute_top_k(table_name, group_col, val_col, k) AS TABLE
 SELECT rs.grp, array_agg(rs.val)
@@ -43,7 +41,5 @@ CREATE OR REPLACE TABLE agg_table AS SELECT grp_col as grp, max(val_col, 2) as r
 query II
 SELECT * FROM (SELECT * FROM window_table ORDER BY rowid) EXCEPT SELECT * FROM (SELECT * FROM agg_table ORDER BY rowid);
 ----
-
-
 
 endloop

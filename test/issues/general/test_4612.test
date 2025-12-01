@@ -2,8 +2,6 @@
 # description: Issue 4612: Can't select by blob field
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE blobs (b BYTEA);
 
@@ -16,7 +14,6 @@ SELECT * FROM blobs;
 \xAA\xFF\xAA
 \xAA\xFF\xAA\xAA\xFF\xAA
 \xAA\xFF\xAA\xAA\xFF\xAA\xAA\xFF\xAA
-
 
 query I
 SELECT * FROM blobs where b = '\xaa\xff\xaA';

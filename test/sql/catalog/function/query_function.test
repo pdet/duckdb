@@ -2,8 +2,6 @@
 # description: test query() function
 # group: [function]
 
-
-
 query I
 SELECT * FROM query('SELECT 42');
 ----

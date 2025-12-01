@@ -2,8 +2,6 @@
 # description: Batched copy to file
 # group: [batched_write]
 
-
-
 statement ok
 CREATE TABLE integers AS SELECT i, i // 5 AS j FROM range(1000000) t(i) ;
 
@@ -49,7 +47,6 @@ COPY v1 TO '__TEST_DIR__/batched_integers_filters.csv' (HEADER);
 
 statement ok
 CREATE TABLE integers_filtered AS FROM '__TEST_DIR__/batched_integers_filters.csv'
-
 
 foreach table v1 integers_filtered
 

@@ -1,8 +1,6 @@
 # name: test/sql/types/test_user_type_errors_18452.test
 # group: [types]
 
-
-
 statement error
 CREATE TYPE l AS X(0,0,0,0,0,0,0,0,0,0,0); -- original issue, those are 11 parameters though
 ----

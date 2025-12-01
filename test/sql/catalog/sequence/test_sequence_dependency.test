@@ -4,7 +4,6 @@
 
 require skip_reload
 
-
 statement ok
 create sequence seq;
 

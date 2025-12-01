@@ -13,7 +13,6 @@ EXPLAIN  SELECT tbl.a, tbl.b FROM "{DATA_DIR}/parquet-testing/arrow/alltypes_pla
 ----
 physical_plan	<!REGEX>:.*PARQUET_SCAN.*Filters:.*
 
-
 # Single column in the root OR node
 query II
 EXPLAIN SELECT tbl.a FROM "{DATA_DIR}/parquet-testing/arrow/alltypes_plain.parquet" tbl(a) WHERE a=1 OR a=2
@@ -26,14 +25,11 @@ EXPLAIN SELECT tbl.a FROM "{DATA_DIR}/parquet-testing/arrow/alltypes_plain.parqu
 ----
 physical_plan	<REGEX>:.*PARQUET_SCAN.*Filters: a=1 OR a>3 AND a<5|.*
 
-
 # Single column multiple ORs
 query II
 EXPLAIN SELECT tbl.a FROM "{DATA_DIR}/parquet-testing/arrow/alltypes_plain.parquet" tbl(a) WHERE a=1 OR a>3 OR a<5
 ----
 physical_plan	<REGEX>:.*PARQUET_SCAN.*Filters: a=1 OR a>3 OR a<5|.*
-
-
 
 # Testing not equal
 query II
@@ -41,13 +37,11 @@ EXPLAIN SELECT tbl.a FROM "{DATA_DIR}/parquet-testing/arrow/alltypes_plain.parqu
 ----
 physical_plan	<REGEX>:.*PARQUET_SCAN.*Filters: a!=1 OR a>3 OR a<2|.*
 
-
 # Multiple OR filters connected with ANDs
 query II
 EXPLAIN SELECT tbl.a, tbl.b, tbl.c FROM "{DATA_DIR}/parquet-testing/arrow/alltypes_plain.parquet" tbl(a,b,c) WHERE (a<2 OR a>3) AND (a=1 OR a=4) AND (b=false OR c=1);
 ----
 physical_plan	<REGEX>:.*PARQUET_SCAN.*Filters: a<2 OR a>3 AND a=1.*OR a=4.*
-
 
 # Testing the number of rows filtered (column "a" has eight values: 0 .. 7)
 statement ok

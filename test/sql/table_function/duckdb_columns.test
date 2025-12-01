@@ -5,8 +5,6 @@
 statement ok
 set storage_compatibility_version='v0.10.2'
 
-
-
 statement ok nosort duckdb_col
 SELECT * FROM duckdb_columns();
 

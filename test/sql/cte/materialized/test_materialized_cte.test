@@ -2,8 +2,6 @@
 # description: Test Materialized Common Table Expressions (CTE)
 # group: [materialized]
 
-
-
 query I
 WITH t(x) AS MATERIALIZED (SELECT 1) SELECT * FROM t;
 ----

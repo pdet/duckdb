@@ -22,8 +22,6 @@ NULL	hello
 
 restart
 
-
-
 query II
 SELECT a, b FROM test ORDER BY a
 ----

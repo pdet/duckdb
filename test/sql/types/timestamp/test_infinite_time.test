@@ -2,8 +2,6 @@
 # description: Extract timestamp function
 # group: [timestamp]
 
-
-
 #
 # Special date and time values from
 # https://www.postgresql.org/docs/14/datatype-datetime.html#DATATYPE-DATETIME-SPECIAL-TABLE

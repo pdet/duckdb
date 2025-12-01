@@ -2,8 +2,6 @@
 # description: ENUM tests
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'quackity-quack', 'happy', 'ok');
 
@@ -50,7 +48,6 @@ select person.name, pet.name from person inner join pet on (person.current_mood 
 ----
 Pedro	Vacilo
 
-
 # This actually performs the optimized comparison since they are both ENUMs but of different types.
 
 query II rowsort
@@ -67,7 +64,6 @@ where person_mood = pet_mood
 ----
 Hannes	Wilbur
 Pedro	Oogie
-
 
 query II rowsort
 select person_name,pet_name from
@@ -172,7 +168,6 @@ Tim	Chorizo	ok	NULL
 statement error
 SELECT person_mood::pet_mood FROM person_pet_den
 ----
-
 
 # Use enums as normal strings (testing e.g. substr, LIKE, REGEXP_MATCHES).
 query T

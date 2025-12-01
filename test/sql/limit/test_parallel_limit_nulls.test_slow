@@ -2,8 +2,6 @@
 # description: Test parallel limit execution with NULLs
 # group: [limit]
 
-
-
 statement ok
 PRAGMA threads=8
 

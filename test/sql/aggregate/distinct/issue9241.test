@@ -2,8 +2,6 @@
 # description: Test DISTINCT ON
 # group: [distinct]
 
-
-
 statement ok
 create table foo (a int, b int);
 

@@ -21,7 +21,6 @@ CREATE VIEW ${tbl} AS SELECT UNNEST(val) FROM read_parquet('__TEST_DIR__/${tbl}_
 
 endloop
 
-
 loop i 1 9
 
 query I

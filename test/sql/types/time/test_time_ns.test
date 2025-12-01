@@ -2,8 +2,6 @@
 # description: Have you seen the fnords?
 # group: [time]
 
-
-
 # Parse and format
 query I
 SELECT '15:30:00.123456789'::TIME_NS;

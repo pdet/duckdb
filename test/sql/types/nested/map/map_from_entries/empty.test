@@ -2,8 +2,6 @@
 # description: Show expected behavior with an empty arguments list
 # group: [map_from_entries]
 
-
-
 statement error
 SELECT map_from_entries();
 ----

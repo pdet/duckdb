@@ -37,7 +37,6 @@ SELECT [x for x in c if x IS NULL] FROM test_vector_types(NULL::INT[]) t(c);
 []
 []
 
-
 query I
 SELECT list_reduce(c, lambda x, y: x + y) FROM test_vector_types(NULL::INT[]) t(c) WHERE len(c) > 0;
 ----

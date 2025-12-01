@@ -3,8 +3,6 @@
 
 load __TEST_DIR__/alprd_min_max.db
 
-
-
 statement ok
 PRAGMA force_compression='alprd';
 
@@ -14,7 +12,6 @@ statement ok
 CREATE TABLE all_types AS SELECT ${type} FROM test_all_types();
 
 loop i 0 15
-
 
 statement ok
 INSERT INTO all_types SELECT ${type} FROM all_types;

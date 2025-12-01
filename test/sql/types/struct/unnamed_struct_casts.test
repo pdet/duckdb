@@ -2,8 +2,6 @@
 # description: Test unnamed struct casts
 # group: [struct]
 
-
-
 statement error
 select row(42, 'hello') union all select '{'': 42,'': hello}';
 ----

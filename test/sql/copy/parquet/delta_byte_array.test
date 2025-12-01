@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query IIIIIIIII
 SELECT * FROM '{DATA_DIR}/parquet-testing/delta_byte_array.parquet'
 ----

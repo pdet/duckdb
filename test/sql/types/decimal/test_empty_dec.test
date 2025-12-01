@@ -2,8 +2,6 @@
 # description: Test empty decimals with DEC
 # group: [decimal]
 
-
-
 statement ok
 CREATE TABLE decs(i DEC(), j DEC)
 

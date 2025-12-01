@@ -2,8 +2,6 @@
 # description: Test semi joins
 # group: [semianti]
 
-
-
 statement ok
 CREATE TABLE left_table (a INTEGER, b INTEGER, c INTEGER);
 

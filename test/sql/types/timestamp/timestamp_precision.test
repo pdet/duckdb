@@ -2,8 +2,6 @@
 # description: Test timestamp precision
 # group: [timestamp]
 
-
-
 statement ok
 CREATE TABLE ts_precision(
 	sec TIMESTAMP(0),

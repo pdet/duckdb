@@ -1,8 +1,6 @@
 # name: test/sql/types/map/map_null.test
 # group: [map]
 
-
-
 query I
 select map(NULL::INT[], [1,2,3])
 ----

@@ -2,8 +2,6 @@
 # description: Issue 3997: CTEs on Insert/update/delete statements
 # group: [general]
 
-
-
 statement ok
 create table x (x int);
 

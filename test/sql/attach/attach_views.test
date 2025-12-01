@@ -2,8 +2,6 @@
 # description: Test views in an attached database
 # group: [attach]
 
-
-
 statement ok
 ATTACH DATABASE ':memory:' AS new_database;
 

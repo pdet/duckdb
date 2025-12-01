@@ -20,7 +20,6 @@ SELECT suggestion, suggestion_start FROM sql_auto_complete('CREATE TABLE abcd') 
 ----
 abcdefgh.	13
 
-
 statement ok
 CALL dbgen(sf=0);
 

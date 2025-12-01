@@ -2,8 +2,6 @@
 # description: Test INSERT OR REPLACE with DEFAULT VALUES
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 (c01 INT, c02 STRING);
 

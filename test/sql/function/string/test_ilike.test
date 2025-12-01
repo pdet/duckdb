@@ -2,8 +2,6 @@
 # description: Test ILIKE statement
 # group: [string]
 
-
-
 # scalar like
 query T
 SELECT 'aaa' ILIKE 'bbb'
@@ -129,7 +127,6 @@ query T
 SELECT 'MÜHLEISEN' ILIKE 'mühleisen'
 ----
 1
-
 
 statement ok
 CREATE TABLE unicode_strings(s STRING, pat STRING);

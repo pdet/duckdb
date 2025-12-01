@@ -2,8 +2,6 @@
 # description: Test an UPSERT with a duplicate in the VALUES list.
 # group: [constraints]
 
-
-
 statement ok
 CREATE TABLE hero (
         name VARCHAR NOT NULL,

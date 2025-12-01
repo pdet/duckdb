@@ -2,8 +2,6 @@
 # description: Test ORDER BY exceptions
 # group: [order]
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);
 

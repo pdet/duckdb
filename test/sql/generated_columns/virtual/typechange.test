@@ -2,8 +2,6 @@
 # description: Change the type of a generated column
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (
 	price INTEGER,

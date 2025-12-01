@@ -7,8 +7,6 @@
 
 require json
 
-
-
 statement ok
 PRAGMA enable_profiling = 'json';
 

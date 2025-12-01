@@ -2,9 +2,6 @@
 # description: Test Coalesce/Enum bug described on 6356
 # group: [enum]
 
-
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
 

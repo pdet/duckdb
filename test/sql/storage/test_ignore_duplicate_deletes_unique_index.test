@@ -39,4 +39,3 @@ SELECT * FROM TBL WHERE id=1
 ----
 1	1
 
-

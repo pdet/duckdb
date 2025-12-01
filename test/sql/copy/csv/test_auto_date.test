@@ -2,8 +2,6 @@
 # description: Test the allow_quoted_nulls option
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE date_tests (a DATE)
 
@@ -34,7 +32,6 @@ CREATE TABLE date_tests (a DATE)
 # -- file's date format is YYYY-MM-DD
 statement ok
 copy date_tests from '{DATA_DIR}/csv/auto_date/date_example_1.csv' WITH (dateformat 'AUTO');
-
 
 # -- file's date format is %m/%d/%y
 statement ok

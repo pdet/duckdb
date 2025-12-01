@@ -5,8 +5,6 @@
 # FIXME - during checkpoint recovery we no longer bind so we no longer have dependency information
 require skip_reload
 
-
-
 foreach fun nextval currval
 
 statement ok

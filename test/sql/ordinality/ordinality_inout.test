@@ -2,16 +2,11 @@
 # description: Tests with ordinality for correlated InOut-TVFs
 # group: [ordinality]
 
-
-
-
 statement ok
 CREATE TABLE test(a int);
 
-
 statement ok
 INSERT INTO test VALUES (1),(3);
-
 
 query III
 SELECT a,my_range,my_ordinality FROM test AS t(a), LATERAL range(t.a) WITH ORDINALITY AS _(my_range,my_ordinality) ORDER BY a,my_range;
@@ -20,7 +15,6 @@ SELECT a,my_range,my_ordinality FROM test AS t(a), LATERAL range(t.a) WITH ORDIN
 3	0	1
 3	1	2
 3	2	3
-
 
 query III
 SELECT a,my_series,my_ordinality FROM test AS t(a), LATERAL generate_series(0,t.a,1) WITH ORDINALITY AS _(my_series,my_ordinality) ORDER BY t.a, my_series, my_ordinality;
@@ -31,7 +25,6 @@ SELECT a,my_series,my_ordinality FROM test AS t(a), LATERAL generate_series(0,t.
 3	1	2
 3	2	3
 3	3	4
-
 
 query II
 WITH ordinalityCTE AS (
@@ -46,7 +39,6 @@ WITH ordinalityCTE AS (
 7	8
 8	9
 9	10
-
 
 query I
 WITH RECURSIVE ordinalityCTE AS (
@@ -67,7 +59,6 @@ WITH RECURSIVE ordinalityCTE AS (
 6
 7
 8
-
 
 query I
 WITH RECURSIVE ordinalityCTE AS (
@@ -96,14 +87,11 @@ WITH RECURSIVE ordinalityCTE AS (
 8
 8
 
-
 statement ok
 CREATE TABLE unnest_test(a char[]);
 
-
 statement ok
 INSERT INTO unnest_test VALUES (['a1','a2','a3']),(['b1','b2']);
-
 
 query III
 SELECT * FROM unnest_test AS t, LATERAL unnest(t.a) WITH ORDINALITY AS _(unnest,my_ordinality) ORDER BY unnest, my_ordinality;

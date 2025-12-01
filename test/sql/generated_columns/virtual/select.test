@@ -2,8 +2,6 @@
 # description: Remove generated column
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (price INTEGER, amount_sold INTEGER);
 

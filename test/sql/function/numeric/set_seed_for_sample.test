@@ -17,4 +17,3 @@ query I rowsort result_1
 select * from t1 using sample 5;
 ----
 
-

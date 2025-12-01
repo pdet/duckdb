@@ -2,8 +2,6 @@
 # description: Test different examples that can be found when searching for python list comprehension examples
 # group: [arrow]
 
-
-
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'
 
@@ -33,7 +31,6 @@ query I
 SELECT list_filter(['apple', 'banana', 'cherry', 'kiwi', 'mango'], fruit -> contains(fruit, 'a'))
 ----
 [apple, banana, mango]
-
 
 query I
 SELECT [fruit for fruit in ['apple', 'banana', 'cherry', 'kiwi', 'mango'] if contains(fruit, 'a')]

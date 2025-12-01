@@ -2,8 +2,6 @@
 # description: Test struct equality bug
 # group: [struct]
 
-
-
 statement ok
 create table integers(i integer);
 

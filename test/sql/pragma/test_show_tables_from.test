@@ -2,8 +2,6 @@
 # description: Test SHOW TABLES FROM syntax
 # group: [pragma]
 
-
-
 statement ok
 ATTACH IF NOT EXISTS ':memory:' AS db
 

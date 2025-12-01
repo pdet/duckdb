@@ -2,8 +2,6 @@
 # description: Test that enable_external_access blocks CSV readers
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE date_test(d date);
 

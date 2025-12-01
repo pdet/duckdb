@@ -2,8 +2,6 @@
 # description: Test large CREATE TABLE AS with varchar columns
 # group: [create]
 
-
-
 query I
 CREATE TABLE varchars AS SELECT i, concat('thisisalongstring', i) AS v FROM range(1000000) tbl(i);
 ----
@@ -18,7 +16,6 @@ query II
 SELECT COUNT(*), SUM(REPLACE(v, 'thisisalongstring', '')::INT) FROM varchars2
 ----
 1000000	499999500000
-
 
 query II
 SELECT * FROM varchars2 LIMIT 5

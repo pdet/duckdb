@@ -165,7 +165,6 @@ order by id
 3	value3	c	2014-01-01
 4	value4	d	2015-01-01
 
-
 # check cases where there are file filters AND table filters
 statement ok
 Create table t1 (a int, b int, c int);

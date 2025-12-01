@@ -2,8 +2,6 @@
 # description: Test UNPIVOT without columns
 # group: [pivot]
 
-
-
 statement ok
 create table integers(i integer);
 

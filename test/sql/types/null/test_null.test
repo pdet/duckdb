@@ -2,8 +2,6 @@
 # description: Test standard NULL handling
 # group: [null]
 
-
-
 # scalar NULL
 query I
 SELECT NULL

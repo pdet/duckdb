@@ -2,8 +2,6 @@
 # description: Issue #8185 - DuckDB binary crashed at duckdb::ExpressionIterator::EnumerateChildren
 # group: [afl]
 
-
-
 statement ok
 CREATE TABLE v0 ( v1 INTEGER , v2 INTEGER) ;
 

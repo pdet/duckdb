@@ -2,8 +2,6 @@
 # description: Test ART index creation with deletes
 # group: [create_drop]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER)
 

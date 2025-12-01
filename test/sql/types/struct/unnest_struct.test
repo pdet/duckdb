@@ -2,8 +2,6 @@
 # description: Test UNNEST of struct fields
 # group: [struct]
 
-
-
 query II
 SELECT UNNEST({'a': 42, 'b': 88})
 ----

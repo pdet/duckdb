@@ -2,8 +2,6 @@
 # description: Test similar to suggestions
 # group: [binder]
 
-
-
 statement ok
 CREATE TABLE depdelay_minutes(depdelay_minutes INTEGER);
 

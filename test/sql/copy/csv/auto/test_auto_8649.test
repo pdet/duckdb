@@ -2,9 +2,6 @@
 # description: Test CSV Sample works for #8649
 # group: [auto]
 
-
-
-
 statement ok
 PRAGMA verify_parallelism
 

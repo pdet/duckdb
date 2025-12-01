@@ -2,8 +2,6 @@
 # description: Test DISTINCT-insensitive aggregate rules
 # group: [expression]
 
-
-
 query I
 SELECT max(distinct x) from range(10) tbl(x);
 ----

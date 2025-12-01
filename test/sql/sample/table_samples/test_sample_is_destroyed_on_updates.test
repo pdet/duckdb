@@ -58,11 +58,9 @@ query III
 select * from duckdb_table_sample('integers_1');
 ----
 
-
 # test altering types destroys the sample
 statement ok
 create or replace table integers_1 as select range a, range+1 b  from range(102400);
-
 
 # don't have enough smaples yet.
 query I
@@ -119,7 +117,4 @@ insert into integers_1 select range a from range(500);
 query I
 select * from duckdb_table_sample('integers_1');
 ----
-
-
-
 

@@ -2,8 +2,6 @@
 # description: Intersect empty array
 # group: [pedro]
 
-
-
 statement error
 SELECT 2 INTERSECT VALUES([]);
 ----

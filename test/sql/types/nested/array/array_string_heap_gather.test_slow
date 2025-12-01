@@ -4,8 +4,6 @@
 statement ok
 PRAGMA verify_external
 
-
-
 # Test for list
 statement ok
 CREATE TABLE test_list AS
@@ -27,7 +25,6 @@ SELECT range % 4 g,
        [range, range + 1, range + 2]::VARCHAR[3] a,
        range i
 FROM range(10000);
-
 
 query IIII rowsort expected_result
 SELECT g o, a, sum(i) OVER (PARTITION BY g ORDER BY o) FROM test_array;

@@ -2,8 +2,6 @@
 # description: Test binding of NULL type
 # group: [binder]
 
-
-
 # regular binding
 query I
 SELECT NULL

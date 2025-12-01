@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 statement ok
 CREATE TABLE IF NOT EXISTS uuid (u uuid);
 
@@ -283,5 +281,4 @@ SELECT 'aaaa'::uuid
 statement error
 SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380Z11'::uuid
 ----
-
 

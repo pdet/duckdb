@@ -2,8 +2,6 @@
 # description: Test GROUP BY errors
 # group: [group]
 
-
-
 statement ok
 CREATE TABLE tbl(i INT)
 

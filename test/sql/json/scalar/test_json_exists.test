@@ -4,8 +4,6 @@
 
 require json
 
-
-
 query I
 SELECT json_exists('{"duck": null}', '$.duck')
 ----

@@ -2,8 +2,6 @@
 # description: Issue #11211 - Incorrect equality comparison for BIT type
 # group: [bit]
 
-
-
 query I
 select ( 2::bit & 2::bit ) = 2::bit as b;
 ----

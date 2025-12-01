@@ -2,9 +2,6 @@
 # description: Test CSVs with a decimal value
 # group: [csv]
 
-
-
-
 query I
 FROM '{DATA_DIR}/csv/decimal.csv'
 ----

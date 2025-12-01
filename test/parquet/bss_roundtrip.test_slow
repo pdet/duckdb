@@ -21,14 +21,12 @@ query IIII nosort q0
 from doubles
 ----
 
-
 statement ok
 copy doubles to '__TEST_DIR__/bss.parquet' (PARQUET_VERSION V2);
 
 query IIII nosort q0
 from '__TEST_DIR__/bss.parquet';
 ----
-
 
 statement ok
 create view floats as
@@ -41,7 +39,6 @@ from lineitem
 query IIII nosort q1
 from floats
 ----
-
 
 statement ok
 copy floats to '__TEST_DIR__/bss.parquet' (PARQUET_VERSION V2);

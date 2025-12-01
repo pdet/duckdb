@@ -2,8 +2,6 @@
 # description: Test incorrect usage of CREATE TABLE AS
 # group: [create]
 
-
-
 statement error
 CREATE TABLE tbl AS EXECUTE tbl;
 ----

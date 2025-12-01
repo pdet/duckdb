@@ -2,8 +2,6 @@
 # description: Issue #4978 (33): Insert into ART index leaf assertion error
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t2 (c1 INT, PRIMARY KEY (c1));
 

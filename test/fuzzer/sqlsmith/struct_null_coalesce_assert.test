@@ -2,8 +2,6 @@
 # description: Assertion trigger in coalesce with null structs
 # group: [sqlsmith]
 
-
-
 statement ok
 CREATE TABLE struct_tbl("struct" STRUCT(a INTEGER, b VARCHAR));
 

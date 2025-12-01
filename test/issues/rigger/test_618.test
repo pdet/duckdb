@@ -2,8 +2,6 @@
 # description: Issue 618
 # group: [rigger]
 
-
-
 # Failed ALTER COLUMN results in a 'Transaction conflict' error that cannot be aborted
 statement ok
 CREATE TABLE t0(c0 DATE);

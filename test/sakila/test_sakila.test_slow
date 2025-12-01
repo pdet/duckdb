@@ -2,8 +2,6 @@
 # description: Run Sakila test queries
 # group: [sakila]
 
-
-
 statement ok
 CREATE TABLE actor (
     actor_id numeric NOT NULL,

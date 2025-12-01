@@ -2,8 +2,6 @@
 # description: Test basics of bignum type
 # group: [bignum]
 
-
-
 foreach int_type tinyint utinyint smallint usmallint integer uinteger bigint ubigint hugeint uhugeint double float
 
 query I
@@ -36,8 +34,6 @@ query I
 select 1::bignum
 ----
 1
-
-
 
 statement ok
 CREATE TABLE integers(a bignum);

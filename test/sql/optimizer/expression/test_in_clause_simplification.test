@@ -2,8 +2,6 @@
 # description: Test InClauseSimplificationRule
 # group: [expression]
 
-
-
 # Removing the TIMESTAMP => DATE cast only works if the 
 # IN clause has TIMESTAMPs.
 statement ok

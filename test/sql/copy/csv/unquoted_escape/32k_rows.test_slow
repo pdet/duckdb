@@ -2,8 +2,6 @@
 # description: Test large number of rows with unquoted escape characters
 # group: [unquoted_escape]
 
-
-
 statement ok
 CREATE TABLE pseudorandom_fields AS SELECT i, list_select(
     [E'\\', E'\t', E'\n', E'\\\\', E'\\\t', E'\\\n', E'\t\\', E'\t\t', E'\t\n', E'\n\\', E'\n\t', E'\n\n', '',  'a', 'b', 'c'],

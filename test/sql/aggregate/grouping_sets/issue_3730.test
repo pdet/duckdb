@@ -2,8 +2,6 @@
 # description: Issue #3730: Segmentation fault on GROUP BY when using ROLLUP/CUBE + COUNT DISTINCT on Parquet
 # group: [grouping_sets]
 
-
-
 statement ok
 CREATE TABLE response(
 	id BIGINT,

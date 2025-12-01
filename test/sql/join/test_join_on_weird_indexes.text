@@ -17,7 +17,6 @@ SELECT SUM(i) FROM integers UNION ALL SELECT AVG(i) FROM integers UNION ALL SELE
 1.000000
 3.000000
 
-
 # join multiple set operations
 statement ok
 SELECT *, i1.rowid as diff_row_id_name FROM integers i1, integers i2 where i1.rowid = i2.i;
@@ -33,7 +32,6 @@ create table t3 as (select range as a from range(50));
 
 statement ok
 select t3.a from t3, (select * from t2 intersect select * from t1) t4 where t4.a=t3.a;
-
 
 # join on PIVOT results
 

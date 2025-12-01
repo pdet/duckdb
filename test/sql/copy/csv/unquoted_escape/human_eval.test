@@ -32,8 +32,6 @@ require httpfs
 
 require json
 
-
-
 statement ok
 CREATE TABLE human_eval_jsonl AS
 SELECT REPLACE(COLUMNS(*), '    ', E'\t') FROM read_ndjson_auto(

@@ -2,8 +2,6 @@
 # description: NULL checkpoint
 # group: [duckfuzz]
 
-
-
 statement error
 CALL checkpoint(NULL)
 ----

@@ -2,8 +2,6 @@
 # description: Test different ART prefixes
 # group: [nodes]
 
-
-
 # very mixed-length prefixes
 
 statement ok

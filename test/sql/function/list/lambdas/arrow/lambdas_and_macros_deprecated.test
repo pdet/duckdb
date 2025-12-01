@@ -2,8 +2,6 @@
 # description: Test mixing lambdas and macros
 # group: [arrow]
 
-
-
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'
 

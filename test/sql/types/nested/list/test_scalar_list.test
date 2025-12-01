@@ -2,8 +2,6 @@
 # description: Test scalar lists
 # group: [list]
 
-
-
 query T
 SELECT LIST_VALUE('hello')
 ----

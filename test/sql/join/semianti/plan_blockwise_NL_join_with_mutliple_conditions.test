@@ -2,8 +2,6 @@
 # description: Test anti ijoin results
 # group: [semianti]
 
-
-
 statement ok
 create table t1 as select * from values (1, 2), (2, 4), (3, 8), (6, 25), (1, 25) t(a, b);
 
@@ -49,14 +47,12 @@ select * from t1 semi join t2 on (t1.a < t2.b and t1.b < t2.b) or (t1.a < t2.b a
 1	2
 2	4
 
-
 query II
 select * from t1 semi join t2 on (t1.a < t2.b or t1.b < t2.b) and (t1.a = 1 or t1.b = 4) order by all;
 ----
 1	2
 1	25
 2	4
-
 
 statement ok
 CREATE TABLE flattened ("start" varchar, "end" varchar);
@@ -74,7 +70,6 @@ create table input_table as select * from VALUES
 ('6', '2023-03-19T23:59:59Z', 4),
 ('7', '2023-03-20T00:00:00Z', 7),
 ('8', '2023-03-21T00:00:00Z', 3) t(user_id, timestamp, value);
-
 
 query III
 SELECT * FROM input_table

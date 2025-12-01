@@ -2,8 +2,6 @@
 # description: Test all types function
 # group: [types]
 
-
-
 query IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 SELECT * FROM test_all_types();
 ----

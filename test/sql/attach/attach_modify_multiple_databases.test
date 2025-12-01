@@ -2,8 +2,6 @@
 # description: Modify multiple databases in one transaction
 # group: [attach]
 
-
-
 # attach a new database
 statement ok
 ATTACH DATABASE ':memory:' AS database;

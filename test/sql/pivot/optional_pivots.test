@@ -2,8 +2,6 @@
 # description: Test pivot syntax with various optional statements
 # group: [pivot]
 
-
-
 statement ok
 CREATE TABLE Cities(Country VARCHAR, Name VARCHAR, Year INT, Population INT);
 

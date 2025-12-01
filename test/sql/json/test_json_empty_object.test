@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # returns JSON instead of {}
 query I
 select json_structure('{}')

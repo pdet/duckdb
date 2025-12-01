@@ -2,8 +2,6 @@
 # description: Test storing large lists
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE a(b INTEGER[]);
 

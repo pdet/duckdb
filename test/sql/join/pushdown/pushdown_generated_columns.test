@@ -2,8 +2,6 @@
 # description: Join pushdown on generated columns
 # group: [pushdown]
 
-
-
 statement ok
 CREATE TABLE unit2(
 	price INTEGER,

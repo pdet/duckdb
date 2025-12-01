@@ -17,7 +17,6 @@ CREATE OR REPLACE MACRO lorem_sentence_util(s) AS upper(s[1]) || s[2:] || '.';
 statement ok
 CREATE OR REPLACE MACRO lorem_sentence(rand, words) AS lorem_sentence_util(list_aggr([lorem_word(deterministic_random(rand + i)) for i in range(words)], 'string_agg', ' '));
 
-
 statement ok
 SET preserve_insertion_order=false;
 

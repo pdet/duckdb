@@ -97,7 +97,6 @@ SELECT bit_length(BITSTRING_AGG(i)) FROM uhugeints
 ----
 56068
 
-
 # bit_count of BITSTRING_AGG should give same results as DISTINCT COUNT 
 query I nosort distinct_small
 SELECT bit_count(BITSTRING_AGG(i)) FROM smallints
@@ -161,7 +160,6 @@ query I
 SELECT BITSTRING_AGG(i, 2378080, 2378150) FROM bigints
 ----
 00000000000000010100100011000000010000000000000000000000000000000000000
-
 
 # test on scalar values 
 query I

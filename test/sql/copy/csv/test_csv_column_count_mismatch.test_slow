@@ -2,8 +2,6 @@
 # description: Test cranlogs broken gzip copy and temp table
 # group: [csv]
 
-
-
 # We can read with auto just fine
 statement ok
 select * from read_csv_auto('{DATA_DIR}/csv/people.csv');

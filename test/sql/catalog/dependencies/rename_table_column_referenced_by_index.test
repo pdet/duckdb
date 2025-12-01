@@ -1,8 +1,6 @@
 # name: test/sql/catalog/dependencies/rename_table_column_referenced_by_index.test
 # group: [dependencies]
 
-
-
 statement ok
 create table tbl(a varchar);
 

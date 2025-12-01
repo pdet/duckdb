@@ -2,8 +2,6 @@
 # description: Test the DATEDIFF function
 # group: [timestamp]
 
-
-
 #
 # DATE
 #
@@ -88,7 +86,6 @@ endloop
 statement error
 SELECT datediff('microseconds',DATE '4151706-4-6',DATE '-5559461-6-26');
 ----
-
 
 query I
 SELECT datediff('isodow',DATE '4765396-11-24',DATE '-4389735-12-13');

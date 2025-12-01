@@ -2,8 +2,6 @@
 # description: cast strings into map structures
 # group: [cast]
 
-
-
 #               Basic tests:
 # ---------------------------------------------------
 
@@ -37,7 +35,6 @@ SELECT '{a=1, b=2, a=3}'::MAP(VARCHAR, INT)
 ----
 Map keys must be unique
 
-
 #               Nested Maps
 # ---------------------------------------------------
 query I
@@ -49,7 +46,6 @@ query I
 SELECT '{{1=100, 2=200}={3=c, 5=e, 7=g}}'::MAP(MAP(INT, INT), MAP(INT, VARCHAR));
 ----
 {{1=100, 2=200}={3=c, 5=e, 7=g}}
-
 
 #               Cast from table
 # ---------------------------------------------------
@@ -65,7 +61,6 @@ SELECT col1::MAP(INT, VARCHAR) FROM stringMap;
 {1=Duck, 2=DB}
 {999=🦆}
 {7=Hello, 8=World, 2=!}
-
 
 #               Quote escaping
 # ---------------------------------------------------
@@ -98,7 +93,6 @@ query III
 SELECT CAST($${'}'="{", ']'="["}$$ AS MAP(VARCHAR, VARCHAR)) a, a::VARCHAR::MAP(VARCHAR, VARCHAR) b, a == b;
 ----
 {'}'='{', ']'='['}	{'}'='{', ']'='['}	true
-
 
 #               Test for whitespaces
 # ---------------------------------------------------
@@ -255,7 +249,6 @@ SELECT '{[[a, b], [c, d], [e]]= {a:2000}, [[aaa]]={a:100}, [[z],[y], [x]]={}}'::
 ----
 {[[a, b], [c, d], [e]]={'a': 2000}, [[aaa]]={'a': 100}, [[z], [y], [x]]={'a': NULL}}
 
-
 #               All types:
 # ---------------------------------------------------
 
@@ -314,7 +307,6 @@ query I
 SELECT MAX(CAST(col AS MAP(INT, INT))) FROM intMap;
 ----
 {9999=10000}
-
 
 #               CSV reader
 # ---------------------------------------------------

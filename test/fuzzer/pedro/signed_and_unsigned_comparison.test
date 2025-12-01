@@ -2,8 +2,6 @@
 # description: Issue #9329: Signed and unsigned integer predicate with wrong result
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t1 (
 	c1 UINT32,

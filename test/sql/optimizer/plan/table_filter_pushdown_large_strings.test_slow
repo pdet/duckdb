@@ -2,8 +2,6 @@
 # description: Test Table Filter Push Down Scan String
 # group: [plan]
 
-
-
 statement ok
 CREATE TABLE strings AS select i FROM (VALUES('pedro'), ('peter'), ('mark')) t1(i), range(0, 100000) t2(j) order by j
 
@@ -27,7 +25,6 @@ SELECT count(i) FROM strings where i = 'diego'
 ----
 0
 
-
 statement ok
 INSERT INTO strings VALUES('po')
 
@@ -47,5 +44,4 @@ query I
 SELECT count(i) FROM strings where i >= 'tim k'
 ----
 100002
-
 

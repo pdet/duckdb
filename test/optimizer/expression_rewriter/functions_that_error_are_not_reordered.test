@@ -21,7 +21,6 @@ and sqrt(a) >= 0;
 ----
 5000
 
-
 statement ok
 CREATE TABLE t2 AS
 SELECT
@@ -33,7 +32,6 @@ FROM range(10000);
 # otherwise xor function will throw an error
 statement ok
 select * from t2 where len(a) = len(b) and ((xor(a::BITSTRING, b::BITSTRING))::VARCHAR)[0] = '0';
-
 
 # fiter out high values with case, then another filter with multiple that will overflow
 # if vcalues are not filtered out
@@ -73,6 +71,4 @@ query I
 select count(*) from t4 where a[1] < 1001 and list_kurtosis(a) is NOT NULL;
 ----
 1000
-
-
 

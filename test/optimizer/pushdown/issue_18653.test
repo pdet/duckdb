@@ -2,8 +2,6 @@
 # description: Performance issue with CROSS JOIN and LATERAL JOIN combined with unnest and json_each. Filter should be pushed down to reduce the joined rows
 # group: [pushdown]
 
-
-
 statement ok
 create table test_table as
 select s.i as id,  [1, 2, 3]::bigint[] as values from generate_series(1, 1000000) as s(i);
@@ -66,7 +64,4 @@ cross join json_each(t.values) as kv(key, value)
 where t.id = 87100;
 ----
 analyzed_plan	<REGEX>:.*DELIM_JOIN.*Filters:.*id=87100.*
-
-
-
 

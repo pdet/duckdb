@@ -2,8 +2,6 @@
 # description: Boundary testing for bignum type
 # group: [bignum]
 
-
-
 # Test All Integers
 query IIIIIIIIII
 select tinyint::varchar::bignum = tinyint::bignum,
@@ -21,7 +19,6 @@ where tinyint is not null;
 ----
 true	true	true	true	true	true	true	true	true	true
 true	true	true	true	true	true	true	true	true	true
-
 
 query IIIIIIIIII
 select tinyint::varchar = tinyint::bignum::varchar ,

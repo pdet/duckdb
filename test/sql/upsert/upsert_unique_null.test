@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_unique_null.test
 # group: [upsert]
 
-
-
 statement ok
 create or replace table tbl (
 	a integer unique,

@@ -2,8 +2,6 @@
 # description: Test subqueries from the paper 'Unnesting Arbitrary Subqueries'
 # group: [subquery]
 
-
-
 statement ok
 CREATE TABLE students(id INTEGER, name VARCHAR, major VARCHAR, year INTEGER)
 

@@ -2,8 +2,6 @@
 # description: Test transactionality of attach
 # group: [attach]
 
-
-
 # straightforward attach and rollback
 statement ok
 BEGIN TRANSACTION

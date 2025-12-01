@@ -2,8 +2,6 @@
 # description: Test semi joins
 # group: [semianti]
 
-
-
 statement ok
 CREATE TABLE t0(c0 VARCHAR);
 
@@ -46,7 +44,6 @@ select * from lineitem l1 where exists (
 ----
 1	1	42
 1	2	43
-
 
 query II
 select c0, EXISTS (select * from t1 where c1 != c0) from t0;

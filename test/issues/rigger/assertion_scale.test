@@ -2,8 +2,6 @@
 # description: SQLancer bug that detected an assertion triggered in type scale
 # group: [rigger]
 
-
-
 statement ok
 BEGIN TRANSACTION;
 
@@ -29,6 +27,4 @@ COMMIT;
 
 statement ok
 SELECT MAX(agg0) FROM (SELECT MAX(v0.c1) AS agg0 FROM v0, t0 WHERE ((((UNICODE('b횐')) IS NOT NULL))AND((- ((0.8179740556303334)*(0.5235330721055326))))) UNION ALL SELECT MAX(v0.c1) AS agg0 FROM v0, t0 WHERE (NOT ((((UNICODE('b횐')) IS NOT NULL))AND((- ((0.8179740556303334)*(0.5235330721055326)))))) UNION ALL SELECT MAX(v0.c1) AS agg0 FROM v0, t0 WHERE ((((((UNICODE('b횐')) IS NOT NULL))AND((- ((0.8179740556303334)*(0.5235330721055326)))))) IS NULL)) as asdf;
-
-
 

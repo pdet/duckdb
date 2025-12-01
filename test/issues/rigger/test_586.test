@@ -2,8 +2,6 @@
 # description: Issue 586
 # group: [rigger]
 
-
-
 # NOACCENT.NOCASE comparison with a special character results in a segmentation fault
 query T
 SELECT ''='Ʇ';

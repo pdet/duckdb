@@ -15,7 +15,6 @@ SELECT DBGEN();
 ----
 tpch
 
-
 statement error
 SELECT * FROM dbgen();
 ----

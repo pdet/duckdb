@@ -2,8 +2,6 @@
 # description: Test transaction ops with intervals
 # group: [types]
 
-
-
 # create table
 statement ok con1
 CREATE TABLE interval (t INTERVAL);

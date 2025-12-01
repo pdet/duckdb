@@ -2,8 +2,6 @@
 # description: Test bignum double
 # group: [bignum]
 
-
-
 query I
 Select 85070591730234614260976917445211069672::BIGNUM ;
 ----
@@ -31,5 +29,4 @@ query I
 select distinct i::uhugeint::varchar == i::uhugeint::bignum::varchar FROM t;
 ----
 true
-
 

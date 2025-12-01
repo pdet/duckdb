@@ -2,8 +2,6 @@
 # description: Test trailing commas
 # group: [parser]
 
-
-
 query I
 SELECT 42,
 ----

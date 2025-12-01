@@ -2,8 +2,6 @@
 # description: Test LATERAL UNNEST
 # group: [lateral]
 
-
-
 mode skip
 
 # FIXME: this causes an internal exception to be thrown

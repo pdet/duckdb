@@ -2,8 +2,6 @@
 # description: Test table star expressions
 # group: [projection]
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER)
 

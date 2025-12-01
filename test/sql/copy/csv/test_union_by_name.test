@@ -2,8 +2,6 @@
 # description: UNION_BY_NAME test
 # group: [csv]
 
-
-
 statement ok
 SET default_null_order='nulls_first';
 
@@ -189,7 +187,6 @@ FROM read_csv_auto('{DATA_DIR}/csv/union-by-name/ubn[12].csv',UNION_BY_NAME=TRUE
 LIMIT 1
 ----
 VARCHAR	BIGINT	BIGINT	TIMESTAMP WITH TIME ZONE
-
 
 # Test ubn[23] timestamp type casting
 query T

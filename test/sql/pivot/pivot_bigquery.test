@@ -6,8 +6,6 @@
 # https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#unpivot_operator
 # pivot
 
-
-
 statement ok
 CREATE TABLE Produce AS
   SELECT 'Kale' as product, 51 as sales, 'Q1' as quarter, 2020 as year UNION ALL

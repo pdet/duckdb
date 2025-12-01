@@ -2,8 +2,6 @@
 # description: Join on large lists
 # group: [inner]
 
-
-
 statement ok
 pragma verify_external
 
@@ -16,5 +14,4 @@ INSERT INTO test SELECT i, case when (i/1000)%2=0 then ARRAY[1::VARCHAR, 1::VARC
 query IIII
 SELECT * FROM test AS t1 LEFT JOIN test AS t2 ON t1.id=t2.id WHERE t1.l!=t2.l or t1.id!=t2.id;
 ----
-
 

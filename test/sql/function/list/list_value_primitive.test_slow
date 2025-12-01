@@ -2,8 +2,6 @@
 # description: Test the list_value function with primitive types
 # group: [list]
 
-
-
 # type casting
 foreach type <integral>
 

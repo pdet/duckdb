@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 COPY (SELECT 42 a) to '__TEST_DIR__/lists.my_file_extension' (FORMAT PARQUET);
 

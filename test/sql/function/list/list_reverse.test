@@ -1,8 +1,6 @@
 # name: test/sql/function/list/list_reverse.test
 # group: [list]
 
-
-
 query I
 SELECT list_reverse(NULL);
 ----
@@ -171,7 +169,6 @@ FROM example ORDER BY length(reverse_arr) DESC;
 [5, 4]
 []
 
-
 # test incorrect syntax
 
 statement error
@@ -198,7 +195,6 @@ SELECT list_reverse([1, NULL, 42, 39, NULL, 58])
 ----
 [58, NULL, 39, 42, NULL, 1]
 
-
 query I
 SELECT list_reverse([1, 42, -39, 58, -1, 18])
 ----
@@ -208,7 +204,6 @@ query I
 SELECT list_reverse(list_reverse([11, -100, 678]))
 ----
 [11, -100, 678]
-
 
 # list column tests
 
@@ -244,7 +239,6 @@ query I
 SELECT ([[1], [1, 2], NULL, [NULL], [], [1, 2, 3]]).list_reverse()
 ----
 [[1, 2, 3], [], [NULL], NULL, [1, 2], [1]]
-
 
 statement ok
 CREATE OR REPLACE TABLE lists AS SELECT range % 4 g, list(range) l FROM range(10000) GROUP BY range % 4;

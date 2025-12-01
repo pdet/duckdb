@@ -2,8 +2,6 @@
 # description: WAL cannot alter table
 # group: [attach]
 
-
-
 statement ok
 ATTACH DATABASE '__TEST_DIR__/wal_crash.db' as db1;
 

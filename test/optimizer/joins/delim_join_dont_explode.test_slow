@@ -17,7 +17,6 @@ insert into  medium_1  (select range::varchar,
                 range + 99,
                 from range(100));
 
-
 statement ok
 create table medium_2 (id integer);
 
@@ -64,6 +63,4 @@ exists(
 order by bt.id
 ----
 physical_plan	<REGEX>:.*HASH_JOIN.*DELIM_SCAN.*SEQ_SCAN.*
-
-
 

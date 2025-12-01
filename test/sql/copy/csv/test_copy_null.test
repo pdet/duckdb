@@ -2,9 +2,6 @@
 # description: Test NULL option of copy statement
 # group: [csv]
 
-
-
-
 # generate CSV file with default delimiter
 # create a table
 statement ok

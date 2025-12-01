@@ -2,8 +2,6 @@
 # description: Test Recursive Common Table Expressions UNION ALL (CTE)
 # group: [cte]
 
-
-
 # simple recursive CTE
 query I
 with recursive t as (select 1 as x union all select x+1 from t where x < 3) select * from t
@@ -92,8 +90,6 @@ NULL
 NULL
 NULL
 NULL
-
-
 
 # recursive CTE with table-producing function
 query I

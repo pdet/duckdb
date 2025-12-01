@@ -2,8 +2,6 @@
 # description: TPC-DS inspired micro benchmarks
 # group: [window]
 
-
-
 statement ok
 BEGIN TRANSACTION
 

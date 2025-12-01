@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_order_coverage.test
 # group: [upsert]
 
-
-
 # Create a table, most columns are indexed on
 statement ok
 create or replace table tbl(

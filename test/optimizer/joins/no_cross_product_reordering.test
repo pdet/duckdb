@@ -16,7 +16,6 @@ explain select * from t1, t2 where a in (select * from t3);
 ----
 physical_plan	<REGEX>:.*CROSS_PRODUCT.*HASH_JOIN.*SEMI.*
 
-
 #An incorrect join plan looks like
 #┌─────────────┴─────────────┐
 #│         PROJECTION        │

@@ -2,8 +2,6 @@
 # description: Read a CSV with enum types
 # group: [csv]
 
-
-
 statement ok
 CREATE TYPE bla AS ENUM ('Y', 'N');
 
@@ -22,7 +20,6 @@ Y
 Y
 N
 NULL
-
 
 query I
 FROM read_csv_auto('{DATA_DIR}/csv/response.csv', types={'column0': 'bla'}, nullstr = 'Null', header = 0);

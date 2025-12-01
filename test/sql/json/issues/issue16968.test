@@ -4,8 +4,6 @@
 
 require json
 
-
-
 query I
 select from_hex('aa')::json;
 ----

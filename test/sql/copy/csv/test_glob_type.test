@@ -2,8 +2,6 @@
 # description: Test globbing files with different types
 # group: [csv]
 
-
-
 query I
 SELECT typeof(bar) FROM '{DATA_DIR}/csv/17451/*.csv' limit 1
 ----

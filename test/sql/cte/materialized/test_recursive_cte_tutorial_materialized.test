@@ -2,8 +2,6 @@
 # description: Test Recursive CTEs from the CyberTec tutorial: https://www.cybertec-postgresql.com/en/recursive-queries-postgresql/
 # group: [materialized]
 
-
-
 statement ok
 CREATE TABLE emp (empno INTEGER PRIMARY KEY,
                   ename VARCHAR,

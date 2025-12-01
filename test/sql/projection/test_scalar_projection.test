@@ -2,8 +2,6 @@
 # description: Test scalar queries
 # group: [projection]
 
-
-
 query I
 SELECT 42
 ----

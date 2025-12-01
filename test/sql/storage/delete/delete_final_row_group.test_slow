@@ -17,7 +17,6 @@ SELECT COUNT(*), SUM(i) FROM integers
 ----
 5000000	12499997500000
 
-
 statement ok
 ALTER TABLE integers ADD COLUMN j INTEGER
 

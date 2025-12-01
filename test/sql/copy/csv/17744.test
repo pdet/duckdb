@@ -2,8 +2,6 @@
 # description: Test for issue #17744
 # group: [csv]
 
-
-
 statement ok
 COPY (
     SELECT
@@ -37,7 +35,6 @@ query II
 SELECT columns, comment FROM sniff_csv('__TEST_DIR__/test.csv', null_padding = true, comment = '#')
 ----
 [{'name': first_column, 'type': VARCHAR}, {'name': second_column, 'type': BIGINT}]	#
-
 
 statement ok
 COPY (

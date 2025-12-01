@@ -2,8 +2,6 @@
 # description: Test pushdown of varchars converted to timestamps
 # group: [expression]
 
-
-
 statement ok
 create or replace table table1 (
     timestamp_str varchar

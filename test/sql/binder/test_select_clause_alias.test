@@ -2,8 +2,6 @@
 # description: Test referencing an alias that exists earlier on in the SELECT clause
 # group: [binder]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

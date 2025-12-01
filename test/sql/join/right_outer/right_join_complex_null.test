@@ -2,8 +2,6 @@
 # description: Test RIGHT OUTER JOIN on complex expression involving NULL
 # group: [right_outer]
 
-
-
 statement ok
 pragma verify_external
 

@@ -10,7 +10,6 @@ COPY (SELECT 42 AS i, 84 AS j) TO '__TEST_DIR__/union_by_name_pushdown1.parquet'
 statement ok
 COPY (SELECT 128 AS j, 33 AS k) TO '__TEST_DIR__/union_by_name_pushdown2.parquet'
 
-
 query III
 SELECT * FROM read_parquet(['__TEST_DIR__/union_by_name_pushdown1.parquet', '__TEST_DIR__/union_by_name_pushdown2.parquet'], union_by_name=True)
 ----

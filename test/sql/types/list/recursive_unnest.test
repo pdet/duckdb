@@ -2,8 +2,6 @@
 # description: Test nested unnests
 # group: [list]
 
-
-
 # recursive unnest
 query I
 SELECT UNNEST([[1, 2, 3]], recursive := true)

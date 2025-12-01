@@ -2,8 +2,6 @@
 # description: Test exponents without decimal points
 # group: [csv]
 
-
-
 query III
 from '{DATA_DIR}/csv/integer_exponent.csv'
 ----

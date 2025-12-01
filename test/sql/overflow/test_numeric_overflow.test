@@ -2,8 +2,6 @@
 # description: Test handling of overflows in float/double
 # group: [overflow]
 
-
-
 query I
 SELECT 1e1000
 ----

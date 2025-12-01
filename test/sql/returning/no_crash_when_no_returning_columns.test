@@ -15,10 +15,8 @@ query I
 SELECT * FROM v0;
 ----
 
-
 statement ok
 INSERT INTO v0 VALUES (1), (2), (3), (4), (0);
-
 
 statement error 
 DELETE from v0 WHERE c1 = 0 RETURNING * EXCLUDE c1;
@@ -29,7 +27,6 @@ query I
 select * from v0 where c1 = 0;
 ----
 0
-
 
 statement error 
 UPDATE v0 SET c1 = 0 WHERE true RETURNING * EXCLUDE c1;

@@ -2,8 +2,6 @@
 # description: IGNORE_ERRORS test
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER);
 
@@ -61,7 +59,6 @@ It was not possible to automatically detect the CSV parsing dialect
 query II
 SELECT * FROM integers AS too_little_columns
 ----
-
 
 statement ok
 DELETE FROM integers;

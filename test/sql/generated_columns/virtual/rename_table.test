@@ -2,8 +2,6 @@
 # description: Test generated columns after renaming a table
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (
 	price INTEGER,

@@ -2,8 +2,6 @@
 # description: Test LATERAL join with empty grouping sets
 # group: [lateral]
 
-
-
 query III
 select x, a, b
 from

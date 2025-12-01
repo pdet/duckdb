@@ -2,8 +2,6 @@
 # description: Test window Common Subexpression Elimination
 # group: [window]
 
-
-
 statement ok
 PRAGMA explain_output = PHYSICAL_ONLY;
 
@@ -60,7 +58,6 @@ query II
 EXPLAIN FROM cse;
 ----
 physical_plan	<!REGEX>:.*sum\(cnt_trace\).*sum\(cnt_trace\).*sum\(cnt_trace\).*
-
 
 statement ok
 CREATE VIEW noncse AS

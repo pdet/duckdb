@@ -14,8 +14,6 @@ insert into t1 values ('a');
 statement ok
 insert into t2 values ('A');
 
-
-
 query I
 select upper(col1)
 from (
@@ -27,7 +25,6 @@ from (
 ) d;
 ----
 A
-
 
 statement ok
 pragma explain_output='physical_only';

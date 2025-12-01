@@ -1,8 +1,6 @@
 # name: test/sql/copy/csv/test_csv_error_message_type.test
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE venue (
     venueid          SMALLINT        NOT NULL /*PRIMARY KEY*/
@@ -65,8 +63,6 @@ CREATE TABLE venue_2 (
     , venuestate     CHAR (2)
     , venueseats     VARCHAR
 );
-
-
 
 # Check our  possible solutions:
 #* Override the type for this column manually by setting the type explicitly, e.g., types={'venueseats': 'VARCHAR'}

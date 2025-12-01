@@ -2,8 +2,6 @@
 # description: Test empty numeric
 # group: [numeric]
 
-
-
 statement ok
 CREATE TABLE numerics(i NUMERIC(), j NUMERIC)
 

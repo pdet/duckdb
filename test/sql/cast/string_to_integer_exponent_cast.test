@@ -2,8 +2,6 @@
 # description: String to Integer casts with Decimals and Exponents
 # group: [cast]
 
-
-
 # Positive numbers (includes unsigned)
 foreach type <integral>
 

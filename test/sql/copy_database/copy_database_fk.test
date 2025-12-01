@@ -2,8 +2,6 @@
 # description: Test COPY DATABASE with foreign key constraint
 # group: [copy_database]
 
-
-
 # FIXME - this is not working right now - we need to correctly take dependencies into account for COPY FROM DATABASE
 mode skip
 

@@ -2,8 +2,6 @@
 # description: Test standard update behavior
 # group: [update]
 
-
-
 # create a table
 statement ok con1
 CREATE TABLE test (a INTEGER);

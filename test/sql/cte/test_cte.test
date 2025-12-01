@@ -2,8 +2,6 @@
 # description: Test Common Table Expressions (CTE)
 # group: [cte]
 
-
-
 statement ok
 create table a(i integer);
 
@@ -45,7 +43,6 @@ with cte1 as (select i as j from a), cte2 as (select ref.j as k from cte1 as ref
 statement error
 with cte1 as (select 42), cte1 as (select 42) select * FROM cte1;
 ----
-
 
 # multiple uses of same CTE
 query II

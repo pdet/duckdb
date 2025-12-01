@@ -2,8 +2,6 @@
 # description: Test auto detection of headers
 # group: [csv]
 
-
-
 query I
 from read_csv('{DATA_DIR}/csv/headers/undetected_type.csv', delim = ';')
 ----

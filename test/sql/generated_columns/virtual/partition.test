@@ -2,8 +2,6 @@
 # description: Using a generated column as a PARTITION BY key
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (
 	price INTEGER,

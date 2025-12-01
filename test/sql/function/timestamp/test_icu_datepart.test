@@ -793,7 +793,6 @@ SELECT DATE_PART(['timezone', 'timezone_hour', 'timezone_minute'], '2021-12-22':
 ----
 {'timezone': -12600, 'timezone_hour': -3, 'timezone_minute': -30}
 
-
 #
 # 13 month Calendars
 #

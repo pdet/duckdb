@@ -2,8 +2,6 @@
 # description: Issue #2965
 # group: [cast]
 
-
-
 foreach datatype TINYINT SMALLINT INTEGER BIGINT HUGEINT
 
 query I

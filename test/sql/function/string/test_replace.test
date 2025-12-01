@@ -2,8 +2,6 @@
 # description: REPLACE test
 # group: [string]
 
-
-
 # test replace on NULLs
 query T
 select REPLACE('This is the main test string', NULL, 'ALT')

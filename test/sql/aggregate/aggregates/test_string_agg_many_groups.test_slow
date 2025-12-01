@@ -2,8 +2,6 @@
 # description: Test STRING_AGG operator with many groups
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_parallelism
 

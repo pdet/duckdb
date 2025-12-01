@@ -2,8 +2,6 @@
 # description: Issue #4370: Random segmentation fault when using list_sort and having
 # group: [list]
 
-
-
 statement ok
 create or replace table test1 as (
     select 'new_customers' as child, 'dim_model_7' as parent

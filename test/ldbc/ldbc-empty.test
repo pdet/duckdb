@@ -160,7 +160,6 @@ create table tag (
    t_tagclassid bigint not null
 );
 
-
 # run the queries
 
 #  Q1. Posting summary
@@ -230,7 +229,6 @@ SELECT co.pl_name AS "country.name"
 HAVING count(*) > 100
  LIMIT 100
 ;
-
 
 # Q3. Tag evolution
 # make_date -> year,month,day
@@ -520,7 +518,6 @@ SELECT p.personid AS "person.id"
  ORDER BY p.score + sum(f.score) DESC, p.personid
  LIMIT 100
 ;
-
 
 mode skip
 #  Q11. Unrelated replies

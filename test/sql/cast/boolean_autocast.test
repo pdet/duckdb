@@ -2,8 +2,6 @@
 # description: Test boolean auto casts
 # group: [cast]
 
-
-
 # boolean <-> integer
 query T
 SELECT true=1;

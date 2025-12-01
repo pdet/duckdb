@@ -2,8 +2,6 @@
 # description: Test overflow in dayofweek
 # group: [sqlsmith]
 
-
-
 statement ok
 CREATE TABLE dates(date DATE);
 

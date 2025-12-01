@@ -2,8 +2,6 @@
 # description: Test ART index with linear insertions and deletes
 # group: [insert_update_delete]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 
@@ -150,7 +148,6 @@ SELECT COUNT(*)+${i} FROM integers WHERE i >= 0;
 256
 
 endloop
-
 
 # BREAKING POINT: [1024]
 loop i 1 1025

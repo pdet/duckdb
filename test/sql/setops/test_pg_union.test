@@ -5,9 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
-
 #--
 #-- UNION (also INTERSECT, EXCEPT)
 #--
@@ -459,13 +456,11 @@ SELECT q1 FROM int8_tbl EXCEPT SELECT q2 FROM int8_tbl ORDER BY q2 LIMIT 1;
 
 mode unskip
 
-
 query I
 SELECT q1 FROM int8_tbl EXCEPT (((SELECT q2 FROM int8_tbl ORDER BY q2 LIMIT 1))) ORDER BY 1;
 ----
 123
 4567890123456789
-
 
 #--
 #-- New syntaxes (7.1) permit new tests

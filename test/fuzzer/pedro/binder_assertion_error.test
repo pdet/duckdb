@@ -2,8 +2,6 @@
 # description: Issue #4978 (16): Binder assertion error
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c0 INT);
 

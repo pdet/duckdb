@@ -2,8 +2,6 @@
 # description: Test COUNT(*) with transaction local changes
 # group: [transactions]
 
-
-
 statement ok
 CREATE TABLE tbl (id INT);
 

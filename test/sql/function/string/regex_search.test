@@ -2,8 +2,6 @@
 # description: regex search test
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE t0 as FROM VALUES('asdf') t(c0);
 

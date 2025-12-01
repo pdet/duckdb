@@ -2,8 +2,6 @@
 # description: Test timestamp try cast
 # group: [timestamp]
 
-
-
 # try cast on gibberish
 query I
 select try_cast('' as timestamp)

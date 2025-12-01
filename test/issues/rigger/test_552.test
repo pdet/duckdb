@@ -2,8 +2,6 @@
 # description: Issue 552
 # group: [rigger]
 
-
-
 # RIGHT JOIN results in Assertion `filter->expressions.size() == 1'
 statement ok
 CREATE TABLE t0(c0 INT);

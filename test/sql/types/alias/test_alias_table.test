@@ -2,8 +2,6 @@
 # description: ALIAS types used in table tests
 # group: [alias]
 
-
-
 statement ok
 CREATE TYPE alias AS VARCHAR;
 

@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_lambda.test
 # group: [upsert]
 
-
-
 statement ok
 CREATE OR REPLACE TABLE foo (
 	pk_col INT PRIMARY KEY,

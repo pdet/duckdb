@@ -4,8 +4,6 @@
 
 require icu
 
-
-
 statement ok
 create table test(id int, name text)
 

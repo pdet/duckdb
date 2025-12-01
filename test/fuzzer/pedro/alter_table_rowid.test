@@ -2,8 +2,6 @@
 # description: Issue #4587: Alter table statements with rowid column
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0(c0 INTEGER, c1 INTEGER);
 

@@ -2,8 +2,6 @@
 # description: Blob slicing test
 # group: [blob]
 
-
-
 query I
 select array_slice(blob '\x00\x01\x02\x03\x04\x05', 2, 4)
 ----

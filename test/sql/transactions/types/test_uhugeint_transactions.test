@@ -2,8 +2,6 @@
 # description: Test transaction ops with uhugeints
 # group: [types]
 
-
-
 # create table
 statement ok con1
 CREATE TABLE uhugeints (h UHUGEINT);

@@ -2,8 +2,6 @@
 # description: Test IN with a single NULL element
 # group: [prepared]
 
-
-
 statement ok
 prepare fromFirst as from (select ? fromV) select ? selectV,*;
 

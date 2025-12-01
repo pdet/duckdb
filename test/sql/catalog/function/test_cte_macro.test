@@ -2,8 +2,6 @@
 # description: Test Macro with CTE
 # group: [function]
 
-
-
 statement ok
 CREATE TABLE integers (a INT)
 

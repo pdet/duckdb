@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 # pandas equivalent:
 # df = pandas.read_parquet('{DATA_DIR}/parquet-testing/bug1588.parquet')
 # df[(df.has_image_link == 1) & ((df.has_image_alt_text == 1) | df.is_image_alt_text_empty == 1)]
@@ -26,7 +24,6 @@ select count(*) from some_bools where val = '1'::bool;
 ----
 1
 
-
 query I
 SELECT has_image_link FROM parquet_scan('{DATA_DIR}/parquet-testing/bug1588.parquet') where has_image_link = 1
 ----
@@ -43,7 +40,6 @@ query I
 SELECT COUNT(*) FROM parquet_scan('{DATA_DIR}/parquet-testing/bug1588.parquet') WHERE has_image_link = '1'::bool
 ----
 3
-
 
 # original query for the lolz
 query I

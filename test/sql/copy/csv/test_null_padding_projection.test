@@ -2,8 +2,6 @@
 # description: Test CSV with nullpading interoping with other options and projection pushdown
 # group: [csv]
 
-
-
 # Test simple null_padding, this will fail because we have a row with more columns that defined
 statement error
 from read_csv('{DATA_DIR}/csv/nullpadding.csv',null_padding=true, columns={
@@ -90,7 +88,6 @@ where  b = 100;
 10	100	1000	10000
 10	100	NULL	NULL
 
-
 query IIIII
 select * from read_csv('{DATA_DIR}/csv/nullpadding.csv',null_padding=true, columns={
 'a': 'INTEGER','b': 'INTEGER','c': 'INTEGER','d': 'INTEGER'}, auto_detect = false, ignore_errors = true, filename = true, strict_mode=True)
@@ -139,7 +136,6 @@ select * from read_csv('{DATA_DIR}/csv/nullpadding.csv',null_padding=true, colum
 10	100	NULL	NULL	NULL	NULL	NULL
 10	100	1000	10000	100000	NULL	NULL
 
-
 # Test Null Padding + Projection + Multiple files running Single Threaded
 statement ok
 set threads =1
@@ -153,7 +149,6 @@ FROM read_csv(main.list_value('{DATA_DIR}/csv/public_daily_sample.csv','{DATA_DI
 statement ok
 create view T_2 as
 SELECT * EXCLUDE (SETTLEMENTDATE, XX, filename, I), CAST(SETTLEMENTDATE AS TIMESTAMP) AS SETTLEMENTDATE, split(filename, '/')[8] AS file, isoyear(CAST(SETTLEMENTDATE AS TIMESTAMP)) AS "YEAR" FROM T
-
 
 query I
 select count(*) from T_2

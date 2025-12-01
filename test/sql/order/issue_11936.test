@@ -4,8 +4,6 @@
 
 require notmusl
 
-
-
 statement ok
 CREATE TABLE test(col1 INT, col2 INT2[][][][][][]);
 

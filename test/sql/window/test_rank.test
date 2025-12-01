@@ -2,8 +2,6 @@
 # description: Test RANK state computations
 # group: [window]
 
-
-
 # Multiple chunks, single partition
 query IIIII
 WITH t AS (

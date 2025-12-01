@@ -2,8 +2,6 @@
 # description: Test schema reference in column reference
 # group: [select]
 
-
-
 statement ok
 CREATE SCHEMA s1;
 

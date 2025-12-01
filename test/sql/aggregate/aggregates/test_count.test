@@ -2,8 +2,6 @@
 # description: Test COUNT operator
 # group: [aggregates]
 
-
-
 # test counts on scalar values
 query IIIII
 SELECT COUNT(*), COUNT(1), COUNT(100), COUNT(NULL), COUNT(DISTINCT 1)

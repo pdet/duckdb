@@ -2,8 +2,6 @@
 # description: Test handling of deep expression trees
 # group: [overflow]
 
-
-
 statement ok
 CREATE TABLE integers(x INTEGER)
 

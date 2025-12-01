@@ -2,8 +2,6 @@
 # description: Test function chaining
 # group: [parser]
 
-
-
 statement ok
 CREATE TABLE varchars(v VARCHAR);
 

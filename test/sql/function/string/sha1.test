@@ -2,8 +2,6 @@
 # description: Test the sha1 function
 # group: [string]
 
-
-
 query II
 SELECT sha1('hello'), sha1(NULL)
 ----

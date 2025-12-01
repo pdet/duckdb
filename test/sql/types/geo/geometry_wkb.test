@@ -64,7 +64,6 @@ insert into t_all_types values
 	(27, 'GEOMETRYCOLLECTION M (POINT M (1 2 4), LINESTRING M (3 4 6, 5 6 8))'),
 	(28, 'GEOMETRYCOLLECTION ZM (POINT ZM (1 2 3 4), LINESTRING ZM (3 4 5 6, 5 6 7 8))');
 
-
 # Now compare the stringified result-set "all_values" with different input encodings
 query I rowsort all_values
 select id, g::VARCHAR from t_all_types order by id;

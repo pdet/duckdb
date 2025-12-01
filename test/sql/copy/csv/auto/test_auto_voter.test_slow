@@ -2,9 +2,6 @@
 # description: Test read_csv_auto from voter tsv
 # group: [auto]
 
-
-
-
 statement ok
 CREATE TABLE voters AS SELECT * FROM read_csv_auto ('{DATA_DIR}/csv/real/voter.tsv');
 
@@ -23,7 +20,6 @@ SELECT COUNT(*) FROM "{DATA_DIR}/csv/real/voter.tsv";
 # FIXME: This should run on windows
 
 require notwindows
-
 
 statement ok
 PRAGMA verify_parallelism

@@ -2,8 +2,6 @@
 # description: Test LIMIT with CTE clauses
 # group: [order]
 
-
-
 query I
 WITH cte AS (SELECT 3) SELECT * FROM range(10000000) LIMIT (SELECT * FROM cte)
 ----

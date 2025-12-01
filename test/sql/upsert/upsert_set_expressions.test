@@ -1,8 +1,6 @@
 # name: test/sql/upsert/upsert_set_expressions.test
 # group: [upsert]
 
-
-
 # Create a table with only 1 non-indexed column
 statement ok
 create or replace table tbl(

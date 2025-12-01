@@ -2,8 +2,6 @@
 # description: Test nullif on maps
 # group: [sqlsmith]
 
-
-
 statement ok
 CREATE TABLE tbl(map MAP(VARCHAR, VARCHAR));;
 

@@ -2,8 +2,6 @@
 # description: Test struct remapping
 # group: [struct]
 
-
-
 # Remapping operations:
 # - rename 'value.i' -> 'value.v1'
 # - rename 'value.j' -> 'value.v2'

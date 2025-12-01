@@ -29,7 +29,6 @@ EXPLAIN SELECT ABS(i) FROM integers ORDER BY i;
 ----
 logical_opt	<!REGEX>:.*abs.*
 
-
 # mix of positive and negative values
 statement ok
 INSERT INTO integers VALUES (-5)
@@ -51,7 +50,6 @@ query II
 EXPLAIN SELECT ABS(i) FROM integers ORDER BY i;
 ----
 logical_opt	<REGEX>:.*abs.*
-
 
 statement ok
 INSERT INTO integers VALUES (-15)

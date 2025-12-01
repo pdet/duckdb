@@ -6,8 +6,6 @@ require tpch
 
 require json
 
-
-
 statement ok
 call dbgen(sf=0.01);
 

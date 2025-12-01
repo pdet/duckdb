@@ -4,8 +4,6 @@
 
 require json
 
-
-
 query I
 SELECT typeof(arg_min({foo: 'bar'}::JSON, 1));
 ----

@@ -2,8 +2,6 @@
 # description: Test for issue 15473
 # group: [csv]
 
-
-
 query I
 select columns from sniff_csv('{DATA_DIR}/csv/15473.csv');
 ----
@@ -28,7 +26,6 @@ query I
 select columns from sniff_csv('{DATA_DIR}/csv/15473_time_timestamp.csv');
 ----
 [{'name': a, 'type': VARCHAR}]
-
 
 # Test over 10000 rows
 statement ok

@@ -2,8 +2,6 @@
 # description: Test ART usage with selection vectors
 # group: [insert_update_delete]
 
-
-
 statement ok
 CREATE TABLE source(i INTEGER)
 

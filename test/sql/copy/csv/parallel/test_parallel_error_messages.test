@@ -2,8 +2,6 @@
 # description: Test auto-detect with plus symbols
 # group: [parallel]
 
-
-
 statement ok
 PRAGMA verify_parallelism
 

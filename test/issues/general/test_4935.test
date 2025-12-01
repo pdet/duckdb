@@ -1,8 +1,6 @@
 # name: test/issues/general/test_4935.test
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t1(a int);
 

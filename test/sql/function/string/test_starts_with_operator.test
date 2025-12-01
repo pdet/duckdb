@@ -2,8 +2,6 @@
 # description: ^@ starts_with operator test
 # group: [string]
 
-
-
 # starts_with of various lengths
 query IIIIIIIIII
 SELECT 'hello world' ^@ 'h',

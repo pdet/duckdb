@@ -66,5 +66,4 @@ PRAGMA tpch(${qnr})
 
 endloop
 
-
 endloop

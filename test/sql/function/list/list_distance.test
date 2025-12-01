@@ -23,7 +23,6 @@ SELECT list_distance(l, [1, 2, 3]) FROM lists;
 7.483315
 NULL
 
-
 statement error
 SELECT list_distance([1, NULL, 3]::${type}[], [1, 2, 3]::${type}[]);
 ----

@@ -2,8 +2,6 @@
 # description: Duplicate alias in USING
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE t1 (c1 INT);
 

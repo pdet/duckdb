@@ -2,8 +2,6 @@
 # description: Test list_reduce function
 # group: [arrow]
 
-
-
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'
 

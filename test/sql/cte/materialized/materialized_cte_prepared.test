@@ -2,8 +2,6 @@
 # description: Test DML statements with materialized Common Table Expressions (CTE)
 # group: [materialized]
 
-
-
 require no_alternative_verify
 
 statement ok

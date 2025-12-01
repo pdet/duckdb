@@ -1,8 +1,6 @@
 # name: test/sql/copy/encryption/different_aes_ciphers.test
 # group: [encryption]
 
-
-
 # We need httpfs to do encrypted writes
 require httpfs
 
@@ -38,7 +36,6 @@ true
 
 endloop
 
-
 # we can create a database with a specific cipher (CTR)
 statement ok
 ATTACH '__TEST_DIR__/encrypted_default_cipher.duckdb' AS encrypted (ENCRYPTION_KEY 'asdf', ENCRYPTION_CIPHER 'CTR');
@@ -72,7 +69,6 @@ statement error
 ATTACH '__TEST_DIR__/encrypted_default_cipher.duckdb' AS encrypted (ENCRYPTION_KEY 'asdf', ENCRYPTION_CIPHER 'GCM');
 ----
 with a different cipher (GCM) than the one used to create it (CTR)
-
 
 # CBC is disabled (for now)
 statement error

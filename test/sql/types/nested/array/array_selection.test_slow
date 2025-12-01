@@ -2,8 +2,6 @@
 # description: Test selecting arrays
 # group: [array]
 
-
-
 statement ok
 CREATE TABLE tbl AS
 SELECT i%2000 sparse_id,

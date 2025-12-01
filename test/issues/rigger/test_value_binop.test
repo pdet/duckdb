@@ -2,8 +2,6 @@
 # description: Test missing value binop that triggers optimiezr bug
 # group: [rigger]
 
-
-
 statement ok
 CREATE TABLE t0(c0 DATE, c1 SMALLINT);
 

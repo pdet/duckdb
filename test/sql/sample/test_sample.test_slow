@@ -2,8 +2,6 @@
 # description: Test SAMPLE keyword
 # group: [sample]
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);
 
@@ -67,7 +65,6 @@ query I
 SELECT COUNT(*) FROM range(2000000) USING SAMPLE 1000100
 ----
 1000100
-
 
 query I
 SELECT COUNT(*) FROM range(2000000) USING SAMPLE 2
@@ -221,7 +218,6 @@ select i from integers using sample (1 rows) repeatable (0);
 query I noresult repeatable_seed_0
 select i from integers using sample (1 rows) repeatable (0);
 ----
-
 
 query I noresult repeatable_seed_1
 select i from integers using sample reservoir(1%) repeatable (0) order by i;

@@ -2,8 +2,6 @@
 # description: Test INNER JOIN with NOT BETWEEN and IS NULL conditions
 # group: [inner]
 
-
-
 statement ok
 CREATE TABLE t1(c0 INT);
 CREATE TABLE t2(c0 INT);

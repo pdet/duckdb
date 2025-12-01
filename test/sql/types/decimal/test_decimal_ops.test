@@ -2,8 +2,6 @@
 # description: Test various operations with decimals
 # group: [decimal]
 
-
-
 statement ok
 CREATE TABLE decimals(d DECIMAL(3, 2));
 

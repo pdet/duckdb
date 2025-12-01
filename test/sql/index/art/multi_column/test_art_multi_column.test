@@ -2,8 +2,6 @@
 # description: Test ART index on table with multiple columns
 # group: [multi_column]
 
-
-
 statement ok
 CREATE TABLE integers(i BIGINT, j INTEGER, k VARCHAR)
 

@@ -2,8 +2,6 @@
 # description: Test unnest semantics with NULL and empty lists
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE people(id INTEGER, name VARCHAR, address VARCHAR[]);
 

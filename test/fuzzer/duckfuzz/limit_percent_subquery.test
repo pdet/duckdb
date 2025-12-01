@@ -2,8 +2,6 @@
 # description: Limit percent subquery
 # group: [duckfuzz]
 
-
-
 statement ok
 create table tbl(i INT);
 

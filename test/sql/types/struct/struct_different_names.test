@@ -2,8 +2,6 @@
 # description: Test inserting structs with different names and unnamed structs
 # group: [struct]
 
-
-
 statement error
 CREATE TABLE wrong AS FROM (VALUES (ROW(3)));
 ----

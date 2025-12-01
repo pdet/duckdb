@@ -2,8 +2,6 @@
 # description: Test string functions with null bytes
 # group: [string]
 
-
-
 query I
 SELECT chr(0)
 ----

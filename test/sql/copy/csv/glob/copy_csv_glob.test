@@ -2,8 +2,6 @@
 # description: Test globbing CSVs
 # group: [glob]
 
-
-
 statement ok
 CREATE TABLE dates(d DATE);
 

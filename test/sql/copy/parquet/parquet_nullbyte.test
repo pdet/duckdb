@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query II
 select * from parquet_scan('{DATA_DIR}/parquet-testing/nullbyte.parquet')
 ----

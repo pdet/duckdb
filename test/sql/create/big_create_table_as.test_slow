@@ -2,8 +2,6 @@
 # description: Test large CREATE TABLE AS statements
 # group: [create]
 
-
-
 query I
 CREATE TABLE integers AS SELECT * FROM range(1000000) tbl(i);
 ----
@@ -18,7 +16,6 @@ query II
 SELECT COUNT(*), SUM(i) FROM integers2
 ----
 1000000	499999500000
-
 
 query I
 SELECT * FROM integers2 LIMIT 5

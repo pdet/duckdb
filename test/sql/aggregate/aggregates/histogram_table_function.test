@@ -4,8 +4,6 @@
 
 require 64bit
 
-
-
 # integers
 statement ok
 create table integers(i int);

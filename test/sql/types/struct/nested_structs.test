@@ -2,8 +2,6 @@
 # description: Test storing nested structs in tables
 # group: [struct]
 
-
-
 statement ok
 CREATE TABLE a(c ROW(i ROW(a INTEGER), j INTEGER));
 

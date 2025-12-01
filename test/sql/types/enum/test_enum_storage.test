@@ -2,8 +2,6 @@
 # description: ENUM types used in table/catalog storage tests
 # group: [enum]
 
-
-
 # load the DB from disk
 load __TEST_DIR__/enum_types.db
 

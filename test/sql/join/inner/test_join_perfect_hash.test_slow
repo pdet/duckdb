@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 foreach type <numeric> DECIMAL(4,0) DECIMAL(8,0) DECIMAL(16,0) DECIMAL(32,0)
 
 statement ok
@@ -20,7 +18,6 @@ CREATE TABLE test2 (b ${type}, c ${type});
 
 statement ok
 INSERT INTO test2 VALUES (1, 10), (2, 20), (3, 30), (1, 10), (2, 20), (3, 30), (1, 10), (2, 20), (3, 30), (1, 10), (2, 20), (3, 30), (1, 10), (2, 20), (3, 30)
-
 
 # simple inner join
 query III
@@ -121,7 +118,6 @@ NULL	4	40
 13	3	30
 13	3	30
 13	3	30
-
 
 statement ok
 CREATE OR REPLACE TABLE test7 (a ${type}, b ${type});

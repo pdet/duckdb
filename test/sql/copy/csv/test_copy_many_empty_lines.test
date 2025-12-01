@@ -2,9 +2,6 @@
 # description: Test copy statement with many empty lines
 # group: [csv]
 
-
-
-
 # CSV file with many empty lines
 # load CSV file into a table
 statement ok

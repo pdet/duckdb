@@ -2,8 +2,6 @@
 # description: Test basic TIME functionality
 # group: [time]
 
-
-
 statement ok
 CREATE TABLE times(i TIME)
 

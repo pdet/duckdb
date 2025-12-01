@@ -2,9 +2,6 @@
 # description: Test read_csv_auto from imdb csv
 # group: [auto]
 
-
-
-
 statement ok
 CREATE TABLE movie_info AS SELECT * FROM read_csv_auto ('{DATA_DIR}/csv/real/imdb_movie_info_escaped.csv');
 
@@ -12,7 +9,6 @@ query I
 SELECT COUNT(*) FROM movie_info;
 ----
 201
-
 
 statement ok
 CREATE TABLE movie_info2 AS SELECT * FROM read_csv_auto ('{DATA_DIR}/csv/real/imdb_movie_info_escaped.csv');

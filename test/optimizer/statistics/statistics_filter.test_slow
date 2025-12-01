@@ -10,8 +10,6 @@ CREATE TABLE integers AS SELECT i::${type} i FROM (VALUES (1), (2), (3)) tbl(i);
 statement ok
 PRAGMA explain_output = OPTIMIZED_ONLY;
 
-
-
 # = filter is out of range
 query II
 EXPLAIN SELECT * FROM integers WHERE i=0;
@@ -104,7 +102,6 @@ query I
 SELECT * FROM integers WHERE i>=4;
 ----
 
-
 query I
 SELECT * FROM integers WHERE i>=3;
 ----
@@ -114,7 +111,6 @@ query I
 SELECT * FROM integers WHERE i<1;
 ----
 
-
 query I
 SELECT * FROM integers WHERE i<2;
 ----
@@ -123,7 +119,6 @@ SELECT * FROM integers WHERE i<2;
 query I
 SELECT * FROM integers WHERE i<=0;
 ----
-
 
 query I
 SELECT * FROM integers WHERE i<=1;
@@ -226,7 +221,6 @@ query I
 SELECT * FROM (SELECT * FROM integers LIMIT 10) integers(i) WHERE i>=4;
 ----
 
-
 query I
 SELECT * FROM (SELECT * FROM integers LIMIT 10) integers(i) WHERE i>=3;
 ----
@@ -236,7 +230,6 @@ query I
 SELECT * FROM (SELECT * FROM integers LIMIT 10) integers(i) WHERE i<1;
 ----
 
-
 query I
 SELECT * FROM (SELECT * FROM integers LIMIT 10) integers(i) WHERE i<2;
 ----
@@ -245,7 +238,6 @@ SELECT * FROM (SELECT * FROM integers LIMIT 10) integers(i) WHERE i<2;
 query I
 SELECT * FROM (SELECT * FROM integers LIMIT 10) integers(i) WHERE i<=0;
 ----
-
 
 query I
 SELECT * FROM (SELECT * FROM integers LIMIT 10) integers(i) WHERE i<=1;

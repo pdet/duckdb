@@ -2,8 +2,6 @@
 # description: Test CSV file without trailing newline
 # group: [csv]
 
-
-
 # no newline at end of file with simple delimiter
 # load CSV file into a table
 statement ok

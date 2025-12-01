@@ -11,8 +11,6 @@ require icu
 
 load __TEST_DIR__/test_samples.db
 
-
-
 statement ok
 create table materialized_range as select * from range(5000000);
 
@@ -61,7 +59,6 @@ select count(*) from duckdb_table_sample('integers_2');
 ----
 2048
 
-
 query II
 select floor(b / 1000000) as interval, count(*) as frequency from duckdb_table_sample('integers_1') group by interval order by all;
 ----
@@ -70,7 +67,6 @@ select floor(b / 1000000) as interval, count(*) as frequency from duckdb_table_s
 2.0	406
 3.0	404
 4.0	377
-
 
 # adding another interval should subtract an equal number from the rest of the intervals
 statement ok
@@ -95,7 +91,6 @@ select count(*) from integers_1;
 ----
 12000000
 
-
 ## about half of the samples should have the pair '-1', 1.
 # on latest storage test its something like 997
 query I
@@ -118,7 +113,6 @@ create view sample_view as select * from duckdb_table_sample('integers_1');
 # update the sample
 statement ok
 insert into integers_1 (select -2, -2 from range(6000000));
-
 
 # 2048 / 3 = 682 (639 is good)
 query I

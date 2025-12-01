@@ -85,7 +85,6 @@ SELECT part_col, value_col, value2_col FROM parquet_scan('__TEST_DIR__/partition
 0	2	6
 0	4	8
 
-
 # a file already exist, throw error
 statement error
 COPY test TO '__TEST_DIR__/partitioned4' (FORMAT PARQUET, PARTITION_BY part_col);

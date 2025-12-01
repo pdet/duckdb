@@ -2,8 +2,6 @@
 # description: Window function timeout
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c0 TIME);
 

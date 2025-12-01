@@ -2,8 +2,6 @@
 # description: Test committing the transaction-local ADD PRIMARY KEY command.
 # group: [add_pk]
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)
 

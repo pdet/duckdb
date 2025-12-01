@@ -121,4 +121,3 @@ SELECT * FROM integers LEFT OUTER JOIN integers2 ON TRUE ORDER BY i
 3	4	1	10
 3	4	2	20
 
-

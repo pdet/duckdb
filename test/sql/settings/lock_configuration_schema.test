@@ -2,8 +2,6 @@
 # description: Test lock configuration and schema changes
 # group: [settings]
 
-
-
 statement ok
 create schema s1;
 

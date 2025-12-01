@@ -2,8 +2,6 @@
 # description: Test union type joins
 # group: [union]
 
-
-
 statement ok
 SET default_null_order='nulls_first';
 
@@ -32,7 +30,6 @@ SELECT id, union_tag(a), a.b, a.c FROM tbl1 UNION SELECT id, union_tag(d), d.e, 
 4		c		NULL	bar
 4		e		2		NULL
 
-
 query IIII
 SELECT id, union_tag(a) as tag, a.b as v1, a.c as v2 FROM tbl1 UNION SELECT id, union_tag(d) as tag, d.e as v1, d.f as v2 FROM tbl2 ORDER BY ALL;
 ----
@@ -51,7 +48,6 @@ SELECT tbl1.a.c, tbl1.id, tbl2.id FROM tbl2 JOIN tbl1 ON tbl1.a.c = tbl2.d.f ORD
 ----
 bar	4	2
 foo	3	1
-
 
 query I
 SELECT t1.id FROM tbl1 as t1 JOIN tbl1 as t2 ON t1.a = t2.a ORDER BY ALL;
@@ -114,7 +110,6 @@ NULL	4	NULL
 2	2	4
 bar	4	2
 foo	3	1
-
 
 # where
 query I

@@ -2,8 +2,6 @@
 # description: Test accessing list elements using a list
 # group: [list]
 
-
-
 query I
 SELECT a[1] FROM (VALUES (LIST_VALUE())) tbl(a)
 ----

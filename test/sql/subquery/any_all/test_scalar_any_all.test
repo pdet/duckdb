@@ -2,8 +2,6 @@
 # description: Test scalar ANY/ALL queries
 # group: [any_all]
 
-
-
 # scalar ANY
 query T
 SELECT 1 = ANY(SELECT 1)

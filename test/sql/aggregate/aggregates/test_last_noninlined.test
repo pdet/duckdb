@@ -2,8 +2,6 @@
 # description: Test LAST with non-inlined strings
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE tbl(a INTEGER, b VARCHAR)
 

@@ -2,8 +2,6 @@
 # description: SQLancer bug that detected a crash with zonemap columns being out of range
 # group: [rigger]
 
-
-
 statement ok
 CREATE TABLE t0(c0 DOUBLE, c1 DOUBLE);
 

@@ -2,8 +2,6 @@
 # description: Test time parsing
 # group: [time]
 
-
-
 query I
 SELECT '14:42:04'::TIME::VARCHAR
 ----

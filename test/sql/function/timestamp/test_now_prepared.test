@@ -2,8 +2,6 @@
 # description: NOW function with prepared statements
 # group: [timestamp]
 
-
-
 statement ok
 CREATE TABLE timestamps(ts TIMESTAMP);
 

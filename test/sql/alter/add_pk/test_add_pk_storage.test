@@ -4,8 +4,6 @@
 
 load __TEST_DIR__/test_add_pk.db
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)
 

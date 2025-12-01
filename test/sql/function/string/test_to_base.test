@@ -2,8 +2,6 @@
 # description: to_base tests
 # group: [string]
 
-
-
 statement error
 SELECT to_base(-10, 2)
 ----
@@ -38,7 +36,6 @@ statement error
 SELECT to_base(10, 2, -10)
 ----
 min_length must be between 0 and 64
-
 
 # Basic checks
 query I
@@ -127,7 +124,6 @@ ORDER BY range
 101001	00101001	29	29	15	15
 101010	00101010	2A	2A	16	16
 
-
 # Check some fib numbers
 statement ok
 CREATE TABLE fib AS SELECT * FROM (VALUES
@@ -186,7 +182,6 @@ SELECT to_base(col0, 2) FROM fib ORDER BY col0;
 100010100101111
 110111111110001
 1011010100100000
-
 
 query I
 SELECT to_base(col0, 16) FROM fib ORDER BY col0;

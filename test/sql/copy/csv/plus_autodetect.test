@@ -2,8 +2,6 @@
 # description: Test auto-detect with plus symbols
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE phone_numbers AS SELECT * FROM read_csv_auto('{DATA_DIR}/csv/phonenumbers.csv')
 

@@ -2,8 +2,6 @@
 # description: BIT tests
 # group: [bit]
 
-
-
 query I
 SELECT ('0101011'::BIT)
 ----

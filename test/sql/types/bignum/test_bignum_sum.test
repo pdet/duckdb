@@ -33,7 +33,6 @@ select (-999999999)::BIGNUM + (-1)::BIGNUM
 ----
 -1000000000
 
-
 query I
 select 9223372036854775808::BIGNUM + (-1)::BIGNUM
 ----
@@ -43,8 +42,6 @@ query I
 select (-1000)::BIGNUM +  (-1000)::BIGNUM
 ----
 -2000
-
-
 
 query I
 SELECT sum(x)::bignum FROM numbers;
@@ -134,8 +131,6 @@ SELECT (-0)::BIGNUM + 0::BIGNUM;
 statement ok
 DROP TABLE bignum_zero;
 
-
-
 # Large positive + small negative
 query I
 SELECT 10000000000000000000::BIGNUM + (-5)::BIGNUM;
@@ -146,7 +141,6 @@ query I
 SELECT (-5)::BIGNUM + 10000000000000000000::BIGNUM;
 ----
 9999999999999999995
-
 
 # Large negative + small positive
 query I
@@ -165,7 +159,6 @@ query I
 SELECT (-18446744073709551615)::BIGNUM + (-1)::BIGNUM;
 ----
 -18446744073709551616
-
 
 # Mixed range aggregation
 statement ok
@@ -224,7 +217,6 @@ SELECT sum(x)::BIGNUM FROM mixed_values;
 
 statement ok
 DROP TABLE mixed_values;
-
 
 # Chained operations
 query I
@@ -288,7 +280,6 @@ statement error
 select bignum + '1'::bignum from test_all_types(use_large_bignum = true) limit 1 offset 1
 ----
 Out of Range Error: Overflow in Bignum Operation. A Bignum can hold max 8388607 data bytes. Current bignum has 8388608 bytes.
-
 
 statement ok
 create table bignum_underflow as select bignum from test_all_types(use_large_bignum = true) limit 1

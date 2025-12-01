@@ -2,8 +2,6 @@
 # description: Test MERGE INTO with multiple different update clauses
 # group: [merge]
 
-
-
 statement ok
 CREATE TABLE Entry(type varchar, number int, text varchar, country VARCHAR, date DATE);
 
@@ -14,7 +12,6 @@ INSERT INTO Entry VALUES
 	('country', NULL, NULL, 'Netherlands', NULL),
 	('date', NULL, NULL, NULL, DATE '2000-01-01');
 
-
 statement ok
 CREATE TABLE NewEntry(type varchar, number int, text varchar, country VARCHAR, date DATE);
 
@@ -24,7 +21,6 @@ INSERT INTO NewEntry VALUES
 	('text', NULL, 'World', NULL, NULL),
 	('country', NULL, NULL, 'Germany', NULL),
 	('date', NULL, NULL, NULL, DATE '2010-01-01');
-
 
 query I
 MERGE INTO Entry USING NewEntry ON Entry.type=NewEntry.type

@@ -2,8 +2,6 @@
 # description: test for list_resize() that should error
 # group: [list]
 
-
-
 statement ok
 prepare q1 as select list_resize(?, ?);
 

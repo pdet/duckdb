@@ -2,8 +2,6 @@
 # description: Issue #4571: Duplicate table name at CTE in INSERT statement
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0(c0 INT);
 

@@ -2,8 +2,6 @@
 # description: Test CSV that is segfaulting
 # group: [csv]
 
-
-
 loop i 0 39
 # We don't really care if these pass or fail, as long as they don't segfault
 

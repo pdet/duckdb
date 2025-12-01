@@ -21,7 +21,6 @@ WHERE key IS NULL
 ----
 c	NULL
 
-
 query II
 select *
 from parquet_scan('{DATA_DIR}/parquet-testing/hive-partitioning/empty_string/*/*.parquet')

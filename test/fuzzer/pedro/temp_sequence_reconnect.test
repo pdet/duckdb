@@ -4,8 +4,6 @@
 
 require skip_reload
 
-
-
 load __TEST_DIR__/temp_sequence_restart
 
 statement ok

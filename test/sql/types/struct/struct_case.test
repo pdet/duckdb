@@ -2,8 +2,6 @@
 # description: Test struct case statement
 # group: [struct]
 
-
-
 # constant case
 query I
 SELECT CASE WHEN 1=1 THEN {'i': 1} ELSE {'i': 2} END

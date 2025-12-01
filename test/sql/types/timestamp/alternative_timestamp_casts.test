@@ -2,8 +2,6 @@
 # description: Test timestamp casts
 # group: [timestamp]
 
-
-
 query I
 SELECT DATE '1992-01-01'::TIMESTAMP_MS
 ----

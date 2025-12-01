@@ -40,7 +40,6 @@ select a, cardinality(m) from (select a,MAP(lsta,lstb) as m from (SELECT list(a)
 6	1
 7	1
 
-
 #What about selection vectors?
 query II
 select a, cardinality(m) from (select a,MAP(lsta,lstb) as m from (SELECT list(a) as lsta, list(b) as lstb, a FROM ints where b < 3 group by a) as lst_tbl) as T ORDER BY ALL
@@ -58,7 +57,6 @@ select cardinality(m) from (select MAP(list_value(1), list_value(2)) from range(
 1
 1
 1
-
 
 # Test dictionary vectors
 query III rowsort

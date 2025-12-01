@@ -2,8 +2,6 @@
 # description: Test Top N Optimization
 # group: [topn]
 
-
-
 statement ok
 CREATE TABLE test (b INTEGER);
 

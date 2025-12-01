@@ -2,8 +2,6 @@
 # description: Test glob **
 # group: [glob]
 
-
-
 # tests without previous directories
 query I
 select count(*) > 0 from glob('**');

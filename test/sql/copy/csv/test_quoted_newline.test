@@ -2,8 +2,6 @@
 # description: Test copy statement with quoted newline
 # group: [csv]
 
-
-
 # CSV file with newlines enclosed by quotes
 statement ok
 CREATE TABLE test (a VARCHAR, b INTEGER);

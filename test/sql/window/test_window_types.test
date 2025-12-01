@@ -2,8 +2,6 @@
 # description: Test window functions with different types
 # group: [window]
 
-
-
 foreach type <numeric>
 
 statement ok

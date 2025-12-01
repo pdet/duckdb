@@ -2,8 +2,6 @@
 # description: Test INSERT OR REPLACE with a unique index.
 # group: [insert_or_replace]
 
-
-
 # Single UNIQUE INDEX
 
 statement ok

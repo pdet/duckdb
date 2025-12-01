@@ -2,8 +2,6 @@
 # description: Test ANY/ALL queries
 # group: [any_all]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER)
 

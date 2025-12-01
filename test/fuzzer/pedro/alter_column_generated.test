@@ -2,8 +2,6 @@
 # description: Issue #4677: heap-buffer-overflow on ALTER statement
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0(c0 AS (1), c1 INT);
 

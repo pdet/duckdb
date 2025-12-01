@@ -2,8 +2,6 @@
 # description: Test struct extract on a macro
 # group: [function]
 
-
-
 statement ok
 CREATE MACRO my_extract(x) AS x.a.b
 

@@ -2,8 +2,6 @@
 # description: Issue 19067 - Cascading Views using CTEs High Memory & CPU
 # group: [general]
 
-
-
 statement ok
 CREATE OR REPLACE VIEW view_1 AS
 SELECT

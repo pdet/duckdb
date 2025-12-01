@@ -2,8 +2,6 @@
 # description: Decimal to string statement verification assertion error
 # group: [afl]
 
-
-
 query I
 SELECT .0
 ----

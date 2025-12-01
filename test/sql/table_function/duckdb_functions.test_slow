@@ -2,8 +2,6 @@
 # description: Test duckdb_functions function
 # group: [table_function]
 
-
-
 statement ok
 SELECT * FROM duckdb_functions();
 

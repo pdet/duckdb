@@ -2,8 +2,6 @@
 # description: Test semi/anti join in combination with USING columns
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 (c01 INT);
 

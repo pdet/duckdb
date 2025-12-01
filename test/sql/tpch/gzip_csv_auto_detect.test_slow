@@ -4,8 +4,6 @@
 
 require tpch
 
-
-
 # write lineitem to lineitem.csv.gz
 statement ok
 CALL dbgen(sf=1);

@@ -16,6 +16,3 @@ explain select * from t_left, (select * from t_right limit 10000) where a = b;
 ----
 logical_opt	<REGEX>:.*SEQ_SCAN.*LIMIT.*SEQ_SCAN.*
 
-
-
-

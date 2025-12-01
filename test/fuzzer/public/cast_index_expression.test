@@ -2,8 +2,6 @@
 # description: Test CREATE INDEX using an index expression that triggers a cast
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 (c01 INT, c02 STRING);
 

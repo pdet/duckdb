@@ -2,8 +2,6 @@
 # description: Test implicit typing of generated columns
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE test (
     foo INTEGER,

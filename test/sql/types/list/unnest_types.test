@@ -2,8 +2,6 @@
 # description: Test unnest with different types
 # group: [list]
 
-
-
 # integers
 foreach type <integral>
 
@@ -72,7 +70,6 @@ statement ok
 drop table a
 
 endloop
-
 
 # intervals
 statement ok

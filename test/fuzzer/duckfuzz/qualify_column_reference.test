@@ -2,8 +2,6 @@
 # description: Qualify column reference
 # group: [duckfuzz]
 
-
-
 statement ok
 create table tbl(c1 int, c2 int);
 

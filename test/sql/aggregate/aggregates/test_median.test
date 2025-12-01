@@ -2,8 +2,6 @@
 # description: Test MEDIAN aggregate
 # group: [aggregates]
 
-
-
 statement ok
 PRAGMA verify_external
 
@@ -98,7 +96,6 @@ query I
 SELECT median(42) FROM quantile
 ----
 42
-
 
 #
 # Validate even number of values for all types.

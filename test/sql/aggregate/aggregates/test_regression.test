@@ -2,8 +2,6 @@
 # description: Test Regression Functions
 # group: [aggregates]
 
-
-
 query I
 select regr_avgx(NULL,NULL)
 ----
@@ -187,7 +185,6 @@ select regr_intercept(1,1)
 ----
 NULL
 
-
 statement error
 select regr_intercept(*)
 ----
@@ -197,7 +194,6 @@ create  table aggr(k int, v decimal(10,2), v2 decimal(10, 2));
 
 statement ok
 insert into aggr values(1, 10, null), (2, 10, 11), (2, 20, 22), (2, 25, null), (2, 30, 35);
-
 
 query II
 select k, regr_avgx(v, v2) from aggr group by k ORDER BY ALL;
@@ -297,7 +293,6 @@ query I
 select regr_intercept(v, v2) from aggr;
 ----
 1.154734
-
 
 # Window Function
 query I rowsort

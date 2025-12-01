@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # this used to error but the json pointer spec says we should be able to extract the root using the empty string
 query I
 select json_extract('{"my_field": "duck"}', '')

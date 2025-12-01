@@ -2,8 +2,6 @@
 # description: Test read CSV function with json type
 # group: [csv]
 
-
-
 require json
 
 statement error

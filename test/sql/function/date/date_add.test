@@ -2,8 +2,6 @@
 # description: Test date_add/date_sub
 # group: [date]
 
-
-
 statement ok
 CREATE TABLE dates(d DATE);
 

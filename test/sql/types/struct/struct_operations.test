@@ -2,8 +2,6 @@
 # description: Test various operations on structs
 # group: [struct]
 
-
-
 statement ok
 CREATE TABLE a(id INTEGER, b ROW(i INTEGER, j INTEGER));
 

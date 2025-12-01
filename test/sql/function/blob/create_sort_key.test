@@ -2,8 +2,6 @@
 # description: Test create_sort_key function
 # group: [blob]
 
-
-
 # test integer types with all modifiers
 statement ok
 CREATE TABLE integers(i INTEGER);
@@ -133,7 +131,6 @@ NULL
 [1]
 []
 
-
 # test struct types
 statement ok
 CREATE TABLE structs(s ROW(i INT, v VARCHAR));
@@ -226,7 +223,6 @@ NULL
 [{'i': 42, 'v': hello}]
 []
 
-
 # test nested lists
 statement ok
 CREATE TABLE nested_lists(s INT[][]);
@@ -271,7 +267,6 @@ NULL
 [[1, 2, 3, 4, 5, 6, 7, 8, 9]]
 [[], []]
 []
-
 
 # test blobs
 statement ok

@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query IIIIIIIIIIIIIIIIIIIIII
 SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/adam_genotypes.parquet')
 ----

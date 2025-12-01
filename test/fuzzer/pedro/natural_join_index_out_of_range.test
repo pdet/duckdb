@@ -2,8 +2,6 @@
 # description: Natural join index out of range
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0(c1 INT);
 

@@ -2,8 +2,6 @@
 # description: Test subqueries with (NOT) IN clause
 # group: [any_all]
 
-
-
 # scalar subquery
 query I
 SELECT 1 AS one WHERE 1 IN (SELECT 1);

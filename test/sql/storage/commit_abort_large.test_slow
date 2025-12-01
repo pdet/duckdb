@@ -8,8 +8,6 @@ load __TEST_DIR__/commit_abort.db
 statement ok
 PRAGMA wal_autocheckpoint='1TB';
 
-
-
 statement ok
 CREATE TABLE test (a INTEGER PRIMARY KEY, b INTEGER, c VARCHAR);
 
@@ -72,8 +70,6 @@ SELECT * FROM test ORDER BY a, b, c
 16	24	blabla
 
 restart
-
-
 
 query III
 SELECT * FROM test ORDER BY a, b, c

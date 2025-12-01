@@ -31,7 +31,6 @@ INSERT INTO tbl SELECT
 UNION ALL SELECT 
     union_value(str := 'hello')::UNION(num INTEGER, str STRING) 
 
-
 query I
 SELECT CASE WHEN union_tag(u) = 'num' THEN u ELSE NULL END AS num FROM tbl;
 ----

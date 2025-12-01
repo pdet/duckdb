@@ -2,8 +2,6 @@
 # description: Test referencing an alias or a function chaining alias
 # group: [binder]
 
-
-
 query II
 SELECT 'test' || ' more testing' AS added, added.substr(5) AS my_substr
 ----

@@ -2,8 +2,6 @@
 # description: Test #15141: order by with no pivot columns
 # group: [pivot]
 
-
-
 statement ok
 create table p (col1 timestamp, col2 int);
 

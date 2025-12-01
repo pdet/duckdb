@@ -2,8 +2,6 @@
 # description: Invalid window function call
 # group: [afl]
 
-
-
 query I
 SELECT count(x) OVER () FROM (SELECT 1) x(x);
 ----

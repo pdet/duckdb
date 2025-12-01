@@ -19,7 +19,6 @@ insert into a values (1);
 statement ok
 insert into b values (1)
 
-
 # other tests
 statement ok
 drop table b;

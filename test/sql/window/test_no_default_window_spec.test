@@ -2,8 +2,6 @@
 # description: Non-default window specs
 # group: [window]
 
-
-
 statement ok
 create table tenk1d(ten int4, four int4)
 

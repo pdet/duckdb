@@ -2,8 +2,6 @@
 # description: Test range joins
 # group: [inner]
 
-
-
 # create tables
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);

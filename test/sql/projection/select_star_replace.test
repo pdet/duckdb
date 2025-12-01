@@ -2,8 +2,6 @@
 # description: SELECT * REPLACE
 # group: [projection]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER, k INTEGER)
 

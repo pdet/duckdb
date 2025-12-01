@@ -2,8 +2,6 @@
 # description: Test ART INTEGER key type
 # group: [types]
 
-
-
 require skip_reload
 
 # BEGIN TYPE INTEGER

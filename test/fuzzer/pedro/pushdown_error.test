@@ -4,8 +4,6 @@
 
 # fuzzer
 
-
-
 load __TEST_DIR__/wal_crash.db
 
 statement ok

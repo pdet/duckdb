@@ -2,8 +2,6 @@
 # description: Test adding a PRIMARY KEY to an invalid table and column.
 # group: [add_pk]
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)
 

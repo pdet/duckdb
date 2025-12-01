@@ -2,8 +2,6 @@
 # description: Test Top-N Window Elimination Rule
 # group: [optimizer]
 
-
-
 statement ok
 PRAGMA explain_output = OPTIMIZED_ONLY;
 

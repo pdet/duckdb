@@ -24,7 +24,6 @@ query IIIIIIIIIIIIIIII
 select * from lineitem qualify l_orderkey<lag(l_orderkey) over ();
 ----
 
-
 loop i 1 9
 
 query I

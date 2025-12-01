@@ -2,8 +2,6 @@
 # description: Test invalidating the constraint with uncommitted changes.
 # group: [add_pk]
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER);
 

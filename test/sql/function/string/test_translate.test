@@ -2,8 +2,6 @@
 # description: TRANSLATE test
 # group: [string]
 
-
-
 # test translate on NULLs
 query T
 select TRANSLATE('This is the main test string', NULL, 'ALT')

@@ -2,8 +2,6 @@
 # description: Test case insensitivity in pivot names
 # group: [pivot]
 
-
-
 statement ok
 CREATE TABLE Cities (Name VARCHAR, id INTEGER);
 INSERT INTO Cities VALUES ('Test', 1);

@@ -38,7 +38,6 @@ statement error
 SELECT * FROM test.v
 ----
 
-
 loop i 0 2
 
 # restart the system

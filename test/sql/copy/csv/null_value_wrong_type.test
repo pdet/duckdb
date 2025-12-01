@@ -2,8 +2,6 @@
 # description: Issue of not properly detecting a type in combination of null values
 # group: [csv]
 
-
-
 query IIIIII
 describe from '{DATA_DIR}/csv/null_mismatch.csv'
 ----

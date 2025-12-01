@@ -2,8 +2,6 @@
 # description: Complex Expressions
 # group: [projection]
 
-
-
 statement ok
 CREATE TABLE exprtest (a INTEGER, b INTEGER)
 

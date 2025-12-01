@@ -2,8 +2,6 @@
 # description: String split test
 # group: [string]
 
-
-
 # test unnesting of null values a bit
 query T
 SELECT string_split(NULL, NULL)
@@ -182,7 +180,6 @@ a
 a
 a
 
-
 query T
 SELECT UNNEST(string_split_regex('a a  a   a', '\s+'))
 ----
@@ -303,7 +300,6 @@ select UNNEST(string_split_regex('1,2,3,4,,6', '(,|)'))
 (empty)
 (empty)
 6
-
 
 query T
 select UNNEST(string_split_regex('1,2,3,4,,6', '(|,)'))

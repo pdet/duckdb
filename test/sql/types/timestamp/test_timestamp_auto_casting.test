@@ -2,8 +2,6 @@
 # description: Test auto-casting of timestamps
 # group: [timestamp]
 
-
-
 statement ok
 CREATE TABLE timestamps(ts_SEC TIMESTAMP_S, ts_MS TIMESTAMP_MS, ts TIMESTAMP, ts_NS TIMESTAMP_NS)
 

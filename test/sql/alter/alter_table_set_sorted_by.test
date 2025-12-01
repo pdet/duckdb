@@ -2,8 +2,6 @@
 # description: Test ALTER TABLE SET SORTED BY
 # group: [alter]
 
-
-
 statement ok
 CREATE TABLE tbl(i INTEGER);
 

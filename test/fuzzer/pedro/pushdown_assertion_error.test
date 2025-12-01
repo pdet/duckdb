@@ -2,8 +2,6 @@
 # description: Use complex types in ALL clause
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t2 (c2 INT);
 

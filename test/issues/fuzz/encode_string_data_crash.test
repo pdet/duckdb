@@ -2,8 +2,6 @@
 # description: Issue #3350: SEGV in duckdb::EncodeStringDataPrefix
 # group: [fuzz]
 
-
-
 statement ok
 CREATE TABLE strings(b REAL, a INTEGER);
 

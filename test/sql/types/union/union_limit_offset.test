@@ -2,8 +2,6 @@
 # description: Test union type limit and offset
 # group: [union]
 
-
-
 statement ok
 CREATE TABLE tbl1 (u UNION(num INT, str VARCHAR));
 

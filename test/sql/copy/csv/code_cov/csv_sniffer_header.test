@@ -2,8 +2,6 @@
 # description: Tests to enforce codecov in csv header sniffing
 # group: [code_cov]
 
-
-
 query I
 SELECT count(*) from read_csv_auto('{DATA_DIR}/csv/header_left_space.csv')
 ----
@@ -20,7 +18,6 @@ bla_1	BIGINT	YES	NULL	NULL	NULL
 b_la	BIGINT	YES	NULL	NULL	NULL
 _	BIGINT	YES	NULL	NULL	NULL
 _3b	BIGINT	YES	NULL	NULL	NULL
-
 
 query III
 FROM read_csv(['{DATA_DIR}/csv/auto/sample.csv','{DATA_DIR}/csv/auto/sample.csv','{DATA_DIR}/csv/auto/sample.csv'])

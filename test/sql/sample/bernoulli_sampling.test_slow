@@ -24,7 +24,6 @@ INSERT INTO output select count(*) as n_rows FROM sampled;
 
 endloop
 
-
 query II
 select min(num_rows) > 0, count(*) FILTER (num_rows = 0) = 0 from output;
 ----
@@ -47,6 +46,4 @@ select id from t1 USING SAMPLE 1% (bernoulli, 5);
 query I nosort result_1
 select id from t1 USING SAMPLE 1% (bernoulli, 5);
 ----
-
-
 

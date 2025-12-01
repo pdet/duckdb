@@ -2,8 +2,6 @@
 # description: regex filter push test
 # group: [string]
 
-
-
 statement ok
 CREATE TABLE regex(s STRING)
 

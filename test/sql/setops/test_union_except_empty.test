@@ -2,8 +2,6 @@
 # description: Test order of UNION statements
 # group: [setops]
 
-
-
 statement ok
 create table t (i int);
 

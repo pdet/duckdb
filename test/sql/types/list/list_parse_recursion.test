@@ -2,8 +2,6 @@
 # description: Test string -> list conversion of very deeply nested lists
 # group: [list]
 
-
-
 statement error
 SELECT REPEAT ( '[{"a":' , 100000 )::INT[]
 ----

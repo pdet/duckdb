@@ -2,8 +2,6 @@
 # description: Windows with EXCLUDE clause
 # group: [window]
 
-
-
 statement ok
 CREATE TABLE tenk1d (
         unique1	        int4,
@@ -164,7 +162,6 @@ NULL	0
 0	3
 0	3
 
-
 # last_value
 query II
 SELECT last_value(four) over (order by four rows between current row
@@ -181,7 +178,6 @@ FROM tenk1d ORDER BY four;
 3	2
 3	3
 NULL	3
-
 
 # nth_value
 query II
@@ -200,8 +196,6 @@ FROM tenk1d ORDER BY four;
 1	3
 1	3
 
-
-
 # IGNORE NULLS
 query III
 SELECT nth_value(col, 3 ignore nulls) over (order by four rows between unbounded preceding                                               
@@ -219,7 +213,6 @@ FROM tenk1d ORDER BY four, col;
 1	3	3
 1	3	3 
 
-
 # IGNORE NULLS with input > STANDARD_VECTOR_SIZE
 query I
 SELECT DISTINCT first_value(col IGNORE NULLS) OVER (ORDER BY i ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING EXCLUDE CURRENT ROW)
@@ -232,7 +225,6 @@ ORDER BY ALL NULLS FIRST;
 ----
 NULL
 1
-
 
 # without ORDER BY: EXCLUDE CURRENT ROW / constant aggregate otherwise
 query II
@@ -250,7 +242,6 @@ FROM tenk1d ORDER BY unique1;
 37	8
 36	9
 
-
 # without ORDER BY: EXCLUDE GROUP / constant aggregate otherwise
 query II
 SELECT sum(unique1) OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING EXCLUDE GROUP), unique1
@@ -266,7 +257,6 @@ NULL	6
 NULL	7
 NULL	8
 NULL	9
-
 
 # without ORDER BY: EXCLUDE TIES / constant aggregate otherwise
 query II
@@ -299,7 +289,6 @@ SELECT DISTINCT j,sum(j) OVER (ORDER BY j ROWS BETWEEN UNBOUNDED PRECEDING AND U
 9	13800
 10	13500
 
-
 # with WHERE clause
 query II
 SELECT i, last_value(i) OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING EXCLUDE CURRENT ROW) FROM generate_series(1,10) AS _(i)
@@ -315,7 +304,6 @@ ORDER BY i;
 7	9
 8	9
 9	8
-
 
 # regression test
 query II
@@ -409,8 +397,6 @@ SELECT unique1, COUNT(*) OVER(ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW E
 ----
 physical_plan	<!REGEX>:.*STREAMING_WINDOW.*
 
-
-
 # PARTITION BY without ORDER BY
 query III
 SELECT unique1, four, sum(unique1) OVER (PARTITION BY four ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING EXCLUDE CURRENT ROW) FROM tenk1d ORDER BY four, unique1;
@@ -441,7 +427,6 @@ SELECT unique1, four, sum(unique1) OVER (PARTITION BY four ROWS BETWEEN UNBOUNDE
 3 	3 	NULL
 7 	3 	NULL
 
-
 # PARTITION BY without ORDER BY
 query III
 SELECT unique1, four, sum(unique1) OVER (PARTITION BY four ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING EXCLUDE TIES) FROM tenk1d ORDER BY four, unique1;
@@ -456,7 +441,6 @@ SELECT unique1, four, sum(unique1) OVER (PARTITION BY four ROWS BETWEEN UNBOUNDE
 6 	2 	6
 3 	3 	3
 7 	3 	7
-
 
 #
 # Custom aggregates (not implemented yet)
@@ -499,7 +483,6 @@ ORDER BY i;
 4 	4
 5 	3
 5 	2
-
 
 ## COUNT(*) and TIES
 query II
@@ -750,7 +733,6 @@ FROM t1;
 2	2	1
 3	1	2
 
-
 # PG test
 query III
 select sum(salary) over (order by enroll_date range between '1 year'::interval preceding and '1 year'::interval following
@@ -871,7 +853,6 @@ select last_value(salary) over(order by salary range between 1000 following and 
 NULL	5000	5200
 NULL	5200	5200
 NULL	5200	6000
-
 
 statement error
 SELECT sum(i) OVER (EXCLUDE CURRENT ROW) FROM generate_series(1,10) AS _(i);

@@ -2,8 +2,6 @@
 # description: list try cast
 # group: [duckfuzz]
 
-
-
 statement ok
 create table integers(i INT[]);
 

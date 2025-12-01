@@ -5,8 +5,6 @@
 
 # Recursive CTEs
 
-
-
 statement ok
 PRAGMA threads=1
 

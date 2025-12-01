@@ -2,8 +2,6 @@
 # description: Type mismatch in regex range filter optimizer
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE v00 ( c01 INTEGER ) ;
 

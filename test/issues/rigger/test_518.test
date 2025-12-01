@@ -2,8 +2,6 @@
 # description: Issue 518
 # group: [rigger]
 
-
-
 # Query using the LN() function does not terminate
 statement ok
 CREATE TABLE t0(c0 INT);

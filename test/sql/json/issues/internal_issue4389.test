@@ -4,8 +4,6 @@
 
 require json
 
-
-
 statement ok
 CREATE TABLE todos (userId UBIGINT, id UBIGINT, title VARCHAR, completed BOOLEAN);
 

@@ -13,7 +13,6 @@ CREATE TABLE lineitem_struct AS SELECT lineitem_normalized AS struct_val FROM li
 statement ok
 CREATE VIEW lineitem AS SELECT UNNEST(struct_val) FROM lineitem_struct;
 
-
 query I
 SELECT
     l_returnflag

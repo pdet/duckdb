@@ -2,8 +2,6 @@
 # description: Test we can round-trip partitioned compressed CSV files
 # group: [csv]
 
-
-
 require no_extension_autoloading "FIXME: Autoloading not working in CSV Value conversion"
 
 statement ok

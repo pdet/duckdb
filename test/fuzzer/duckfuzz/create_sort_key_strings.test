@@ -2,8 +2,6 @@
 # description: create_sort_key with string boundaries
 # group: [duckfuzz]
 
-
-
 statement ok
 CREATE TABLE t2(c38 STRUCT(a INTEGER, b VARCHAR));
 

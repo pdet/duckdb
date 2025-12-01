@@ -37,11 +37,9 @@ query IIIIIII nosort q0
 SELECT * FROM read_parquet('{DATA_DIR}/parquet-testing/enum.parquet', filename=false)
 ----
 
-
 query IIIIIII nosort q0
 SELECT * FROM read_parquet('{DATA_DIR}/parquet-testing/enum.parquet', filename=0)
 ----
-
 
 # cool names work too
 query I

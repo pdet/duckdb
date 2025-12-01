@@ -7,8 +7,6 @@ SET default_null_order='nulls_first';
 
 require parquet
 
-
-
 # we run this twice, once with multi threading and once without
 loop i 0 2
 
@@ -57,7 +55,6 @@ ORDER BY a;
 102	NULL	103
 9223372036854775807	NULL	NULL
 
-
 # without union by name, parquet reader will use the first parquet files's type
 statement error
 SELECT a 
@@ -78,7 +75,6 @@ ORDER BY a;
 100
 102
 9223372036854775807
-
 
 statement error
 SELECT b
@@ -119,7 +115,6 @@ ORDER BY a;
 ----
 NULL	[44]	[45]
 [42]	[43]	NULL
-
 
 query TTT
 SELECT typeof(a),typeof(b),typeof(c)

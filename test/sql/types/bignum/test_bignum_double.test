@@ -2,8 +2,6 @@
 # description: Test bignum double
 # group: [bignum]
 
-
-
 query I
 select '100'::bignum::double
 ----
@@ -23,7 +21,6 @@ query I
 select '340282366920938463463374607431768211455'::bignum::double
 ----
 340282366920938463463374607431768211455
-
 
 query I
 select '-100'::bignum::double

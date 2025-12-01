@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # unary type function
 query T
 select json_type('{"str": 42}')

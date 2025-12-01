@@ -2,8 +2,6 @@
 # description: Update indexed table rows with large row_id ( > 122879) which cross the first segment/row_group.
 # group: [update]
 
-
-
 # create a table
 statement ok
 CREATE TABLE student(id INTEGER, name VARCHAR, PRIMARY KEY(id));
@@ -52,7 +50,6 @@ UPDATE student SET name = 'updator2' WHERE id = 245780
 # rowgroup 1 vector > 0
 statement ok
 UPDATE student SET name = 'updator3' WHERE id = 150881
-
 
 # read again
 # rowgroup 0

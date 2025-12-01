@@ -2,8 +2,6 @@
 # description: Test circular dependency detection
 # group: [virtual]
 
-
-
 statement error
 CREATE TABLE tbl (
 	gcol1 AS (gcol10),

@@ -2,8 +2,6 @@
 # description: Issue #6651 - Crash When Updating after Commit
 # group: [update]
 
-
-
 statement ok
 CREATE TABLE a (b int);
 

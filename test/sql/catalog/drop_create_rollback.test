@@ -2,8 +2,6 @@
 # description: Issue #7274 - crash when recreating table with different case sensitivity but the same name
 # group: [catalog]
 
-
-
 statement ok
 CREATE TABLE t1 (c1 CHAR(5));
 

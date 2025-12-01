@@ -2,8 +2,6 @@
 # description: Test CSVs with a variable date format
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE dates (d DATE);
 

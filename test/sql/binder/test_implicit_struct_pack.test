@@ -2,8 +2,6 @@
 # description: Test implicit struct pack when selecting table alias
 # group: [binder]
 
-
-
 statement ok
 create table test as select range i from range(3)
 

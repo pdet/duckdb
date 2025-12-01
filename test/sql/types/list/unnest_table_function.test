@@ -2,8 +2,6 @@
 # description: Test UNNEST in a table function
 # group: [list]
 
-
-
 # standard usage of unnest
 query I
 SELECT * FROM UNNEST(ARRAY[1, 2, 3]);
@@ -162,7 +160,6 @@ SELECT k, a, b,
 a	[4, 5, 5]	[5, 7]	[5]
 b	[2, 3]	[1, 2, 3, 4]	[2, 3]
 c	[2, 3]	[4]	[]
-
 
 # aliases
 query I

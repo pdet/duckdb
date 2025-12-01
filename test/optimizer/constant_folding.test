@@ -8,7 +8,6 @@ CREATE TABLE test(X BOOLEAN);
 statement ok
 PRAGMA explain_output = OPTIMIZED_ONLY;
 
-
 query I nosort cfold1
 EXPLAIN SELECT 1+1
 ----
@@ -56,5 +55,4 @@ EXPLAIN SELECT CASE WHEN 1 IN (1+1, 2, 3, 4, NULL, 1) THEN (3+4) ELSE 2+2+2 END
 query I nosort cfold6
 EXPLAIN SELECT 7
 ----
-
 

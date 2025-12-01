@@ -4,8 +4,6 @@
 
 require json
 
-
-
 query II
 with cte as (
     select '{"a":1}'::JSON as j

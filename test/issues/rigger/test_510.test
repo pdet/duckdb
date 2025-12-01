@@ -2,8 +2,6 @@
 # description: Issue 510
 # group: [rigger]
 
-
-
 # SIMILAR TO results in an incorrect result
 statement ok
 CREATE TABLE t0(c0 INT);

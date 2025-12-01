@@ -2,8 +2,6 @@
 # description: CSV Writer writes the header as default
 # group: [csv]
 
-
-
 statement ok
 create table t (a integer)
 

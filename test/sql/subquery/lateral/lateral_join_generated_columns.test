@@ -2,8 +2,6 @@
 # description: Test lateral joins with generated columns
 # group: [lateral]
 
-
-
 statement ok
 CREATE TABLE tbl (
 	x INTEGER,

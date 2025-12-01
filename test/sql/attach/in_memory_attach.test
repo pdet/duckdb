@@ -2,8 +2,6 @@
 # description: Test in-memory attach
 # group: [attach]
 
-
-
 statement ok
 ATTACH DATABASE ':memory:' AS new_database;
 

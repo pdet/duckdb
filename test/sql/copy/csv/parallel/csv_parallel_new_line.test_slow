@@ -6,10 +6,7 @@
 statement ok
 PRAGMA verify_parallelism
 
-
-
 loop i 27 100
-
 
 # Test read_csv auto with \n
 query IIII
@@ -57,7 +54,6 @@ select * from read_csv_auto('{DATA_DIR}/csv/auto/multi_column_string_mix_r_n.csv
 1000000	1904	658	p7
 10000000	12845	370	p8
 100000000	15519	785	p9
-
 
 # Test read_csv auto with \r\n
 query IIII

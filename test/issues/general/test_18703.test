@@ -2,8 +2,6 @@
 # description: Issue 18703 - DuckDB Crash with Correlated Aggregation inside a WITH clause
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t0(c0 INT);
 

@@ -39,7 +39,6 @@ FROM VALUES
 ('0058b00000IIEQVAA6','0058b00000IIEQVAA6'),
 ('0058b00000IIEQVAA7','0058b00000IIEQVAA7') t(root_person_id, descendent_person_id);
 
-
 query I
 with opp_stats as (
 	select persons.id from persons

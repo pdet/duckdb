@@ -1,8 +1,6 @@
 # name: test/sql/generated_columns/virtual/select_alias.test
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE tbl (
 	price INTEGER,

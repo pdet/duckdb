@@ -106,4 +106,3 @@ SELECT i, j, parse_path(filename)[-2:] as file FROM parquet_scan(['{DATA_DIR}/pa
 1	a	[glob, t1.parquet]
 1	a	[glob, t1.parquet]
 
-

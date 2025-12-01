@@ -2,8 +2,6 @@
 # description: Test the glob reorder on a file that is mostly null
 # group: [csv]
 
-
-
 statement ok
 create table t1 as select 1 as a,1 as b from range(3);
 

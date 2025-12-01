@@ -1,8 +1,6 @@
 # name: test/sql/error/test_try_expression.test
 # group: [error]
 
-
-
 # --- OPERATOR_CAST ---
 
 query I
@@ -28,7 +26,6 @@ query I
 select TRY(CAST('abc' as INTEGER) IS NULL);
 ----
 NULL
-
 
 # --- OPERATOR_IS_NOT_NULL ---
 

@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # singletons
 query T
 select json_structure('42')

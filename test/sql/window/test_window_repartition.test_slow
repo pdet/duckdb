@@ -2,8 +2,6 @@
 # description: Window reparitioning at scale
 # group: [window]
 
-
-
 statement ok
 PRAGMA threads=10
 

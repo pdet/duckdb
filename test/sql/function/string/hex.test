@@ -2,8 +2,6 @@
 # description: Test the to_hex/from_hex function
 # group: [string]
 
-
-
 query I
 SELECT to_hex('duckdb');
 ----

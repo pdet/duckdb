@@ -2,8 +2,6 @@
 # description: Very complex recursive CTE with several corner cases
 # group: [cte]
 
-
-
 query IIIIIIIII
 SELECT "input".*,
        "result".*

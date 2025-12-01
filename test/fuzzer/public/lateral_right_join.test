@@ -2,8 +2,6 @@
 # description: Lateral join followed by a right join
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE tbl (c01 INT, c02 VARCHAR);
 

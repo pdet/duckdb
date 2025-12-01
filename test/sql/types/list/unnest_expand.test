@@ -2,8 +2,6 @@
 # description: Test expanding structs in UNNEST
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE tbl1 (str VARCHAR, str_list VARCHAR[]);
 

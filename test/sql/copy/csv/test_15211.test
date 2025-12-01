@@ -2,8 +2,6 @@
 # description: Test for issue 15211
 # group: [csv]
 
-
-
 statement ok
 set threads=1
 

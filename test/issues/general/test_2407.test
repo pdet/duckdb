@@ -2,8 +2,6 @@
 # description: Issue 2407: arg_max/arg_min doesn't work properly with DATE
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE test(d DATE, i INTEGER);
 

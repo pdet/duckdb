@@ -2,8 +2,6 @@
 # description: Issue 505
 # group: [rigger]
 
-
-
 # A RIGHT JOIN unexpectedly fetches rows
 statement ok
 CREATE TABLE t0(c0 INT);

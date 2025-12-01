@@ -2,8 +2,6 @@
 # description: Test constant intervals
 # group: [interval]
 
-
-
 # interval constants with different representations
 query I
 SELECT interval 2 days;

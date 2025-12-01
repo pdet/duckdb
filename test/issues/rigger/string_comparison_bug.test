@@ -2,8 +2,6 @@
 # description: SQLancer bug that detected a crash in a string comparison
 # group: [rigger]
 
-
-
 statement ok
 BEGIN TRANSACTION;
 

@@ -1,8 +1,6 @@
 # name: test/sql/types/nested/array/array_simple.test
 # group: [array]
 
-
-
 statement ok
 PRAGMA verify_external
 
@@ -59,7 +57,6 @@ SELECT * FROM t1 ORDER BY 1 ASC;
 [6, NULL]
 [NULL, 3]
 [NULL, NULL]
-
 
 # Aggregates
 statement ok

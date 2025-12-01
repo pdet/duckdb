@@ -2,8 +2,6 @@
 # description: FILTER clause for WINDOW functions
 # group: [window]
 
-
-
 statement ok
 CREATE TABLE testing AS
 	SELECT

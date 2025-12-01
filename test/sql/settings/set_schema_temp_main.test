@@ -1,8 +1,6 @@
 # name: test/sql/settings/set_schema_temp_main.test
 # group: [settings]
 
-
-
 statement error
 CREATE SCHEMA temp.s1;
 ----

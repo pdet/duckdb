@@ -2,8 +2,6 @@
 # description: Test vacuuming leaves.
 # group: [vacuum]
 
-
-
 statement ok
 CREATE TABLE delete_vacuum (id INT);
 

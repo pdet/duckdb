@@ -2,8 +2,6 @@
 # description: Issue #4694: Race condition at HashJoinFinalizeEvent
 # group: [pedro]
 
-
-
 statement ok
 CREATE SEQUENCE t4;
 

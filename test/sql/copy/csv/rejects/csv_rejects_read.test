@@ -132,7 +132,6 @@ SELECT * EXCLUDE (scan_id) FROM reject_errors ORDER BY ALL;
 0	3680	18396	18396	1	num	CAST	B, A	Error when converting column "num". Could not convert string "B" to 'INTEGER'
 0	5680	28396	28396	1	num	CAST	C, A	Error when converting column "num". Could not convert string "C" to 'INTEGER'
 
-
 statement ok
 DROP TABLE reject_errors;
 
@@ -215,14 +214,12 @@ ON L.num = R.num;
 1	A	1	A
 3	C	3	C
 
-
 query IIIIIIII
 SELECT * EXCLUDE (scan_id, file_id) FROM reject_errors ORDER BY ALL;
 ----
 3	15	15	1	num	CAST	X,Y	Error when converting column "num". Could not convert string "X" to 'INTEGER'
 3	15	15	1	num	CAST	X,Y	Error when converting column "num". Could not convert string "X" to 'INTEGER'
 6	27	27	1	num	CAST	X,Y	Error when converting column "num". Could not convert string "X" to 'INTEGER'
-
 
 statement ok
 DROP TABLE reject_errors;
@@ -233,7 +230,6 @@ DROP TABLE reject_scans;
 query IIIII rowsort
 FROM read_csv('{DATA_DIR}/csv/rejects/dr_who.csv', columns={ 'date': 'DATE', 'datetime': 'TIMESTAMPTZ', 'time': 'TIME', 'timestamp': 'TIMESTAMP', 'time_tz': 'TIMETZ' }, store_rejects=true);
 ----
-
 
 query IIIIIIII
 SELECT * EXCLUDE (scan_id, file_id) FROM reject_errors ORDER BY column_name;
@@ -249,7 +245,6 @@ DROP TABLE reject_errors;
 
 statement ok
 DROP TABLE reject_scans;
-
 
 # Test rejects table with comments
 statement ok

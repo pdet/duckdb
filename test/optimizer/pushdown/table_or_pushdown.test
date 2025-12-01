@@ -17,7 +17,6 @@ SELECT * FROM integers WHERE a=1 OR b=2 AND (a>3 OR b<5)
 1	1
 2	2
 
-
 #### test OR filters with AND that triggers a stop early condition
 query II
 EXPLAIN SELECT * FROM integers WHERE a=1 OR a=2 AND (a>3 OR b<5)
@@ -29,7 +28,6 @@ SELECT * FROM integers WHERE a=1 OR a=2 AND (a>3 OR b<5)
 ----
 1	1
 2	2
-
 
 #### test OR filters with AND in the same column
 query II
@@ -77,7 +75,6 @@ SELECT * FROM strings WHERE s>'AAAAAAAAAAAAAAA1'
 AAAAAAAAAAAAAAA11111
 AAAAAAAAAAAAAAA99999
 
-
 #### test only OR filters
 query II
 EXPLAIN SELECT * FROM strings WHERE s>'AAAAAAAAAAAAAAA' OR s<'AAAAAAAAAAAAAAA99999A'
@@ -89,7 +86,6 @@ SELECT * FROM strings WHERE s>'AAAAAAAAAAAAAAA' OR s<'AAAAAAAAAAAAAAA99999A'
 ----
 AAAAAAAAAAAAAAA11111
 AAAAAAAAAAAAAAA99999
-
 
 statement ok
 INSERT INTO strings VALUES ('BBBB'), ('CCCC')
@@ -108,13 +104,11 @@ AAAAAAAAAAAAAAA99999
 BBBB
 CCCC
 
-
 #### Testing not equal
 query II
 EXPLAIN SELECT * FROM strings WHERE s!='BBBB' or s>'BBBB'
 ----
 physical_plan	<REGEX>:.*SEQ_SCAN.*Filters:.*s!=.*'BBBB'.*OR.*s>.*'BBBB'.*
-
 
 query I
 SELECT * FROM strings WHERE s!='BBBB' or s>'BBBB'
@@ -333,7 +327,6 @@ select * from t0 where (NULL OR cast(t0.c1 as bool)) order by all;
 1
 2
 2
-
 
 mode skip
 

@@ -2,8 +2,6 @@
 # description: MonetDB Test: update_with_correlated_subselect.SF-1284791.sql
 # group: [monetdb]
 
-
-
 statement ok
 create table t1284791b (id2 int, val2 varchar(255))
 

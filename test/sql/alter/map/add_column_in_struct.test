@@ -31,7 +31,6 @@ SELECT remap_struct(
 {{'n': 3, 'm': 3}={'i': 1, 'j': 1, 'k': NULL}}
 {{'n': 4, 'm': 4}={'i': 2, 'j': 2, 'k': NULL}}
 
-
 statement ok
 CREATE TABLE test(
 	s MAP(

@@ -44,7 +44,6 @@ FROM sales
 GROUP BY GROUPING SETS ((product_id), (region), ())
 ORDER BY product_id, region, total_amount;
 
-
 statement ok
 set default_collation=c
 
@@ -54,7 +53,6 @@ UNION ALL
 select NULL product_id, NULL region, sum(amount_sold) from sales
 UNION ALL
 select product_id, NULL region, sum(amount_sold) from sales group by product_id order by 1,2;
-
 
 statement ok
 set default_collation=en_us;

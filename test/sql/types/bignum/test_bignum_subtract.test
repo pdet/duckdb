@@ -2,8 +2,6 @@
 # description: Test bignum implicit cast
 # group: [bignum]
 
-
-
 query I
 SELECT -(1::BIGNUM)
 ----

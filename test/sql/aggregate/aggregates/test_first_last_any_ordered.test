@@ -2,8 +2,6 @@
 # description: Test first/last/any_value and ordered aggregates
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, grp INTEGER);
 

@@ -2,8 +2,6 @@
 # description: Test bug from issue 10273
 # group: [csv]
 
-
-
 query IIII
 FROM read_csv('{DATA_DIR}/csv/inconsistencies/inconsistent_columns_3.csv')
 ----
@@ -30,7 +28,6 @@ FROM read_csv('{DATA_DIR}/csv/inconsistencies/inconsistent_columns_3.csv', null_
 1	2	3	4
 1	2	3	4
 1	2	3	4
-
 
 query I
 FROM read_csv('{DATA_DIR}/csv/inconsistencies/inconsistent_columns_6.csv')

@@ -2,8 +2,6 @@
 # description: Floating-point conversion overflow
 # group: [pedro]
 
-
-
 foreach float_type REAL DOUBLE
 
 foreach type UTINYINT USMALLINT UINTEGER UBIGINT

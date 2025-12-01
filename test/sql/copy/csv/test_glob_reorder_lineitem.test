@@ -4,8 +4,6 @@
 
 require tpch
 
-
-
 statement ok
 call dbgen(sf=0.1);
 

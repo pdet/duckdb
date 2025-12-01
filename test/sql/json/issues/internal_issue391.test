@@ -4,8 +4,6 @@
 
 require json
 
-
-
 statement ok
 create table test as select {i: range}::JSON j from range(10)
 

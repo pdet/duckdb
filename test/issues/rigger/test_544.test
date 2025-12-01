@@ -2,8 +2,6 @@
 # description: Issue 544
 # group: [rigger]
 
-
-
 # SELECT on view with text constant in ORDER BY crashes
 statement ok
 CREATE TABLE t0(c0 INT);

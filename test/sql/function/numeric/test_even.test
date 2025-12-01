@@ -15,7 +15,6 @@ select i, even(i + 0.4) from generate_series(-4,4) tbl(i);
 3	4
 4	6
 
-
 query II
 select i, even(i + 0.9) from generate_series(-4,4) tbl(i);
 ----

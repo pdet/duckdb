@@ -2,8 +2,6 @@
 # description: Test printf
 # group: [string]
 
-
-
 # printf without format specifiers
 query TT
 SELECT printf('hello'), printf(NULL)

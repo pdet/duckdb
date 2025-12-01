@@ -2,8 +2,6 @@
 # description: Test SEMI JOIN with USING clause
 # group: [public]
 
-
-
 statement ok
 CREATE TABLE  t0(c0 INT, c1 INT);
 

@@ -8,8 +8,6 @@ require skip_reload
 
 require no_extension_autoloading "FIXME: to be reviewed whether this can be lifted"
 
-
-
 statement ok
 set allow_parser_override_extension=strict_when_supported;
 
@@ -124,13 +122,10 @@ ALTER TABLE t0 DROP COLUMN rowid;
 ----
 Catalog Error: Table with name t0 does not exist!
 
-
 statement error
 ALTER TABLE aliens ADD COLUMN iq_level intelligence;
 ----
 Catalog Error: Table with name aliens does not exist!
-
-
 
 statement error
 ALTER TABLE t0 ALTER c1 TYPE TIMESTAMP;

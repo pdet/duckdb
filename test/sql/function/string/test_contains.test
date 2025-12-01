@@ -2,8 +2,6 @@
 # description: Contains test
 # group: [string]
 
-
-
 # contains of various lengths
 query IIIIIIIIII
 SELECT CONTAINS('hello world', 'h'),
@@ -138,7 +136,6 @@ statement error
 SELECT contains(NULL,NULL) FROM strings
 ----
 Binder Error: Could not choose a best candidate function
-
 
 # Test empty pattern
 query T

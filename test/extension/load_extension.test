@@ -8,8 +8,6 @@ require skip_reload
 
 require allow_unsigned_extensions
 
-
-
 statement error
 LOAD 'asdf';
 ----

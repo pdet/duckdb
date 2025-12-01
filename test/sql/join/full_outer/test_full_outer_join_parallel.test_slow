@@ -2,8 +2,6 @@
 # description: Test full outer join with parallelism
 # group: [full_outer]
 
-
-
 statement ok
 PRAGMA threads=4
 

@@ -27,7 +27,6 @@ query I nosort q0
 SELECT total_blocks FROM pragma_database_size()
 ----
 
-
 loop i 0 100
 
 query III

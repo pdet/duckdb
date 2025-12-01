@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 statement ok
 CREATE TABLE t1 (x INT, y INT);
 
@@ -18,7 +16,6 @@ CREATE TABLE t2 (y INT, z INT);
 
 statement ok
 INSERT INTO t2 VALUES (2, 2), (4, 4);
-
 
 ########## test binding
 query I
@@ -46,7 +43,6 @@ query II
 NULL	5
 1	NULL
 3	NULL
-
 
 # Ambiguous name
 
@@ -108,7 +104,6 @@ NULL	1	1	NULL
 NULL	3	3	NULL
 1	NULL	NULL	NULL
 
-
 query III
 SELECT x, y FROM t1 UNION BY NAME (SELECT y, z FROM t2 INTERSECT SELECT 2, 2 FROM t1 ORDER BY #1) ORDER BY #1;
 ----
@@ -116,14 +111,12 @@ NULL	2	2
 1	1	NULL
 3	3	NULL
 
-
 query III
 (SELECT x, y FROM t1 UNION BY NAME SELECT y, z FROM t2 ORDER BY #1) EXCEPT SELECT NULL, 2, 2 FROM t1 ORDER BY #1;
 ----
 NULL	4	4
 1	1	NULL
 3	3	NULL
-
 
 ########## same name in select list
 

@@ -2,8 +2,6 @@
 # description: Test cardinality function for maps
 # group: [map]
 
-
-
 # Single element on map
 query I
 select m[1] from (select MAP(LIST_VALUE(1, 2, 3, 4),LIST_VALUE(10, 9, 8, 7)) as m) as T
@@ -48,7 +46,6 @@ query I
 select m[2::TINYINT] from (select MAP(LIST_VALUE(1, 2, 3, 4,5),LIST_VALUE(10, 9, 8, 7,11)) as m) as T
 ----
 9
-
 
 # Keys of a MAP have to be unique
 statement error

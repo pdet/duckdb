@@ -2,8 +2,6 @@
 # description: Test for issue #18579
 # group: [csv]
 
-
-
 query IIIIII
 DESCRIBE FROM read_csv('{DATA_DIR}/csv/18579/*.csv', union_by_name = true);
 ----

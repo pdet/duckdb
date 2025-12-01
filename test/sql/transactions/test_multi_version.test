@@ -2,8 +2,6 @@
 # description: Test multiple versions of the same data
 # group: [transactions]
 
-
-
 # initialize the database
 statement ok con1
 CREATE TABLE integers(i INTEGER);

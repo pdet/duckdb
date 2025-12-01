@@ -2,8 +2,6 @@
 # description: Test SQL pivot on an empty table
 # group: [pivot]
 
-
-
 statement ok
 CREATE TABLE Cities(Country VARCHAR, Name VARCHAR, Year INT, Population INT);
 

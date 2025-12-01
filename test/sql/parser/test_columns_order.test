@@ -2,8 +2,6 @@
 # description: Test the columns expression in the ORDER BY
 # group: [parser]
 
-
-
 statement ok
 CREATE TABLE tbl(col1 INTEGER, col2 INTEGER, col3 INTEGER);
 
@@ -52,7 +50,6 @@ FROM tbl UNION FROM tbl ORDER BY COLUMNS('col2|col3') DESC
 1	200	10
 3	200	0
 2	100	20
-
 
 statement error
 SELECT * FROM tbl ORDER BY COLUMNS('xxxx')

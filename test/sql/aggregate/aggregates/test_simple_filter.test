@@ -2,8 +2,6 @@
 # description: Test simple aggregate filtering
 # group: [aggregates]
 
-
-
 query III
 SELECT
     count(*) as total_rows,

@@ -2,26 +2,20 @@
 # description: Tests with ordinality for constant TVFs and non-correlated InOut-functions
 # group: [ordinality]
 
-
-
-
 query II
 SELECT * FROM range(1) WITH ORDINALITY AS _(ordinality);
 ----
 0	1
-
 
 query II
 SELECT o,range FROM range(1) WITH ORDINALITY AS _(range,o);
 ----
 1	0
 
-
 query II
 SELECT col = '{DATA_DIR}/csv/customer.csv' OR col = '{DATA_DIR}\csv\customer.csv', o FROM glob('{DATA_DIR}/csv/customer.csv') with ordinality AS _(col,o);
 ----
 true	1
-
 
 query II
 SELECT my_range, my_ordinality FROM range(3) WITH ORDINALITY AS _(my_range, my_ordinality) ORDER BY my_range,my_ordinality;
@@ -30,7 +24,6 @@ SELECT my_range, my_ordinality FROM range(3) WITH ORDINALITY AS _(my_range, my_o
 1	2
 2	3
 
-
 query II
 SELECT my_series, my_ordinality FROM generate_series(0,3,1) WITH ORDINALITY AS _(my_series,my_ordinality) ORDER BY my_series, my_ordinality;
 ----
@@ -38,7 +31,6 @@ SELECT my_series, my_ordinality FROM generate_series(0,3,1) WITH ORDINALITY AS _
 1	2
 2	3
 3	4
-
 
 query II
 SELECT * FROM repeat('x', 5) WITH ORDINALITY ORDER BY ordinality;
@@ -49,7 +41,6 @@ x	3
 x	4
 x	5
 
-
 query II
 SELECT * FROM repeat('x', 9) WITH ORDINALITY WHERE ordinality >  4 ORDER BY ordinality;
 ----
@@ -59,14 +50,12 @@ x	7
 x	8
 x	9
 
-
 statement ok
 CREATE OR REPLACE VIEW view_ordinality AS
 SELECT r AS range, o AS my_ordinality
 FROM range((select 10)) WITH ORDINALITY AS _(r, o)
 WHERE my_ordinality > 4
 ORDER BY range, my_ordinality;
-
 
 query II
 SELECT range, my_ordinality FROM view_ordinality ORDER BY range, my_ordinality;
@@ -77,7 +66,6 @@ SELECT range, my_ordinality FROM view_ordinality ORDER BY range, my_ordinality;
 7	8
 8	9
 9	10
-
 
 query I
 WITH RECURSIVE ordinalityCTE AS (
@@ -96,7 +84,6 @@ WITH RECURSIVE ordinalityCTE AS (
 4
 5
 
-
 query I
 WITH RECURSIVE ordinalityCTE AS (
     SELECT 1 AS ordinality
@@ -114,7 +101,6 @@ WITH RECURSIVE ordinalityCTE AS (
 4
 5
 
-
 query II
 SELECT * FROM unnest([41,42,43]) WITH ORDINALITY;
 ----
@@ -122,21 +108,16 @@ SELECT * FROM unnest([41,42,43]) WITH ORDINALITY;
 42	2
 43	3
 
-
 query II nosort read_csv_result
 SELECT column00, ordinality FROM read_csv('{DATA_DIR}/csv/customer.csv') WITH ORDINALITY ORDER BY ordinality,column00;
-
 
 query II nosort read_csv_result
 SELECT column00, row_number() OVER () AS ordinality FROM read_csv('{DATA_DIR}/csv/customer.csv') ORDER BY ordinality,column00;
 
-
 require parquet
-
 
 query II nosort parquet_result
 SELECT d,ordinality FROM read_parquet('{DATA_DIR}/parquet-testing/date.parquet') WITH ORDINALITY ORDER BY ordinality,d;
-
 
 query III nosort parquet_result
 SELECT d, row_number() OVER () AS ordinality FROM read_parquet('{DATA_DIR}/parquet-testing/date.parquet') ORDER BY ordinality,d;

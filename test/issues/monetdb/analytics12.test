@@ -2,8 +2,6 @@
 # description: MonetDB Test for grouping sets
 # group: [monetdb]
 
-
-
 statement ok
 START TRANSACTION
 

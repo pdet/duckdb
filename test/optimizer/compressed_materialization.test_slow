@@ -2,8 +2,6 @@
 # description: Compressed materialization test
 # group: [optimizer]
 
-
-
 statement ok
 PRAGMA explain_output = OPTIMIZED_ONLY
 

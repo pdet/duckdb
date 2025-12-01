@@ -2,8 +2,6 @@
 # description: Correctly handle errors in window expressions
 # group: [sqlsmith]
 
-
-
 statement ok
 CREATE TABLE tbl AS SELECT 'thisisastring42' AS r_name;
 

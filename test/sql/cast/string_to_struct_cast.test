@@ -2,8 +2,6 @@
 # description: cast strings into (nested) structs
 # group: [cast]
 
-
-
 #               Basic tests:
 # ---------------------------------------------------
 
@@ -37,8 +35,6 @@ SELECT '{🦆: Quack, 🦤: ....}'::STRUCT(🦆 VARCHAR, 🦤 VARCHAR);
 ----
 {'🦆': Quack, '🦤': ....}
 
-
-
 #               Nested structs
 # ---------------------------------------------------
 query I
@@ -60,7 +56,6 @@ query I
 SELECT CAST('{a:{b:{c:{d:{e:{f:"Hello World"}}}}}}' AS STRUCT(a STRUCT(b STRUCT(c STRUCT(d STRUCT(e STRUCT(f VARCHAR)))))));
 ----
 {'a': {'b': {'c': {'d': {'e': {'f': Hello World}}}}}}
-
 
 #               Cast from table
 # ---------------------------------------------------
@@ -100,7 +95,6 @@ SELECT col::STRUCT(a VARCHAR, b FLOAT, c INT) FROM tbl3;
 {'a': DUCK, 'b': 9.999, 'c': 12}
 {'a': DB, 'b': 1.111, 'c': 21}
 
-
 # ---------------------------------------------------
 statement ok
 CREATE TABLE tbl4(col VARCHAR);
@@ -112,7 +106,6 @@ query I
 SELECT col::STRUCT(a STRUCT(b INT)) FROM tbl4;
 ----
 {'a': {'b': 1}}
-
 
 #               Struct with lists
 # ---------------------------------------------------
@@ -131,8 +124,6 @@ SELECT '{key_A: [[{a: 5, b: 900}, {a:3, b:34}], [{a:2, b: 0}]], key_B: [Hello, W
 ----
 {'key_A': [[{'a': 5, 'b': 900}, {'a': 3, 'b': 34}], [{'a': 2, 'b': 0}]], 'key_B': [Hello, World]}
 
-
-
 #               Unordered casting
 # ---------------------------------------------------
 query I
@@ -150,8 +141,6 @@ SELECT '{key_D: "World Hello", key_B: [Hello, World], key_C : 5000, key_A: [[{a:
 ----
 {'key_A': [[{'a': 5, 'b': 900}, {'a': 3, 'b': 34}], [{'a': 2, 'b': 0}]], 'key_B': [Hello, World], 'key_C': 5000, 'key_D': World Hello}
 
-
-
 #               Quote escaping
 # ---------------------------------------------------
 query I
@@ -168,8 +157,6 @@ query I
 SELECT ($${a:'}', b: "hello world"}$$::STRUCT(a VARCHAR, b VARCHAR));
 ----
 {'a': '}', 'b': hello world}
-
-
 
 #               Test for whitespaces
 # ---------------------------------------------------
@@ -206,7 +193,6 @@ SELECT '{  key_A:     2, key_B: {key_C: hello world    }     X   }'::STRUCT(key_
 ----
 can't be cast to the destination type STRUCT(key_C VARCHAR)
 
-
 #               NULL values
 # ---------------------------------------------------
 
@@ -229,7 +215,6 @@ query I
 SELECT '{a:{c: NULL}, b: NULL, c:{d: "Ducky", e: NULL}}'::STRUCT(a STRUCT(c INT), b VARCHAR, c STRUCT(d VARCHAR, e DOUBLE));
 ----
 {'a': {'c': NULL}, 'b': NULL, 'c': {'d': Ducky, 'e': NULL}}
-
 
 #               Missing values
 # ---------------------------------------------------
@@ -273,7 +258,6 @@ SELECT '{}'::STRUCT(a INT, b VARCHAR);
 ----
 {'a': NULL, 'b': NULL}
 
-
 #               Try Cast
 # ---------------------------------------------------
 query I
@@ -311,7 +295,6 @@ NULL
 {'a': NULL, 'b': 100.0, 'c': 🦆}
 {'a': {'d': NULL}, 'b': 100.0, 'c': 🦆}
 NULL
-
 
 #               Syntax error checking
 # ---------------------------------------------------
@@ -375,8 +358,6 @@ SELECT CAST('{[{]}}' AS STRUCT(a VARCHAR[]));
 ----
 can't be cast to the destination type STRUCT(a VARCHAR[])
 
-
-
 #               Test WHERE clause
 # ---------------------------------------------------
 statement ok
@@ -389,7 +370,6 @@ query I
 SELECT cast(col as STRUCT(a VARCHAR, b INT)).a FROM tbl WHERE cast(col as STRUCT(a VARCHAR, b INT)).b=12;
 ----
 DUCK
-
 
 #               CSV reader
 # ---------------------------------------------------
@@ -462,7 +442,6 @@ SELECT col1::STRUCT(
 ) FROM json_tbl;
 ----
 {'id': 0001, 'type': donut, 'name': Cake, 'ppu': 0.55, 'batters': {'batter': [{'id': 1001, 'type': Regular}, {'id': 1002, 'type': Chocolate}, {'id': 1003, 'type': Blueberry}, {'id': 1004, 'type': 'Devil\'s Food'}]}, 'topping': [{'id': 5001, 'type': None}, {'id': 5002, 'type': Glazed}, {'id': 5005, 'type': Sugar}, {'id': 5007, 'type': Powdered Sugar}, {'id': 5006, 'type': Chocolate with Sprinkles}, {'id': 5003, 'type': Chocolate}, {'id': 5004, 'type': Maple}]}
-
 
 # ---------------------------------------------------
 

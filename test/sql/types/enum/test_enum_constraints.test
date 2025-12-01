@@ -2,8 +2,6 @@
 # description: ENUM tests on table constraints
 # group: [enum]
 
-
-
 # FIXME: dependencies between enums and tables are currently disabled
 mode skip
 
@@ -164,7 +162,6 @@ CREATE TABLE person (
 statement ok
 BEGIN TRANSACTION;
 
-
 statement ok
 ALTER TABLE person ALTER current_mood SET DATA TYPE VARCHAR;
 
@@ -175,7 +172,6 @@ ROLLBACK;
 statement error
 DROP TYPE mood;
 ----
-
 
 #CLEANUP
 statement ok
@@ -193,10 +189,8 @@ CREATE TABLE person (
     current_mood mood
 );
 
-
 statement ok
 BEGIN TRANSACTION;
-
 
 statement ok
 ALTER TABLE person DROP COLUMN current_mood
@@ -262,7 +256,6 @@ DROP TABLE person
 
 statement ok
 DROP TYPE mood
-
 
 # Test Table Multiple Columns Same Type
 

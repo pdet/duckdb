@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 CREATE TABLE table1 (
     name VARCHAR,

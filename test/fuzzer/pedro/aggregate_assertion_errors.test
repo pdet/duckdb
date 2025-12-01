@@ -2,8 +2,6 @@
 # description: Various aggregate assertion errors
 # group: [pedro]
 
-
-
 query I
 SELECT reservoir_quantile(1, 1 ORDER BY 1);
 ----

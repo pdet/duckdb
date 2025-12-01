@@ -2,8 +2,6 @@
 # description: Test replacement scan aliases
 # group: [csv]
 
-
-
 # implicit alias is equal to the file name
 
 statement ok

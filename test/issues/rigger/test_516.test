@@ -2,8 +2,6 @@
 # description: Issue 516
 # group: [rigger]
 
-
-
 # Query with comparison on boolean column results in 'Invalid type: Invalid Type [BOOL]: Invalid type for
 # index'
 statement ok

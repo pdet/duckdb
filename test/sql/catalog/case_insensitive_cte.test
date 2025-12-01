@@ -2,8 +2,6 @@
 # description: Test case insensitive CTE
 # group: [catalog]
 
-
-
 query I
 with cte AS (SELECT 42 "A")
 select a from cte

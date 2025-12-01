@@ -2,8 +2,6 @@
 # description: Test list_where function
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE integers (i int[])
 
@@ -231,7 +229,6 @@ query I
 SELECT LIST_WHERE(ARRAY_VALUE('1', NULL), [TRUE, TRUE, TRUE]);
 ----
 [1, NULL, NULL]
-
 
 query I
 SELECT LIST_WHERE(ARRAY_VALUE('1', NULL), [TRUE, TRUE, FALSE]);

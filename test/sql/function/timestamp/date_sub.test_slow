@@ -2,8 +2,6 @@
 # description: Test the DATESUB function
 # group: [timestamp]
 
-
-
 #
 # DATE
 #
@@ -278,7 +276,6 @@ select DATESUB('minute', '2004-01-31 13:00:00'::TIMESTAMP, '2004-02-01 12:05:00'
 ----
 1385
 
-
 query I
 select DATESUB('second', '2004-01-31 12:00:00'::TIMESTAMP, '2004-02-01 12:00:05'::TIMESTAMP);
 ----
@@ -293,7 +290,6 @@ query I
 select DATESUB('second', '2004-01-31 12:00:05'::TIMESTAMP, '2004-02-01 12:00:00'::TIMESTAMP);
 ----
 86395
-
 
 query I
 select DATESUB('millisecond', '2004-01-31 12:00:00'::TIMESTAMP, '2004-02-01 12:00:00.050'::TIMESTAMP);
@@ -478,7 +474,6 @@ FROM (SELECT '12:52:07.123456'::TIME + INTERVAL (d) HOUR AS startdate FROM range
 1
 
 endloop
-
 
 #
 # NULLs

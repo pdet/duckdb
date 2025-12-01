@@ -60,7 +60,6 @@ SELECT * FROM cte3 LIMIT 4;
 ----
 logical_opt	<REGEX>:.*TOP_N.*
 
-
 statement ok
 create table large_table as select range a from range(100000);
 

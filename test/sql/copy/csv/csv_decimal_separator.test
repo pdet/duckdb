@@ -2,8 +2,6 @@
 # description: Support decimal separators
 # group: [csv]
 
-
-
 # period-separated decimal doesn't parse
 statement error
 CREATE TABLE decimal_separators AS SELECT * FROM read_csv_auto('{DATA_DIR}/csv/decimal_separators/decimal_separators.csv', column_types={'commas': 'double', 'periods': 'double'}, delim=';', decimal_separator=',')
@@ -56,7 +54,6 @@ SELECT typeof(commas), typeof(periods) FROM decimal_separators2 limit 1;
 ----
 DECIMAL(18,3)	VARCHAR
 
-
 # no separator specified => commas get read as varchar
 statement ok
 CREATE TABLE decimal_separators3 AS SELECT * FROM read_csv_auto('{DATA_DIR}/csv/decimal_separators/decimal_separators.csv',  column_types={'periods': 'decimal'}, delim=';')
@@ -69,7 +66,6 @@ SELECT commas, periods FROM decimal_separators3;
 1,53e4	15300.000
 +1,53e4	+15300.000
 -1,53e4	-15300.000
-
 
 # in a comma-delimited file, comma as decimal separator is OK when quoted
 statement ok

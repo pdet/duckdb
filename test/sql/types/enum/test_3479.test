@@ -2,8 +2,6 @@
 # description: Test Enum -> Enum invalid conversion
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
 

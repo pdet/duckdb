@@ -2,8 +2,6 @@
 # description: Lambda expression with macro function chaining
 # group: [binder]
 
-
-
 query I
 with stage as (
       select

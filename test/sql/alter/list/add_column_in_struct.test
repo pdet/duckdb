@@ -17,7 +17,6 @@ SELECT remap_struct(
 [{'i': 1, 'j': 1, 'k': NULL}]
 [{'i': 2, 'j': 2, 'k': NULL}]
 
-
 statement ok
 CREATE TABLE test(s STRUCT(i INTEGER, j INTEGER)[])
 

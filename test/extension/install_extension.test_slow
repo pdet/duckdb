@@ -6,8 +6,6 @@ require notmingw
 
 require skip_reload
 
-
-
 # we need a persistent database because otherwise we are not allowed to restart
 load __TEST_DIR__/dummy_database_for_extension_installation.db
 
@@ -73,7 +71,6 @@ select count(*) from glob('__TEST_DIR__/extension_directory/**/loadable_extensio
 
 # unload again
 restart
-
 
 statement ok
 SET extension_directory=''

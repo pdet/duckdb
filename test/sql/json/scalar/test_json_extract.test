@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # should work within other functions (no conflict with list Lambda functions)
 query T
 SELECT json_structure('{"duck":"goose"}'->'duck');

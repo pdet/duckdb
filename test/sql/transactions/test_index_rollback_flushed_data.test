@@ -2,8 +2,6 @@
 # description: Test that we revert the global storage correctly after a constraint violation
 # group: [transactions]
 
-
-
 statement ok con1
 CREATE TABLE integers(i INTEGER UNIQUE);
 

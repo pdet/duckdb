@@ -2,8 +2,6 @@
 # description: Test the ART index with multiple updates on the same value
 # group: [insert_update_delete]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER)
 

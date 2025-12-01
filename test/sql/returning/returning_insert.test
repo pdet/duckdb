@@ -72,7 +72,6 @@ INSERT INTO table1(a) VALUES (10) RETURNING *;
 ----
 10	-2	-3
 
-
 # returning while insert uses a subquery
 query III
 INSERT INTO table1 (a, b, c) SELECT * from table1 WHERE a = 10 and b=-2 and c=-3 RETURNING *;
@@ -192,7 +191,6 @@ query I
 INSERT INTO table2(a, b) VALUES ('duckdb', 97) RETURNING {'a': a, 'b': b};
 ----
 {'a': duckdb, 'b': 97}
-
 
 ### SEQUENCES
 statement ok

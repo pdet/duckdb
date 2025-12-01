@@ -2,8 +2,6 @@
 # description: Test the chain reaction effect of deleting a column that is a dependency of a generated column
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (
 	price INTEGER,

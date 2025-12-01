@@ -2,8 +2,6 @@
 # description: DATE_PART test
 # group: [timetz]
 
-
-
 statement ok
 CREATE TABLE timetzs(d TIMETZ, s VARCHAR);
 

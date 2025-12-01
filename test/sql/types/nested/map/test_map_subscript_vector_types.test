@@ -2,8 +2,6 @@
 # description: Test cardinality function for maps
 # group: [map]
 
-
-
 # expected result
 query I nosort correct
 SELECT true as equal

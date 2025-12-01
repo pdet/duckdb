@@ -2,8 +2,6 @@
 # description: Test referencing generated columns within generated column expressions
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (
 	price INTEGER,

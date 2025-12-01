@@ -1,8 +1,6 @@
 # name: test/sql/parser/digit_separators.test
 # group: [parser]
 
-
-
 # Simple parse test
 query I
 SELECT 1_2
@@ -47,7 +45,6 @@ statement error
 SELECT '_1_2'::INT
 ----
 Could not convert string '_1_2' to INT32
-
 
 # Cant end with an underscore
 statement error
@@ -98,7 +95,6 @@ statement error
 SELECT '1__2.1__2'::FLOAT
 ----
 Conversion Error: Could not convert string '1__2.1__2' to FLOAT
-
 
 query I
 SELECT '12.1_2'::FLOAT
@@ -226,7 +222,6 @@ SELECT '_12e10::BIGINT' == 12e10::BIGINT
 ----
 Conversion Error: Could not convert string '_12e10::BIGINT' to INT64
 
-
 # Binary notation (trailing, leading and duplicate underscores)
 
 query I
@@ -281,13 +276,11 @@ SELECT '0x0__F_F_F'::INT
 ----
 Conversion Error: Could not convert string '0x0__F_F_F' to INT32
 
-
 # Test decimals keep their width
 query IIII
 SELECT typeof(10.00), typeof(10.0_0), typeof(1_0.00), typeof(1_0.0_0);
 ----
 DECIMAL(4,2)	DECIMAL(4,2)	DECIMAL(4,2)	DECIMAL(4,2)
-
 
 query I
 select 1_2e1_0::FLOAT

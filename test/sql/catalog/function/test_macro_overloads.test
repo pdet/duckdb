@@ -2,8 +2,6 @@
 # description: Test macro overloads
 # group: [function]
 
-
-
 # simple overloaded macro
 statement ok
 CREATE MACRO multi_add
@@ -62,7 +60,6 @@ query I
 SELECT COUNT(*) FROM generate_numbers(1, 2, 2, mult := 5);
 ----
 25
-
 
 # view overloads in duckdb_functions
 query II

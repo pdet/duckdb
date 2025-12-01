@@ -2,7 +2,5 @@
 # description: Left Outer join with non-foldable filter on RHS
 # group: [left_outer]
 
-
-
 statement ok
 select * from range(1) tbl(i) left join range(2) tbl2(j) on (i=j) where j+random()<0;

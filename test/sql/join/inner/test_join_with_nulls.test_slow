@@ -4,8 +4,6 @@
 
 set seed 0.42
 
-
-
 statement ok
 PRAGMA disable_optimizer;
 

@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 # Exception on missing file
 statement error
 SELECT * FROM parquet_scan('does_not_exist')

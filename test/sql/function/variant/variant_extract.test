@@ -1,8 +1,6 @@
 # name: test/sql/function/variant/variant_extract.test
 # group: [variant]
 
-
-
 require json
 
 query I

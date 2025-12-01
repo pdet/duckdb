@@ -2,8 +2,6 @@
 # description: Test errors in binding window functions
 # group: [window]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER)
 

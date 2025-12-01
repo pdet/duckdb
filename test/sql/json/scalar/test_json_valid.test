@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # there was a bug with infinity handling in yyjson, therefore we have these tests
 # it has since been fixed
 query T
@@ -32,7 +30,6 @@ INSERT INTO j1(x)
 query T
 SELECT * FROM j1 WHERE NOT json_valid(x);
 ----
-
 
 query T
 SELECT json_valid('{"a":55,"b":72,}');

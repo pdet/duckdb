@@ -2,8 +2,6 @@
 # description: Test Issue: 4252
 # group: [full_outer]
 
-
-
 statement ok
 CREATE TABLE test (x INT, y INT);
 

@@ -2,8 +2,6 @@
 # description: Test return types of UNPIVOT statement
 # group: [pivot]
 
-
-
 query II
 SELECT column_name, column_type FROM (DESCRIBE unpivot ( select 42) on columns(*))
 ----

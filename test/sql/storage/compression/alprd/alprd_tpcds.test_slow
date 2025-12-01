@@ -749,5 +749,4 @@ DROP TABLE catalog_page;
 statement ok
 DROP TABLE call_center;
 
-
 endloop

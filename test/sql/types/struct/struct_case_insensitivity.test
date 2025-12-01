@@ -2,8 +2,6 @@
 # description: Test struct case insensitivity
 # group: [struct]
 
-
-
 statement ok
 CREATE TABLE tbl AS SELECT ({'HELLO': 3}) col;
 

@@ -2,8 +2,6 @@
 # description: Reference issue in duckdb_constraints with temporary tables
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c1 INT, c0 INT CONSTRAINT k1 REFERENCES t0(c0) UNIQUE);
 

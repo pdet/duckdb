@@ -2,8 +2,6 @@
 # description: Test basic functionality when the provided argument is a column
 # group: [map_from_entries]
 
-
-
 statement ok
 CREATE TABLE t1 (list STRUCT(a INT, b VARCHAR)[]);
 

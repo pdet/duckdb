@@ -22,7 +22,6 @@ SELECT
   END
 FROM range(0, 10000) tbl(i);
 
-
 statement ok
 checkpoint
 

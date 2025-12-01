@@ -7,8 +7,6 @@ require vector_size 2048
 
 load data/storage/views_092.db readonly
 
-
-
 # query the views directly
 query I
 SELECT * FROM v1

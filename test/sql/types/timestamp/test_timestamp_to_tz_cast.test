@@ -4,8 +4,6 @@
 
 require icu
 
-
-
 # Note: this also contains TIMESTAMP_NS
 foreach unit TIMESTAMP TIMESTAMP_NS TIMESTAMP_MS TIMESTAMP_S
 

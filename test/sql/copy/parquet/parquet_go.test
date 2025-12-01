@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query II
 SELECT * FROM '{DATA_DIR}/parquet-testing/parquet_go.parquet'
 ----

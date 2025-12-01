@@ -2,9 +2,6 @@
 # description: Test force_not_null
 # group: [csv]
 
-
-
-
 statement ok
 CREATE TABLE test (col_a INTEGER, col_b VARCHAR(10), col_c VARCHAR(10));
 

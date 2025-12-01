@@ -4,8 +4,6 @@
 
 require json
 
-
-
 query I
 SELECT json_pretty('[1,2,{"a":43,    "g":[true, true]}]') = '[
     1,

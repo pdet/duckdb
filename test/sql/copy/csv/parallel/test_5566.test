@@ -6,8 +6,6 @@
 statement ok
 PRAGMA verify_parallelism
 
-
-
 query I
 select * from read_csv_auto('{DATA_DIR}/csv/auto/test_single_column.csv')
 ----

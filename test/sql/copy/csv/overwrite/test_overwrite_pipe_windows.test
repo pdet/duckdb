@@ -2,8 +2,6 @@
 # description: Test overwrite to pipe on windows systems
 # group: [overwrite]
 
-
-
 require windows
 
 require notmingw

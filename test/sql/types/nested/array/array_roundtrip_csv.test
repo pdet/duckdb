@@ -4,8 +4,6 @@
 statement ok
 PRAGMA verify_external
 
-
-
 statement ok
 CREATE OR REPLACE TABLE arrays2 (a INTEGER[3])
 

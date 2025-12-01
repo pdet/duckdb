@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 SET home_directory='__TEST_DIR__'
 

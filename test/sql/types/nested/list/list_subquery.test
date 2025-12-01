@@ -2,8 +2,6 @@
 # description: Test lists in basic subqueries
 # group: [list]
 
-
-
 query I
 SELECT (SELECT [1, 2])
 ----

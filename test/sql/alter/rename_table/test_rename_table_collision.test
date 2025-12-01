@@ -58,7 +58,6 @@ statement error con1
 SELECT * FROM t1
 ----
 
-
 # Now we're going to do a rollback instead of a commit
 
 statement ok con2

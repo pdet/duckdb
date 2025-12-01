@@ -2,8 +2,6 @@
 # description: Test unsigned verify
 # group: [unsigned]
 
-
-
 query I
 select []::uint16[]
 ----

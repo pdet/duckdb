@@ -2,8 +2,6 @@
 # description: Test expressions with transitive filters
 # group: [filter]
 
-
-
 # Test various transitive filters with simple constant comparisons followed by non-scalar comparisons
 # The main point here is to check that the optimizer handles all these cases correctly
 
@@ -136,7 +134,6 @@ query II
 SELECT * FROM vals1 WHERE i<=0 AND j<i
 ----
 0	-1
-
 
 #################################################################################################
 # Non-scalar comparisons followed by simple constant comparisons

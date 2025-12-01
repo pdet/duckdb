@@ -2,8 +2,6 @@
 # description: Ensure ORDER BY ... NULLS FIRST LIMIT uses TopN path
 # group: [topn]
 
-
-
 statement ok
 CREATE TABLE topn_nulls(v INTEGER)
 

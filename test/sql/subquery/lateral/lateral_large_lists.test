@@ -2,8 +2,6 @@
 # description: Test LATERAL joins with large arrays (inspired by #3593 but with a lateral join)
 # group: [lateral]
 
-
-
 query I
 SELECT total_seats
 FROM (

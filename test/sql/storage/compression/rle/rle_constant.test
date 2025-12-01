@@ -50,7 +50,6 @@ INSERT INTO test select 8 from range(512)
 statement ok
 checkpoint;
 
-
 # Some of them produce constant vectors, but not all
 query I
 select distinct on (types) vector_type(a) as types from test order by all;

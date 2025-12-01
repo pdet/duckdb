@@ -39,7 +39,6 @@ overri
 ----
 Parser Error: syntax error at or near "overri"
 
-
 query I
 SELECT 1;
 ----

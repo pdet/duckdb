@@ -2,8 +2,6 @@
 # description: Test window clauses and overrides
 # group: [window]
 
-
-
 statement ok
 create table integers as select range i from range(0,16);
 

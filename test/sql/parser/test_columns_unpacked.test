@@ -1,8 +1,6 @@
 # name: test/sql/parser/test_columns_unpacked.test
 # group: [parser]
 
-
-
 query I
 select COALESCE(*COLUMNS(*)) from (select NULL, 2, 3) t(a, b, c);
 ----
@@ -200,7 +198,6 @@ select [(UNPACK(a + COLUMNS(['a', 'b'])))] from integers
 ----
 [42, 63]
 [2674, 8668]
-
 
 # UNPACK operator nested inside another UNPACK operator
 statement error

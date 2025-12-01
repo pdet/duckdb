@@ -2,8 +2,6 @@
 # description: Test jaro and jaro_winkler function
 # group: [string]
 
-
-
 query T
 select jaro_winkler_similarity('CRATE', 'TRACE')
 ----

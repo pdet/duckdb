@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 SET storage_compatibility_version='v1.1.0'
 

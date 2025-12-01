@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 statement ok
 PRAGMA verify_external
 
@@ -46,7 +44,6 @@ SELECT quantile_disc(col, [-.25, -.5, -.75])
 FROM VALUES (11000), (3100), (2900), (2800), (2600), (2500) AS tab(col);
 ----
 [3100, 2900, 2600]
-
 
 # VARCHAR. Remember, this is dictionary ordering, not numeric ordering!
 query I

@@ -15,7 +15,6 @@ CREATE TABLE right_table (a INTEGER, b INTEGER);
 statement ok
 INSERT INTO right_table select 41, range as b from range(375);
 
-
 query II
 EXPLAIN ANALYZE SELECT * FROM left_table SEMI JOIN right_table ON left_table.a = right_table.a;
 ----
@@ -38,7 +37,6 @@ query II
 explain analyze SELECT * FROM left_table SEMI JOIN (SELECT a as foo from right_table where b > 1) buzz ON left_table.a = buzz.foo
 ----
 analyzed_plan	<REGEX>:.*RIGHT_SEMI.*
-
 
 statement ok
 INSERT INTO left_table VALUES (43, 1, 5), (43, 1, 5), (43, 1, 5), (43, 1, 5);
@@ -86,20 +84,17 @@ EXPLAIN ANALYZE SELECT * FROM left_table SEMI JOIN right_table ON (left_table.a 
 ----
 analyzed_plan	<!REGEX>:.*RIGHT_SEMI.*
 
-
 # range joins do *not* flip
 query II
 EXPLAIN ANALYZE SELECT * FROM left_table SEMI JOIN right_table ON (left_table.a > right_table.a);
 ----
 analyzed_plan	<!REGEX>:.*RIGHT_SEMI.*
 
-
 # complex condition resulting in an any join DOES *NOT* flip
 query II
 explain analyze SELECT * FROM left_table SEMI JOIN right_table ON (left_table.a + right_table.a = 85 OR left_table.a + right_table.b = 84) order by left_table.a, left_table.c;
 ----
 analyzed_plan	<!REGEX>:.*RIGHT_SEMI.*
-
 
 statement ok
 INSERT INTO right_table VALUES (1, 42), (1, 42);

@@ -2,8 +2,6 @@
 # description: Test csv dialect detection
 # group: [auto]
 
-
-
 statement ok 
 PRAGMA verify_parallelism
 
@@ -292,7 +290,6 @@ text3
 
 statement ok
 DROP TABLE test;
-
 
 # CSV file with trailing empty lines 
 statement ok

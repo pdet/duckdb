@@ -8,8 +8,6 @@ require notmingw
 
 require allow_unsigned_extensions
 
-
-
 statement ok
 LOAD '__BUILD_DIRECTORY__/test/extension/loadable_extension_demo.duckdb_extension';
 

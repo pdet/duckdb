@@ -45,7 +45,6 @@ SELECT gen_random_uuid() FROM uuids;
 SELECT uuidv4() FROM uuids;
 SELECT uuidv7() FROM uuids;
 
-
 # UUID v4 follows `XXXXXXXX-XXXX-4XXX-XXXX-XXXXXXXXXXXX` format
 query I
 SELECT DISTINCT substring(uuid()::varchar, 15, 1) FROM range(100);

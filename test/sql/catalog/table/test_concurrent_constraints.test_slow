@@ -4,7 +4,6 @@
 statement ok
 CREATE TABLE tbl_constraints(pk INT PRIMARY KEY, u INT UNIQUE, s INT CHECK (s > 42), d INT CHECK (d + 1 < 42));
 
-
 concurrentloop threadid 0 100
 
 statement ok

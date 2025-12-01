@@ -2,8 +2,6 @@
 # description: Test explain analyze
 # group: [explain]
 
-
-
 statement ok
 CREATE TABLE integers AS SELECT * FROM range(100) tbl(i);
 

@@ -2,8 +2,6 @@
 # description: Test unpivot with unaligned columns
 # group: [pivot]
 
-
-
 statement ok
 CREATE TABLE test(id BIGINT, metric_1 VARCHAR, value_x VARCHAR, metric_2 VARCHAR, value_q VARCHAR, metric_3 VARCHAR, value_j VARCHAR);;
 

@@ -23,7 +23,6 @@ SELECT array_distance(l, [1, 2, 3]::${type}[3]) FROM arrays;
 7.483315
 NULL
 
-
 statement error
 SELECT array_distance([1, NULL, 3]::${type}[3], [1, 2, 3]::${type}[3]);
 ----
@@ -38,6 +37,5 @@ statement error
 SELECT array_distance([1, 2, 3]::${type}[3], [1, 2, 3, 4]::${type}[4]);
 ----
 array_distance: Array arguments must be of the same size
-
 
 endloop

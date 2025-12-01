@@ -2,8 +2,6 @@
 # description: Test sampling of larger relations
 # group: [sample]
 
-
-
 # sample on a larger data set
 query I
 SELECT COUNT(*) FROM range(10000) USING SAMPLE 5

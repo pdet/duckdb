@@ -2,8 +2,6 @@
 # description: Test Time With Time Zone
 # group: [time]
 
-
-
 statement ok
 CREATE TABLE timetzs (ttz TIMETZ);
 

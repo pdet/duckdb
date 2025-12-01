@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query I
 SELECT * FROM '{DATA_DIR}/parquet-testing/aws2.parquet'
 ----

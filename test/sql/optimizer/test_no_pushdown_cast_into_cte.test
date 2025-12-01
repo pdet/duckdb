@@ -23,7 +23,6 @@ WHERE  a < b;
 1	4
 3	8
 
-
 # check filter is above projection that casts the varchar to int
 query II
 EXPLAIN WITH t(a, b) AS (
@@ -42,7 +41,6 @@ WHERE  a < b;
 ----
 logical_opt	<REGEX>:.*FILTER.*CAST\(a AS INTEGER.*<.*b AS INTEGER\).*PROJECTION.*FILTER.*position.*
 
-
 # INT can always be cast to varchar, so the filter a[1] = '1'
 # can be pushed down
 query II
@@ -58,7 +56,6 @@ with t(a, b) as  (
 ----
 1	2
 
-
 # we should not see two filters, since the filter can be pushed to just above the column data scan
 query II
 explain with t(a, b) as  (
@@ -72,7 +69,6 @@ explain with t(a, b) as  (
 ) select a, b from t where a[1] = '1';
 ----
 logical_opt	<!REGEX>:.*FILTER.*PROJECTION.*FILTER.*
-
 
 statement ok
 create or replace table mytablename2 as
@@ -91,7 +87,6 @@ from (values
     ('xxx3')
 ) t(mycolname),
 range(4300) b(someothercolname)
-
 
 query I
 select

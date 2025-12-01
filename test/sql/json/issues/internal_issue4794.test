@@ -4,8 +4,6 @@
 
 require json
 
-
-
 statement error
 FROM read_json('{DATA_DIR}/json/format_string_key.json');
 ----

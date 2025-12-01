@@ -4,7 +4,5 @@
 
 require json
 
-
-
 statement ok
 select * from read_json('{DATA_DIR}/json/internal_2732.json', map_inference_threshold=0);

@@ -2,8 +2,6 @@
 # description: Test correctly reserving the child vector size in the presence of NULL.
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE struct_data(str STRUCT(val VARCHAR)[]);
 

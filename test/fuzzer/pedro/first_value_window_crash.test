@@ -2,8 +2,6 @@
 # description: first_value window crash
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t1 (c0 INT);
 

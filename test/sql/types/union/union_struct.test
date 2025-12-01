@@ -60,7 +60,6 @@ SELECT * FROM tbl1 as l JOIN tbl1 as r ON l.union_struct.str = r.union_struct.ob
 ----
 key2	{'k': key2, 'v': NULL}
 
-
 # Struct with union
 statement ok
 CREATE TABLE tbl2 (struct_union STRUCT(str VARCHAR, alt UNION(k VARCHAR, v INT)))

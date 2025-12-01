@@ -2,8 +2,6 @@
 # description: ALTER TYPE large with mix of NULLs and non-nulls
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t1 (c0 USMALLINT);
 

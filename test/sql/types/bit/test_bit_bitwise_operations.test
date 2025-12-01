@@ -2,8 +2,6 @@
 # description: Test bitwise operations of bit string type
 # group: [bit]
 
-
-
 statement ok
 CREATE TABLE bits (b bit);
 

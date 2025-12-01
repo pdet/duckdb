@@ -2,8 +2,6 @@
 # description: Repeat row with NULL argument
 # group: [duckfuzz]
 
-
-
 statement error
 FROM repeat_row(NULL)
 ----

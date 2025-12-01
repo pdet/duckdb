@@ -2,8 +2,6 @@
 # description: Test Top N Optimization
 # group: [topn]
 
-
-
 statement ok
 CREATE TABLE test AS SELECT i, i + 1 AS j, i + 2 AS k, -i AS l FROM range(10) t(i);
 

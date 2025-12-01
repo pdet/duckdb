@@ -2,8 +2,6 @@
 # description: Test correlated EXISTS with nested derived table containing same table name
 # group: [exists]
 
-
-
 statement ok
 CREATE TABLE t0(c2 INT);
 

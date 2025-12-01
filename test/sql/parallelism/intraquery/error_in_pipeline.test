@@ -2,8 +2,6 @@
 # description: Test errors happening in pipelines
 # group: [intraquery]
 
-
-
 statement ok
 PRAGMA threads=16
 

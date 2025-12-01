@@ -2,8 +2,6 @@
 # description: Segment tree index issue
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c1 INT);
 

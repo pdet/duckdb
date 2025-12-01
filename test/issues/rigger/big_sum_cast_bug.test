@@ -2,8 +2,6 @@
 # description: SQLancer bug that detected an error in casting of the result of a sum to double
 # group: [rigger]
 
-
-
 query I
 SELECT SUM(-9223372036854775808)::DOUBLE AS agg0 FROM (VALUES (0), (1)) t1;
 ----

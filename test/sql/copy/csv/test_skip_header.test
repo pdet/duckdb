@@ -2,8 +2,6 @@
 # description: Test read CSV function
 # group: [csv]
 
-
-
 query III
 FROM '{DATA_DIR}/csv/skip_header.csv'
 ----

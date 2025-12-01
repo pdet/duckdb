@@ -2,8 +2,6 @@
 # description: Test updates on the ART
 # group: [insert_update_delete]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER)
 

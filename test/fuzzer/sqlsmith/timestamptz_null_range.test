@@ -6,8 +6,6 @@ require icu
 
 require no_extension_autoloading "FIXME: generate_series(TIMESTAMP WITH TIME ZONE,...) currently do not autoload ICU"
 
-
-
 query I
 SELECT NULL FROM (
 	SELECT 4767 

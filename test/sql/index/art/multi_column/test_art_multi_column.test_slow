@@ -2,8 +2,6 @@
 # description: Test ART index on table with multiple columns and connections
 # group: [multi_column]
 
-
-
 require skip_reload
 
 # create a table

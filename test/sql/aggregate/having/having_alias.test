@@ -2,8 +2,6 @@
 # description: Test aliases in the HAVING clause
 # group: [having]
 
-
-
 query II
 SELECT b, sum(a) AS a
 FROM (VALUES (1, 0), (1, 1)) t(a, b)

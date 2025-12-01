@@ -22,7 +22,6 @@ a	4
 b	1
 b	2
 
-
 query II
 SELECT union_tag(a), a FROM tbl ORDER BY a DESC;
 ----

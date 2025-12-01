@@ -4,8 +4,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 statement ok
 pragma verify_parallelism
 

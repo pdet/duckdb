@@ -2,8 +2,6 @@
 # description: Test for CTE issue #17311
 # group: [cte]
 
-
-
 statement ok
 CREATE RECURSIVE VIEW nums (n) AS
     VALUES (1)

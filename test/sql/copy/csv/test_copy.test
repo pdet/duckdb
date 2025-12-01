@@ -2,9 +2,6 @@
 # description: Test copy statement
 # group: [csv]
 
-
-
-
 # generate CSV file with ',' as delimiter and complex strings
 # load CSV file into a table
 statement ok
@@ -284,7 +281,6 @@ statement error
 COPY empty_table FROM '{DATA_DIR}/csv/test/empty.csv' (HEADER 0);
 ----
 It was not possible to automatically detect the CSV parsing dialect
-
 
 # unterminated quotes
 statement ok

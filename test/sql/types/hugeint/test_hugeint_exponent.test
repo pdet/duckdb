@@ -2,8 +2,6 @@
 # description: Test hugeint conversion
 # group: [hugeint]
 
-
-
 query I
 select '170141183460469231731687303715884105700e0'::hugeint
 ----

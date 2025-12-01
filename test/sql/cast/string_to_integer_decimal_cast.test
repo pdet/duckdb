@@ -2,8 +2,6 @@
 # description: String to Integer casts with Decimals
 # group: [cast]
 
-
-
 # Positive numbers (includes unsigned)
 foreach type <integral>
 
@@ -26,7 +24,6 @@ query I
 select '1.50004'::${type};
 ----
 2
-
 
 endloop
 

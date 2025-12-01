@@ -2,8 +2,6 @@
 # description: Test structs in basic subqueries
 # group: [struct]
 
-
-
 query I
 SELECT (SELECT {'a': 3})
 ----

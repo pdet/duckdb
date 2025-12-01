@@ -2,8 +2,6 @@
 # description: Test issue 8231 related to missing headers and null padding
 # group: [auto]
 
-
-
 statement ok
 create view locations_header_trailing_comma as SELECT * from read_csv_auto('{DATA_DIR}/csv/locations_row_trailing_comma.csv', null_padding=True)
 

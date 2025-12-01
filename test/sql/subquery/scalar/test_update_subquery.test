@@ -2,8 +2,6 @@
 # description: Test subqueries in update
 # group: [scalar]
 
-
-
 statement ok
 CREATE TABLE integers(id INTEGER, i INTEGER)
 

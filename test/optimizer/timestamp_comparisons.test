@@ -40,13 +40,11 @@ select * from t where t::timestamp = '2028-02-28 01:00:00';
 ----
 2028-02-28 01:00:00+01
 
-
 # Without the cast of 't', it matches:
 query I
 select * from t where t = timestamp '2028-02-28 01:00:00';
 ----
 2028-02-28 01:00:00+01
-
 
 # IN is affected too (no match)
 query I

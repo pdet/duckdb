@@ -2,8 +2,6 @@
 # description: Test binned histograms
 # group: [aggregates]
 
-
-
 statement ok
 CREATE TABLE obs(n BIGINT);
 

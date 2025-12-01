@@ -2,8 +2,6 @@
 # description: Test big header
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE test (foo INTEGER, bar VARCHAR(10), baz VARCHAR(10), bam VARCHAR(10));
 

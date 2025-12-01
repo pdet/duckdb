@@ -2,8 +2,6 @@
 # description: SQLancer bug that detected an assertion in the query profiler when deleting with a static false condition
 # group: [rigger]
 
-
-
 statement ok
 PRAGMA enable_profiling
 

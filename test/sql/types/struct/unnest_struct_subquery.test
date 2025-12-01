@@ -2,8 +2,6 @@
 # description: Test UNNEST of struct in subquery
 # group: [struct]
 
-
-
 statement error
 SELECT (SELECT UNNEST(a).a) FROM (VALUES ({'a': 42, 'b': 88})) t(a);
 ----

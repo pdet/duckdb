@@ -2,8 +2,6 @@
 # description: Test index UPSERTs.
 # group: [upsert]
 
-
-
 statement ok
 CREATE TABLE tbl (i INT, j INT);
 

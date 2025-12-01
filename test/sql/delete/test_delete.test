@@ -2,8 +2,6 @@
 # description: Test deletions
 # group: [delete]
 
-
-
 statement ok
 CREATE TABLE a(i INTEGER);
 

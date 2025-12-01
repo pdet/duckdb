@@ -2,8 +2,6 @@
 # description: Assertion trigger on rename column
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t1 (c1 INT, c2 INT);
 

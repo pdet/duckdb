@@ -75,7 +75,6 @@ EXPLAIN SELECT i1.i=2 FROM integers i1 JOIN integers2 i2 ON (i2.i<i1.i);
 ----
 logical_opt	<REGEX>:.*\(i = 2\).*
 
-
 query I
 SELECT i=1 FROM integers JOIN integers2 USING (i);
 ----

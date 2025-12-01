@@ -2,8 +2,6 @@
 # description: Test Nested Recursive Common Table Expressions (CTE)
 # group: [cte]
 
-
-
 query I
 WITH RECURSIVE t(x) AS
 (

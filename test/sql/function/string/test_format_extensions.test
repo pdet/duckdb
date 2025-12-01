@@ -2,8 +2,6 @@
 # description: Test format extensions
 # group: [string]
 
-
-
 # thousands separator
 query I
 select printf('%,d', 123456789)

@@ -167,7 +167,6 @@ SELECT $$["\\backslash at start and end\\", "\\leading and trailing backslash\\"
 ----
 [\backslash at start and end\, \leading and trailing backslash\]
 
-
 query I
 SELECT $$[" mix, of special\ characters " , "[various] \"combinations\" "]$$::VARCHAR[];
 ----

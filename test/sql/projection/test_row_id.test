@@ -2,8 +2,6 @@
 # description: Test Row IDs
 # group: [projection]
 
-
-
 statement ok
 create table a(i integer);
 

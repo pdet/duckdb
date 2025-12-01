@@ -2,8 +2,6 @@
 # description: Issue #9459 - Dropping schema with double quote in name fails
 # group: [catalog]
 
-
-
 statement ok
 create schema """cursed_schema";
 

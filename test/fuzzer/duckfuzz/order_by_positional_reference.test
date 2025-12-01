@@ -2,8 +2,6 @@
 # description: Mix GROUP BY ALL and positional references
 # group: [duckfuzz]
 
-
-
 statement ok
 create table integers(c1 int, c2 int);
 

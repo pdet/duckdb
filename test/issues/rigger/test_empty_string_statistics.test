@@ -2,8 +2,6 @@
 # description: SQLancer bug found with statistics not being properly updated on empty strings
 # group: [rigger]
 
-
-
 statement ok
 BEGIN TRANSACTION;
 

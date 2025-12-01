@@ -2,8 +2,6 @@
 # description: Test multiple UPSERTs in a connection with LIST payload.
 # group: [constraints]
 
-
-
 statement ok
 SET immediate_transaction_mode = true;
 

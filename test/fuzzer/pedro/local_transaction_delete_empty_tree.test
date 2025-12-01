@@ -2,8 +2,6 @@
 # description: Empty segment tree error when deleting in local transaction
 # group: [pedro]
 
-
-
 statement ok
 START TRANSACTION;
 

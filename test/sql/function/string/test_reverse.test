@@ -2,8 +2,6 @@
 # description: REVERSE test
 # group: [string]
 
-
-
 # test reverse on scalars
 query TTTT
 select REVERSE(''), REVERSE('Hello'), REVERSE('MotörHead'), REVERSE(NULL)

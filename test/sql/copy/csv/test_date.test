@@ -2,8 +2,6 @@
 # description: Test date copy
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE date_test(d date);
 

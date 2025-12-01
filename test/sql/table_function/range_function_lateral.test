@@ -2,8 +2,6 @@
 # description: Test range functions with lateral functions
 # group: [table_function]
 
-
-
 query I
 SELECT * FROM range(1, NULL, 1);
 ----

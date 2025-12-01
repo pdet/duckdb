@@ -4,8 +4,6 @@
 
 # Note: this is **incredibly** slow on debug
 
-
-
 query I nosort all_types
 SELECT columns(*)
 FROM test_all_types()

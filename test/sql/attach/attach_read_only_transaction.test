@@ -2,8 +2,6 @@
 # description: Test attach with explicit READ ONLY transactions
 # group: [attach]
 
-
-
 statement ok
 ATTACH ':memory:' AS db1;
 

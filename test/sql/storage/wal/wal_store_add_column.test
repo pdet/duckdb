@@ -4,7 +4,6 @@
 
 require skip_reload
 
-
 load __TEST_DIR__/test_store_add_column.db
 
 statement ok

@@ -2,8 +2,6 @@
 # description: Test the md5 function
 # group: [string]
 
-
-
 query II
 select md5('hello'), md5(NULL)
 ----

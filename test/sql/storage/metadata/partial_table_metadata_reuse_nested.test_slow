@@ -16,7 +16,6 @@ INSERT INTO complex_nested SELECT ROW(r, range(10), 'hello world', range(90, 100
 statement ok
 COMMIT
 
-
 loop i 0 10
 
 statement ok

@@ -2,8 +2,6 @@
 # description: Issue 4753: Exists and ANY correlated subquery produce incorrect result
 # group: [general]
 
-
-
 statement ok
 CREATE TABLE t (x INT);
 

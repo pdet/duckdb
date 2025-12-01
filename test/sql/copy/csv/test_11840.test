@@ -2,8 +2,6 @@
 # description: Test CSV Sniffing detects correct typesfor issue 11840
 # group: [csv]
 
-
-
 query I
 FROM '{DATA_DIR}/csv/date_specificity.csv'
 ----

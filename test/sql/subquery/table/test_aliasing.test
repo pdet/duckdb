@@ -2,8 +2,6 @@
 # description: Aliasing and aggregation in subqueries
 # group: [table]
 
-
-
 statement ok
 create table a(i integer)
 

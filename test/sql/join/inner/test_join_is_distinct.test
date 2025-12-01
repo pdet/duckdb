@@ -4,8 +4,6 @@
 
 # issue #8328
 
-
-
 statement ok
 CREATE TABLE tbl (col0 INTEGER, col1 INTEGER);
 

@@ -2,8 +2,6 @@
 # description: Test if the columnrefs in a generated-column expression can result in ambiguity
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (
 	price INTEGER,

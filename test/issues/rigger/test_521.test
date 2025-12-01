@@ -2,8 +2,6 @@
 # description: Issue 521
 # group: [rigger]
 
-
-
 # ROUND() evaluates to -nan
 query R
 SELECT ROUND(0.1, 1000);

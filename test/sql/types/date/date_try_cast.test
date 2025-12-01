@@ -2,8 +2,6 @@
 # description: Test date try cast
 # group: [date]
 
-
-
 # try cast on gibberish
 query I
 select try_cast('' as date)

@@ -2,8 +2,6 @@
 # description: Test parallel insert from many groups
 # group: [insert]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER);
 

@@ -2,8 +2,6 @@
 # description: Enum Range Function
 # group: [enum]
 
-
-
 statement ok
 CREATE TYPE rainbow AS ENUM ('red', 'orange', 'yellow', 'green', 'blue', 'purple');
 
@@ -19,7 +17,6 @@ query I
 SELECT enum_range_boundary('orange'::rainbow, 'green'::rainbow)
 ----
 [orange, yellow, green]
-
 
 query I
 SELECT enum_range_boundary('green'::rainbow, 'orange'::rainbow)

@@ -2,8 +2,6 @@
 # description: Test simple projection statements
 # group: [projection]
 
-
-
 # create table
 statement ok
 CREATE TABLE a (i integer, j integer);

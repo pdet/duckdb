@@ -2,8 +2,6 @@
 # description: Test reading a CSV file with an enum type
 # group: [csv]
 
-
-
 statement ok
 CREATE TYPE mood AS ENUM ('happy', 'sad', 'angry')
 

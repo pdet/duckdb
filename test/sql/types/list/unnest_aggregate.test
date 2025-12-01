@@ -2,8 +2,6 @@
 # description: Test unnest semantics with NULL and empty lists
 # group: [list]
 
-
-
 query I
 SELECT SUM(a) FROM UNNEST(RANGE(1, 11)) t(a);
 ----

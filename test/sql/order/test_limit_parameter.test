@@ -2,8 +2,6 @@
 # description: Test LIMIT with a parameter (issue 1866)
 # group: [order]
 
-
-
 statement error
 SELECT 'Test' LIMIT ?
 ----

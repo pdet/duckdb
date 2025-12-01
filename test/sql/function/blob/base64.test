@@ -2,8 +2,6 @@
 # description: Test blob base64 functions
 # group: [blob]
 
-
-
 # test base64 encoding
 query I
 SELECT base64(encode(''))

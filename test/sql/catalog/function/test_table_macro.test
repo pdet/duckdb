@@ -2,9 +2,6 @@
 # description: Test SELECTMacro
 # group: [function]
 
-
-
-
 statement ok
 CREATE TABLE test_tbl (id INT, name string);
 
@@ -53,7 +50,6 @@ SELECT * FROM xt2(100,'m%');
 4	mary
 5	mungo
 6	midge
-
 
 # check similar to
 statement ok
@@ -112,7 +108,6 @@ SELECT * FROM greek_tbl where id<=(SELECT min(id) FROM xt(id,30));
 ----
 1	alpha
 
-
 # check that table macros are present in  duckdb_functions() -
 # nb they have the function_type 'table_macro'
 query IIIIIIIII
@@ -121,7 +116,4 @@ SELECT schema_name, function_name, function_type, description, return_type, para
 ----
 main	sgreek	table_macro	NULL	NULL	[a, b, c]	[NULL, NULL, NULL]	NULL	SELECT a, b FROM greek_tbl WHERE (id >= c)
 main	xt	table_macro	NULL	NULL	[id, imax]	[NULL, NULL]	NULL	SELECT id, "name" FROM test_tbl WHERE (id <= imax)
-
-
-
 

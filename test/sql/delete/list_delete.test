@@ -2,8 +2,6 @@
 # description: Test list deletions
 # group: [delete]
 
-
-
 statement ok
 CREATE TABLE aggr (k int[]);
 

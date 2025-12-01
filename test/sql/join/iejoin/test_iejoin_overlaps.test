@@ -2,8 +2,6 @@
 # description: IEJoin block short circuiting
 # group: [iejoin]
 
-
-
 statement ok
 SET merge_join_threshold=0
 

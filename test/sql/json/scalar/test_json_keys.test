@@ -4,8 +4,6 @@
 
 require json
 
-
-
 query T
 select json_keys('{"duck": 42}');
 ----

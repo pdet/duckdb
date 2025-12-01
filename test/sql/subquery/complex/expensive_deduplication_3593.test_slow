@@ -2,8 +2,6 @@
 # description: Issue #3593: Macros causes crash: memory consumption or recursion or something
 # group: [complex]
 
-
-
 query I
 SELECT
 (

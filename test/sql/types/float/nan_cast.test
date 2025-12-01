@@ -2,8 +2,6 @@
 # description: Test casting of NaN and inf values
 # group: [float]
 
-
-
 # to integer/decimal casts
 foreach source_type FLOAT DOUBLE
 

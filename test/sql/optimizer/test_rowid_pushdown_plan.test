@@ -15,7 +15,6 @@ query IIIIIIIIIIIIIIII rowsort top5_result
 SELECT * FROM lineitem WHERE rowid IN (SELECT rowid FROM lineitem ORDER BY l_orderkey DESC LIMIT 5);
 ----
 
-
 query IIIIIIIIIIIIIIII rowsort filter_result
 SELECT * FROM lineitem WHERE l_orderkey % 20000 == 0;
 ----

@@ -13,7 +13,6 @@ explain select record_key from (
 ----
 physical_plan	<REGEX>:.*HASH_GROUP_BY.*#0.*#1.*arg_min_null.*
 
-
 # this query was slow, but should be equivalent to the first query
 query II
 explain select distinct on (id, provider) record_key from test order by id, provider, record_rank desc, record_date

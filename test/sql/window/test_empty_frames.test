@@ -2,8 +2,6 @@
 # description: Empty aggregate frames
 # group: [window]
 
-
-
 statement ok
 CREATE TABLE t1 (id INTEGER, ch CHAR(1)) ;
 

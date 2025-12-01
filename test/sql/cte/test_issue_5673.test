@@ -2,8 +2,6 @@
 # description: Issue #5673 and #4987: CTE and Table name are name shadowing
 # group: [cte]
 
-
-
 statement ok
 create or replace table orders(ordered_at int);
 

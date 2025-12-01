@@ -2,8 +2,6 @@
 # description: Issue 1933: use INTERVAL function Time out of bounds report error
 # group: [general]
 
-
-
 query I
 SELECT DATE '2021-06-30' - INTERVAL '4' MONTH;
 ----

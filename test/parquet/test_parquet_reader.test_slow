@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query I
 SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/manyrowgroups.parquet') limit 50;
 ----
@@ -1314,7 +1312,6 @@ SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/bug2557.parquet') limit 1
 [consectetur, adipiscing, elit]	[822, 843, 702, 469]	[]
 [dolor, sit, amet, consectetur, adipiscing, elit]	[698, 385]	[3591.160509]
 [Lorem, ipsum, dolor, sit, amet, consectetur, adipiscing, elit]	[597, 719]	[1218.803740]
-
 
 statement ok
 from '{DATA_DIR}/parquet-testing/bug14120-dict-nulls-only.parquet';

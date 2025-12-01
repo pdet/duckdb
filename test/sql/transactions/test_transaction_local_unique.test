@@ -2,8 +2,6 @@
 # description: Test appends on transaction local data with unique indices
 # group: [transactions]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER PRIMARY KEY, j INTEGER)
 

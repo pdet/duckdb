@@ -5,9 +5,6 @@
 # No way CI can handle this
 mode skip
 
-
-
-
 require tpch
 
 statement ok

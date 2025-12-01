@@ -2,8 +2,6 @@
 # description: Issue #6690: incorrect handling of NULL values when decimal separator is defined
 # group: [csv]
 
-
-
 statement ok
 FROM read_csv_auto('{DATA_DIR}/csv/comma_decimal_null.csv',SEP=',',SAMPLE_SIZE=-1,decimal_separator=',')
 

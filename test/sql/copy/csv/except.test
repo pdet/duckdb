@@ -2,8 +2,6 @@
 # description: Test Except works when one of the children is a CSV File
 # group: [csv]
 
-
-
 statement ok
 COPY (SELECT 1 a, 2 b) TO '__TEST_DIR__/mismatch_types_except.csv';
 

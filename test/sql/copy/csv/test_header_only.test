@@ -2,13 +2,10 @@
 # description: Test CSV Parser on an header only CSV file
 # group: [csv]
 
-
-
 query I
 SELECT columns from sniff_csv('{DATA_DIR}/csv/header_only.csv', header=True, ignore_errors=True)
 ----
 [{'name': abs_file_name, 'type': VARCHAR}]
-
 
 query I
 SELECT abs_file_name FROM read_csv('{DATA_DIR}/csv/header_only.csv', header=True, ignore_errors=True)

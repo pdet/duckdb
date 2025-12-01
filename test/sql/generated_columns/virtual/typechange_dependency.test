@@ -2,8 +2,6 @@
 # description: Test changing types of dependencies of generated columns
 # group: [virtual]
 
-
-
 statement ok
 CREATE TABLE unit (
 	price INTEGER,

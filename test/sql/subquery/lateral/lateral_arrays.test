@@ -2,8 +2,6 @@
 # description: Test LATERAL joins with arrays
 # group: [lateral]
 
-
-
 statement ok
 CREATE TABLE tbl(i INTEGER, arr INT[]);
 

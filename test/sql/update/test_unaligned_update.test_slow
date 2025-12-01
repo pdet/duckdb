@@ -2,8 +2,6 @@
 # description: Unaligned updates
 # group: [update]
 
-
-
 statement ok
 CREATE TABLE t1 AS SELECT * FROM generate_series(0, 1999, 1) tbl(i)
 

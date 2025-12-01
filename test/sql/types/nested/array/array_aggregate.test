@@ -2,8 +2,6 @@
 # description: Test array type with aggregate functions
 # group: [array]
 
-
-
 statement ok
 CREATE TABLE tbl1 (a INT[3]);
 
@@ -22,13 +20,11 @@ SELECT COUNT(*), max(a) FROM tbl1 GROUP BY list_sum(a::INT[]) % 2 == 0;
 1	[10, 11, 12]
 3	[7, 8, 9]
 
-
 query II rowsort
 SELECT COUNT(*), max(a) FROM tbl1 GROUP BY list_sum(a::INT[]) % 2 == 0 HAVING list_sum(a::INT[]) % 2 == 0 NOT NULL;
 ----
 1	[10, 11, 12]
 3	[7, 8, 9]
-
 
 query II
 SELECT MAX(a), MIN(a) FROM tbl1;

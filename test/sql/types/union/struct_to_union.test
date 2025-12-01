@@ -17,7 +17,6 @@ insert into union_tbl VALUES
 ----
 Conversion Error: Type STRUCT(tag VARCHAR, a BOOLEAN, b "NULL", c "NULL")
 
-
 # field names have to match
 statement error
 insert into union_tbl VALUES

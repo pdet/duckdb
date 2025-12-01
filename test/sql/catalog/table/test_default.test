@@ -4,9 +4,6 @@
 
 require skip_reload
 
-
-
-
 # no default specified: write NULL value
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);

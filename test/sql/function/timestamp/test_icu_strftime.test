@@ -11,8 +11,6 @@ SET Calendar = 'gregorian';
 statement ok
 SET TimeZone = 'America/Los_Angeles';
 
-
-
 statement ok
 CREATE TABLE timestamps AS SELECT ts::TIMESTAMPTZ AS ts FROM (VALUES
 	('-infinity'),

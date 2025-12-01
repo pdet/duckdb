@@ -2,8 +2,6 @@
 # description: Recursive CTEs with complex pipelines
 # group: [materialized]
 
-
-
 # recursive CTE with various cross products
 query I
 WITH RECURSIVE t AS MATERIALIZED

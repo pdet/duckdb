@@ -2,8 +2,6 @@
 # description: Test lists with aggregations
 # group: [list]
 
-
-
 query II
 select min(i::varchar), max(i::varchar) from range(10) tbl(i);
 ----
@@ -76,7 +74,6 @@ query I
 select string_agg(list_value(i)::varchar, ',') from range(10) tbl(i);
 ----
 [0],[1],[2],[3],[4],[5],[6],[7],[8],[9]
-
 
 # window aggregate
 query III

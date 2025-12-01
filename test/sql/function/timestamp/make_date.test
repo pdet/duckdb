@@ -2,8 +2,6 @@
 # description: Test the MAKE_DATE/TIME/TIMESTAMP functions
 # group: [timestamp]
 
-
-
 #
 # Dates
 #

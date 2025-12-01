@@ -2,8 +2,6 @@
 # description: Issue 3351: NullPointer at duckdb/src/function/function.cpp:368:29
 # group: [fuzz]
 
-
-
 statement ok
 CREATE TABLE strings(a INTEGER);
 

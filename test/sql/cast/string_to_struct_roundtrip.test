@@ -61,5 +61,3 @@ select $${"test": \\  test  \\}$$::STRUCT("test" VARCHAR) a, a::VARCHAR::STRUCT(
 ----
 {'test': \\  test  \\}	{'test': \\  test  \\}	true
 
-
-

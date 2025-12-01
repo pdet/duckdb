@@ -2,8 +2,6 @@
 # description: Test timestamp with timezones cast
 # group: [timestamp]
 
-
-
 # we can cast timestamps with UTC in them
 query I
 SELECT TIMESTAMP '2021-05-25 04:55:03.382494 UTC';

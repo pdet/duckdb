@@ -9,8 +9,6 @@
 #distinct aggregate =	'D'
 #regular aggregate =	'-'
 
-
-
 statement ok
 PRAGMA verify_external
 

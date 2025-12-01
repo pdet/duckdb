@@ -2,8 +2,6 @@
 # description: Test CSV with timestamp_tz and timestampformat
 # group: [csv]
 
-
-
 require icu
 
 statement ok

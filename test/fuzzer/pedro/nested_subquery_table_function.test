@@ -2,8 +2,6 @@
 # description: Issue #4676: Subquery as Table UDF argument assertion error
 # group: [pedro]
 
-
-
 query I
 SELECT 1 FROM range((SELECT 1) - 0);
 ----

@@ -1,8 +1,6 @@
 # name: test/fuzzer/pedro/is_distinct_from_validation.test
 # group: [pedro]
 
-
-
 query I
 SELECT (0 IS DISTINCT FROM 2) = 0;
 ----

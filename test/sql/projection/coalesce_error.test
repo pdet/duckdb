@@ -2,8 +2,6 @@
 # description: Test COALESCE error short-circuiting
 # group: [projection]
 
-
-
 # constant coalesce short-circuiting
 query I
 SELECT COALESCE(1, 'hello'::INT)

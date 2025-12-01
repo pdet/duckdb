@@ -2,8 +2,6 @@
 # description: Issue 6276: Spurious additional parameter required in prepared statement
 # group: [prepared]
 
-
-
 statement ok
 PREPARE v1 AS SELECT CASE ? WHEN ? THEN ? WHEN ? THEN ? ELSE ? END AS x
 

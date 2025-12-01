@@ -9,8 +9,6 @@
 #distinct aggregate =	'D'
 #regular aggregate =	'-'
 
-
-
 statement ok
 create table tbl as
 	(select i%50 as i, i%100 as j, i%5 as groups from range(50000) tbl(i))

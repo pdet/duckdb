@@ -2,8 +2,6 @@
 # description: Test triggering different exceptions
 # group: [create_drop]
 
-
-
 statement ok
 CREATE TABLE integers(i integer, j integer, k BOOLEAN)
 

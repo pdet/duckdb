@@ -2,8 +2,6 @@
 # description: Test full outer joins on unions
 # group: [setops]
 
-
-
 statement ok
 CREATE TABLE integers(i INTEGER);
 

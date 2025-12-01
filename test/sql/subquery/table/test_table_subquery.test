@@ -2,8 +2,6 @@
 # description: Table subquery
 # group: [table]
 
-
-
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)
 

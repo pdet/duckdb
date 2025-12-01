@@ -2,8 +2,6 @@
 # description: Positional reference
 # group: [select]
 
-
-
 query I
 SELECT #1 FROM range(1)
 ----

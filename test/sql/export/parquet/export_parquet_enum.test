@@ -10,7 +10,6 @@ begin transaction;
 statement ok
 create type my_enum as enum ('1', '2', '3')
 
-
 statement ok
 create table tbl (a my_enum);
 

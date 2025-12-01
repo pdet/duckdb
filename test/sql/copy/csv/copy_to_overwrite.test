@@ -2,8 +2,6 @@
 # description: Test copy to overwriting behavior
 # group: [csv]
 
-
-
 statement ok
 SET threads=1;
 

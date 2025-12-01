@@ -32,7 +32,6 @@ GROUP BY id
 HAVING LENGTH(child_ids) != 3;
 ----
 
-
 query II
 SELECT
   id,

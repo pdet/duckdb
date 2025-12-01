@@ -2,8 +2,6 @@
 # description: Test casting structs
 # group: [common]
 
-
-
 statement error
 SELECT struct_pack(b => 42)::STRUCT(a INT);
 ----

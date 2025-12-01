@@ -2,8 +2,6 @@
 # description: Test transaction aborts after failures
 # group: [transactions]
 
-
-
 # set up a table
 statement ok
 CREATE TABLE integers(i INTEGER PRIMARY KEY)

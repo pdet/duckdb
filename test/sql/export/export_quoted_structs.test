@@ -4,8 +4,6 @@
 
 # create a bunch of tables with data and views
 
-
-
 statement ok
 BEGIN TRANSACTION
 

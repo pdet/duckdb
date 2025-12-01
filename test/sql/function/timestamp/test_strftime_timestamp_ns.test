@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 statement ok
 CREATE TABLE timestamps(d TIMESTAMP_NS);
 INSERT INTO timestamps VALUES 
@@ -334,7 +332,6 @@ NULL
 79
 222
 223
-
 
 # %U - Week number of the year (Sunday as the first day of the week).
 query I

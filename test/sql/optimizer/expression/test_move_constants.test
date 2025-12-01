@@ -2,8 +2,6 @@
 # description: Test queries involving constants that can be moved
 # group: [expression]
 
-
-
 # move constants with signed value extremes
 
 # tinyint

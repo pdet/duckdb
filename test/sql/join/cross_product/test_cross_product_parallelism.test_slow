@@ -2,8 +2,6 @@
 # description: Test cross product with parallelism
 # group: [cross_product]
 
-
-
 statement ok
 PRAGMA threads=4
 

@@ -2,8 +2,6 @@
 # description: Test Materialized Correlated Recursive Common Table Expressions (CTE)
 # group: [materialized]
 
-
-
 # Correlation in the initialization query
 query II
 SELECT x, y
@@ -108,7 +106,6 @@ FROM   generate_series(1,2) AS _(x), generate_series(1,2) AS __(y) order by all;
 1	2	3
 2	1	3
 2	2	4
-
 
 # Complex nested recursive query
 query III rowsort

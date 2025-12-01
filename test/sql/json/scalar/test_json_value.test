@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # unlike JSON extract, this goes our NULL
 query T
 select json_value('{"foo": null}', '$.foo')

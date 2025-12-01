@@ -50,7 +50,6 @@ COPY v1 TO '__TEST_DIR__/batched_integers_filters.parquet';
 statement ok
 CREATE TABLE integers_filtered AS FROM '__TEST_DIR__/batched_integers_filters.parquet'
 
-
 foreach table v1 integers_filtered
 
 query IIIII

@@ -2,8 +2,6 @@
 # description: Test mixed line endings
 # group: [csv]
 
-
-
 # generate CSV file with different line endings
 # load CSV file into a table
 statement ok

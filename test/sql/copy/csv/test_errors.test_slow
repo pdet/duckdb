@@ -2,8 +2,6 @@
 # description: Test reading csv files with errors return correct error line
 # group: [csv]
 
-
-
 require tpch
 
 statement ok

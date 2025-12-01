@@ -20,7 +20,6 @@ query I nosort regexconstantpattern
 EXPLAIN SELECT contains(s, 'aa') FROM test
 ----
 
-
 # contains optimization: /a/ -> contains(aaa)
 query I nosort regexconstantsinglechar
 EXPLAIN SELECT regexp_matches(s, 'a') FROM test
@@ -41,7 +40,6 @@ SELECT regexp_matches(s, 'a') FROM test
 query I nosort correct_result
 SELECT contains(s, 'aaa') FROM test
 ----
-
 
 query I nosort correct_result
 SELECT regexp_matches(s, '^a') FROM TEST;
@@ -71,7 +69,6 @@ aaa
 a.a
 baba
 a_a
-
 
 query II
 explain analyze SELECT regexp_matches(s, 'a.*a', 's'), s FROM TEST;

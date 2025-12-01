@@ -2,8 +2,6 @@
 # description: Test ART leaf containing duplicates
 # group: [nodes]
 
-
-
 statement ok
 CREATE TABLE integers(i integer)
 

@@ -2,8 +2,6 @@
 # description: Test list_zip function
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE integers (i int[])
 
@@ -276,7 +274,6 @@ query III
 SELECT list_zip(['{a: 1'::BLOB, '{a: 3'::BLOB]) a, a::VARCHAR::STRUCT(a BLOB)[] b, a == b
 ----
 [('{a: 1'), ('{a: 3')]	[{'a': '{a: 1'}, {'a': '{a: 3'}]	true
-
 
 query I
 SELECT list_zip([NULL::BLOB])

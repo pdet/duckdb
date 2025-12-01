@@ -4,8 +4,6 @@
 
 require json
 
-
-
 # original from the issue
 statement ok
 FROM '{DATA_DIR}/json/15601/fragment*.json'

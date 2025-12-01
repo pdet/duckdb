@@ -8,7 +8,6 @@ CREATE TABLE test(A BOOLEAN, B BOOLEAN, C BOOLEAN, D BOOLEAN, X BOOLEAN, Y BOOLE
 statement ok
 PRAGMA explain_output = OPTIMIZED_ONLY;
 
-
 query I nosort distributivity1
 EXPLAIN SELECT (X AND A AND B) OR (A AND X AND C) OR (X AND B AND D) FROM test
 ----

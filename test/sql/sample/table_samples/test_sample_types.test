@@ -6,8 +6,6 @@ mode skip
 
 # test valid sampling types (for now only integral types)
 
-
-
 statement ok
 create table string_samples as select range::Varchar a from range(204800);
 

@@ -14,7 +14,6 @@ CREATE TABLE test_default (a BOOL DEFAULT nextval('seq') is not distinct from ne
 statement ok
 INSERT INTO test_default (b) VALUES (2), (4), (6);
 
-
 query II
 select * from test_default;
 ----
@@ -25,7 +24,6 @@ False	6
 # Use in DEFAULT expression of a table and store that table on disk (storage test)
 
 restart
-
 
 query II
 select * from test_default;

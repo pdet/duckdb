@@ -10,9 +10,6 @@ SET default_null_order='nulls_first';
 # Assertions built using the Domain Testing technique
 # at: https://bbst.courses/wp-content/uploads/2018/01/Kaner-Intro-to-Domain-Testing-2018.pdf
 
-
-
-
 statement ok
 CREATE TABLE strings(s VARCHAR)
 

@@ -34,7 +34,6 @@ SELECT col, geometry FROM '__WORKING_DIRECTORY__/data/geoparquet/data-point-enco
 2	NULL
 3	\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00D@\x00\x00\x00\x00\x00\x00D@
 
-
 #------------------------------------------------------------------------------
 # Test writing geoparquet when conversion is enabled but spatial is not loaded
 #------------------------------------------------------------------------------
@@ -68,13 +67,11 @@ SELECT col, geometry FROM '__TEST_DIR__/data-point-out-enabled.parquet'
 2	NULL
 3	\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00D@\x00\x00\x00\x00\x00\x00D@
 
-
 query I
 SELECT (decode(value)) as col
 FROM parquet_kv_metadata('__TEST_DIR__/data-point-out-enabled.parquet');
 ----
 {"version":"1.0.0","primary_column":"geometry","columns":{"geometry":{"encoding":"WKB","geometry_types":["Point"],"bbox":[30.0,10.0,40.0,40.0]}}}
-
 
 #------------------------------------------------------------------------------
 # Test writing geoparquet when conversion is disabled and spatial is not loaded

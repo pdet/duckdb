@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 create view r AS from read_parquet('{DATA_DIR}/parquet-testing/hive-partitioning/union_by_name/*/*.parquet', hive_partitioning=1, union_by_name=1)
 

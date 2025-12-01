@@ -29,7 +29,6 @@ select count(*) from integers;
 statement ok
 DROP TABLE integers;
 
-
 # Try with sniffing
 
 statement ok

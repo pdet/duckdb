@@ -7,8 +7,6 @@
 
 load __TEST_DIR__/test_add_pk_naming_conflict.db
 
-
-
 statement ok
 CREATE TABLE tbl (i INTEGER);
 
@@ -24,8 +22,6 @@ ALTER TABLE tbl ADD PRIMARY KEY (i);
 <REGEX>:Catalog Error.*already exists.*
 
 restart
-
-
 
 statement error
 ALTER TABLE tbl ADD PRIMARY KEY (i);

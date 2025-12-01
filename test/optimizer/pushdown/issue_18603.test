@@ -2,8 +2,6 @@
 # description: Test filter pushdown with conflict comparison filters
 # group: [pushdown]
 
-
-
 statement ok
 CREATE TABLE t0(c0 INT, c1 BOOLEAN);
 

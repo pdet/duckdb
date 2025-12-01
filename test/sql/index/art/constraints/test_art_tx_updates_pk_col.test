@@ -2,8 +2,6 @@
 # description: Test UPDATE on the PK column with different connections and VARCHAR payload.
 # group: [constraints]
 
-
-
 statement ok
 SET immediate_transaction_mode = true;
 

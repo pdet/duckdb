@@ -2,8 +2,6 @@
 # description: Test try cast
 # group: [cast]
 
-
-
 # TRY_CAST turns a failed cast into NULL
 query I
 SELECT TRY_CAST('hello' as INTEGER)

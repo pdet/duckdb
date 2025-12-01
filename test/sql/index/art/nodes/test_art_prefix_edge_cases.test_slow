@@ -2,8 +2,6 @@
 # description: Test ART prefix edge cases
 # group: [nodes]
 
-
-
 statement ok
 CREATE TABLE integers(i BIGINT)
 

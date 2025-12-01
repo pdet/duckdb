@@ -2,8 +2,6 @@
 # description: cast strings into (nested) types
 # group: [cast]
 
-
-
 # These are some slow tests in addition to the string_to_list/struct casting tests
 
 #               All types to List cast
@@ -84,7 +82,6 @@ SELECT CAST(LIST(interval)::VARCHAR AS INTERVAL[]) FROM test_all_types();
 ----
 ['00:00:00', '83 years 3 months 999 days 00:16:39.999999', NULL]
 
-
 #               Larger input to List cast
 # ---------------------------------------------------
 
@@ -101,7 +98,6 @@ query I
 SELECT COUNT(col) FROM big_list;
 ----
 2000
-
 
 #               All types to Struct cast:
 # ---------------------------------------------------

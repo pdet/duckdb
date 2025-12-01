@@ -2,8 +2,6 @@
 # description: Test bitwise operations of huge int type
 # group: [hugeint]
 
-
-
 # left-shift
 query I
 SELECT 1::HUGEINT << 3
@@ -35,7 +33,6 @@ query I
 select 1::HUGEINT << 64;
 ----
 18446744073709551616
-
 
 # out of bounds shifts
 statement error

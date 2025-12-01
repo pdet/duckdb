@@ -2,8 +2,6 @@
 # description: Issue 3349: Assertion Failed: chunk.ColumnCount() == op.aggregates.size()
 # group: [fuzz]
 
-
-
 statement ok
 create table strings (a VARCHAR, b VARCHAR);
 

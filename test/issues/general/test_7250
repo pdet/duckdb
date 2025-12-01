@@ -32,7 +32,6 @@ name: test/issues/general/test_7250.test
  statement ok
  CREATE VIEW v0(c0) AS SELECT 1 FROM t1, t0;
 
-
  statement ok
  SELECT *
     FROM v0,

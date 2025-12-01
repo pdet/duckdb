@@ -37,7 +37,6 @@ DELETE FROM integers WHERE i%2<>0
 ----
 500000
 
-
 query I
 SELECT SUM(i) FROM integers
 ----

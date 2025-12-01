@@ -2,8 +2,6 @@
 # description: CSV writer home directory
 # group: [csv]
 
-
-
 statement ok
 SET home_directory='__TEST_DIR__'
 

@@ -119,7 +119,6 @@ EXECUTE v7([1,2,3])
 ----
 [[1, 2, 3]]
 
-
 query I
 EXECUTE v7(NULL)
 ----
@@ -218,7 +217,6 @@ query I
 EXECUTE v13([1, 2, 3])
 ----
 [1, 2, 3]
-
 
 # ambiguous aggregate usage
 statement ok

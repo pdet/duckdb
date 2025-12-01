@@ -2,13 +2,10 @@
 # description: Test that headers described on #12089 are properly parsed.
 # group: [csv]
 
-
-
 query I
 select columns FROM sniff_csv('{DATA_DIR}/csv/headers/escaped_quote.csv');
 ----
 [{'name': Name, 'type': VARCHAR}, {'name': 'Escaped\'\'Quote', 'type': BIGINT}]
-
 
 query I
 select columns FROM sniff_csv('{DATA_DIR}/csv/headers/unescaped_quote.csv');

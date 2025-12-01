@@ -2,8 +2,6 @@
 # description: Test that repeated almost full delete of in-memory table frees up memory
 # group: [delete]
 
-
-
 statement ok
 SET threads=1
 

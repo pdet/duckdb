@@ -2,8 +2,6 @@
 # description: Test for a crash reported in issue #3417
 # group: [cte]
 
-
-
 statement ok
 CREATE TABLE table1 (id INTEGER, a INTEGER);
 

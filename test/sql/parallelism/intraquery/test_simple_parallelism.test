@@ -2,14 +2,11 @@
 # description: Test simple parallelism
 # group: [intraquery]
 
-
-
 statement ok
 PRAGMA threads=4
 
 statement ok
 PRAGMA verify_parallelism
-
 
 statement ok
 PRAGMA enable_profiling

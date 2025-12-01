@@ -2,8 +2,6 @@
 # description: Test attach with nested types
 # group: [attach]
 
-
-
 # attach a new database
 statement ok
 ATTACH DATABASE ':memory:' AS database;

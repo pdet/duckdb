@@ -2,8 +2,6 @@
 # description: GROUP BY large strings
 # group: [group]
 
-
-
 statement ok
 PRAGMA verify_external
 

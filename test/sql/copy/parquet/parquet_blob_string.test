@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 query I
 SELECT typeof(#1) FROM parquet_scan('{DATA_DIR}/parquet-testing/binary_string.parquet',binary_as_string=False) limit 1
 ----
@@ -22,7 +20,6 @@ query I
 SELECT typeof(#1) FROM parquet_scan('{DATA_DIR}/parquet-testing/binary_string.parquet',binary_as_string=True) limit 1
 ----
 VARCHAR
-
 
 query I
 SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/binary_string.parquet',binary_as_string=True)
@@ -79,7 +76,6 @@ query I
 SELECT typeof(#1) FROM parquet_scan('{DATA_DIR}/parquet-testing/binary_string.parquet' ,binary_as_string=False) limit 1
 ----
 BLOB
-
 
 query I
 SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/binary_string.parquet')

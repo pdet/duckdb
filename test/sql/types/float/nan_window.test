@@ -2,8 +2,6 @@
 # description: Test NaN and inf in windowing functions
 # group: [float]
 
-
-
 # grouping by inf and nan
 foreach type FLOAT DOUBLE
 

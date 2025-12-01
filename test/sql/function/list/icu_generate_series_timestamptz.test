@@ -67,7 +67,6 @@ SELECT generate_series(timestamp '2020-01-01', timestamp '2020-06-01', NULL);
 ----
 NULL
 
-
 # > vector size
 query I
 SELECT count(*) FROM (

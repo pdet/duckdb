@@ -8,8 +8,6 @@ require 64bit
 # The database is written with a vector size of 2048.
 require vector_size 2048
 
-
-
 # unzip to specific path
 unzip data/storage/test.db.gz __TEST_DIR__/test.db
 

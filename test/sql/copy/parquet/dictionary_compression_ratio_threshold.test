@@ -12,7 +12,6 @@ CREATE TABLE test AS SELECT 'thisisaverylongstringbutitrepeatsmanytimessoitshigh
 statement ok
 COPY test TO '__TEST_DIR__/dictionary_compression_ratio_threshold.parquet' (dictionary_compression_ratio_threshold -2)
 
-
 # default is 1.0
 statement ok
 COPY test TO '__TEST_DIR__/dictionary_compression_ratio_threshold.parquet'

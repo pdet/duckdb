@@ -2,8 +2,6 @@
 # description: Test copy statement with file overwrite
 # group: [overwrite]
 
-
-
 # create a table and insert some values
 statement ok
 CREATE TABLE test (a INTEGER, b VARCHAR(10));

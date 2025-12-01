@@ -2,8 +2,6 @@
 # description: Memory leak on "last" aggregate
 # group: [pedro]
 
-
-
 statement ok
 CREATE TABLE t0 (c1 VARCHAR);
 

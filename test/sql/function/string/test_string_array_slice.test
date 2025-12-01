@@ -2,8 +2,6 @@
 # description: String slicing test
 # group: [string]
 
-
-
 query I
 SELECT 'hello'[0:2]
 ----

@@ -2,8 +2,6 @@
 # description: Test GLOB statement
 # group: [string]
 
-
-
 # scalar glob
 query T
 SELECT 'aaa' GLOB 'bbb'

@@ -2,8 +2,6 @@
 # description: Test CSV projection pushdown
 # group: [csv]
 
-
-
 query II
 select l_returnflag, l_linenumber from read_csv('{DATA_DIR}/csv/real/lineitem_sample.csv', delim='|', header=False, columns={
 	'l_orderkey': 'INT',

@@ -35,5 +35,3 @@ SELECT suggestion, suggestion_start FROM sql_auto_complete('set allowed_p') LIMI
 ----
 allowed_paths	4
 
-
-

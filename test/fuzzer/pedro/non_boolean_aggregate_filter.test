@@ -2,8 +2,6 @@
 # description: Issue #4570: Non-boolean aggregate filter
 # group: [pedro]
 
-
-
 query I
 SELECT mode(1) FILTER (0);
 ----

@@ -2,8 +2,6 @@
 # description: Test deletions on tables with indexes
 # group: [delete]
 
-
-
 statement ok
 CREATE TABLE t (id INT PRIMARY KEY, s TEXT, j BIGINT);
 

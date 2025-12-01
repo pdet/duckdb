@@ -2,8 +2,6 @@
 # description: Test uhugeint aggregates
 # group: [uhugeint]
 
-
-
 statement ok
 CREATE TABLE hugeints(g INTEGER, h UHUGEINT);
 

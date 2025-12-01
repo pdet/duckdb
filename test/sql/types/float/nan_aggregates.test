@@ -2,8 +2,6 @@
 # description: Test aggregates on NaN values
 # group: [float]
 
-
-
 foreach type FLOAT DOUBLE
 
 query III

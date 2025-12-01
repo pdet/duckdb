@@ -2,8 +2,6 @@
 # description: Test ILIKE statement with ESCAPE
 # group: [string]
 
-
-
 # scalar ilike
 query T
 select 'a%c' ilike 'a$%C' escape '$';

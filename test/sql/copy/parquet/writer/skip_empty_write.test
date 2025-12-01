@@ -4,8 +4,6 @@
 
 require parquet
 
-
-
 statement ok
 CREATE TABLE empty_tbl(i INT, j VARCHAR);
 

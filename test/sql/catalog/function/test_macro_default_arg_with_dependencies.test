@@ -10,8 +10,6 @@ USE macro_default_arg
 statement ok
 set enable_macro_dependencies=true
 
-
-
 statement ok
 CREATE MACRO f(x := NULL) AS x+1;
 

@@ -2,8 +2,6 @@
 # description: Test sniffer bug from date detection is issue https://github.com/duckdb/duckdb/issues/13121
 # group: [csv]
 
-
-
 query III
 FROM '{DATA_DIR}/csv/bad_date.csv'
 ----
@@ -28,12 +26,10 @@ SELECT columns[1].type FROM sniff_csv('{DATA_DIR}/csv/bad_date_2.csv')
 ----
 DATE
 
-
 query I
 SELECT columns FROM sniff_csv('{DATA_DIR}/csv/bad_date_2.csv')
 ----
 [{'name': date, 'type': DATE}, {'name': specification_version, 'type': VARCHAR}]
-
 
 query II
 FROM '{DATA_DIR}/csv/conflict_timestamp.csv'

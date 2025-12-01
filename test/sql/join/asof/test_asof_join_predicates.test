@@ -2,8 +2,6 @@
 # description: Test As-Of join NLJ rewrite for non-comparison predicates
 # group: [asof]
 
-
-
 # Issue 18309
 statement ok
 CREATE TABLE tt1 (i INTEGER, j VARCHAR);

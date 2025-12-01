@@ -2,8 +2,6 @@
 # description: Test in-memory compression
 # group: [memory]
 
-
-
 statement ok
 ATTACH ':memory:' AS memory_compressed (COMPRESS)
 

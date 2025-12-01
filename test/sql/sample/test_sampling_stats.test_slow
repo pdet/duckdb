@@ -2,8 +2,6 @@
 # description: Test SAMPLE keyword
 # group: [sample]
 
-
-
 set seed 0.42
 
 query I

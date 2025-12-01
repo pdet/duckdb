@@ -2,8 +2,6 @@
 # description: Test basic transaction functionality
 # group: [transactions]
 
-
-
 # cannot commit or rollback in auto commit mode
 statement error
 COMMIT

@@ -2,8 +2,6 @@
 # description: Test unnest with many empty lists
 # group: [list]
 
-
-
 statement ok
 CREATE TABLE t1 AS SELECT [] i FROM range(10000)
 

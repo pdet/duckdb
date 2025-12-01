@@ -2,8 +2,6 @@
 # description: Test arithmetic on NaN values
 # group: [float]
 
-
-
 foreach type FLOAT DOUBLE
 
 foreach val nan
@@ -137,7 +135,6 @@ SELECT -('inf'::${type})
 -inf
 
 endloop
-
 
 foreach type FLOAT DOUBLE
 

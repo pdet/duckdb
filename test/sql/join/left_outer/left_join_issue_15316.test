@@ -5,8 +5,6 @@
 statement ok
 set explain_output='optimized_only';
 
-
-
 statement ok
 CREATE OR REPLACE TABLE big_table AS
 SELECT i.range AS col1,

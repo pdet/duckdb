@@ -2,8 +2,6 @@
 # description: Test reading CSV files where the file list comes from a table
 # group: [csv]
 
-
-
 statement ok
 CREATE TABLE globbed_files AS FROM glob('{DATA_DIR}/csv/glob/a?/*.csv');
 

@@ -2,8 +2,6 @@
 # description: Test STRUCT comparisons
 # group: [struct]
 
-
-
 # Constant single integer column comparisons
 query T
 SELECT {'x': 1} < {'x': 2}
@@ -722,7 +720,6 @@ CREATE VIEW struct_nested AS SELECT * FROM (VALUES
 	({'x': 2, 'y': {'a': 'goose', 'b': 2.5}}, NULL),
 	(NULL, NULL)
 	) tbl(l, r);
-
 
 query T
 SELECT l < r FROM struct_nested

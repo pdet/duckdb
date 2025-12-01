@@ -84,7 +84,6 @@ select * from (
 ----
 D	B	40	1
 
-
 # The filter is on the partitioned column, but is part of an OR conjunction, so we can push it down
 query IIII
 select * from (
@@ -119,7 +118,6 @@ select * from (
 ----
 A	B	70	1
 D	B	70	2
-
 
 # can't push down the filter c!='B', since the values of the rank() window function
 # are affected by the existence of the rows where c='B'

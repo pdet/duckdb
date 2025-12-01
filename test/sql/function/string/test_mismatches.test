@@ -5,8 +5,6 @@
 statement ok
 SET default_null_order='nulls_first';
 
-
-
 query I
 SELECT mismatches('hallo', 'hallo')
 ----
@@ -47,8 +45,6 @@ SELECT mismatches(NULL, NULL)
 ----
 NULL
 
-
-
 statement ok
 CREATE TABLE strings(s VARCHAR)
 
@@ -74,9 +70,6 @@ NULL
 1
 4
 
-
-
-
 # special cases
 
 statement error
@@ -100,10 +93,6 @@ NULL
 NULL
 NULL
 NULL
-
-
-
-
 
 # incorrect usages
 statement error
@@ -130,7 +119,6 @@ statement error
 SELECT mismatches(s, '') FROM strings ORDER BY s
 ----
 
-
 statement ok
 DROP TABLE strings
 
@@ -139,7 +127,6 @@ CREATE TABLE strings(s VARCHAR)
 
 statement ok
 INSERT INTO strings VALUES ('hello'), ('halo'), (NULL)
-
 
 # incorrect usage
 
@@ -150,9 +137,6 @@ SELECT mismatches(s, 'hallo') FROM strings
 statement error
 SELECT mismatches('hallo', s) FROM strings
 ----
-
-
-
 
 query I
 SELECT hamming('hallo', 'hallo')
@@ -168,8 +152,6 @@ query I
 SELECT hamming(s, 'hallo') FROM strings WHERE s = 'hello'
 ----
 1
-
-
 
 # Comparing fields from two columns row wise
 

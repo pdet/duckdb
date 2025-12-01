@@ -2,8 +2,6 @@
 # description: Test TIMESTAMP WITH TIME ZONE common operations
 # group: [timestamp]
 
-
-
 # Cast from string
 query I
 select timestamptz '2021-11-15 02:30:00';

@@ -174,7 +174,6 @@ SELECT * FROM '__TEST_DIR__/mixed_uuid_types/a=5/a_name????????-????-4???-????-?
 ----
 25	3125	5
 
-
 # Test "{uuid}" with per_thread_output TRUE
 statement ok
 COPY testpto TO '__TEST_DIR__/pto' (FORMAT PARQUET, PER_THREAD_OUTPUT TRUE, OVERWRITE_OR_IGNORE TRUE, FILENAME_PATTERN "basename_{uuid}");

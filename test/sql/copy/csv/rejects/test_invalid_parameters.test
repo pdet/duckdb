@@ -99,7 +99,6 @@ SELECT * FROM read_csv_auto(
 ----
 REJECTS_LIMIT: cannot be negative
 
-
 query III
 SELECT typeof(first(column0)), typeof(first(column1)), COUNT(*) FROM read_csv_auto(
     '{DATA_DIR}/csv/error/mismatch/big_bad*.csv',

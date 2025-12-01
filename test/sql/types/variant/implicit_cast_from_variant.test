@@ -246,7 +246,6 @@ select [
 ----
 Conversion Error: Can't convert VARIANT to 'UNION(a INTEGER, b BOOLEAN, c VARIANT)'
 
-
 statement error
 select v::int from (values ({'a': 42}::variant)) t(v);
 ----

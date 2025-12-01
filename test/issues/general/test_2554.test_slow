@@ -2,8 +2,6 @@
 # description: Issue 2554: a recursive CTE SQL works in Sqlite reports a within error in duckdb
 # group: [general]
 
-
-
 query I
 WITH RECURSIVE
 input(sud) AS (

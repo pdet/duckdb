@@ -2,8 +2,6 @@
 # description: Test DETACH with keywords
 # group: [attach]
 
-
-
 statement ok
 ATTACH DATABASE ':memory:' AS varchar;
 

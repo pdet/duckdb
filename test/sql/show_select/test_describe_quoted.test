@@ -1,8 +1,6 @@
 # name: test/sql/show_select/test_describe_quoted.test
 # group: [show_select]
 
-
-
 # Quoted table name, no schema name
 statement ok
 create table "a.b.c" (x int);

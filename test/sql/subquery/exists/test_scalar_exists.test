@@ -2,8 +2,6 @@
 # description: Test scalar EXISTS query
 # group: [exists]
 
-
-
 query T
 SELECT EXISTS(SELECT 1)
 ----

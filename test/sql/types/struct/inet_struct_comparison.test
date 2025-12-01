@@ -5,7 +5,6 @@
 # original issue from author for https://github.com/duckdb/duckdb/issues/13924
 require inet
 
-
 statement ok
 CREATE TABLE  t1(c0 INT, c1 INET);
 
