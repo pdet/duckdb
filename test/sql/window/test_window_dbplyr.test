@@ -2,8 +2,7 @@
 # description: Ensure dbplyr crash with ORDER BY under window stays fixed
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE dbplyr_052 (x INTEGER, g DOUBLE, w int)

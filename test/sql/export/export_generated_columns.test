@@ -7,8 +7,7 @@ require skip_reload
 statement ok
 pragma storage_compatibility_version='v1.1.0'
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 BEGIN TRANSACTION

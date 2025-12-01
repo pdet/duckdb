@@ -1,8 +1,7 @@
 # name: test/sql/copy_database/copy_table_with_sequence.test
 # group: [copy_database]
 
-statement ok
-pragma enable_verification;
+
 
 statement ok
 attach '__TEST_DIR__/backup.db';

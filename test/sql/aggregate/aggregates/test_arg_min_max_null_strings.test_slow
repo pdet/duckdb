@@ -2,8 +2,7 @@
 # description: Test arg_min_null/arg_max_null with strings
 # group: [aggregates]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA verify_external

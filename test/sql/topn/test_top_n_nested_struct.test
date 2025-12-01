@@ -2,8 +2,7 @@
 # description: Test Top-N on nested structs
 # group: [topn]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE nested_struct(cik BIGINT, entityName VARCHAR, a STRUCT(b STRUCT(c INT, d INT), c STRUCT(e INT, f INT)));

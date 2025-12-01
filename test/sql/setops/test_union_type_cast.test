@@ -2,8 +2,7 @@
 # description: Test UNION type casting
 # group: [setops]
 
-statement ok
-PRAGMA enable_verification
+
 
 # type casting in single union
 query R

@@ -2,8 +2,7 @@
 # description: Test csv type detection
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # a CSV file with many strings

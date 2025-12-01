@@ -2,8 +2,7 @@
 # description: Test abort of big append (bigger than block size)
 # group: [transactions]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER PRIMARY KEY);

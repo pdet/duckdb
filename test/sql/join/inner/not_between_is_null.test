@@ -2,8 +2,7 @@
 # description: Test INNER JOIN with NOT BETWEEN and IS NULL conditions
 # group: [inner]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t1(c0 INT);

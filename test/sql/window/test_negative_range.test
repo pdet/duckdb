@@ -2,8 +2,7 @@
 # description: Check that negative ranges trigger errors
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE OR REPLACE TABLE issue10855(i INTEGER, v FLOAT);

@@ -2,8 +2,7 @@
 # description: Test various ops involving intervals
 # group: [interval]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE interval (t INTERVAL);

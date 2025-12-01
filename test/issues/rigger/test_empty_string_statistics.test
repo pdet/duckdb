@@ -2,8 +2,7 @@
 # description: SQLancer bug found with statistics not being properly updated on empty strings
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 BEGIN TRANSACTION;

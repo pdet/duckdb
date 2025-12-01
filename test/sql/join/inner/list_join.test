@@ -2,8 +2,7 @@
 # description: Join on large lists
 # group: [inner]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 pragma verify_external

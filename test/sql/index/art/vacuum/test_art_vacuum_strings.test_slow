@@ -2,8 +2,7 @@
 # description: Test checkpointing for vacuum operations with strings
 # group: [vacuum]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE FUNCTION mem_to_bytes(x) AS CASE

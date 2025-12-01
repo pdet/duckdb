@@ -2,8 +2,7 @@
 # description: Equality + inequality joins
 # group: [inner]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);

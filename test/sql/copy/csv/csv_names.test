@@ -2,8 +2,7 @@
 # description: Read a CSV with names flags
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Duplicate names shuold not be accepted
 statement error

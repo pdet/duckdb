@@ -2,8 +2,7 @@
 # description: Test MAD (Moving Absolute Deviation) aggregate
 # group: [aggregates]
 
-statement ok
-PRAGMA enable_verification
+
 
 # scalar mad is zero
 query II

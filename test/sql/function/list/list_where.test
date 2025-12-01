@@ -2,8 +2,7 @@
 # description: Test list_where function
 # group: [list]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers (i int[])

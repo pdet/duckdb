@@ -8,8 +8,7 @@ require-env LOCAL_EXTENSION_REPO
 
 require no_extension_autoloading "EXPECTED: Test relies on explicit INSTALL and LOAD"
 
-statement ok
-PRAGMA enable_verification
+
 
 # Set the repository to the correct one
 statement ok

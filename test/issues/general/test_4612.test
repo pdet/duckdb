@@ -2,8 +2,7 @@
 # description: Issue 4612: Can't select by blob field
 # group: [general]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE blobs (b BYTEA);

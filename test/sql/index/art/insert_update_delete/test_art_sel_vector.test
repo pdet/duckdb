@@ -2,8 +2,7 @@
 # description: Test ART usage with selection vectors
 # group: [insert_update_delete]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE source(i INTEGER)

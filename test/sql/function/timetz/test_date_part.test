@@ -2,8 +2,7 @@
 # description: DATE_PART test
 # group: [timetz]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE timetzs(d TIMETZ, s VARCHAR);

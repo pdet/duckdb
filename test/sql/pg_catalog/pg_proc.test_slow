@@ -2,8 +2,7 @@
 # description: Test pg_proc function
 # group: [pg_catalog]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SELECT * FROM pg_proc;

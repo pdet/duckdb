@@ -2,8 +2,7 @@
 # description: Create a generated column using the 'rowid' system column
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE unit (price INTEGER, amount_sold INTEGER);

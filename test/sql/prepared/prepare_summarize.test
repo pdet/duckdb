@@ -2,8 +2,7 @@
 # description: PREPARE of SUMMARIZE/DESCRIBE
 # group: [prepared]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE accounts AS SELECT 1 id, 'Mark' AS name

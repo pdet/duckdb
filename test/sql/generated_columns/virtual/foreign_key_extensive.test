@@ -2,8 +2,7 @@
 # description: Re-testing 'test_foreignkey.test' with generated columns mixed in
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE album (

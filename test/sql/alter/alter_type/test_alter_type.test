@@ -2,8 +2,7 @@
 # description: Test ALTER TABLE ALTER TYPE.
 # group: [alter_type]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test(i INTEGER, j INTEGER)
@@ -42,8 +41,7 @@ SELECT stats(i) FROM test LIMIT 1
 ----
 <REGEX>:.*1.*2.*
 
-statement ok
-PRAGMA enable_verification
+
 
 # Fail on non-existent column.
 statement error

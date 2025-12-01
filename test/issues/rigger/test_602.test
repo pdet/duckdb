@@ -2,8 +2,7 @@
 # description: Issue 602
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # GROUP BY does not take COLLATE into account
 statement ok

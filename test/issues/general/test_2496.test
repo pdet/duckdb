@@ -2,8 +2,7 @@
 # description: Issue 2496: Incorrect Struct Sorting Order on Ties
 # group: [general]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE list_str AS

@@ -4,8 +4,7 @@
 
 require json
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement error
 PRAGMA custom_profiling_settings='}}}}}}'

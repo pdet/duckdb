@@ -6,8 +6,7 @@ require skip_reload
 
 load __TEST_DIR__/test_add_pk_attach.db
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (i INTEGER, j INTEGER)

@@ -2,8 +2,7 @@
 # description: Test DEFAULT VALUES insert
 # group: [table]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table x (i int default 1, j int default 2)

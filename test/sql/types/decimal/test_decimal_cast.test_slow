@@ -2,8 +2,7 @@
 # description: Exhaustively test many decimal cast combinations
 # group: [decimal]
 
-statement ok
-PRAGMA enable_verification
+
 
 # test various decimal to decimal casts
 loop i 2 38

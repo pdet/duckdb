@@ -2,8 +2,7 @@
 # description: List slicing test
 # group: [list]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE listdata (

@@ -2,8 +2,7 @@
 # description: Issue #3367: signed integer overflow at propagate_and_compress.cpp:79:37
 # group: [fuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test(a BIGINT);

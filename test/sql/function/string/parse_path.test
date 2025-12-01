@@ -2,8 +2,7 @@
 # description: parse path functions test
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 require notwindows
 

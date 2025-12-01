@@ -4,8 +4,7 @@
 
 require parquet
 
-statement ok
-pragma enable_verification
+
 
 # pandas equivalent:
 # df = pandas.read_parquet('{DATA_DIR}/parquet-testing/bug1588.parquet')

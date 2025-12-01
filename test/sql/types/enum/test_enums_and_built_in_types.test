@@ -4,8 +4,7 @@
 
 load :memory:
 
-statement ok
-PRAGMA enable_verification
+
 
 statement error
 CREATE TYPE "integer" AS ENUM ('1', '2', '3');

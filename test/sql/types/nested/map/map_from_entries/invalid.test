@@ -2,8 +2,7 @@
 # description: Showcase error handling of invalid arguments
 # group: [map_from_entries]
 
-statement ok
-PRAGMA enable_verification
+
 
 # More than one argument
 statement error

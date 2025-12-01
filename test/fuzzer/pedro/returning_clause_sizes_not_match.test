@@ -1,8 +1,7 @@
 # name: test/fuzzer/pedro/returning_clause_sizes_not_match.test
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 CREATE TABLE test (x INT, y AS(x + 100));

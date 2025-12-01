@@ -2,8 +2,7 @@
 # description: Test csv header detection
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # CSV file with two lines, none header

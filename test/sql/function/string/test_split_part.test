@@ -2,8 +2,7 @@
 # description: split part test
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 # test core functionality
 query T

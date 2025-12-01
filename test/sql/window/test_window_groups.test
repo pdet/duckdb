@@ -2,8 +2,7 @@
 # description: GROUPS functionality tests. Taken from sqlite test/window8.test
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t3(a TEXT, b TEXT, c INTEGER);

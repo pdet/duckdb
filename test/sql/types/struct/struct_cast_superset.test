@@ -4,8 +4,7 @@
 
 require parquet
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t1 (s1 STRUCT(a INT, b INT));

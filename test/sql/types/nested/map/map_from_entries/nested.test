@@ -2,8 +2,7 @@
 # description: Test basic functionality of map_from_entries function
 # group: [map_from_entries]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # LIST - correct

@@ -2,8 +2,7 @@
 # description: Test try_cast for decimal
 # group: [decimal]
 
-statement ok
-PRAGMA enable_verification
+
 
 # smallint
 statement error

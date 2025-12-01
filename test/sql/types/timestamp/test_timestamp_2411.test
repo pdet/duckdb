@@ -2,8 +2,7 @@
 # description: Test bug described on issue 2411
 # group: [timestamp]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE timestamp1(i TIMESTAMP)

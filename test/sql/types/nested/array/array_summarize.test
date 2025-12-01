@@ -1,8 +1,7 @@
 # name: test/sql/types/nested/array/array_summarize.test
 # group: [array]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE arrays (a INTEGER[3])

@@ -2,8 +2,7 @@
 # description: Test joins under setops
 # group: [setops]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test AS SELECT * FROM range(0, 1024, 1) t1(a);

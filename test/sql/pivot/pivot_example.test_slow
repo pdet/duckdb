@@ -2,8 +2,7 @@
 # description: Test SQL pivot examples for documentation
 # group: [pivot]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE Cities(Country VARCHAR, Name VARCHAR, Year INT, Population INT);

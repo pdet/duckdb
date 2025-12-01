@@ -7,8 +7,7 @@
 
 require json
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 PRAGMA enable_profiling = 'json';

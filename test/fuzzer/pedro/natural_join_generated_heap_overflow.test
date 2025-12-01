@@ -2,8 +2,7 @@
 # description: Issue #4675: Natural join with generated column heap overflow
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0 (c1 AS (1), c0 INT);

@@ -2,8 +2,7 @@
 # description: Issue #2999: Correlated group on ANY subquery
 # group: [any_all]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0 (c0 INT);

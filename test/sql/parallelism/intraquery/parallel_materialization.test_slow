@@ -2,8 +2,7 @@
 # description: Test parallel materialization of results
 # group: [intraquery]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA threads=4

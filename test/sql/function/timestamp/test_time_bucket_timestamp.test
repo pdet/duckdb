@@ -2,8 +2,7 @@
 # description: Test time bucket functionality
 # group: [timestamp]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE timestamps(w INTERVAL, t TIMESTAMP, shift INTERVAL, origin TIMESTAMP);

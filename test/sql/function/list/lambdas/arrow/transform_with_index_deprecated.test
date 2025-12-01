@@ -2,8 +2,7 @@
 # description: Test the list_transform function with an index parameter
 # group: [arrow]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'

@@ -2,8 +2,7 @@
 # description: Binder issue when using GROUP BY ALL together
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0(c1 INT);

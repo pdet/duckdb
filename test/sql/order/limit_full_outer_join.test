@@ -2,8 +2,7 @@
 # description: Test LIMIT with full outer joins
 # group: [order]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER)

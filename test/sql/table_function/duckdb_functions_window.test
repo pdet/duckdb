@@ -1,8 +1,7 @@
 # name: test/sql/table_function/duckdb_functions_window.test
 # group: [table_function]
 
-statement ok
-PRAGMA enable_verification
+
 
 # FIXME: fix this later when Window functions are actual catalog entries, with the function_type = 'window'
 

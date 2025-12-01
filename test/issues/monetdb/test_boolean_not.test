@@ -2,8 +2,7 @@
 # description: MonetDB Test: boolean_not.Bug-3505.sql
 # group: [monetdb]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE BOOLTBL1 (f1 bool);

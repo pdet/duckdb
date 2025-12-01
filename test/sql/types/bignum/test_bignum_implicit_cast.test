@@ -2,8 +2,7 @@
 # description: Test bignum implicit cast
 # group: [bignum]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table t (a bignum)

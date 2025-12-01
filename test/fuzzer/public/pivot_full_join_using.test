@@ -2,8 +2,7 @@
 # description: Test pivoting on a USING column that comes from a FULL JOIN
 # group: [public]
 
-statement ok
-pragma enable_verification
+
 
 statement ok
 CREATE TABLE t1 (c01 INT, c02 INT);

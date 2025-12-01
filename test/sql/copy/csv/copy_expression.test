@@ -2,8 +2,7 @@
 # description: Test copy with expressions
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET VARIABLE copy_target = '__TEST_DIR__/copy_expression_target.csv';

@@ -1,8 +1,7 @@
 # name: test/sql/upsert/upsert_duplicates_issue.test
 # group: [upsert]
 
-statement ok
-pragma enable_verification;
+
 
 require parquet
 

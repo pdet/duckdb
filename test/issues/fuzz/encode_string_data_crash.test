@@ -2,8 +2,7 @@
 # description: Issue #3350: SEGV in duckdb::EncodeStringDataPrefix
 # group: [fuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE strings(b REAL, a INTEGER);

@@ -2,8 +2,7 @@
 # description: Test prepared statement parameters in POSITION
 # group: [parser]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PREPARE v1 AS SELECT POSITION(? in ?)

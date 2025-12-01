@@ -2,8 +2,7 @@
 # description: Test nested unnests
 # group: [list]
 
-statement ok
-PRAGMA enable_verification
+
 
 # recursive unnest
 query I

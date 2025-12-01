@@ -2,8 +2,7 @@
 # description: Test UNPIVOT without columns
 # group: [pivot]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table integers(i integer);

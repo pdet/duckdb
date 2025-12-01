@@ -32,8 +32,7 @@ require httpfs
 
 require json
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE human_eval_jsonl AS

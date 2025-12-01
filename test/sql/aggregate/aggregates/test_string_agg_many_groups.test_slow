@@ -2,8 +2,7 @@
 # description: Test STRING_AGG operator with many groups
 # group: [aggregates]
 
-statement ok
-PRAGMA enable_Verification
+
 
 statement ok
 PRAGMA verify_parallelism

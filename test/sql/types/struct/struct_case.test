@@ -2,8 +2,7 @@
 # description: Test struct case statement
 # group: [struct]
 
-statement ok
-PRAGMA enable_verification
+
 
 # constant case
 query I

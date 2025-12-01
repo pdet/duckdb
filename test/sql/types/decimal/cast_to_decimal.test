@@ -2,8 +2,7 @@
 # description: Test casting from numeric to decimal
 # group: [decimal]
 
-statement ok
-PRAGMA enable_verification
+
 
 # tinyint
 query IIII

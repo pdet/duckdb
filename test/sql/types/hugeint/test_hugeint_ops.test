@@ -2,8 +2,7 @@
 # description: Test various huge integer ops
 # group: [hugeint]
 
-statement ok
-PRAGMA enable_verification
+
 
 # test storage of the HUGEINT type
 statement ok

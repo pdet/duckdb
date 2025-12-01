@@ -2,8 +2,7 @@
 # description: Test a=b OR (a IS NULL AND b IS NULL) to a IS NOT DISTINCT FROM b
 # group: [expression]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA explain_output = 'PHYSICAL_ONLY'

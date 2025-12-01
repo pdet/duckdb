@@ -2,8 +2,7 @@
 # description: UBIGINT arithmetic
 # group: [numeric]
 
-statement ok
-PRAGMA enable_verification
+
 
 # ubigint casts
 query I

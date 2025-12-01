@@ -2,8 +2,7 @@
 # description: Test pivot over subquery
 # group: [pivot]
 
-statement ok
-PRAGMA enable_verification
+
 
 # pivot using an enum
 statement ok

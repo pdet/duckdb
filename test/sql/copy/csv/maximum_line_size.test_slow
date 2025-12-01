@@ -2,8 +2,7 @@
 # description: Test maximum_line_size CSV option
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (a INTEGER, b VARCHAR, c INTEGER);

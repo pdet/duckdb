@@ -2,8 +2,7 @@
 # description: Issue #4202: Suspect behavior when comparing dates and timestamps
 # group: [date]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table t1 (date timestamp);

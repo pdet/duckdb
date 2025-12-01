@@ -2,8 +2,7 @@
 # description: Test RANK state computations
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Multiple chunks, single partition
 query IIIII

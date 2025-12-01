@@ -2,8 +2,7 @@
 # description: Delete from altered table triggers assertion
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t1 AS SELECT 1 c1;

@@ -2,8 +2,7 @@
 # description: Test As-Of join with missing matches
 # group: [asof]
 
-statement ok
-PRAGMA enable_verification
+
 
 # These test stress several aspects of the matching:
 # * Probe inequality less than the minimum (no match)

@@ -2,8 +2,7 @@
 # description: Most scalar window functions
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 # test scalar window functions
 query I

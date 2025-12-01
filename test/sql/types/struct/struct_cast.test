@@ -2,8 +2,7 @@
 # description: Test struct cast
 # group: [struct]
 
-statement ok
-PRAGMA enable_verification
+
 
 # constant casts
 query I

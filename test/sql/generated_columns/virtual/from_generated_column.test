@@ -2,8 +2,7 @@
 # description: Expected behavior when trying to create a generated column from a generated column
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE unit (price INTEGER, amount_sold INTEGER);

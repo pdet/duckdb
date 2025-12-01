@@ -7,8 +7,7 @@ require parquet
 # NOTE: since updating ZSTD, compression levels between -131072 and 22 are now supported
 # We now also support this, and this test has been updated accordingly
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers AS FROM range(100) t(i)

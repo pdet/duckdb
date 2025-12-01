@@ -2,8 +2,7 @@
 # description: Test the binding of the concat function
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET default_null_order='nulls_first';

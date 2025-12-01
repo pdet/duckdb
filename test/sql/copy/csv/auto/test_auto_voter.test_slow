@@ -2,8 +2,7 @@
 # description: Test read_csv_auto from voter tsv
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

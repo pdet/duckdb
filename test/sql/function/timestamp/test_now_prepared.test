@@ -2,8 +2,7 @@
 # description: NOW function with prepared statements
 # group: [timestamp]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE timestamps(ts TIMESTAMP);

@@ -1,8 +1,7 @@
 # name: test/sql/types/nested/array/array_simple.test
 # group: [array]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA verify_external

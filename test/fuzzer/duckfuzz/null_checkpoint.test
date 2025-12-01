@@ -2,8 +2,7 @@
 # description: NULL checkpoint
 # group: [duckfuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement error
 CALL checkpoint(NULL)

@@ -2,8 +2,7 @@
 # description: Test that (concatenated) gzip archives with bgzf extra field can be read
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

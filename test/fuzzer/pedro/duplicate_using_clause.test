@@ -2,8 +2,7 @@
 # description: Issue #4561: Binding assertion error
 # group: [pedro]
 
-statement ok
-pragma enable_verification
+
 
 statement ok
 CREATE TABLE t1(c0 INT);

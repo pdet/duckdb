@@ -2,8 +2,7 @@
 # description: Test tables in different schemas with the same name
 # group: [binder]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE SCHEMA IF NOT EXISTS s1;

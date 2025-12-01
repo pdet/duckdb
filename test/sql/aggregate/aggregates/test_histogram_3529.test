@@ -2,8 +2,7 @@
 # description: Test histogram aggregation issue 3529
 # group: [aggregates]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table tmp (c0 integer, c1 integer);

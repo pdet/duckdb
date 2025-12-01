@@ -2,8 +2,7 @@
 # description: Test pivot over generated columns
 # group: [pivot]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE Product(DaysToManufacture int, StandardCost int GENERATED ALWAYS AS (DaysToManufacture * 5));

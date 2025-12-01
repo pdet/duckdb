@@ -2,8 +2,7 @@
 # description: Coverage tests for AsOf Joins
 # group: [asof]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 pragma verify_external

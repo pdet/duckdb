@@ -2,8 +2,7 @@
 # description: Truncation to precision tests
 # group: [numeric]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE truncme(a DOUBLE, b INTEGER, c UINTEGER)

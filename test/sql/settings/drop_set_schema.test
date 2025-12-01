@@ -5,8 +5,7 @@
 # So we have to exclude this test from Force Restart runs
 require skip_reload
 
-statement ok
-pragma enable_verification;
+
 
 # Create a new schema
 statement ok

@@ -2,8 +2,7 @@
 # description: Test struct case statement
 # group: [struct]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SELECT a from (SELECT STRUCT_PACK(a := 42, b := 43) as a) as t

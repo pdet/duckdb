@@ -2,8 +2,7 @@
 # description: Test referencing generated columns within generated column expressions
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE unit (

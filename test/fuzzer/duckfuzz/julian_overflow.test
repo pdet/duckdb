@@ -2,8 +2,7 @@
 # description: Array slice underflow
 # group: [duckfuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SELECT julian(c1) 

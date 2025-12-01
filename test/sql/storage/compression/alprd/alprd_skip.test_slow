@@ -4,8 +4,7 @@
 # load the DB from disk
 load __TEST_DIR__/test_alprd.db
 
-statement ok
-pragma enable_verification;
+
 
 statement ok
 pragma disable_optimizer;

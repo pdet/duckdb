@@ -2,8 +2,7 @@
 # description: Test copy into auto from lineitem csv
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

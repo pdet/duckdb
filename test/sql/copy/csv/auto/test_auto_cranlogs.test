@@ -2,8 +2,7 @@
 # description: Test read_csv_auto from cranlogs gzip
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

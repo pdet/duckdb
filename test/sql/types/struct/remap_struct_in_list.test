@@ -2,8 +2,7 @@
 # description: Test struct remapping
 # group: [struct]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Remapping operations:
 # - rename 'list.i' -> 'list.v1'

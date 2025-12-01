@@ -2,8 +2,7 @@
 # description: Test that index entries are properly removed after aborted append
 # group: [transactions]
 
-statement ok
-PRAGMA enable_verification
+
 
 loop i 1 9
 

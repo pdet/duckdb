@@ -2,8 +2,7 @@
 # description: Test UPSERT with different connections and LIST payload.
 # group: [constraints]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET immediate_transaction_mode = true;

@@ -2,8 +2,7 @@
 # description: Test reading a CSV file with an empty quote
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

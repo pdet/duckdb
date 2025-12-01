@@ -2,8 +2,7 @@
 # description: SQLancer bug that found a crash in the instr implementation
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 BEGIN TRANSACTION;

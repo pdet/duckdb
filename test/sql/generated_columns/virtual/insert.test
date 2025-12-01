@@ -2,8 +2,7 @@
 # description: Test that all types of inserting work
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (

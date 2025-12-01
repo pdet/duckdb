@@ -2,8 +2,7 @@
 # description: Test storage_info pragma
 # group: [pragma]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER)

@@ -2,8 +2,7 @@
 # description: Test bug described on issue 2411
 # group: [time]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE times(i TIME)

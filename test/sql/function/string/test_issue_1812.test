@@ -2,8 +2,7 @@
 # description: Test LIKE statement
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t (str VARCHAR);

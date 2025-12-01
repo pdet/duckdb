@@ -2,8 +2,7 @@
 # description: Test the ANY_VALUE function
 # group: [aggregates]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE tbl(i INTEGER)

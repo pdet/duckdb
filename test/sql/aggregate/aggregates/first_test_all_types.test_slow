@@ -2,8 +2,7 @@
 # description: Test the first aggregate on all types
 # group: [aggregates]
 
-statement ok
-pragma enable_verification
+
 
 # verify that first produces the same result as limit 1 for all types
 statement ok

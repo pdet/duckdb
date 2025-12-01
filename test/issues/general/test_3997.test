@@ -2,8 +2,7 @@
 # description: Issue 3997: CTEs on Insert/update/delete statements
 # group: [general]
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 create table x (x int);

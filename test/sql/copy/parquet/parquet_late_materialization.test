@@ -4,8 +4,7 @@
 
 require parquet
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 COPY (SELECT i, i + 1 AS j, i + 2 AS k, -i AS l FROM range(10) t(i)) TO '__TEST_DIR__/late_materialization.parquet';

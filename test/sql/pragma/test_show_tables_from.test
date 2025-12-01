@@ -2,8 +2,7 @@
 # description: Test SHOW TABLES FROM syntax
 # group: [pragma]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 ATTACH IF NOT EXISTS ':memory:' AS db

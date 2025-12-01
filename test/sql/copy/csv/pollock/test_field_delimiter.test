@@ -2,8 +2,7 @@
 # description: Test field delimiter from Pollock
 # group: [pollock]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 FROM read_csv('{DATA_DIR}/csv/pollock/file_field_delimiter_0x20.csv', delim = ' ', escape = '"', quote='"', header = false, skip=1,

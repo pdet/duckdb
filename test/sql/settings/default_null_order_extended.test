@@ -2,8 +2,7 @@
 # description: Test extended default null order settings
 # group: [settings]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i integer);

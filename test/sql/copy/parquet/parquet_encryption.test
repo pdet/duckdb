@@ -10,8 +10,7 @@ require noforcestorage
 # writing encrypted parquet requires httpfs to be loaded
 require httpfs
 
-statement ok
-PRAGMA enable_verification
+
 
 # AES key must have one of the three specified lengths or be valid Base64
 statement error

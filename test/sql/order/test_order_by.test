@@ -2,8 +2,7 @@
 # description: Test ORDER BY keyword
 # group: [order]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER);

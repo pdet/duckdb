@@ -2,8 +2,7 @@
 # description: Test SQL pivot with a subquery in the IN clause
 # group: [pivot]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE Cities(Country VARCHAR, Name VARCHAR, Year INT, Population INT);

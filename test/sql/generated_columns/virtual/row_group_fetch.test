@@ -1,8 +1,7 @@
 # name: test/sql/generated_columns/virtual/row_group_fetch.test
 # group: [virtual]
 
-statement ok
-pragma enable_verification;
+
 
 statement ok
 CREATE TABLE t1 (

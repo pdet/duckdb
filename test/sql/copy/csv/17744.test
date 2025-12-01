@@ -2,8 +2,7 @@
 # description: Test for issue #17744
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 COPY (

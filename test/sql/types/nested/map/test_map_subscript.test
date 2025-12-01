@@ -2,8 +2,7 @@
 # description: Test cardinality function for maps
 # group: [map]
 
-statement ok
-pragma enable_verification
+
 
 # Single element on map
 query I

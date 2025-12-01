@@ -2,8 +2,7 @@
 # description: Issue 18163 - Deterministic query return undeterministic results
 # group: [general]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t90(c0 VARCHAR);

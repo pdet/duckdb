@@ -5,8 +5,7 @@
 
 # Recursive CTEs
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA threads=1

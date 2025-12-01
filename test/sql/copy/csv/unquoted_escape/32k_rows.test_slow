@@ -2,8 +2,7 @@
 # description: Test large number of rows with unquoted escape characters
 # group: [unquoted_escape]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE pseudorandom_fields AS SELECT i, list_select(

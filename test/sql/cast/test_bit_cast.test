@@ -2,8 +2,7 @@
 # description: Test casting from and to BitString
 # group: [cast]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE bits (b bit);

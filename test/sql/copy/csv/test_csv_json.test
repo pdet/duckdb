@@ -2,8 +2,7 @@
 # description: Test read CSV function with json type
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 require json
 

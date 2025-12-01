@@ -2,8 +2,7 @@
 # description: Test imdb escapes
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

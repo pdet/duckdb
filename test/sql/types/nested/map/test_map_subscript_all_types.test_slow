@@ -4,8 +4,7 @@
 
 # Note: this is **incredibly** slow on debug
 
-statement ok
-PRAGMA enable_verification;
+
 
 query I nosort all_types
 SELECT columns(*)

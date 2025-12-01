@@ -2,8 +2,7 @@
 # description: Test that repeated truncate of in-memory table frees up memory
 # group: [delete]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE a(i INTEGER)

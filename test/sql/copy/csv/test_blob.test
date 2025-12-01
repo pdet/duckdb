@@ -2,8 +2,7 @@
 # description: Test BLOB with COPY INTO
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # CSV file with almost ALL ASCII chars

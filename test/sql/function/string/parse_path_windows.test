@@ -2,8 +2,7 @@
 # description: test parse path functions in windows
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 require windows
 

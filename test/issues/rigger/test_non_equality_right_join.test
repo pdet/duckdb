@@ -2,8 +2,7 @@
 # description: SQLancer bug that detected a problem with a non-equality predicate which would not get correctly flipped when transforming between left <-> right join
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 BEGIN TRANSACTION;

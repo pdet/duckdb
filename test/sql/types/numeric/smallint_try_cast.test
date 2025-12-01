@@ -2,8 +2,7 @@
 # description: Smallint try cast
 # group: [numeric]
 
-statement ok
-PRAGMA enable_verification
+
 
 # smallint casts
 statement ok

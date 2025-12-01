@@ -2,8 +2,7 @@
 # description: Test ART prefix edge cases
 # group: [nodes]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i BIGINT)

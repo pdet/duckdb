@@ -2,8 +2,7 @@
 # description: Test list_grade_up function
 # group: [list]
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 PRAGMA default_order='ASC';

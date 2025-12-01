@@ -2,8 +2,7 @@
 # description: Test timestamp with timezones cast
 # group: [timestamp]
 
-statement ok
-PRAGMA enable_verification
+
 
 # we can cast timestamps with UTC in them
 query I

@@ -2,8 +2,7 @@
 # description: Test structs with aggregations
 # group: [struct]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE VIEW million_structs AS

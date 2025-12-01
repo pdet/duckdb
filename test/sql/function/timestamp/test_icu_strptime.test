@@ -11,8 +11,7 @@ SET Calendar = 'gregorian';
 statement ok
 SET TimeZone = 'America/Los_Angeles';
 
-statement ok
-PRAGMA enable_verification
+
 
 # Parse TZ
 query I

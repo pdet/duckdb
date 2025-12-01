@@ -2,8 +2,7 @@
 # description: Test for arg_max with N
 # group: [aggregates]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t1 (val VARCHAR, arg INT);

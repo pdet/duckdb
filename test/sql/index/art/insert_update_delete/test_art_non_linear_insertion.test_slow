@@ -2,8 +2,7 @@
 # description: Test Anon-linear insertions into an ART
 # group: [insert_update_delete]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER)

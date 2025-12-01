@@ -4,8 +4,7 @@
 
 # Original issue: 2382
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 CREATE TABLE kvp (

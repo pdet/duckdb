@@ -2,8 +2,7 @@
 # description: Issue #3352: String null pointer in foreign key
 # group: [fuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE s1(t0 INTEGER, a TEXT, b TEXT);

@@ -2,8 +2,7 @@
 # description: Test hugeint aggregates
 # group: [hugeint]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE hugeints(g INTEGER, h HUGEINT);

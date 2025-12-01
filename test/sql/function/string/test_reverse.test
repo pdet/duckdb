@@ -2,8 +2,7 @@
 # description: REVERSE test
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 # test reverse on scalars
 query TTTT

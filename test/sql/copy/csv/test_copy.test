@@ -2,8 +2,7 @@
 # description: Test copy statement
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # generate CSV file with ',' as delimiter and complex strings

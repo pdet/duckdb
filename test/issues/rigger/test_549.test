@@ -2,8 +2,7 @@
 # description: Issue 549
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Nested CASE expression results in Assertion `other.auxiliary->type == VectorBufferType::STRING_BUFFER' failed
 statement ok

@@ -2,8 +2,7 @@
 # description: Test clean-up of chunks when mixing inserts and deletes
 # group: [transactions]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER);

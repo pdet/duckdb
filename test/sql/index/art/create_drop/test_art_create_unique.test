@@ -2,8 +2,7 @@
 # description: Test unique ART creation
 # group: [create_drop]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0(c0 INTEGER);

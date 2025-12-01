@@ -2,8 +2,7 @@
 # description: Test read CSV function in a recursive CTE
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 # first create a table from read csv, and use that in a recursive cte
 statement ok

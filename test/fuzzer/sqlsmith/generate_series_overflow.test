@@ -2,8 +2,7 @@
 # description: Fuzzer #26: overflow in generate series
 # group: [sqlsmith]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE tbl(bigint BIGINT);

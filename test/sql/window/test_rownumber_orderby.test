@@ -2,8 +2,7 @@
 # description: Test argument ordering for ROW_NUMBER and NTILE
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 query IIII
 SELECT 

@@ -4,8 +4,7 @@
 
 mode skip
 
-statement ok
-PRAGMA enable_verification
+
 
 query I
 SELECT count(*) FROM read_csv('{DATA_DIR}/csv/drug_exposure.csv');

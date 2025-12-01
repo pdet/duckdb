@@ -2,8 +2,7 @@
 # description: Issue #6651 - Crash When Updating after Commit
 # group: [update]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE a (b int);

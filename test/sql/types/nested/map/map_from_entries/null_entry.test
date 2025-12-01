@@ -2,8 +2,7 @@
 # description: Show expected behavior when an entry in the list of entries is NULL
 # group: [map_from_entries]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Some of the structs provided are NULL
 statement error

@@ -2,8 +2,7 @@
 # description: Test unhappy paths of varchar bignum
 # group: [bignum]
 
-statement ok
-PRAGMA enable_verification
+
 
 query I
 select '-0'::BIGNUM

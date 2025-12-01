@@ -2,8 +2,7 @@
 # description: Test ATTACH with search path
 # group: [attach]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 ATTACH DATABASE '__TEST_DIR__/view_search_path.db' AS view_search_path;

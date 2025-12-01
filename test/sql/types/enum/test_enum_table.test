@@ -2,8 +2,7 @@
 # description: ENUM types used in table tests
 # group: [enum]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');

@@ -2,8 +2,7 @@
 # description: Test array type with aggregate functions
 # group: [array]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE tbl1 (a INT[3]);

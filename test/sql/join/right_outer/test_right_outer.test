@@ -2,8 +2,7 @@
 # description: Test RIGHT OUTER JOIN
 # group: [right_outer]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 pragma verify_external

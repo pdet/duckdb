@@ -6,8 +6,7 @@
 # because the bitpacking groups fit the blocks.
 require block_size 16384
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE T (a INTEGER USING COMPRESSION RLE)

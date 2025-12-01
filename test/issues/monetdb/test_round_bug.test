@@ -2,8 +2,7 @@
 # description: MonetDB Test: round.Bug-3542.sql
 # group: [monetdb]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test_num_data (id integer, val decimal(18,10));

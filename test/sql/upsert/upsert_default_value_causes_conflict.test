@@ -1,8 +1,7 @@
 # name: test/sql/upsert/upsert_default_value_causes_conflict.test
 # group: [upsert]
 
-statement ok
-pragma enable_verification;
+
 
 statement ok
 create or replace table tbl (

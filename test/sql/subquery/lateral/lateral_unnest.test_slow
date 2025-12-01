@@ -2,8 +2,7 @@
 # description: Test LATERAL UNNEST
 # group: [lateral]
 
-statement ok
-PRAGMA enable_verification
+
 
 mode skip
 

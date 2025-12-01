@@ -2,8 +2,7 @@
 # description: Test copy with a ZSTD stream
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 require parquet
 

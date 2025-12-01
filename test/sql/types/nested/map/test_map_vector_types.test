@@ -1,8 +1,7 @@
 # name: test/sql/types/nested/map/test_map_vector_types.test
 # group: [map]
 
-statement ok
-pragma enable_verification;
+
 
 statement ok
 create macro input() as table

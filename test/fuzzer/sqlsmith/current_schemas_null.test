@@ -2,8 +2,7 @@
 # description: current_schemas null input
 # group: [sqlsmith]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE booleans(bool BOOLEAN);

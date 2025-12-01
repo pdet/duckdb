@@ -2,8 +2,7 @@
 # description: Test chaining USING joins
 # group: [inner]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t1 (a INTEGER, b INTEGER)

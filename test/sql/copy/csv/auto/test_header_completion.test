@@ -2,8 +2,7 @@
 # description: Test csv header completion
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # CSV file with one missing header

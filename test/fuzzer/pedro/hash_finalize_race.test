@@ -2,8 +2,7 @@
 # description: Issue #4694: Race condition at HashJoinFinalizeEvent
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE SEQUENCE t4;

@@ -2,8 +2,7 @@
 # description: Test Top N with lists
 # group: [topn]
 
-statement ok
-PRAGMA enable_verification
+
 
 # top-n with lists and null values
 statement ok

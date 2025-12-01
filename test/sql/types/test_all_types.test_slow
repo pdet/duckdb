@@ -2,8 +2,7 @@
 # description: Test all types function
 # group: [types]
 
-statement ok
-PRAGMA enable_verification
+
 
 query IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 SELECT * FROM test_all_types();

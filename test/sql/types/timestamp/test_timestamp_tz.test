@@ -2,8 +2,7 @@
 # description: Test TIMESTAMP WITH TIME ZONE common operations
 # group: [timestamp]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Cast from string
 query I

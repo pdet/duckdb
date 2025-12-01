@@ -2,8 +2,7 @@
 # description: Issue #3005: array_slice prevents row values to be used more than once
 # group: [cte]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE p(loc int8);

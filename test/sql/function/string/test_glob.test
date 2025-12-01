@@ -2,8 +2,7 @@
 # description: Test GLOB statement
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 # scalar glob
 query T

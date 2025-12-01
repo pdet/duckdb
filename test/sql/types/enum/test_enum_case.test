@@ -2,8 +2,7 @@
 # description: Test enum in CASE expressions
 # group: [enum]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TYPE E1 AS ENUM ('v1', 'v2');

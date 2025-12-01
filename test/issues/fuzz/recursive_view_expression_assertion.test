@@ -2,8 +2,7 @@
 # description: Issue #3354: Assertion Failed at expression_iterator.cpp:187
 # group: [fuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA threads=1

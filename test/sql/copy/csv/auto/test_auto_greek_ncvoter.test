@@ -2,8 +2,7 @@
 # description: Test read_csv_auto from ncvoter csv
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

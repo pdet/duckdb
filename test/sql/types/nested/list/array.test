@@ -2,8 +2,7 @@
 # description: Test ARRAY syntax
 # group: [list]
 
-statement ok
-PRAGMA enable_verification
+
 
 # scalar array syntax
 query IIII

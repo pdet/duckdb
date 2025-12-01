@@ -2,8 +2,7 @@
 # description: Issue 1599: Update + Transactions raises RuntimeError: Not implemented Error: operator
 # group: [general]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 start transaction;

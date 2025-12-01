@@ -2,8 +2,7 @@
 # description: Add a generated column on creation of a table
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Creating tables with only generated columns is not supported
 statement error

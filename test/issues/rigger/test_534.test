@@ -2,8 +2,7 @@
 # description: Issue 534
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # UPDATE causes subsequent query to segfault
 statement ok

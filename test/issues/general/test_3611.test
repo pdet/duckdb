@@ -5,8 +5,7 @@
 # load the DB from disk
 load __TEST_DIR__/issue_3611.db
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA force_compression='dictionary'

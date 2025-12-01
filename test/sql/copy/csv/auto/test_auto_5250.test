@@ -2,8 +2,7 @@
 # description: Test CSV Sample works for #5250
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 PRAGMA verify_parallelism

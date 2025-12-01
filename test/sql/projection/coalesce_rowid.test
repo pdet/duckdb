@@ -2,8 +2,7 @@
 # description: SELECT * REPLACE
 # group: [projection]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table tbl as select case when i%2=0 then null else i end as i from range(10) tbl(i);

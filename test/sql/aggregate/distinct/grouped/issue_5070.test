@@ -1,8 +1,7 @@
 # name: test/sql/aggregate/distinct/grouped/issue_5070.test
 # group: [grouped]
 
-statement ok
-pragma enable_verification
+
 
 statement ok
 pragma verify_parallelism

@@ -2,8 +2,7 @@
 # description: Test UNNEST in a table function
 # group: [list]
 
-statement ok
-PRAGMA enable_verification
+
 
 # standard usage of unnest
 query I

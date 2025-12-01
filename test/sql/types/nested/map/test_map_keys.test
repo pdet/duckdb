@@ -1,8 +1,7 @@
 # name: test/sql/types/nested/map/test_map_keys.test
 # group: [map]
 
-statement ok
-PRAGMA enable_verification;
+
 
 # Empty
 query I

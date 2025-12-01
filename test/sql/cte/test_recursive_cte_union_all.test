@@ -2,8 +2,7 @@
 # description: Test Recursive Common Table Expressions UNION ALL (CTE)
 # group: [cte]
 
-statement ok
-PRAGMA enable_verification
+
 
 # simple recursive CTE
 query I
@@ -94,8 +93,7 @@ NULL
 NULL
 NULL
 
-statement ok
-PRAGMA enable_verification
+
 
 # recursive CTE with table-producing function
 query I

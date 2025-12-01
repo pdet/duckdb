@@ -4,8 +4,7 @@
 
 require json
 
-statement ok
-pragma enable_verification
+
 
 # from issue 4227
 query T

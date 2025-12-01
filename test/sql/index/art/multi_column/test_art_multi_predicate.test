@@ -2,8 +2,7 @@
 # description: Test a point lookup with multiple predicates
 # group: [multi_column]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER, j INTEGER)

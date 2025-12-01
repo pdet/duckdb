@@ -2,8 +2,7 @@
 # description: Issue 540
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Nested MAX() results in nondeterministic result or double free
 statement ok

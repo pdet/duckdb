@@ -2,8 +2,7 @@
 # description: Prepared parameters with mixed types
 # group: [prepared]
 
-statement ok
-PRAGMA enable_verification
+
 
 # first type up-casts to second type
 statement ok

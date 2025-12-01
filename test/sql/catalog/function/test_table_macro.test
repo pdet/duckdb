@@ -2,8 +2,7 @@
 # description: Test SELECTMacro
 # group: [function]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

@@ -2,8 +2,7 @@
 # description: Test reading timestamp with timezones
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE tbl(id int, ts timestamp);

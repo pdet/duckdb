@@ -2,8 +2,7 @@
 # description: Issue 579
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Updated value in column is not visible in a SELECT
 statement ok

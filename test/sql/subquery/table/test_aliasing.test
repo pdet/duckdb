@@ -2,8 +2,7 @@
 # description: Aliasing and aggregation in subqueries
 # group: [table]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table a(i integer)

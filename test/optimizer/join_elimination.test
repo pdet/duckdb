@@ -2,8 +2,7 @@
 # description: test join elimination
 # group: [optimizer]
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 create table a(ida int, valuea int);

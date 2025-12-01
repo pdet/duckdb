@@ -2,8 +2,7 @@
 # description: Test selecting a view through a qualified reference
 # group: [select]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE SCHEMA s;

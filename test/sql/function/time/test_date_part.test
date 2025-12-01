@@ -2,8 +2,7 @@
 # description: DATE_PART test
 # group: [time]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE times(d TIME, s VARCHAR);

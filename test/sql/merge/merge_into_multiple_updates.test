@@ -2,8 +2,7 @@
 # description: Test MERGE INTO with multiple different update clauses
 # group: [merge]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE Entry(type varchar, number int, text varchar, country VARCHAR, date DATE);

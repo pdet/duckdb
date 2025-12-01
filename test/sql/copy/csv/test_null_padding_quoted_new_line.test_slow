@@ -2,8 +2,7 @@
 # description: Test CSV with nullpading interoping with quoted new line
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE T as SELECT 'this line

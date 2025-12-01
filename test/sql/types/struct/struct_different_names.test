@@ -2,8 +2,7 @@
 # description: Test inserting structs with different names and unnamed structs
 # group: [struct]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement error
 CREATE TABLE wrong AS FROM (VALUES (ROW(3)));

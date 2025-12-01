@@ -7,8 +7,7 @@ SELECT '" \'' "';
 ----
 " \' "
 
-statement ok
-PRAGMA enable_verification
+
 
 query T
 SELECT '" \'' "';

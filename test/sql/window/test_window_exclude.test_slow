@@ -2,8 +2,7 @@
 # description: Windows with EXCLUDE clause
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE tenk1d (

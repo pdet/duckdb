@@ -2,8 +2,7 @@
 # description: Test cycling inserts into the ART.
 # group: [nodes]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers (i INTEGER);

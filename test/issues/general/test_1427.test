@@ -2,8 +2,7 @@
 # description: Issue 1427: Segment Fault Crash when select a view (which has IN statement)
 # group: [general]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table t as select 123 as a

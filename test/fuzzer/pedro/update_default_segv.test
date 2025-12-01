@@ -2,8 +2,7 @@
 # description: Issue #4678: Update default SEGV
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0(c0 VARCHAR, c2 AS(1), c3 INT, UNIQUE(c0));

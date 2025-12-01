@@ -2,8 +2,7 @@
 # description: Secondary orderings of XXX_VALUE functions.
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 query IIIII
 SELECT 

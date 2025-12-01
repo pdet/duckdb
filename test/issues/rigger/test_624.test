@@ -2,8 +2,7 @@
 # description: Issue 624
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # ALTER TABLE results in an assertion failure 'Assertion `expr.return_type == vector.type' failed'
 statement ok

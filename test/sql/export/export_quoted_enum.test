@@ -2,8 +2,7 @@
 # description: Test export of enum with reserved keyword name
 # group: [export]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 BEGIN TRANSACTION

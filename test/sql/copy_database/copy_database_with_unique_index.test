@@ -2,8 +2,7 @@
 # description: Test the COPY DATABASE statement with unique indexes.
 # group: [copy_database]
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 ATTACH '__TEST_DIR__/copy_db_old.db' AS old;

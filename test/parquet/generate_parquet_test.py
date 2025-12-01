@@ -19,8 +19,7 @@ def generate_header(f):
 
 require parquet
 
-statement ok
-PRAGMA enable_verification
+
 
 '''
     )

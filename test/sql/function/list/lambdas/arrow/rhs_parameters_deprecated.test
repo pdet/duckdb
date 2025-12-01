@@ -2,8 +2,7 @@
 # description: Test nested lambda parameters in the rhs of lambda expressions
 # group: [arrow]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'

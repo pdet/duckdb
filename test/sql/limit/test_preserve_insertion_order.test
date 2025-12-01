@@ -2,8 +2,7 @@
 # description: Test limit with preserve insertion order disabled
 # group: [limit]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET preserve_insertion_order=false

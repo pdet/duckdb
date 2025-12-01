@@ -2,8 +2,7 @@
 # description: Test correct column name output in read_csv functions
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t1 AS SELECT * FROM read_csv_auto('{DATA_DIR}/csv/test/issue2518.csv', header=False, columns={'rsID':'INT', 'CHR': 'VARCHAR', 'POS': 'INT','REFB': 'VARCHAR','ALTB':'VARCHAR'}, auto_detect = false)

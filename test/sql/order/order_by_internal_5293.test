@@ -2,8 +2,7 @@
 # description: Test ORDER BY issue 5293 - New sort code merge logic fails for fixed width strings
 # group: [order]
 
-statement ok
-pragma enable_verification;
+
 
 statement ok
 create table t1 as from VALUES

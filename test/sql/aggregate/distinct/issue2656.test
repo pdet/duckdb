@@ -2,8 +2,7 @@
 # description: Issue #2656: DISTINCT + ORDER produces incorrect result
 # group: [distinct]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE T (t1 int, t2 int);

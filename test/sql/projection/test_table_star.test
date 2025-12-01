@@ -2,8 +2,7 @@
 # description: Test table star expressions
 # group: [projection]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (a INTEGER, b INTEGER)

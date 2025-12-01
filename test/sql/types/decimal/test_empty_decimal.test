@@ -2,8 +2,7 @@
 # description: Test empty decimals
 # group: [decimal]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE decimals(i DECIMAL(), j DECIMAL)

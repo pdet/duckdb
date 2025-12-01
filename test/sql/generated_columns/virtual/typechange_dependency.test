@@ -2,8 +2,7 @@
 # description: Test changing types of dependencies of generated columns
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE unit (

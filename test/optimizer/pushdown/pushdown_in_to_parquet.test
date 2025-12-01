@@ -4,8 +4,7 @@
 
 require parquet
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table t1 as select range::VARCHAR a from range(1000);

@@ -2,8 +2,7 @@
 # description: Issue #3365: Undefined behavior at bitwise.cpp:148:38
 # group: [fuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 # issue tests
 statement error

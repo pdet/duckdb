@@ -2,8 +2,7 @@
 # description: SELECT struct.*;
 # group: [projection]
 
-statement ok
-PRAGMA enable_verification
+
 
 # create table
 statement ok

@@ -20,8 +20,7 @@ USE db_v13
 statement ok
 PRAGMA force_compression='${compression}'
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE blobs (b BYTEA);

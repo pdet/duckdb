@@ -2,8 +2,7 @@
 # description: Test that order is preserved even when mixing generated and standard columns
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (

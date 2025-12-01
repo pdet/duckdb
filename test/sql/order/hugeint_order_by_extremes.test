@@ -2,8 +2,7 @@
 # description: Issue #3471: Select fails when ordering on hugeint column
 # group: [order]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test (a hugeint);

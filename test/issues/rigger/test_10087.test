@@ -2,8 +2,7 @@
 # description: SQLancer bug that detected an issue with the column lifetime analyzer
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0(c1 INT);

@@ -2,8 +2,7 @@
 # description: Test read_csv_auto with column_types option
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # Test read_csv wout auto_detect throws

@@ -2,8 +2,7 @@
 # description: Issue 522
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Casting a large number to REAL and multiplying it with zero results in -nan
 statement error

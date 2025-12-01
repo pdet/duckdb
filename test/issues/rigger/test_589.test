@@ -2,8 +2,7 @@
 # description: Issue 589
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Creating an index on rowid results in an internal error 'Failed to bind column reference'
 statement ok

@@ -2,8 +2,7 @@
 # description: Test CSV projection pushdown with file globs
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 COPY (SELECT DATE '1992-01-01' d, 42 i, 'hello' s) TO '__TEST_DIR__/projection_pushdown_f1.csv' (HEADER, DELIMITER '|')

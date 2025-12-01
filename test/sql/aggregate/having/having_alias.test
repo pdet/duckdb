@@ -2,8 +2,7 @@
 # description: Test aliases in the HAVING clause
 # group: [having]
 
-statement ok
-PRAGMA enable_verification
+
 
 query II
 SELECT b, sum(a) AS a

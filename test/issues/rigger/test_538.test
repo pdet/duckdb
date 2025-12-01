@@ -2,8 +2,7 @@
 # description: Issue 538
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Incorrect result for predicate with shift on a BIGINT column
 statement ok

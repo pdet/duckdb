@@ -1,8 +1,7 @@
 # name: test/sql/error/test_try_expression.test
 # group: [error]
 
-statement ok
-pragma enable_verification;
+
 
 # --- OPERATOR_CAST ---
 

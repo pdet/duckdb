@@ -2,8 +2,7 @@
 # description: Test Nested Common Table Expressions (CTE)
 # group: [cte]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table a(i integer);

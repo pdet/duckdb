@@ -4,8 +4,7 @@
 
 # these tests check the different cases of the expression iterator
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'

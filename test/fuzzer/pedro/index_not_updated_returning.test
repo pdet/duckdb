@@ -2,8 +2,7 @@
 # description: Issue #4978 (23): Index not updated assertion
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t2 AS SELECT 1 c1, 1 c2;

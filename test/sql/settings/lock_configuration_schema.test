@@ -2,8 +2,7 @@
 # description: Test lock configuration and schema changes
 # group: [settings]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create schema s1;

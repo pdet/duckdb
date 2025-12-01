@@ -5,8 +5,7 @@
 # example taken from SQL server docs
 # https://learn.microsoft.com/en-us/sql/t-sql/queries/from-using-pivot-and-unpivot?view=sql-server-ver15
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE Product(DaysToManufacture int, StandardCost int);

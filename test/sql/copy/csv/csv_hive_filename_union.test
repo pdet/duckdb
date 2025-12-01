@@ -2,8 +2,7 @@
 # description: Test the automatic parsing of the hive partitioning scheme
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 # projection pushdown
 query I

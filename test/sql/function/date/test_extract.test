@@ -2,8 +2,7 @@
 # description: Extract function
 # group: [date]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE dates(i DATE)

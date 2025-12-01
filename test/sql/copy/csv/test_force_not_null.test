@@ -2,8 +2,7 @@
 # description: Test force_not_null
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

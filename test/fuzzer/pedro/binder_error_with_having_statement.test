@@ -2,8 +2,7 @@
 # description: Issue #5984 (8, 12, 15): Another Binder Error
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

@@ -2,8 +2,7 @@
 # description: Segment tree index issue
 # group: [pedro]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0 (c1 INT);

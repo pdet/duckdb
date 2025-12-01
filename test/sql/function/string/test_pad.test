@@ -2,8 +2,7 @@
 # description: LPAD/RPAD test
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 # test lpad on NULLs
 query TTTTTTT

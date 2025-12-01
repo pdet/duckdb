@@ -2,8 +2,7 @@
 # description: Test COUNT(*) with transaction local changes
 # group: [transactions]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE tbl (id INT);

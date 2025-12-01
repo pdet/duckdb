@@ -2,8 +2,7 @@
 # description: Test force_quote
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 # create a table

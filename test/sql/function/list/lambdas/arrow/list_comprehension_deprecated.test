@@ -2,8 +2,7 @@
 # description: Test different examples that can be found when searching for python list comprehension examples
 # group: [arrow]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'

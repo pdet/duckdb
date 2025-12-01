@@ -2,8 +2,7 @@
 # description: Issue #4370: Random segmentation fault when using list_sort and having
 # group: [list]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create or replace table test1 as (

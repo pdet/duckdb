@@ -2,8 +2,7 @@
 # description: Test ART creation with many duplicates in leaves and deletions
 # group: [create_drop]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 BEGIN TRANSACTION

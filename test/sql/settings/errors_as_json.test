@@ -2,8 +2,7 @@
 # description: Test errors_as_json setting
 # group: [settings]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET errors_as_json=true

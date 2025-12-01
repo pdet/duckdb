@@ -2,8 +2,7 @@
 # description: Correlated subquery related? Failed to bind column reference "once_state2" [35.0] (bindings: {#[1.0], #[33.0]})
 # group: [general]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table stuff (

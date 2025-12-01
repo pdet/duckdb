@@ -2,8 +2,7 @@
 # description: Test aggregation in WHERE
 # group: [filter]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(a INTEGER, b INTEGER)

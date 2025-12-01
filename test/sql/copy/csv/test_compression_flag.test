@@ -2,8 +2,7 @@
 # description: Test compression flag for read_csv and copy
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

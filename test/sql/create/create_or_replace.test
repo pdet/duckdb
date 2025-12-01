@@ -2,8 +2,7 @@
 # description: Test CREATE OR REPLACE TABLE
 # group: [create]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER)

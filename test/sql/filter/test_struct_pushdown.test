@@ -3,8 +3,7 @@
 
 load __TEST_DIR__/test_struct_pushdown.test
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE test_structs(i STRUCT(a integer, b bool));

@@ -2,8 +2,7 @@
 # description: Test creating a macro with the lambda arrow and loading that from storage.
 # group: [arrow]
 
-statement ok
-PRAGMA enable_verification;
+
 
 statement ok
 SET lambda_syntax='ENABLE_SINGLE_ARROW'

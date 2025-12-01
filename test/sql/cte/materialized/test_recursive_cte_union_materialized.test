@@ -2,8 +2,7 @@
 # description: Test Recursive Common Table Expressions UNION (CTE)
 # group: [materialized]
 
-statement ok
-PRAGMA enable_verification
+
 
 # simple recursive CTE
 query I

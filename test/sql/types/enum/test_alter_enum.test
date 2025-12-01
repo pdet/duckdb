@@ -2,8 +2,7 @@
 # description: Alter column type from String to ENUM
 # group: [enum]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE person (

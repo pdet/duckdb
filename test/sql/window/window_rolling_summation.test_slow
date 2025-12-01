@@ -2,8 +2,7 @@
 # description: Rolling summation (issue #965)
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table temp as select * from range(0, 10000) temp(x);

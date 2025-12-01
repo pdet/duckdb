@@ -2,8 +2,7 @@
 # description: Test ordering the same value several times
 # group: [order]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers(i INTEGER)

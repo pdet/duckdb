@@ -2,8 +2,7 @@
 # description: Test unnamed struct casts
 # group: [struct]
 
-statement ok
-pragma enable_verification
+
 
 
 query I

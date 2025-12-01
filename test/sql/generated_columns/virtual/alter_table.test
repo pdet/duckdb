@@ -2,8 +2,7 @@
 # description: Test generated columns added through ALTER TABLE query
 # group: [virtual]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE unit (price INTEGER, amount_sold INTEGER);

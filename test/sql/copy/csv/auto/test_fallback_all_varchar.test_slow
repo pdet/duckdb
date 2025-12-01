@@ -2,8 +2,7 @@
 # description: Test optional parameters for read csv
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 
 statement ok

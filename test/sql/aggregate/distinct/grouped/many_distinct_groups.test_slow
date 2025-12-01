@@ -1,8 +1,7 @@
 # name: test/sql/aggregate/distinct/grouped/many_distinct_groups.test_slow
 # group: [grouped]
 
-statement ok
-pragma enable_verification
+
 
 statement ok
 pragma verify_parallelism

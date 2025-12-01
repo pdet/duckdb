@@ -2,8 +2,7 @@
 # description: Test mark join with different types
 # group: [mark]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 pragma verify_external

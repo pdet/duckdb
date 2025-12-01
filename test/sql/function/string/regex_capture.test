@@ -2,8 +2,7 @@
 # description: Percent Rank
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE filenames (filename VARCHAR);

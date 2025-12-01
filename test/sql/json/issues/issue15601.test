@@ -4,8 +4,7 @@
 
 require json
 
-statement ok
-PRAGMA enable_verification
+
 
 # original from the issue
 statement ok

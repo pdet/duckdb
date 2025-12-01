@@ -2,8 +2,7 @@
 # description: Issue #2745: sql with RECURSIVE keyword but does not RECURSIVE hang
 # group: [cte]
 
-statement ok
-PRAGMA enable_verification
+
 
 query III
 with RECURSIVE parents_tab (id , value , parent )

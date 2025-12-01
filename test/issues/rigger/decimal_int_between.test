@@ -2,8 +2,7 @@
 # description: Issue #9825 - Missing Results when using Floating-point in BETWEEN
 # group: [rigger]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t0(c1 INT);

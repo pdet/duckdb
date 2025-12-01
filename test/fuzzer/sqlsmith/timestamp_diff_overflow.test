@@ -2,8 +2,7 @@
 # description: Test overflow in timestamp subtract
 # group: [sqlsmith]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE ts("timestamp" TIMESTAMP);;

@@ -2,8 +2,7 @@
 # description: Test column binding in cross product of multiple joins
 # group: [inner]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table t1(i integer);

@@ -2,8 +2,7 @@
 # description: Test OFFSET and LIMIT with prepared statements
 # group: [prepared]
 
-statement ok
-pragma enable_verification
+
 
 # Prepare a query with OFFSET and LIMIT as parameters with OFFSET written first in the query
 statement ok

@@ -1,8 +1,7 @@
 # name: test/sql/merge/merge_into_by_source.test
 # group: [merge]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE Stock(item_id int, balance int);

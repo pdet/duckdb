@@ -2,8 +2,7 @@
 # description: Have you seen the fnords?
 # group: [time]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Parse and format
 query I

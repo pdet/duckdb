@@ -2,8 +2,7 @@
 # description: Contains test
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 # contains of various lengths
 query IIIIIIIIII

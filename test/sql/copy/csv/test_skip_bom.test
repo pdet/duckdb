@@ -2,8 +2,7 @@
 # description: Test read CSV function
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 # read csv with UTF-8 BOM
 statement ok

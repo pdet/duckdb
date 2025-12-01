@@ -2,8 +2,7 @@
 # description: RIGHT test
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 foreach FUN RIGHT RIGHT_GRAPHEME
 

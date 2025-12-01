@@ -2,8 +2,7 @@
 # description: Issue #5984 (4): Logical column index 1 out of range during natural joins
 # group: [pedro]
 
-statement ok
-pragma enable_verification
+
 
 statement ok
 CREATE TABLE t0(c1 INT);

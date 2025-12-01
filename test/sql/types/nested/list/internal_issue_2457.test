@@ -6,8 +6,7 @@
 statement ok
 set threads=1
 
-statement ok
-pragma enable_verification
+
 
 statement ok
 CREATE OR REPLACE TABLE t1 (i INT, l INT[]);

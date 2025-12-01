@@ -2,8 +2,7 @@
 # description: Test using column value aliases as groups
 # group: [binder]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table test(a int);

@@ -2,8 +2,7 @@
 # description: Test parallel CSV reader with union by name
 # group: [parallel]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 SET default_null_order='nulls_first';

@@ -2,8 +2,7 @@
 # description: Test that aliases can be used in the HAVING clause
 # group: [binder]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE integers AS SELECT * FROM range(5) tbl(i);

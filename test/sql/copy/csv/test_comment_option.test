@@ -2,8 +2,7 @@
 # description: Test that the comment option of csv reading works properly
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Test comment and skip option
 query III

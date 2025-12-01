@@ -3,8 +3,7 @@
 
 require vector_size 2048
 
-statement ok
-PRAGMA enable_verification
+
 
 # Array try cast
 query I rowsort

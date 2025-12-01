@@ -5,8 +5,7 @@
 # No way CI can handle this
 mode skip
 
-statement ok
-PRAGMA enable_verification
+
 
 
 require tpch

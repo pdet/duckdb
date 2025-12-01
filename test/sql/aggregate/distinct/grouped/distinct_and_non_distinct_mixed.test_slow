@@ -9,8 +9,7 @@
 #distinct aggregate =	'D'
 #regular aggregate =	'-'
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table tbl as

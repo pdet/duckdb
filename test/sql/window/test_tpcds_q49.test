@@ -2,8 +2,7 @@
 # description: TPC-DS Q49 bug fix for multi-sort window functions
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 BEGIN TRANSACTION

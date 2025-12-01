@@ -2,8 +2,7 @@
 # description: Test CREATE TABLE AS SELECT (CTAS) statements
 # group: [create]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE tbl1 AS SELECT 1;

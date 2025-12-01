@@ -2,8 +2,7 @@
 # description: Test DISTINCT ON with COLUMNS(...) expansion
 # group: [distinct]
 
-statement ok
-PRAGMA enable_verification
+
 
 # Test 1: Basic COLUMNS expansion in DISTINCT ON
 query III

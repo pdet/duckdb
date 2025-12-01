@@ -2,8 +2,7 @@
 # description: Test glob fallback (#4699)
 # group: [csv]
 
-statement ok
-PRAGMA enable_verification
+
 
 query III
 SELECT * FROM '{DATA_DIR}/csv/[avalon]_daily-avg.csv'

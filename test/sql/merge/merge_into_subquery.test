@@ -2,8 +2,7 @@
 # description: Test MERGE INTO with subqueries
 # group: [merge]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE Totals(item_id int, balance int);

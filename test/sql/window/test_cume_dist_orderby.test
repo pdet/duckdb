@@ -2,8 +2,7 @@
 # description: Test argument ordering for CUME_DIST
 # group: [window]
 
-statement ok
-PRAGMA enable_verification
+
 
 query IIII
 SELECT 

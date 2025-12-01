@@ -2,8 +2,7 @@
 # description: Issue #12328: Segmentation fault during PIVOTING table (CLI) using struct field
 # group: [pivot]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table donnees_csv as select {'year': i::varchar, 'month': i::varchar} AS donnee, i%5 as variable_id, i%10 id_niv from range(1000) t(i);

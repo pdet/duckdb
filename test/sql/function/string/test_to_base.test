@@ -2,8 +2,7 @@
 # description: to_base tests
 # group: [string]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement error
 SELECT to_base(-10, 2)

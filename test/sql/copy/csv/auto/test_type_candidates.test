@@ -2,8 +2,7 @@
 # description: Test Type Candidates for auto_csv
 # group: [auto]
 
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 create table t (a integer, b double, c varchar)

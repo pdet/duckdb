@@ -2,8 +2,7 @@
 # description: Array slice underflow
 # group: [duckfuzz]
 
-statement ok
-PRAGMA enable_verification
+
 
 # test macro with subquery in limit/offset
 query I

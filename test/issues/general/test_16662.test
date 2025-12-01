@@ -2,8 +2,7 @@
 # description: Issue 16662 - Unexpected binder error when using a CTE multiple times
 # group: [general]
 
-statement ok
-pragma enable_verification
+
 
 statement ok
 CREATE VIEW

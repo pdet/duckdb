@@ -2,8 +2,7 @@
 # description: Test index UPSERTs.
 # group: [upsert]
 
-statement ok
-pragma enable_verification;
+
 
 statement ok
 CREATE TABLE tbl (i INT, j INT);

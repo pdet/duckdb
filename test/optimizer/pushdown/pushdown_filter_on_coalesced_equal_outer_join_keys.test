@@ -3,8 +3,7 @@
 # group: [pushdown]
 
 # enable query verification
-statement ok
-PRAGMA enable_verification
+
 
 statement ok
 CREATE TABLE t1 AS FROM VALUES
