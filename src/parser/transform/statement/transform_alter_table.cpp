@@ -127,7 +127,7 @@ unique_ptr<SQLStatement> Transformer::TransformAlter(duckdb_libpgquery::PGAlterT
 					break;
 				}
 				auto null_column = column_entry.Copy();
-				null_column.SetDefaultValue(make_uniq<ConstantExpression>(ConstantExpression(Value(nullptr))));
+				null_column.SetDefaultValue(column_entry.DefaultValue().Copy());
 				return unique_ptr<SQLStatement>(std::move(TransformAndMaterializeAlter(
 				    stmt, data, make_uniq<AddColumnInfo>(data, std::move(null_column), command->missing_ok),
 				    column_entry.GetName(), column_entry.DefaultValue().Copy())));
