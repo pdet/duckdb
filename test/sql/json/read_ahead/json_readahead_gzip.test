@@ -1,0 +1,35 @@
+# name: test/sql/json/read_ahead/json_readahead_gzip.test
+# description: Compressed ND-JSON files have no known buffer ranges and stay on the synchronous path
+# group: [read_ahead]
+
+require json
+
+statement ok
+SET threads=8
+
+statement ok
+COPY (SELECT range AS i FROM range(0, 100000)) TO '{TEST_DIR}/json_ra_gz.ndjson.gz' (FORMAT json, COMPRESSION gzip)
+
+foreach depth -1 1
+
+statement ok
+SET read_ahead_depth={depth}
+
+query II
+SELECT count(*), sum(i) FROM read_json('{TEST_DIR}/json_ra_gz.ndjson.gz')
+----
+100000	4999950000
+
+endloop
+
+# a seekable first file activates read-ahead, later compressed files still read at claim time
+statement ok
+COPY (SELECT range AS i FROM range(100000, 200000)) TO '{TEST_DIR}/json_ra_plain.ndjson' (FORMAT json)
+
+query II
+SELECT count(*), sum(i) FROM read_json(['{TEST_DIR}/json_ra_plain.ndjson', '{TEST_DIR}/json_ra_gz.ndjson.gz'])
+----
+200000	19999900000
+
+statement ok
+RESET read_ahead_depth

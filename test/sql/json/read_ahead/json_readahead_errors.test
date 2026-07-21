@@ -1,0 +1,32 @@
+# name: test/sql/json/read_ahead/json_readahead_errors.test
+# description: Errors in later buffers of a read-ahead scan report correct line numbers
+# group: [read_ahead]
+
+require json
+
+statement ok
+SET threads=8
+
+# a type mismatch in the very last line, in the last of several 16MB buffers
+statement ok
+COPY (SELECT CASE WHEN range = 799999 THEN to_json('oops') ELSE to_json(range) END AS i, repeat('x', 40) AS s FROM range(800000)) TO '{TEST_DIR}/json_ra_err.ndjson' (FORMAT json)
+
+foreach depth -1 1
+
+statement ok
+SET read_ahead_depth={depth}
+
+statement error
+SELECT max(i) FROM read_json('{TEST_DIR}/json_ra_err.ndjson')
+----
+<REGEX>:.*JSON transform error.*in line 800000.*Failed to cast value to numerical.*
+
+query II
+SELECT count(*), max(i) FROM read_json('{TEST_DIR}/json_ra_err.ndjson', ignore_errors=true)
+----
+800000	799998
+
+endloop
+
+statement ok
+RESET read_ahead_depth
