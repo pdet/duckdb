@@ -3,6 +3,7 @@
 #include "json_scan.hpp"
 #include "duckdb/common/types/value.hpp"
 #include "duckdb/parallel/async_result.hpp"
+#include "duckdb/parallel/callback_async_task.hpp"
 
 namespace duckdb {
 
@@ -465,6 +466,22 @@ bool JSONReader::TryInitializeScan(ClientContext &context, GlobalTableFunctionSt
 	return lstate.TryInitializeScan(gstate, *this);
 }
 
+AsyncResult JSONReader::ScheduleIO(ClientContext &context, GlobalTableFunctionState &gstate_p,
+                                   LocalTableFunctionState &lstate_p) {
+	auto &gstate = gstate_p.Cast<JSONGlobalTableFunctionState>().state;
+	auto &scan_state = lstate_p.Cast<JSONLocalTableFunctionState>().state.GetScanState();
+	if (!scan_state.needs_to_read) {
+		// the claim already materialized its buffer (auto-detect re-use or a non-seekable read)
+		return SourceResultType::HAVE_MORE_OUTPUT;
+	}
+	const auto buffer_index = scan_state.buffer_index.GetIndex();
+	auto &allocator = gstate.allocator;
+	vector<unique_ptr<AsyncTask>> io_tasks;
+	io_tasks.push_back(make_uniq<CallbackAsyncTask>(
+	    [this, &allocator, buffer_index] { LoadBuffer(allocator, buffer_index); }, KnownBufferSize(buffer_index)));
+	return AsyncResult(std::move(io_tasks), TaskSchedulerType::ASYNC);
+}
+
 void ReadJSONFunction(ClientContext &context, JSONReader &json_reader, JSONScanGlobalState &gstate,
                       JSONScanLocalState &lstate, DataChunk &output) {
 	auto &scan_state = lstate.GetScanState();
@@ -590,6 +607,16 @@ optional_idx JSONMultiFileInfo::MaxThreads(const MultiFileBindData &bind_data, c
 	// get the max threads from the bind data (if it is set)
 	auto &json_data = bind_data.bind_data->Cast<JSONScanData>();
 	return json_data.max_threads;
+}
+
+bool JSONMultiFileInfo::SupportsReadAhead(const MultiFileBindData &bind_data) const {
+	// gate on the first file's bind-time reader - without one we cannot know whether buffer ranges are known
+	if (bind_data.union_readers.empty() || !bind_data.union_readers[0] || !bind_data.union_readers[0]->reader) {
+		return false;
+	}
+	auto &json_reader = bind_data.union_readers[0]->reader->Cast<JSONReader>();
+	// only newline-delimited files split into independently loadable buffers
+	return json_reader.GetFormat() == JSONFormat::NEWLINE_DELIMITED && json_reader.HasKnownBufferRanges();
 }
 
 FileGlobInput JSONMultiFileInfo::GetGlobInput() {

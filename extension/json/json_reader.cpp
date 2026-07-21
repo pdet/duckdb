@@ -932,10 +932,13 @@ void JSONReader::PrepareForScan(JSONReaderScanState &scan_state) {
 
 void JSONReader::FinalizeBuffer(JSONReaderScanState &scan_state) {
 	if (scan_state.needs_to_read) {
-		// only the byte range was claimed - load the buffer now and attach it for parsing
-		auto &handle = LoadBuffer(scan_state.global_allocator, scan_state.buffer_index.GetIndex());
+		// only the byte range was claimed - a read-ahead task may have loaded the buffer already
+		auto handle = GetBuffer(scan_state.buffer_index.GetIndex());
+		if (!handle) {
+			handle = LoadBuffer(scan_state.global_allocator, scan_state.buffer_index.GetIndex());
+		}
 		scan_state.needs_to_read = false;
-		AttachBuffer(scan_state, handle);
+		AttachBuffer(scan_state, *handle);
 		return;
 	}
 
@@ -1060,8 +1063,9 @@ bool JSONReader::PrepareBufferSeek(JSONReaderScanState &scan_state) {
 	const auto buffer_index = GetBufferIndex();
 	scan_state.read_position = KnownBufferStart(buffer_index);
 	scan_state.read_size = KnownBufferSize(buffer_index);
-	if (buffer_index != 0 || !auto_detect_data.IsSet()) {
+	if (buffer_index != 0 || auto_detect_read_size == 0) {
 		// buffer 0 needs no read when it re-uses the auto-detection read, which already advanced the file cursor
+		// probed through the read size, as the auto-detect buffer itself is consumed on a read-ahead thread
 		GetFileHandle().RegisterReadRequest(scan_state.read_size);
 	}
 	scan_state.buffer_index = buffer_index;
