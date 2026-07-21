@@ -251,7 +251,10 @@ private:
 	void PrepareForReadInternal(JSONReaderScanState &scan_state);
 	void PrepareForScan(JSONReaderScanState &scan_state);
 	bool PrepareBufferSeek(JSONReaderScanState &scan_state);
-	void ReadNextBufferSeek(JSONReaderScanState &scan_state);
+	//! Load a buffer's known byte range into the buffer map, independently of any scan state
+	JSONBufferHandle &LoadBuffer(Allocator &allocator, idx_t buffer_index);
+	//! Attach a buffer in the buffer map to the scan state so it can be parsed
+	void AttachBuffer(JSONReaderScanState &scan_state, JSONBufferHandle &handle);
 	bool ReadNextBufferNoSeek(JSONReaderScanState &scan_state);
 	void FinalizeBuffer(JSONReaderScanState &scan_state);
 

@@ -932,13 +932,14 @@ void JSONReader::PrepareForScan(JSONReaderScanState &scan_state) {
 
 void JSONReader::FinalizeBuffer(JSONReaderScanState &scan_state) {
 	if (scan_state.needs_to_read) {
-		// we haven't read into the buffer yet - this can only happen if we are reading a file we can seek into
-		// read into the buffer
-		ReadNextBufferSeek(scan_state);
+		// only the byte range was claimed - load the buffer now and attach it for parsing
+		auto &handle = LoadBuffer(scan_state.global_allocator, scan_state.buffer_index.GetIndex());
 		scan_state.needs_to_read = false;
+		AttachBuffer(scan_state, handle);
+		return;
 	}
 
-	// we read something
+	// the buffer was read at claim time (auto-detect re-use or a non-seekable read)
 	// skip over the array start if required
 	if (!scan_state.is_last) {
 		if (scan_state.buffer_index.GetIndex() == 0) {
@@ -961,6 +962,26 @@ bool JSONReader::ReadNextBuffer(JSONReaderScanState &scan_state) {
 	return true;
 }
 
+void JSONReader::AttachBuffer(JSONReaderScanState &scan_state, JSONBufferHandle &handle) {
+	D_ASSERT(scan_state.buffer_index.GetIndex() == handle.buffer_index);
+	scan_state.current_buffer_handle = &handle;
+	scan_state.buffer_ptr = char_ptr_cast(handle.buffer.get());
+	scan_state.buffer_size = handle.buffer_size;
+	scan_state.buffer_offset = handle.buffer_start;
+
+	if (scan_state.file_read_type == JSONFileReadType::SCAN_PARTIAL) {
+		// if we are not scanning the entire file - copy the remainder of the previous buffer into this buffer
+		// we don't need to do this for the first buffer
+		// the buffer is in the map before we get here, ensuring we can still read in parallel
+		if (handle.buffer_index != 0) {
+			CopyRemainderFromPreviousBuffer(scan_state);
+		}
+	}
+
+	scan_state.prev_buffer_remainder = 0;
+	scan_state.lines_or_objects_in_buffer = 0;
+}
+
 void JSONReader::FinalizeBufferInternal(JSONReaderScanState &scan_state, AllocatedData &buffer, idx_t buffer_index) {
 	idx_t readers = 1;
 	if (scan_state.file_read_type == JSONFileReadType::SCAN_PARTIAL) {
@@ -970,20 +991,9 @@ void JSONReader::FinalizeBufferInternal(JSONReaderScanState &scan_state, Allocat
 	// Create an entry and insert it into the map
 	auto json_buffer_handle = make_uniq<JSONBufferHandle>(*this, buffer_index, readers, std::move(buffer),
 	                                                      scan_state.buffer_size, scan_state.buffer_offset);
-	scan_state.current_buffer_handle = json_buffer_handle.get();
+	auto &handle = *json_buffer_handle;
 	InsertBuffer(buffer_index, std::move(json_buffer_handle));
-
-	if (scan_state.file_read_type == JSONFileReadType::SCAN_PARTIAL) {
-		// if we are not scanning the entire file - copy the remainder of the previous buffer into this buffer
-		// we don't need to do this for the first buffer
-		// we do this after inserting the buffer in the map to ensure we can still read in parallel
-		if (scan_state.buffer_index.GetIndex() != 0) {
-			CopyRemainderFromPreviousBuffer(scan_state);
-		}
-	}
-
-	scan_state.prev_buffer_remainder = 0;
-	scan_state.lines_or_objects_in_buffer = 0;
+	AttachBuffer(scan_state, handle);
 
 	// YYJSON needs this
 	memset(scan_state.buffer_ptr + scan_state.buffer_size, 0, YYJSON_PADDING_SIZE);
@@ -1012,6 +1022,10 @@ void JSONReader::PrepareForReadInternal(JSONReaderScanState &scan_state) {
 	}
 }
 bool JSONReader::PrepareBufferForRead(JSONReaderScanState &scan_state) {
+	if (scan_state.file_read_type == JSONFileReadType::SCAN_PARTIAL && GetFileHandle().CanSeek()) {
+		// the buffer ranges are known - we only claim a buffer index here, the buffer is loaded when scanned
+		return PrepareBufferSeek(scan_state);
+	}
 	if (auto_detect_data.IsSet()) {
 		// we have auto-detected data - re-use the buffer
 		if (next_buffer_index != 0 || auto_detect_data_size == 0 || scan_state.prev_buffer_remainder != 0) {
@@ -1029,19 +1043,8 @@ bool JSONReader::PrepareBufferForRead(JSONReaderScanState &scan_state) {
 		auto_detect_data_size = 0;
 		return true;
 	}
-	if (scan_state.file_read_type == JSONFileReadType::SCAN_PARTIAL && GetFileHandle().CanSeek()) {
-		// we can seek and are doing a parallel read - we don't need to read immediately yet
-		// we only need to prepare the read now
-		if (!PrepareBufferSeek(scan_state)) {
-			return false;
-		}
-	} else {
-		// we cannot seek - we need to read immediately here
-		if (!ReadNextBufferNoSeek(scan_state)) {
-			return false;
-		}
-	}
-	return true;
+	// we cannot seek - we need to read immediately here
+	return ReadNextBufferNoSeek(scan_state);
 }
 
 bool JSONReader::PrepareBufferSeek(JSONReaderScanState &scan_state) {
@@ -1057,7 +1060,10 @@ bool JSONReader::PrepareBufferSeek(JSONReaderScanState &scan_state) {
 	const auto buffer_index = GetBufferIndex();
 	scan_state.read_position = KnownBufferStart(buffer_index);
 	scan_state.read_size = KnownBufferSize(buffer_index);
-	GetFileHandle().RegisterReadRequest(scan_state.read_size);
+	if (buffer_index != 0 || !auto_detect_data.IsSet()) {
+		// buffer 0 needs no read when it re-uses the auto-detection read, which already advanced the file cursor
+		GetFileHandle().RegisterReadRequest(scan_state.read_size);
+	}
 	scan_state.buffer_index = buffer_index;
 	scan_state.is_last = scan_state.read_size == 0;
 	scan_state.needs_to_read = true;
@@ -1065,18 +1071,44 @@ bool JSONReader::PrepareBufferSeek(JSONReaderScanState &scan_state) {
 	return true;
 }
 
-void JSONReader::ReadNextBufferSeek(JSONReaderScanState &scan_state) {
-	PrepareForReadInternal(scan_state);
-
-	// we start reading at "options.maximum_object_size" to leave space for data from the previous buffer
-	idx_t read_offset = options.maximum_object_size;
-	if (scan_state.read_size > 0) {
-		GetFileHandle().ReadAtPosition(scan_state.buffer_ptr + read_offset, scan_state.read_size,
-		                               scan_state.read_position);
+JSONBufferHandle &JSONReader::LoadBuffer(Allocator &allocator, idx_t buffer_index) {
+	D_ASSERT(HasKnownBufferRanges());
+	D_ASSERT(GetFormat() == JSONFormat::NEWLINE_DELIMITED);
+	const auto read_position = KnownBufferStart(buffer_index);
+	const auto read_size = KnownBufferSize(buffer_index);
+	const bool is_last = read_size == 0;
+	AllocatedData buffer;
+	idx_t buffer_size;
+	idx_t buffer_start;
+	if (buffer_index == 0 && auto_detect_data.IsSet()) {
+		// buffer 0 was already read by the auto-detection - re-use it
+		buffer = std::move(auto_detect_data);
+		buffer_size = auto_detect_data_size;
+		buffer_start = 0;
+		auto_detect_data.Reset();
+		auto_detect_data_size = 0;
+	} else {
+		buffer = allocator.Allocate(options.maximum_object_size * 2);
+		// data is read at an offset, leaving space to stitch in the trailing record of the previous buffer
+		buffer_start = options.maximum_object_size;
+		if (read_size > 0) {
+			GetFileHandle().ReadAtPosition(char_ptr_cast(buffer.get()) + buffer_start, read_size, read_position);
+		}
+		buffer_size = buffer_start + read_size;
 	}
-	scan_state.buffer_size = read_offset + scan_state.read_size;
-	scan_state.buffer_offset = read_offset;
-	scan_state.prev_buffer_remainder = 0;
+	auto buffer_ptr = char_ptr_cast(buffer.get());
+	if (buffer_index == 0 && !is_last) {
+		StringUtil::SkipBOM(buffer_ptr, buffer_size, buffer_start);
+	}
+	// YYJSON needs this
+	memset(buffer_ptr + buffer_size, 0, YYJSON_PADDING_SIZE);
+	// the final stitch-only buffer has no successor reading it
+	const idx_t readers = is_last ? 1 : 2;
+	auto json_buffer_handle =
+	    make_uniq<JSONBufferHandle>(*this, buffer_index, readers, std::move(buffer), buffer_size, buffer_start);
+	auto &handle = *json_buffer_handle;
+	InsertBuffer(buffer_index, std::move(json_buffer_handle));
+	return handle;
 }
 
 bool JSONReader::ReadNextBufferNoSeek(JSONReaderScanState &scan_state) {
