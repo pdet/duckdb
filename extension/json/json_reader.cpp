@@ -74,22 +74,15 @@ FileHandle &JSONFileHandle::GetHandle() {
 	return *file_handle;
 }
 
-bool JSONFileHandle::GetPositionAndSize(idx_t &position, idx_t &size, idx_t requested_size) {
-	D_ASSERT(requested_size != 0);
-	if (last_read_requested) {
-		return false;
-	}
-
-	position = read_position;
-	size = MinValue<idx_t>(requested_size, Remaining());
+void JSONFileHandle::RegisterReadRequest(idx_t size) {
+	D_ASSERT(!last_read_requested);
+	D_ASSERT(size <= Remaining());
 	read_position += size;
 
 	requested_reads++;
 	if (size == 0) {
 		last_read_requested = true;
 	}
-
-	return true;
 }
 
 void JSONFileHandle::ReadAtPosition(char *pointer, idx_t size, idx_t position,
@@ -209,6 +202,7 @@ void JSONReader::Reset() {
 	buffer_line_or_object_counts.clear();
 	auto_detect_data.Reset();
 	auto_detect_data_size = 0;
+	auto_detect_read_size = 0;
 	if (HasFileHandle()) {
 		file_handle->Reset();
 	}
@@ -254,6 +248,30 @@ const string &JSONReader::GetFileName() const {
 JSONFileHandle &JSONReader::GetFileHandle() const {
 	D_ASSERT(HasFileHandle());
 	return *file_handle;
+}
+
+bool JSONReader::HasKnownBufferRanges() const {
+	return HasFileHandle() && file_handle->CanSeek();
+}
+
+idx_t JSONReader::KnownBufferStride() const {
+	return options.maximum_object_size - YYJSON_PADDING_SIZE;
+}
+
+idx_t JSONReader::KnownBufferStart(idx_t buffer_idx) const {
+	D_ASSERT(HasKnownBufferRanges());
+	if (buffer_idx == 0) {
+		return 0;
+	}
+	const auto file_size = file_handle->FileSize();
+	const auto stride = KnownBufferStride();
+	// buffer 0 is either the (larger) auto-detection read or a regular stride
+	const auto first_buffer_size = auto_detect_read_size != 0 ? auto_detect_read_size : MinValue(stride, file_size);
+	return MinValue(first_buffer_size + (buffer_idx - 1) * stride, file_size);
+}
+
+idx_t JSONReader::KnownBufferSize(idx_t buffer_idx) const {
+	return KnownBufferStart(buffer_idx + 1) - KnownBufferStart(buffer_idx);
 }
 
 void JSONReader::InsertBuffer(idx_t buffer_idx, unique_ptr<JSONBufferHandle> &&buffer) {
@@ -723,6 +741,7 @@ void JSONReader::AutoDetect(Allocator &allocator, idx_t buffer_capacity) {
 	if (!file_handle->IsPipe()) {
 		auto_detect_data = std::move(read_buffer);
 		auto_detect_data_size = read_size;
+		auto_detect_read_size = read_size;
 	} else {
 		file_handle->Reset();
 	}
@@ -1029,19 +1048,20 @@ bool JSONReader::PrepareBufferForRead(JSONReaderScanState &scan_state) {
 }
 
 bool JSONReader::PrepareBufferSeek(JSONReaderScanState &scan_state) {
-	scan_state.request_size = scan_state.buffer_capacity / 2 - scan_state.prev_buffer_remainder - YYJSON_PADDING_SIZE;
 	if (!IsOpen()) {
 		return false;
 	}
-	auto &file_handle = GetFileHandle();
-
-	if (file_handle.LastReadRequested()) {
+	D_ASSERT(HasKnownBufferRanges());
+	D_ASSERT(scan_state.prev_buffer_remainder == 0);
+	D_ASSERT(scan_state.buffer_capacity == options.maximum_object_size * 2);
+	if (GetFileHandle().LastReadRequested()) {
 		return false;
 	}
-	if (!file_handle.GetPositionAndSize(scan_state.read_position, scan_state.read_size, scan_state.request_size)) {
-		return false; // We weren't able to read
-	}
-	scan_state.buffer_index = GetBufferIndex();
+	const auto buffer_index = GetBufferIndex();
+	scan_state.read_position = KnownBufferStart(buffer_index);
+	scan_state.read_size = KnownBufferSize(buffer_index);
+	GetFileHandle().RegisterReadRequest(scan_state.read_size);
+	scan_state.buffer_index = buffer_index;
 	scan_state.is_last = scan_state.read_size == 0;
 	scan_state.needs_to_read = true;
 	scan_state.buffer_size = 0;

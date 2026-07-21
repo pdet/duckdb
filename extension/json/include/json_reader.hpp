@@ -63,8 +63,9 @@ public:
 
 	FileHandle &GetHandle();
 
-	//! The next two functions return whether the read was successful
-	bool GetPositionAndSize(idx_t &position, idx_t &size, idx_t requested_size);
+	//! Account for a deferred positional read of "size" bytes (a zero size marks the last read)
+	void RegisterReadRequest(idx_t size);
+	//! Returns whether the read was successful
 	bool Read(char *pointer, idx_t &read_size, idx_t requested_size);
 	//! Read at position optionally allows passing a custom handle to read from, otherwise the default one is used
 	void ReadAtPosition(char *pointer, idx_t size, idx_t position, optional_ptr<FileHandle> override_handle = nullptr);
@@ -136,7 +137,6 @@ struct JSONReaderScanState {
 	//! Buffer (if we have one)
 	AllocatedData read_buffer;
 	bool needs_to_read = false;
-	idx_t request_size;
 	idx_t read_position;
 	idx_t read_size;
 	//! Current scan data
@@ -202,6 +202,12 @@ public:
 	const string &GetFileName() const;
 	JSONFileHandle &GetFileHandle() const;
 
+	//! Whether the byte ranges of this file's buffers can be computed from the buffer index
+	bool HasKnownBufferRanges() const;
+	//! The byte range covered by a buffer (only valid if HasKnownBufferRanges)
+	idx_t KnownBufferStart(idx_t buffer_idx) const;
+	idx_t KnownBufferSize(idx_t buffer_idx) const;
+
 public:
 	string GetReaderType() const override {
 		return "JSON";
@@ -261,6 +267,9 @@ private:
 
 	void ThrowObjectSizeError(const idx_t object_size);
 
+	//! The byte range size of every buffer except a first buffer read by auto-detection
+	idx_t KnownBufferStride() const;
+
 private:
 	//! Add an error to the buffer - requires the lock to be held
 	void AddError(idx_t buf_index, idx_t line_or_object_in_buf, const string &error_msg);
@@ -291,6 +300,8 @@ private:
 	//! If we have auto-detected, this is the buffer read by the auto-detection
 	AllocatedData auto_detect_data;
 	idx_t auto_detect_data_size = 0;
+	//! Size of the auto-detection read, kept after the buffer is handed off (it determines buffer 0's byte range)
+	idx_t auto_detect_read_size = 0;
 
 	//! The first error we found in the file (if any)
 	unique_ptr<JSONError> error;
