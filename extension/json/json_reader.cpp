@@ -85,14 +85,12 @@ void JSONFileHandle::RegisterReadRequest(idx_t size) {
 	}
 }
 
-void JSONFileHandle::ReadAtPosition(char *pointer, idx_t size, idx_t position,
-                                    optional_ptr<FileHandle> override_handle) {
+void JSONFileHandle::ReadAtPosition(char *pointer, idx_t size, idx_t position) {
 	if (IsPipe()) {
 		throw InternalException("ReadAtPosition is not supported for pipes");
 	}
 	if (size != 0) {
-		auto &handle = override_handle ? *override_handle.get() : *file_handle.get();
-		handle.Read(context, pointer, size, position);
+		file_handle->Read(context, pointer, size, position);
 	}
 
 	const auto incremented_actual_reads = ++actual_reads;
@@ -180,7 +178,7 @@ void JSONReader::OpenJSONFile() {
 	lock_guard<mutex> guard(lock);
 	if (!IsOpen()) {
 		auto &fs = FileSystem::GetFileSystem(context);
-		FileOpenFlags flags = FileFlags::FILE_FLAGS_READ | options.compression;
+		FileOpenFlags flags = FileFlags::FILE_FLAGS_READ | FileFlags::FILE_FLAGS_PARALLEL_ACCESS | options.compression;
 		flags.SetCachingMode(CachingMode::CACHE_REMOTE_ONLY);
 		auto regular_file_handle = fs.OpenFile(file, flags);
 		file_handle = make_uniq<JSONFileHandle>(context, std::move(regular_file_handle), BufferAllocator::Get(context));
@@ -413,8 +411,7 @@ static inline void TrimWhitespace(JSONString &line) {
 }
 
 JSONReaderScanState::JSONReaderScanState(ClientContext &context, Allocator &global_allocator, idx_t buffer_capacity)
-    : fs(FileSystem::GetFileSystem(context)), global_allocator(global_allocator),
-      allocator(BufferAllocator::Get(context)), buffer_capacity(buffer_capacity) {
+    : global_allocator(global_allocator), allocator(BufferAllocator::Get(context)), buffer_capacity(buffer_capacity) {
 }
 
 void JSONReaderScanState::ResetForNextParse() {
@@ -1074,27 +1071,8 @@ void JSONReader::ReadNextBufferSeek(JSONReaderScanState &scan_state) {
 	// we start reading at "options.maximum_object_size" to leave space for data from the previous buffer
 	idx_t read_offset = options.maximum_object_size;
 	if (scan_state.read_size > 0) {
-		auto &file_handle = GetFileHandle();
-		{
-			lock_guard<mutex> reader_guard(lock);
-			auto &raw_handle = file_handle.GetHandle();
-			// For non-on-disk files, we create a handle per thread: this is faster for e.g. S3Filesystem where
-			// throttling per tcp connection can occur meaning that using multiple connections is faster.
-			if (!raw_handle.OnDiskFile() && raw_handle.CanSeek()) {
-				if (!scan_state.thread_local_filehandle ||
-				    scan_state.thread_local_filehandle->GetPath() != raw_handle.GetPath()) {
-					FileOpenFlags flags = FileFlags::FILE_FLAGS_READ | FileFlags::FILE_FLAGS_DIRECT_IO;
-					flags.SetCachingMode(CachingMode::CACHE_REMOTE_ONLY);
-					scan_state.thread_local_filehandle = scan_state.fs.OpenFile(raw_handle.GetPath(), flags);
-				}
-			} else if (scan_state.thread_local_filehandle) {
-				scan_state.thread_local_filehandle = nullptr;
-			}
-		}
-
-		// Now read the file lock-free!
-		file_handle.ReadAtPosition(scan_state.buffer_ptr + read_offset, scan_state.read_size, scan_state.read_position,
-		                           scan_state.thread_local_filehandle);
+		GetFileHandle().ReadAtPosition(scan_state.buffer_ptr + read_offset, scan_state.read_size,
+		                               scan_state.read_position);
 	}
 	scan_state.buffer_size = read_offset + scan_state.read_size;
 	scan_state.buffer_offset = read_offset;

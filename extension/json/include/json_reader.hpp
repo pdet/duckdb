@@ -67,8 +67,7 @@ public:
 	void RegisterReadRequest(idx_t size);
 	//! Returns whether the read was successful
 	bool Read(char *pointer, idx_t &read_size, idx_t requested_size);
-	//! Read at position optionally allows passing a custom handle to read from, otherwise the default one is used
-	void ReadAtPosition(char *pointer, idx_t size, idx_t position, optional_ptr<FileHandle> override_handle = nullptr);
+	void ReadAtPosition(char *pointer, idx_t size, idx_t position);
 
 private:
 	idx_t ReadInternal(char *pointer, const idx_t requested_size);
@@ -122,7 +121,6 @@ struct JSONReaderScanState {
 	explicit JSONReaderScanState(ClientContext &context, Allocator &global_allocator,
 	                             idx_t reconstruct_buffer_capacity);
 
-	FileSystem &fs;
 	Allocator &global_allocator;
 	//! Thread-local allocator
 	JSONAllocator allocator;
@@ -158,9 +156,6 @@ struct JSONReaderScanState {
 	bool is_last = false;
 	//! Buffer to reconstruct split values
 	optional_idx batch_index;
-
-	//! For some filesystems (e.g. S3), using a filehandle per thread increases performance
-	unique_ptr<FileHandle> thread_local_filehandle;
 
 public:
 	//! Reset for parsing the next batch of JSON from the current buffer
