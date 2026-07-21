@@ -52,7 +52,6 @@ public:
 	void Close();
 
 	void Reset();
-	bool RequestedReadsComplete();
 	bool LastReadRequested() const;
 
 	idx_t FileSize() const;
@@ -60,8 +59,6 @@ public:
 
 	bool CanSeek() const;
 	bool IsPipe() const;
-
-	FileHandle &GetHandle();
 
 	//! Account for a deferred positional read of "size" bytes (a zero size marks the last read)
 	void RegisterReadRequest(idx_t size);
@@ -86,8 +83,6 @@ private:
 
 	//! Read properties
 	atomic<idx_t> read_position;
-	atomic<idx_t> requested_reads;
-	atomic<idx_t> actual_reads;
 	atomic<bool> last_read_requested;
 
 	//! Cached buffers for resetting when reading stream
@@ -135,8 +130,6 @@ struct JSONReaderScanState {
 	//! Buffer (if we have one)
 	AllocatedData read_buffer;
 	bool needs_to_read = false;
-	idx_t read_position;
-	idx_t read_size;
 	//! Current scan data
 	idx_t scan_count = 0;
 	JSONString units[STANDARD_VECTOR_SIZE];
@@ -154,8 +147,6 @@ struct JSONReaderScanState {
 	bool is_first_scan = false;
 	//! Whether this is the last batch of the file
 	bool is_last = false;
-	//! Buffer to reconstruct split values
-	optional_idx batch_index;
 
 public:
 	//! Reset for parsing the next batch of JSON from the current buffer
@@ -177,7 +168,6 @@ public:
 	JSONReader(ClientContext &context, JSONReaderOptions options, OpenFileInfo file);
 
 	void OpenJSONFile();
-	void CloseHandle();
 	void Reset();
 
 	bool HasFileHandle() const;
@@ -209,6 +199,7 @@ public:
 	}
 
 	void PrepareReader(ClientContext &context, GlobalTableFunctionState &) override;
+	void PrepareReadAhead(ClientContext &context, GlobalTableFunctionState &) override;
 	bool TryInitializeScan(ClientContext &context, GlobalTableFunctionState &gstate,
 	                       LocalTableFunctionState &lstate) override;
 	AsyncResult ScheduleIO(ClientContext &context, GlobalTableFunctionState &gstate,
@@ -249,12 +240,13 @@ private:
 	void SkipOverArrayStart(JSONReaderScanState &scan_state);
 	void AutoDetect(Allocator &allocator, idx_t buffer_size);
 	bool CopyRemainderFromPreviousBuffer(JSONReaderScanState &scan_state);
-	void FinalizeBufferInternal(JSONReaderScanState &scan_state, AllocatedData &buffer, idx_t buffer_index);
-	void PrepareForReadInternal(JSONReaderScanState &scan_state);
 	void PrepareForScan(JSONReaderScanState &scan_state);
 	bool PrepareBufferSeek(JSONReaderScanState &scan_state);
 	//! Load a buffer's known byte range into the buffer map, independently of any scan state
 	JSONBufferHandle &LoadBuffer(Allocator &allocator, idx_t buffer_index);
+	//! Pad, wrap and insert a finished buffer into the buffer map
+	JSONBufferHandle &CreateBufferHandle(AllocatedData &&buffer, idx_t buffer_index, idx_t readers, idx_t buffer_size,
+	                                     idx_t buffer_start);
 	//! Attach a buffer in the buffer map to the scan state so it can be parsed
 	void AttachBuffer(JSONReaderScanState &scan_state, JSONBufferHandle &handle);
 	bool ReadNextBufferNoSeek(JSONReaderScanState &scan_state);
@@ -299,9 +291,8 @@ private:
 
 	//! If we have auto-detected, this is the buffer read by the auto-detection
 	AllocatedData auto_detect_data;
-	idx_t auto_detect_data_size = 0;
 	//! Size of the auto-detection read, kept after the buffer is handed off (it determines buffer 0's byte range)
-	idx_t auto_detect_read_size = 0;
+	idx_t auto_detect_data_size = 0;
 
 	//! The first error we found in the file (if any)
 	unique_ptr<JSONError> error;

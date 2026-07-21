@@ -463,6 +463,14 @@ void JSONReader::PrepareReader(ClientContext &context, GlobalTableFunctionState 
 	}
 }
 
+void JSONReader::PrepareReadAhead(ClientContext &context, GlobalTableFunctionState &gstate_p) {
+	auto &gstate = gstate_p.Cast<JSONGlobalTableFunctionState>().state;
+	if (!IsInitialized()) {
+		// open the file while it is being produced, keeping the open and auto-detect read off the decode path
+		Initialize(gstate.allocator, gstate.buffer_capacity);
+	}
+}
+
 bool JSONReader::TryInitializeScan(ClientContext &context, GlobalTableFunctionState &gstate_p,
                                    LocalTableFunctionState &lstate_p) {
 	auto &gstate = gstate_p.Cast<JSONGlobalTableFunctionState>().state;
@@ -481,10 +489,19 @@ AsyncResult JSONReader::ScheduleIO(ClientContext &context, GlobalTableFunctionSt
 		return SourceResultType::HAVE_MORE_OUTPUT;
 	}
 	const auto buffer_index = scan_state.buffer_index.GetIndex();
+	if (KnownBufferSize(buffer_index) == 0 || (buffer_index == 0 && auto_detect_data_size != 0)) {
+		// stitch-only and auto-detect re-use claims read nothing - they materialize when decoded
+		return SourceResultType::HAVE_MORE_OUTPUT;
+	}
+	// the predecessor buffer needed for stitching gets no task here: jobs are admitted in claim order,
+	// so its load was already scheduled by its own claim
+	auto reader = shared_ptr_cast<BaseFileReader, JSONReader>(shared_from_this());
 	auto &allocator = gstate.allocator;
 	vector<unique_ptr<AsyncTask>> io_tasks;
+	// charged at the full buffer allocation, as the loaded buffer stays resident until it is decoded
 	io_tasks.push_back(make_uniq<CallbackAsyncTask>(
-	    [this, &allocator, buffer_index] { LoadBuffer(allocator, buffer_index); }, KnownBufferSize(buffer_index)));
+	    [reader, &allocator, buffer_index] { reader->LoadBuffer(allocator, buffer_index); },
+	    options.maximum_object_size * 2));
 	return AsyncResult(std::move(io_tasks), TaskSchedulerType::ASYNC);
 }
 

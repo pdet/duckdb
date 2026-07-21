@@ -91,7 +91,7 @@ public:
 		reader.Initialize(global_allocator, buffer_capacity);
 		reader.InitializeScan(scan_state, JSONFileReadType::SCAN_ENTIRE_FILE);
 
-		auto file_size = reader.GetFileHandle().GetHandle().GetFileSize();
+		auto file_size = reader.GetFileHandle().FileSize();
 		while (remaining != 0) {
 			allocator.Reset();
 			auto buffer_offset_before = scan_state.buffer_offset;
