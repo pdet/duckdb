@@ -306,6 +306,12 @@ void JSONMultiFileInfo::BindReader(ClientContext &context, vector<LogicalType> &
 	if (options.auto_detect || options.record_type == JSONRecordType::AUTO_DETECT) {
 		JSONScan::AutoDetect(context, bind_data, return_types, names);
 		D_ASSERT(return_types.size() == names.size());
+		if (!bind_data.union_readers.empty() && bind_data.union_readers[0] && bind_data.union_readers[0]->reader) {
+			// only newline-delimited files with known buffer ranges split into independently loadable buffers
+			auto &first_reader = bind_data.union_readers[0]->reader->Cast<JSONReader>();
+			json_data.supports_read_ahead =
+			    first_reader.GetFormat() == JSONFormat::NEWLINE_DELIMITED && first_reader.HasKnownBufferRanges();
+		}
 	}
 	json_data.key_names = IdentifiersToStrings(names);
 
@@ -575,7 +581,13 @@ AsyncResult JSONReader::Scan(ClientContext &context, GlobalTableFunctionState &g
 	default:
 		throw InternalException("Unsupported scan type for JSONMultiFileInfo::Scan");
 	}
-	return AsyncResult(output.size() ? SourceResultType::HAVE_MORE_OUTPUT : SourceResultType::FINISHED);
+	if (output.size() != 0) {
+		return AsyncResult(SourceResultType::HAVE_MORE_OUTPUT);
+	}
+	// the claim is exhausted - release the buffer while this job still owns the reader,
+	// the scan state can be recycled to a job of a different file
+	lstate.GetScanState().ResetForNextBuffer();
+	return AsyncResult(SourceResultType::FINISHED);
 }
 
 void JSONReader::FinishFile(ClientContext &context, GlobalTableFunctionState &global_state) {
@@ -610,13 +622,8 @@ optional_idx JSONMultiFileInfo::MaxThreads(const MultiFileBindData &bind_data, c
 }
 
 bool JSONMultiFileInfo::SupportsReadAhead(const MultiFileBindData &bind_data) const {
-	// gate on the first file's bind-time reader - without one we cannot know whether buffer ranges are known
-	if (bind_data.union_readers.empty() || !bind_data.union_readers[0] || !bind_data.union_readers[0]->reader) {
-		return false;
-	}
-	auto &json_reader = bind_data.union_readers[0]->reader->Cast<JSONReader>();
-	// only newline-delimited files split into independently loadable buffers
-	return json_reader.GetFormat() == JSONFormat::NEWLINE_DELIMITED && json_reader.HasKnownBufferRanges();
+	auto &json_data = bind_data.bind_data->Cast<JSONScanData>();
+	return json_data.supports_read_ahead;
 }
 
 FileGlobInput JSONMultiFileInfo::GetGlobInput() {

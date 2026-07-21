@@ -42,6 +42,10 @@ public:
 
 	optional_idx max_threads;
 	optional_idx estimated_cardinality_per_file;
+
+	//! Whether the first file splits into independently loadable buffers (recorded at bind time,
+	//! as the bind-time readers are moved out of the bind data before the read-ahead gate is consulted)
+	bool supports_read_ahead = false;
 };
 
 struct JSONScanInfo : public TableFunctionInfo {
