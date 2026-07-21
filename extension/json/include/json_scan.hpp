@@ -88,7 +88,6 @@ public:
 	bool enable_parallel_scans;
 
 	bool file_is_assigned = false;
-	bool initialized = false;
 };
 
 struct JSONScanLocalState {

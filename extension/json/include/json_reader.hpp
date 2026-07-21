@@ -82,8 +82,10 @@ private:
 	const idx_t file_size;
 
 	//! Read properties
+	//! The cursor is atomic as GetProgress reads it under the reader lock while claims advance it
+	//! under the multi-file lock
 	atomic<idx_t> read_position;
-	atomic<bool> last_read_requested;
+	bool last_read_requested;
 
 	//! Cached buffers for resetting when reading stream
 	vector<AllocatedData> cached_buffers;
@@ -210,7 +212,7 @@ public:
 	double GetProgressInFile(ClientContext &context) override;
 
 public:
-	//! Get a new buffer index (must hold the lock)
+	//! Get a new buffer index (grabs the lock)
 	idx_t GetBufferIndex();
 	//! Set line count for a buffer that is done (grabs the lock)
 	void SetBufferLineOrObjectCount(JSONBufferHandle &handle, idx_t count);
@@ -297,7 +299,6 @@ private:
 	//! The first error we found in the file (if any)
 	unique_ptr<JSONError> error;
 
-public:
 	mutable mutex lock;
 };
 

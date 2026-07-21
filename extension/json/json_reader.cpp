@@ -265,6 +265,7 @@ AllocatedData JSONReader::RemoveBuffer(JSONBufferHandle &handle) {
 }
 
 idx_t JSONReader::GetBufferIndex() {
+	lock_guard<mutex> guard(lock);
 	buffer_line_or_object_counts.push_back(-1);
 	return next_buffer_index++;
 }
@@ -726,8 +727,9 @@ bool JSONReader::CopyRemainderFromPreviousBuffer(JSONReaderScanState &scan_state
 	D_ASSERT(GetFormat() == JSONFormat::NEWLINE_DELIMITED);
 
 	// Spinlock until the previous batch index has also read its buffer
-	optional_ptr<JSONBufferHandle> previous_buffer_handle;
+	auto previous_buffer_handle = GetBuffer(scan_state.buffer_index.GetIndex() - 1);
 	while (!previous_buffer_handle) {
+		// a failed load only reaches the query executor once the job that scheduled it rethrows the error
 		if (HasThrown()) {
 			return false;
 		}
