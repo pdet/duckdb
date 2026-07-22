@@ -310,6 +310,29 @@ public:
 		return true;
 	}
 
+	static ReaderInitializeType OpenFileBody(ClientContext &context, const MultiFileBindData &bind_data,
+	                                         MultiFileGlobalState &global_state,
+	                                         MultiFileReaderData &current_reader_data, idx_t current_file_index) {
+		if (current_reader_data.union_data) {
+			auto &union_data = *current_reader_data.union_data;
+			current_reader_data.reader = bind_data.multi_file_reader->CreateReader(
+			    context, *global_state.global_state, union_data, bind_data);
+		} else {
+			current_reader_data.reader = bind_data.multi_file_reader->CreateReader(
+			    context, *global_state.global_state, current_reader_data.file_to_be_opened, current_file_index,
+			    bind_data);
+		}
+		auto init_result = InitializeReader(current_reader_data, bind_data, global_state.column_indexes,
+		                                    global_state.filters, context, current_file_index, global_state);
+		if (init_result != ReaderInitializeType::SKIP_READING_FILE) {
+			current_reader_data.reader->PrepareReader(context, *global_state.global_state);
+			if (global_state.read_ahead) {
+				current_reader_data.reader->PrepareReadAhead(context, *global_state.global_state);
+			}
+		}
+		return init_result;
+	}
+
 	static bool OpenFile(ClientContext &context, const MultiFileBindData &bind_data, MultiFileGlobalState &global_state,
 	                     MultiFileReaderData &current_reader_data, idx_t current_file_index,
 	                     unique_lock<mutex> &parallel_lock) {
@@ -321,32 +344,14 @@ public:
 			// hold the lock on the file we are opening, so other threads can wait for the file to be opened
 			unique_lock<mutex> file_lock(*current_reader_data.file_mutex);
 
-			bool can_skip_file = false;
-			if (current_reader_data.union_data) {
-				auto &union_data = *current_reader_data.union_data;
-				current_reader_data.reader = bind_data.multi_file_reader->CreateReader(
-				    context, *global_state.global_state, union_data, bind_data);
-			} else {
-				current_reader_data.reader = bind_data.multi_file_reader->CreateReader(
-				    context, *global_state.global_state, current_reader_data.file_to_be_opened, current_file_index,
-				    bind_data);
-			}
-			auto init_result = InitializeReader(current_reader_data, bind_data, global_state.column_indexes,
-			                                    global_state.filters, context, current_file_index, global_state);
-			if (init_result == ReaderInitializeType::SKIP_READING_FILE) {
-				//! File can be skipped entirely, close it and move on
-				can_skip_file = true;
-			} else {
-				current_reader_data.reader->PrepareReader(context, *global_state.global_state);
-				if (global_state.read_ahead) {
-					current_reader_data.reader->PrepareReadAhead(context, *global_state.global_state);
-				}
-			}
+			auto init_result =
+			    OpenFileBody(context, bind_data, global_state, current_reader_data, current_file_index);
 
 			// Now re-lock the state and add the reader
 			parallel_lock.lock();
 			global_state.files_opened++;
-			if (can_skip_file) {
+			if (init_result == ReaderInitializeType::SKIP_READING_FILE) {
+				//! File can be skipped entirely, close it and move on
 				current_reader_data.file_state = MultiFileFileState::SKIPPED;
 				// release the reader so its file handle is closed; skipped files are
 				// never scanned, so nothing else needs the reader
