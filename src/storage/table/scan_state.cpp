@@ -298,6 +298,14 @@ bool CollectionScanState::Scan(DataChunk &result, TableScanType type, optional_p
 	return false;
 }
 
+PreparedScanVector::PreparedScanVector() : sample_sel(STANDARD_VECTOR_SIZE) {
+}
+
+void PreparedScanVector::Reset() {
+	prepared = false;
+	io_registered = false;
+}
+
 PrefetchState::~PrefetchState() {
 }
 
