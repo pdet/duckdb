@@ -156,7 +156,7 @@ public:
 	bool CheckZonemapSegments(CollectionScanState &state);
 	void Scan(ScanOptions options, CollectionScanState &state, DataChunk &result);
 	void Scan(CollectionScanState &state, DataChunk &result, TableScanType type);
-	//! Registers the block handles required to scan the next row_count rows, without performing any I/O
+	//! Registers payload prefetch candidates for an initialized scan state without reading payload blocks.
 	void RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state);
 	//! Synchronously prefetches the blocks required to scan the next row_count rows
 	void ScheduleScanIO(CollectionScanState &state, idx_t row_count);

@@ -239,14 +239,6 @@ BufferHandle StandardBufferManager::Allocate(QueryContext context, MemoryTag tag
 
 void StandardBufferManager::BatchRead(QueryContext context, PrefetchRun &run) {
 	idx_t block_count = run.handles.size();
-	if (block_count == 1) {
-		if (Settings::Get<StorageBlockPrefetchSetting>(db) != StorageBlockPrefetch::DEBUG_FORCE_ALWAYS) {
-			// prefetching with block_count == 1 has no performance impact since we can't batch reads
-			// skip the prefetch in this case
-			// we do it anyway if alternative_verify is on for extra testing
-			return;
-		}
-	}
 
 	// Allocate a buffer to hold the data of all blocks.
 	auto block_alloc_size = run.handles[0]->GetBlockAllocSize();
@@ -311,6 +303,12 @@ StandardBufferManager::PrefetchPlan StandardBufferManager::RegisterPrefetch(vect
 
 void StandardBufferManager::ExecutePrefetch(QueryContext context, PrefetchPlan &plan) {
 	for (auto &run : plan) {
+		if (run.handles.size() == 1 &&
+		    Settings::Get<StorageBlockPrefetchSetting>(db) != StorageBlockPrefetch::DEBUG_FORCE_ALWAYS) {
+			// synchronously prefetching a single block has no performance impact since we can't batch reads
+			// skip it, unless debug_force_always is set for extra testing
+			continue;
+		}
 		BatchRead(context, run);
 	}
 }
