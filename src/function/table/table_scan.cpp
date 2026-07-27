@@ -31,6 +31,7 @@
 #include "duckdb/planner/filter/table_filter_functions.hpp"
 #include "duckdb/transaction/duck_transaction.hpp"
 #include "duckdb/transaction/local_storage.hpp"
+#include "duckdb/parallel/async_result.hpp"
 #include "duckdb/storage/data_table.hpp"
 #include "duckdb/storage/storage_index.hpp"
 #include "duckdb/storage/table/data_table_info.hpp"
@@ -324,9 +325,48 @@ public:
 		auto &l_state = data_p.local_state->Cast<TableScanLocalState>();
 		l_state.scan_state.options.force_fetch_row = Settings::Get<DebugForceFetchRowSetting>(context);
 
+#ifdef DUCKDB_DEBUG_ASYNC_SINK_SOURCE
+		if (data_p.results_execution_mode == AsyncResultsExecutionMode::TASK_EXECUTOR) {
+			vector<unique_ptr<AsyncTask>> test_tasks = AsyncResult::GenerateTestTasks();
+			if (!test_tasks.empty()) {
+				data_p.async_result = AsyncResult(std::move(test_tasks));
+				return;
+			}
+		}
+#endif
+
 		do {
 			if (bind_data.is_create_index) {
 				storage.CreateIndexScan(l_state.scan_state, output);
+			} else if (l_state.scan_state.table_state.row_group) {
+				// persistent storage phase: prepare the next vector and schedule its I/O before decoding
+				vector<unique_ptr<AsyncTask>> io_tasks;
+				auto prepare_result = storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks);
+				if (prepare_result == PreparePersistentScanResult::READY) {
+					if (!io_tasks.empty()) {
+						AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
+						if (data_p.results_execution_mode == AsyncResultsExecutionMode::TASK_EXECUTOR) {
+							// yield; on resume the prepared vector is decoded without re-registering I/O
+							data_p.async_result = std::move(io_result);
+							return;
+						}
+						io_result.ExecuteTasksSynchronously();
+					}
+					if (CanRemoveFilterColumns()) {
+						l_state.all_columns.Reset();
+						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, l_state.all_columns);
+						output.ReferenceColumns(l_state.all_columns, projection_ids);
+					} else {
+						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, output);
+					}
+					if (output.size() > 0) {
+						return;
+					}
+					// the prepared vector was filtered out entirely - prepare the next vector
+					context.InterruptCheck();
+					continue;
+				}
+				// ASSIGNMENT_FINISHED: fall through to claim the next assignment
 			} else if (CanRemoveFilterColumns()) {
 				l_state.all_columns.Reset();
 				storage.Scan(tx, l_state.all_columns, l_state.scan_state);
