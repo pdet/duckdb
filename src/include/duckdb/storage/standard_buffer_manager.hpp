@@ -166,8 +166,18 @@ protected:
 	//! overwrites the data within with garbage. Any readers that do not hold the pin will notice
 	void VerifyZeroReaders(BlockLock &l, shared_ptr<BlockHandle> &handle);
 
-	void BatchRead(QueryContext context, vector<shared_ptr<BlockHandle>> &handles,
-	               const map<block_id_t, idx_t> &load_map, block_id_t first_block, block_id_t last_block);
+	//! A run of handles with adjacent block ids (handles[i]->BlockId() == first_block + i)
+	struct PrefetchRun {
+		block_id_t first_block;
+		vector<shared_ptr<BlockHandle>> handles;
+	};
+	using PrefetchPlan = vector<PrefetchRun>;
+
+	//! Computes the contiguous runs of blocks that still need to be loaded, without performing any I/O
+	PrefetchPlan RegisterPrefetch(vector<shared_ptr<BlockHandle>> &handles);
+	//! Synchronously executes every run in the plan through BatchRead
+	void ExecutePrefetch(QueryContext context, PrefetchPlan &plan);
+	void BatchRead(QueryContext context, PrefetchRun &run);
 
 	bool EncryptTemporaryFiles();
 
