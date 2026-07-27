@@ -17,6 +17,7 @@
 namespace duckdb {
 
 class BoundForeignKeyConstraint;
+class AsyncTask;
 class AttachedDatabase;
 class ClientContext;
 class ColumnList;
@@ -58,6 +59,13 @@ enum class DataTableVersion {
 	MAIN_TABLE, // this is the newest version of the table - it has not been altered or dropped
 	ALTERED,    // this table has been altered
 	DROPPED     // this table has been dropped
+};
+
+enum class PreparePersistentScanResult : uint8_t {
+	//! A vector is prepared and can be processed once its I/O tasks (if any) complete
+	READY,
+	//! The current assignment holds no more eligible vectors - claim the next assignment
+	ASSIGNMENT_FINISHED
 };
 
 //! DataTable represents a physical table on disk
@@ -104,6 +112,13 @@ public:
 	//! elements were returned.
 	//! Returns true if all pushed down filters were executed during data fetching
 	void Scan(DuckTransaction &transaction, DataChunk &result, TableScanState &state);
+
+	//! Prepares the next eligible vector of the current persistent scan assignment and creates the async I/O tasks
+	//! required to scan it. READY with no tasks is valid (blocks resident, prefetch disabled or resuming).
+	PreparePersistentScanResult PreparePersistentScanIO(DuckTransaction &transaction, TableScanState &state,
+	                                                    vector<unique_ptr<AsyncTask>> &tasks);
+	//! Processes the vector prepared by PreparePersistentScanIO
+	void ProcessPreparedPersistentScan(DuckTransaction &transaction, TableScanState &state, DataChunk &result);
 
 	//! Fetch data from the specific row identifiers from the base table
 	void Fetch(DuckTransaction &transaction, DataChunk &result, const vector<StorageIndex> &column_ids,

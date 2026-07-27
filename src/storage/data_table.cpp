@@ -28,6 +28,7 @@
 #include "duckdb/storage/table/append_state.hpp"
 #include "duckdb/storage/table/delete_state.hpp"
 #include "duckdb/storage/table/persistent_table_data.hpp"
+#include "duckdb/parallel/async_result.hpp"
 #include "duckdb/storage/table/row_group.hpp"
 #include "duckdb/storage/table/scan_state.hpp"
 #include "duckdb/storage/table/update_state.hpp"
@@ -321,6 +322,44 @@ void DataTable::Scan(DuckTransaction &transaction, DataChunk &result, TableScanS
 	// scan the transaction-local segments
 	auto &local_storage = LocalStorage::Get(transaction);
 	local_storage.Scan(state.local_state, state.GetColumnIds(), result);
+}
+
+PreparePersistentScanResult DataTable::PreparePersistentScanIO(DuckTransaction &transaction, TableScanState &state,
+                                                               vector<unique_ptr<AsyncTask>> &tasks) {
+	auto &table_state = state.table_state;
+	if (!table_state.row_group) {
+		return PreparePersistentScanResult::ASSIGNMENT_FINISHED;
+	}
+	auto &row_group = table_state.row_group->GetNode();
+	ScanOptions options{TransactionData(transaction)};
+	if (!row_group.PrepareScan(options, table_state)) {
+		// the assignment is exhausted - parallel assignments never span row groups
+		D_ASSERT(table_state.max_row <= table_state.row_group->GetRowStart() + row_group.count);
+		table_state.row_group = nullptr;
+		return PreparePersistentScanResult::ASSIGNMENT_FINISHED;
+	}
+	auto &prepared = table_state.prepared_vector;
+	if (prepared.io_registered) {
+		// I/O for the prepared vector was already registered (e.g. we are resuming after BLOCKED)
+		return PreparePersistentScanResult::READY;
+	}
+	prepared.io_registered = true;
+	tasks = row_group.CreateScanIOTasks(table_state, prepared.max_count);
+	return PreparePersistentScanResult::READY;
+}
+
+void DataTable::ProcessPreparedPersistentScan(DuckTransaction &transaction, TableScanState &state, DataChunk &result) {
+	auto &table_state = state.table_state;
+	D_ASSERT(table_state.row_group);
+	auto &row_group = table_state.row_group->GetNode();
+	auto &prepared = table_state.prepared_vector;
+	D_ASSERT(prepared.prepared);
+	if (!prepared.io_registered) {
+		// async preparation was bypassed - fall back to the synchronous prefetch
+		row_group.ScheduleScanIO(table_state, prepared.max_count);
+	}
+	ScanOptions options{TransactionData(transaction)};
+	row_group.ProcessPreparedScan(options, table_state, result);
 }
 
 bool DataTable::CreateIndexScan(TableScanState &state, DataChunk &result) {

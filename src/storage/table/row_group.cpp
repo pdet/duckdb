@@ -1,5 +1,6 @@
 #include "duckdb/storage/table/row_group.hpp"
 #include "duckdb/main/client_context.hpp"
+#include "duckdb/parallel/async_result.hpp"
 #include "duckdb/transaction/commit_state.hpp"
 
 #include "duckdb/common/exception.hpp"
@@ -816,6 +817,16 @@ void RowGroup::ScheduleScanIO(CollectionScanState &state, idx_t row_count) {
 	PrefetchState prefetch_state;
 	RegisterScanIO(state, row_count, prefetch_state);
 	block_manager.buffer_manager.Prefetch(state.context, prefetch_state.blocks);
+}
+
+vector<unique_ptr<AsyncTask>> RowGroup::CreateScanIOTasks(CollectionScanState &state, idx_t row_count) {
+	auto &block_manager = GetBlockManager();
+	if (!block_manager.Prefetch()) {
+		return vector<unique_ptr<AsyncTask>>();
+	}
+	PrefetchState prefetch_state;
+	RegisterScanIO(state, row_count, prefetch_state);
+	return block_manager.buffer_manager.CreatePrefetchTasks(state.context, prefetch_state.blocks);
 }
 
 bool RowGroup::PrepareScan(ScanOptions options, CollectionScanState &state) {
