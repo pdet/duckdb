@@ -75,6 +75,8 @@ public:
 	BufferHandle Pin(const QueryContext &context, shared_ptr<BlockHandle> &handle) final;
 
 	void Prefetch(QueryContext context, vector<shared_ptr<BlockHandle>> &handles) final;
+	vector<unique_ptr<AsyncTask>> CreatePrefetchTasks(QueryContext context,
+	                                                  vector<shared_ptr<BlockHandle>> &handles) final;
 	void Unpin(shared_ptr<BlockHandle> &handle) final;
 
 	//! Set a new memory limit to the buffer manager, throws an exception if the new limit is too low and not enough
@@ -172,6 +174,9 @@ protected:
 		vector<shared_ptr<BlockHandle>> handles;
 	};
 	using PrefetchPlan = vector<PrefetchRun>;
+
+	//! Task that executes one prefetch run on a task-scheduler thread
+	class PrefetchTask;
 
 	//! Computes the contiguous runs of blocks that still need to be loaded, without performing any I/O
 	PrefetchPlan RegisterPrefetch(vector<shared_ptr<BlockHandle>> &handles);

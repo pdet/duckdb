@@ -13,6 +13,7 @@
 #include "duckdb/storage/block_allocator.hpp"
 #include "duckdb/common/encryption_functions.hpp"
 #include "duckdb/main/settings.hpp"
+#include "duckdb/parallel/async_result.hpp"
 #include "duckdb/storage/metadata/metadata_manager.hpp"
 
 namespace duckdb {
@@ -316,6 +317,37 @@ void StandardBufferManager::ExecutePrefetch(QueryContext context, PrefetchPlan &
 void StandardBufferManager::Prefetch(QueryContext context, vector<shared_ptr<BlockHandle>> &handles) {
 	auto plan = RegisterPrefetch(handles);
 	ExecutePrefetch(context, plan);
+}
+
+class StandardBufferManager::PrefetchTask : public AsyncTask {
+public:
+	PrefetchTask(StandardBufferManager &buffer_manager, QueryContext context, PrefetchRun run)
+	    : buffer_manager(buffer_manager), context(context), run(std::move(run)) {
+	}
+
+public:
+	void Execute() override {
+		buffer_manager.BatchRead(context, run);
+	}
+	idx_t GetIOSize() const override {
+		return run.handles.size() * run.handles[0]->GetBlockAllocSize();
+	}
+
+private:
+	StandardBufferManager &buffer_manager;
+	QueryContext context;
+	PrefetchRun run;
+};
+
+vector<unique_ptr<AsyncTask>> StandardBufferManager::CreatePrefetchTasks(QueryContext context,
+                                                                         vector<shared_ptr<BlockHandle>> &handles) {
+	auto plan = RegisterPrefetch(handles);
+	vector<unique_ptr<AsyncTask>> tasks;
+	tasks.reserve(plan.size());
+	for (auto &run : plan) {
+		tasks.push_back(make_uniq<PrefetchTask>(*this, context, std::move(run)));
+	}
+	return tasks;
 }
 
 BufferHandle StandardBufferManager::Pin(shared_ptr<BlockHandle> &handle) {
