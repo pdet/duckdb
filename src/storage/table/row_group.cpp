@@ -797,6 +797,23 @@ bool RowGroup::CheckZonemapSegments(CollectionScanState &state) {
 	}
 }
 
+void RowGroup::RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state) {
+	const auto &column_ids = state.GetColumnIds();
+	for (idx_t i = 0; i < column_ids.size(); i++) {
+		GetColumn(column_ids[i]).InitializePrefetch(prefetch_state, state.column_scans[i], row_count);
+	}
+}
+
+void RowGroup::ScheduleScanIO(CollectionScanState &state, idx_t row_count) {
+	auto &block_manager = GetBlockManager();
+	if (!block_manager.Prefetch()) {
+		return;
+	}
+	PrefetchState prefetch_state;
+	RegisterScanIO(state, row_count, prefetch_state);
+	block_manager.buffer_manager.Prefetch(state.context, prefetch_state.blocks);
+}
+
 void RowGroup::Scan(ScanOptions options, CollectionScanState &state, DataChunk &result) {
 	const auto &column_ids = state.GetColumnIds();
 	auto &filter_info = state.GetFilterInfo();
@@ -855,16 +872,7 @@ void RowGroup::Scan(ScanOptions options, CollectionScanState &state, DataChunk &
 		}
 		state.rows_scanned += count;
 
-		auto &block_manager = GetBlockManager();
-		if (block_manager.Prefetch()) {
-			PrefetchState prefetch_state;
-			for (idx_t i = 0; i < column_ids.size(); i++) {
-				const auto &column = column_ids[i];
-				GetColumn(column).InitializePrefetch(prefetch_state, state.column_scans[i], max_count);
-			}
-			auto &buffer_manager = block_manager.buffer_manager;
-			buffer_manager.Prefetch(state.context, prefetch_state.blocks);
-		}
+		ScheduleScanIO(state, max_count);
 
 		bool has_filters = filter_info.HasFilters();
 		if (count == max_count && !has_filters) {
