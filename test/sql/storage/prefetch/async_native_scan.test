@@ -1,0 +1,187 @@
+# name: test/sql/storage/prefetch/async_native_scan.test
+# description: Result equivalence of native storage scans across async I/O settings
+# group: [prefetch]
+
+load __TEST_DIR__/async_native_scan.db
+
+statement ok
+CREATE TABLE integers AS SELECT range AS i FROM range(1000000);
+
+statement ok
+CREATE TABLE upd AS SELECT range AS i, range * 2 AS j FROM range(100000);
+
+statement ok
+DELETE FROM upd WHERE i % 10 = 0;
+
+statement ok
+UPDATE upd SET j = j + 1 WHERE i % 7 = 0;
+
+statement ok
+CREATE TABLE nested AS SELECT {'a': range, 'b': range::VARCHAR} AS s, [range, range + 1] AS l, array_value(range::INT, (range + 1)::INT) AS arr FROM range(100000);
+
+statement ok
+PRAGMA force_compression='uncompressed'
+
+statement ok
+CREATE TABLE big_strings AS SELECT range AS i, repeat('x', 8192) || range::VARCHAR AS s FROM range(500);
+
+statement ok
+PRAGMA force_compression='zstd'
+
+statement ok
+CREATE TABLE zstd_strings AS SELECT range AS i, repeat('abcdefgh', 2000) || range::VARCHAR AS s FROM range(2000);
+
+statement ok
+PRAGMA force_compression='auto'
+
+statement ok
+ATTACH '__TEST_DIR__/async_native_scan_rd.db' AS rd
+
+statement ok
+CREATE TABLE rd.t AS SELECT range AS i FROM range(100000)
+
+statement ok
+DETACH rd
+
+statement ok
+CHECKPOINT
+
+# restart so the first forced-prefetch pass runs on cold blocks
+restart
+
+foreach strategy DEFAULT SYNCHRONOUS
+
+foreach prefetch debug_force_always never
+
+foreach nthreads 0 1 4
+
+statement ok
+SET debug_physical_table_scan_execution_strategy={strategy}
+
+statement ok
+SET storage_block_prefetch='{prefetch}'
+
+statement ok
+SET async_threads={nthreads}
+
+query II
+SELECT count(*), sum(i) FROM integers
+----
+1000000	499999500000
+
+query II
+SELECT count(*), sum(i) FROM integers WHERE i BETWEEN 1000 AND 1999
+----
+1000	1499500
+
+# early vectors are rejected entirely by the filter before later vectors produce output
+query II
+SELECT count(*), sum(i) FROM integers WHERE i > 900000
+----
+99999	94999050000
+
+query I
+SELECT count(*) FROM (SELECT * FROM integers LIMIT 10)
+----
+10
+
+query I
+SELECT count(*) FROM integers WHERE rowid < 100
+----
+100
+
+query I
+SELECT count(*) BETWEEN 30000 AND 200000 FROM integers USING SAMPLE 10% (system, 42)
+----
+true
+
+query I
+SELECT count(*) FROM upd
+----
+90000
+
+query I
+SELECT (SELECT sum(j) FROM upd) = (SELECT sum(i * 2 + CASE WHEN i % 7 = 0 THEN 1 ELSE 0 END) FROM range(100000) t(i) WHERE i % 10 <> 0)
+----
+true
+
+query III
+SELECT sum(s.a), sum(l[1]), sum(arr[1]) FROM nested
+----
+4999950000	4999950000	4999950000
+
+query III
+SELECT count(*), min(strlen(s)), max(strlen(s)) FROM big_strings
+----
+500	8193	8195
+
+query I
+SELECT s = repeat('x', 8192) || '42' FROM big_strings WHERE i = 42
+----
+true
+
+query III
+SELECT count(*), min(strlen(s)), max(strlen(s)) FROM zstd_strings
+----
+2000	16001	16004
+
+query I
+SELECT s = repeat('abcdefgh', 2000) || '999' FROM zstd_strings WHERE i = 999
+----
+true
+
+endloop
+
+endloop
+
+endloop
+
+# forced-async configuration for the remaining checks
+statement ok
+SET debug_physical_table_scan_execution_strategy=DEFAULT
+
+statement ok
+SET storage_block_prefetch='debug_force_always'
+
+statement ok
+SET async_threads=4
+
+# transaction-local rows are scanned through the synchronous path after the persistent phase
+statement ok
+BEGIN
+
+statement ok
+INSERT INTO integers SELECT range FROM range(1000000, 1000100)
+
+query II
+SELECT count(*), sum(i) FROM integers
+----
+1000100	500099504950
+
+statement ok
+ROLLBACK
+
+query I
+SELECT count(*) FROM integers
+----
+1000000
+
+# read_duckdb forwards the inner native scan's async result
+query II
+SELECT count(*), sum(i) FROM read_duckdb('__TEST_DIR__/async_native_scan_rd.db')
+----
+100000	4999950000
+
+# one more guaranteed-cold forced-async pass
+restart
+
+statement ok
+SET debug_physical_table_scan_execution_strategy=DEFAULT
+
+statement ok
+SET storage_block_prefetch='debug_force_always'
+
+query II
+SELECT count(*), sum(i) FROM integers
+----
+1000000	499999500000
