@@ -809,7 +809,7 @@ void RowGroup::RegisterScanIO(CollectionScanState &state, idx_t row_count, Prefe
 	}
 }
 
-void RowGroup::ScheduleScanIO(CollectionScanState &state, idx_t row_count) {
+void RowGroup::PrefetchScanIO(CollectionScanState &state, idx_t row_count) {
 	auto &block_manager = GetBlockManager();
 	if (!block_manager.Prefetch()) {
 		return;
@@ -819,7 +819,7 @@ void RowGroup::ScheduleScanIO(CollectionScanState &state, idx_t row_count) {
 	block_manager.buffer_manager.Prefetch(state.context, prefetch_state.blocks);
 }
 
-vector<unique_ptr<AsyncTask>> RowGroup::CreateScanIOTasks(CollectionScanState &state, idx_t row_count) {
+vector<unique_ptr<AsyncTask>> RowGroup::CollectScanIOTasks(CollectionScanState &state, idx_t row_count) {
 	auto &block_manager = GetBlockManager();
 	if (!block_manager.Prefetch()) {
 		return vector<unique_ptr<AsyncTask>>();
@@ -1025,7 +1025,7 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 
 void RowGroup::Scan(ScanOptions options, CollectionScanState &state, DataChunk &result) {
 	while (PrepareScan(options, state)) {
-		ScheduleScanIO(state, state.prepared_vector.max_count);
+		PrefetchScanIO(state, state.prepared_vector.max_count);
 		ProcessPreparedScan(options, state, result);
 		if (result.size() > 0) {
 			return;

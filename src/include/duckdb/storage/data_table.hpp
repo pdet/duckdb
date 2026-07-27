@@ -113,8 +113,7 @@ public:
 	//! Returns true if all pushed down filters were executed during data fetching
 	void Scan(DuckTransaction &transaction, DataChunk &result, TableScanState &state);
 
-	//! Prepares the next eligible vector of the current persistent scan assignment and creates the async I/O tasks
-	//! required to scan it. READY with no tasks is valid (blocks resident, prefetch disabled or resuming).
+	//! Prepares the next eligible vector of the assignment and collects its I/O tasks - READY with no tasks is valid
 	PreparePersistentScanResult PreparePersistentScanIO(DuckTransaction &transaction, TableScanState &state,
 	                                                    vector<unique_ptr<AsyncTask>> &tasks);
 	//! Processes the vector prepared by PreparePersistentScanIO

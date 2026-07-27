@@ -157,14 +157,11 @@ public:
 	bool CheckZonemapSegments(CollectionScanState &state);
 	void Scan(ScanOptions options, CollectionScanState &state, DataChunk &result);
 	void Scan(CollectionScanState &state, DataChunk &result, TableScanType type);
-	//! Registers payload prefetch candidates for an initialized scan state without reading payload blocks.
-	void RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state);
 	//! Synchronously prefetches the blocks required to scan the next row_count rows
-	void ScheduleScanIO(CollectionScanState &state, idx_t row_count);
-	//! Creates the async I/O tasks required to scan the next row_count rows, without performing any I/O
-	vector<unique_ptr<AsyncTask>> CreateScanIOTasks(CollectionScanState &state, idx_t row_count);
-	//! Prepares the next eligible vector in the assigned range for scanning, skipping vectors rejected by sampling,
-	//! zonemaps or MVCC. Returns false when the range holds no more eligible vectors. Idempotent while prepared.
+	void PrefetchScanIO(CollectionScanState &state, idx_t row_count);
+	//! Collects the async I/O tasks required to scan the next row_count rows, without performing any I/O
+	vector<unique_ptr<AsyncTask>> CollectScanIOTasks(CollectionScanState &state, idx_t row_count);
+	//! Prepares the next eligible vector in the assigned range - idempotent, returns false when none remain
 	bool PrepareScan(ScanOptions options, CollectionScanState &state);
 	//! Processes the vector prepared by PrepareScan, clearing the prepared state when the vector is finished
 	void ProcessPreparedScan(ScanOptions options, CollectionScanState &state, DataChunk &result);
@@ -261,6 +258,8 @@ public:
 	ColumnData &GetRawColumnData(storage_t c) const;
 
 private:
+	//! Registers payload prefetch candidates for an initialized scan state without reading payload blocks
+	void RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state);
 	void InitializeAppendInternal(RowGroupAppendState &append_state);
 	optional_ptr<RowVersionManager> GetVersionInfo();
 	optional_ptr<RowVersionManager> GetVersionInfoIfLoaded() const;

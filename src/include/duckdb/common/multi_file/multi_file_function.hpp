@@ -702,21 +702,7 @@ public:
 	}
 
 	static bool HandleBlocked(TableFunctionInput &data_p, AsyncResult &res) {
-		D_ASSERT(res.GetResultType() == AsyncResultType::BLOCKED);
-		switch (data_p.results_execution_mode) {
-		case AsyncResultsExecutionMode::TASK_EXECUTOR:
-			data_p.async_result = std::move(res);
-			return true;
-		case AsyncResultsExecutionMode::SYNCHRONOUS:
-			// run the I/O synchronously, then loop again to resume
-			res.ExecuteTasksSynchronously();
-			if (res.GetResultType() != AsyncResultType::HAVE_MORE_OUTPUT) {
-				throw InternalException("Unexpected behaviour from ExecuteTasksSynchronously");
-			}
-			return false;
-		default:
-			throw InternalException("Unexpected AsyncResultsExecutionMode in MultiFileScan");
-		}
+		return data_p.HandleBlocked(res);
 	}
 
 	//! Emit the current output to the caller, or signal the loop to continue when there is nothing to emit yet.

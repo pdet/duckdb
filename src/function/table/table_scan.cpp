@@ -326,11 +326,13 @@ public:
 		l_state.scan_state.options.force_fetch_row = Settings::Get<DebugForceFetchRowSetting>(context);
 
 #ifdef DUCKDB_DEBUG_ASYNC_SINK_SOURCE
-		if (data_p.results_execution_mode == AsyncResultsExecutionMode::TASK_EXECUTOR) {
+		{
 			vector<unique_ptr<AsyncTask>> test_tasks = AsyncResult::GenerateTestTasks();
 			if (!test_tasks.empty()) {
-				data_p.async_result = AsyncResult(std::move(test_tasks));
-				return;
+				AsyncResult test_result(std::move(test_tasks));
+				if (data_p.HandleBlocked(test_result)) {
+					return;
+				}
 			}
 		}
 #endif
@@ -339,18 +341,16 @@ public:
 			if (bind_data.is_create_index) {
 				storage.CreateIndexScan(l_state.scan_state, output);
 			} else if (l_state.scan_state.table_state.row_group) {
-				// persistent storage phase: prepare the next vector and schedule its I/O before decoding
+				// persistent storage phase - prepare the next vector and schedule its I/O before decoding
 				vector<unique_ptr<AsyncTask>> io_tasks;
 				auto prepare_result = storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks);
 				if (prepare_result == PreparePersistentScanResult::READY) {
 					if (!io_tasks.empty()) {
 						AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
-						if (data_p.results_execution_mode == AsyncResultsExecutionMode::TASK_EXECUTOR) {
-							// yield; on resume the prepared vector is decoded without re-registering I/O
-							data_p.async_result = std::move(io_result);
+						// on resume the prepared vector is decoded without re-registering I/O
+						if (data_p.HandleBlocked(io_result)) {
 							return;
 						}
-						io_result.ExecuteTasksSynchronously();
 					}
 					if (CanRemoveFilterColumns()) {
 						l_state.all_columns.Reset();
@@ -366,7 +366,7 @@ public:
 					context.InterruptCheck();
 					continue;
 				}
-				// ASSIGNMENT_FINISHED: fall through to claim the next assignment
+				// ASSIGNMENT_FINISHED - fall through to claim the next assignment
 			} else if (CanRemoveFilterColumns()) {
 				l_state.all_columns.Reset();
 				storage.Scan(tx, l_state.all_columns, l_state.scan_state);

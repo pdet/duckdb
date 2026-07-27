@@ -175,9 +175,6 @@ protected:
 	};
 	using PrefetchPlan = vector<PrefetchRun>;
 
-	//! Task that executes one prefetch run on a task-scheduler thread
-	class PrefetchTask;
-
 	//! Computes the contiguous runs of blocks that still need to be loaded, without performing any I/O
 	PrefetchPlan RegisterPrefetch(vector<shared_ptr<BlockHandle>> &handles);
 	//! Synchronously executes every run in the plan through BatchRead

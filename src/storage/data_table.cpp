@@ -344,7 +344,7 @@ PreparePersistentScanResult DataTable::PreparePersistentScanIO(DuckTransaction &
 		return PreparePersistentScanResult::READY;
 	}
 	prepared.io_registered = true;
-	tasks = row_group.CreateScanIOTasks(table_state, prepared.max_count);
+	tasks = row_group.CollectScanIOTasks(table_state, prepared.max_count);
 	return PreparePersistentScanResult::READY;
 }
 
@@ -356,7 +356,7 @@ void DataTable::ProcessPreparedPersistentScan(DuckTransaction &transaction, Tabl
 	D_ASSERT(prepared.prepared);
 	if (!prepared.io_registered) {
 		// async preparation was bypassed - fall back to the synchronous prefetch
-		row_group.ScheduleScanIO(table_state, prepared.max_count);
+		row_group.PrefetchScanIO(table_state, prepared.max_count);
 	}
 	ScanOptions options{TransactionData(transaction)};
 	row_group.ProcessPreparedScan(options, table_state, result);

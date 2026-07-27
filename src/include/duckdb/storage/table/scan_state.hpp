@@ -225,8 +225,7 @@ private:
 	idx_t always_true_filters = 0;
 };
 
-//! The eligibility state of one scan vector, computed by RowGroup::PrepareScan ahead of any block reads and
-//! consumed by RowGroup::ProcessPreparedScan
+//! Per-vector eligibility state computed by RowGroup::PrepareScan and consumed by ProcessPreparedScan
 struct PreparedScanVector {
 	PreparedScanVector();
 
