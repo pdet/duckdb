@@ -701,10 +701,6 @@ public:
 		return partition_data;
 	}
 
-	static bool HandleBlocked(TableFunctionInput &data_p, AsyncResult &res) {
-		return data_p.HandleBlocked(res);
-	}
-
 	//! Emit the current output to the caller, or signal the loop to continue when there is nothing to emit yet.
 	static bool EmitOutput(TableFunctionInput &data_p, DataChunk &output) {
 		if (output.size() == 0 && data_p.results_execution_mode == AsyncResultsExecutionMode::SYNCHRONOUS) {
@@ -731,8 +727,8 @@ public:
 
 		data.resuming_blocked_scan = res.GetResultType() == AsyncResultType::BLOCKED;
 		if (res.GetResultType() == AsyncResultType::BLOCKED) {
-			return HandleBlocked(data_p, res) ? MultiFileDecodeResult::RETURN_TO_CALLER
-			                                  : MultiFileDecodeResult::CONTINUE;
+			return data_p.HandleBlocked(res) ? MultiFileDecodeResult::RETURN_TO_CALLER
+			                                 : MultiFileDecodeResult::CONTINUE;
 		}
 
 		output.SetChildCardinality(scan_chunk.size());
@@ -788,7 +784,7 @@ public:
 			auto scheduled =
 			    lstate.job.reader->ScheduleIO(context, *gstate.global_state, *lstate.job.reader_scan_state);
 			lstate.job_state = MultiFileJobState::DECODE;
-			if (scheduled.GetResultType() == AsyncResultType::BLOCKED && HandleBlocked(input, scheduled)) {
+			if (scheduled.GetResultType() == AsyncResultType::BLOCKED && input.HandleBlocked(scheduled)) {
 				return MultiFileAcquireResult::PARKED;
 			}
 		}

@@ -285,7 +285,6 @@ StandardBufferManager::PrefetchPlan StandardBufferManager::RegisterPrefetch(vect
 	map<block_id_t, shared_ptr<BlockHandle>> to_be_loaded;
 	for (auto &handle : handles) {
 		if (handle->GetMemory().GetState() != BlockState::BLOCK_LOADED) {
-			// need to load this block, add it to the map
 			to_be_loaded.insert(make_pair(handle->BlockId(), handle));
 		}
 	}

@@ -341,32 +341,31 @@ public:
 			if (bind_data.is_create_index) {
 				storage.CreateIndexScan(l_state.scan_state, output);
 			} else {
-				if (l_state.scan_state.table_state.row_group) {
-					// persistent storage phase, prepare the next vector and schedule its I/O before decoding
-					vector<unique_ptr<AsyncTask>> io_tasks;
-					if (storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks)) {
-						if (!io_tasks.empty()) {
-							AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
-							// on resume the prepared vector is decoded without registering I/O again
-							if (data_p.HandleBlocked(io_result)) {
-								return;
-							}
-						}
-						if (CanRemoveFilterColumns()) {
-							l_state.all_columns.Reset();
-							storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, l_state.all_columns);
-							output.ReferenceColumns(l_state.all_columns, projection_ids);
-						} else {
-							storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, output);
-						}
-						if (output.size() > 0) {
+				// persistent storage phase, prepare the next vector and schedule its I/O before decoding
+				vector<unique_ptr<AsyncTask>> io_tasks;
+				if (storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks)) {
+					if (!io_tasks.empty()) {
+						AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
+						// on resume the prepared vector is decoded without registering I/O again
+						if (data_p.HandleBlocked(io_result)) {
 							return;
 						}
-						// the prepared vector was filtered out entirely, prepare the next vector
-						context.InterruptCheck();
-						continue;
 					}
+					if (CanRemoveFilterColumns()) {
+						l_state.all_columns.Reset();
+						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, l_state.all_columns);
+						output.ReferenceColumns(l_state.all_columns, projection_ids);
+					} else {
+						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, output);
+					}
+					if (output.size() > 0) {
+						return;
+					}
+					// the prepared vector was filtered out entirely, prepare the next vector
+					context.InterruptCheck();
+					continue;
 				}
+				// the assignment is exhausted, Scan drains any claimed local storage rows
 				if (CanRemoveFilterColumns()) {
 					l_state.all_columns.Reset();
 					storage.Scan(tx, l_state.all_columns, l_state.scan_state);

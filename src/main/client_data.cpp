@@ -12,7 +12,6 @@
 #include "duckdb/main/database.hpp"
 #include "duckdb/main/database_manager.hpp"
 #include "duckdb/main/query_profiler.hpp"
-#include "duckdb/parallel/async_result.hpp"
 #include "duckdb/storage/buffer_manager.hpp"
 #include "duckdb/storage/buffer/block_handle.hpp"
 
@@ -100,10 +99,6 @@ public:
 	}
 	void Prefetch(QueryContext context, vector<shared_ptr<BlockHandle>> &handles) override {
 		return buffer_manager.Prefetch(context, handles);
-	}
-	vector<unique_ptr<AsyncTask>> CreatePrefetchTasks(QueryContext context,
-	                                                  vector<shared_ptr<BlockHandle>> &handles) override {
-		return buffer_manager.CreatePrefetchTasks(context, handles);
 	}
 	void Unpin(shared_ptr<BlockHandle> &handle) override {
 		return buffer_manager.Unpin(handle);

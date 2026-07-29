@@ -66,9 +66,9 @@ public:
 	//! Pre-fetch a series of blocks.
 	//! Using this function is a performance suggestion.
 	virtual void Prefetch(QueryContext context, vector<shared_ptr<BlockHandle>> &handles) = 0;
-	//! Creates one async task per contiguous run of blocks that still needs loading
+	//! Creates one async task per contiguous run of blocks needing load, the base falls back to synchronous Prefetch
 	virtual vector<unique_ptr<AsyncTask>> CreatePrefetchTasks(QueryContext context,
-	                                                          vector<shared_ptr<BlockHandle>> &handles) = 0;
+	                                                          vector<shared_ptr<BlockHandle>> &handles);
 	//! Unpin a block handle.
 	virtual void Unpin(shared_ptr<BlockHandle> &handle) = 0;
 

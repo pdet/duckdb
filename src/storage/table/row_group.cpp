@@ -956,7 +956,6 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 				auto filter_idx = permutation[i];
 				auto &filter = filter_list[filter_idx];
 				if (filter.IsAlwaysTrue()) {
-					// this filter is always true, skip it
 					continue;
 				}
 				auto &table_filter_state = *filter.filter_state;
