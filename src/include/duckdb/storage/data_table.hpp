@@ -61,13 +61,6 @@ enum class DataTableVersion {
 	DROPPED     // this table has been dropped
 };
 
-enum class PreparePersistentScanResult : uint8_t {
-	//! A vector is prepared and can be processed once its I/O tasks (if any) complete
-	READY,
-	//! The current assignment holds no more eligible vectors - claim the next assignment
-	ASSIGNMENT_FINISHED
-};
-
 //! DataTable represents a physical table on disk
 class DataTable : public enable_shared_from_this<DataTable> {
 public:
@@ -113,9 +106,9 @@ public:
 	//! Returns true if all pushed down filters were executed during data fetching
 	void Scan(DuckTransaction &transaction, DataChunk &result, TableScanState &state);
 
-	//! Prepares the next eligible vector of the assignment and collects its I/O tasks - READY with no tasks is valid
-	PreparePersistentScanResult PreparePersistentScanIO(DuckTransaction &transaction, TableScanState &state,
-	                                                    vector<unique_ptr<AsyncTask>> &tasks);
+	//! Prepares the next eligible vector of the assignment and collects its I/O tasks
+	bool PreparePersistentScanIO(DuckTransaction &transaction, TableScanState &state,
+	                             vector<unique_ptr<AsyncTask>> &tasks);
 	//! Processes the vector prepared by PreparePersistentScanIO
 	void ProcessPreparedPersistentScan(DuckTransaction &transaction, TableScanState &state, DataChunk &result);
 

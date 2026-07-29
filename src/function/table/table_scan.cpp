@@ -343,8 +343,7 @@ public:
 			} else if (l_state.scan_state.table_state.row_group) {
 				// persistent storage phase - prepare the next vector and schedule its I/O before decoding
 				vector<unique_ptr<AsyncTask>> io_tasks;
-				auto prepare_result = storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks);
-				if (prepare_result == PreparePersistentScanResult::READY) {
+				if (storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks)) {
 					if (!io_tasks.empty()) {
 						AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
 						// on resume the prepared vector is decoded without re-registering I/O
@@ -366,7 +365,7 @@ public:
 					context.InterruptCheck();
 					continue;
 				}
-				// ASSIGNMENT_FINISHED - fall through to claim the next assignment
+				// the assignment is exhausted
 			} else if (CanRemoveFilterColumns()) {
 				l_state.all_columns.Reset();
 				storage.Scan(tx, l_state.all_columns, l_state.scan_state);

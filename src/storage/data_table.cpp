@@ -324,41 +324,37 @@ void DataTable::Scan(DuckTransaction &transaction, DataChunk &result, TableScanS
 	local_storage.Scan(state.local_state, state.GetColumnIds(), result);
 }
 
-PreparePersistentScanResult DataTable::PreparePersistentScanIO(DuckTransaction &transaction, TableScanState &state,
-                                                               vector<unique_ptr<AsyncTask>> &tasks) {
+bool DataTable::PreparePersistentScanIO(DuckTransaction &transaction, TableScanState &state,
+                                        vector<unique_ptr<AsyncTask>> &tasks) {
 	auto &table_state = state.table_state;
 	if (!table_state.row_group) {
-		return PreparePersistentScanResult::ASSIGNMENT_FINISHED;
+		return false;
 	}
 	auto &row_group = table_state.row_group->GetNode();
-	ScanOptions options{TransactionData(transaction)};
+	ScanOptions options {TransactionData(transaction)};
 	if (!row_group.PrepareScan(options, table_state)) {
-		// the assignment is exhausted - parallel assignments never span row groups
+		// the assignment is exhausted
 		D_ASSERT(table_state.max_row <= table_state.row_group->GetRowStart() + row_group.count);
 		table_state.row_group = nullptr;
-		return PreparePersistentScanResult::ASSIGNMENT_FINISHED;
+		return false;
 	}
 	auto &prepared = table_state.prepared_vector;
 	if (prepared.io_registered) {
 		// I/O for the prepared vector was already registered (e.g. we are resuming after BLOCKED)
-		return PreparePersistentScanResult::READY;
+		return true;
 	}
 	prepared.io_registered = true;
 	tasks = row_group.CollectScanIOTasks(table_state, prepared.max_count);
-	return PreparePersistentScanResult::READY;
+	return true;
 }
 
 void DataTable::ProcessPreparedPersistentScan(DuckTransaction &transaction, TableScanState &state, DataChunk &result) {
 	auto &table_state = state.table_state;
 	D_ASSERT(table_state.row_group);
 	auto &row_group = table_state.row_group->GetNode();
-	auto &prepared = table_state.prepared_vector;
-	D_ASSERT(prepared.prepared);
-	if (!prepared.io_registered) {
-		// async preparation was bypassed - fall back to the synchronous prefetch
-		row_group.PrefetchScanIO(table_state, prepared.max_count);
-	}
-	ScanOptions options{TransactionData(transaction)};
+	D_ASSERT(table_state.prepared_vector.prepared);
+	D_ASSERT(table_state.prepared_vector.io_registered);
+	ScanOptions options {TransactionData(transaction)};
 	row_group.ProcessPreparedScan(options, table_state, result);
 }
 
