@@ -168,7 +168,7 @@ protected:
 	//! overwrites the data within with garbage. Any readers that do not hold the pin will notice
 	void VerifyZeroReaders(BlockLock &l, shared_ptr<BlockHandle> &handle);
 
-	//! A run of handles with adjacent block ids (handles[i]->BlockId() == first_block + i)
+	//! A run of handles with adjacent block ids starting at first_block
 	struct PrefetchRun {
 		block_id_t first_block;
 		vector<shared_ptr<BlockHandle>> handles;

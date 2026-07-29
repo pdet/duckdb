@@ -285,16 +285,15 @@ StandardBufferManager::PrefetchPlan StandardBufferManager::RegisterPrefetch(vect
 	map<block_id_t, shared_ptr<BlockHandle>> to_be_loaded;
 	for (auto &handle : handles) {
 		if (handle->GetMemory().GetState() != BlockState::BLOCK_LOADED) {
-			// need to load this block - add it to the map
+			// need to load this block, add it to the map
 			to_be_loaded.insert(make_pair(handle->BlockId(), handle));
 		}
 	}
-	// group adjacent blocks into contiguous runs
 	PrefetchPlan plan;
 	for (auto &entry : to_be_loaded) {
 		if (plan.empty() ||
 		    plan.back().first_block + NumericCast<block_id_t>(plan.back().handles.size()) != entry.first) {
-			// this block is not adjacent to the previous block - start a new run
+			// this block is not adjacent to the previous block, start a new run
 			plan.push_back(PrefetchRun {entry.first, {}});
 		}
 		plan.back().handles.push_back(std::move(entry.second));
@@ -306,7 +305,7 @@ void StandardBufferManager::ExecutePrefetch(QueryContext context, PrefetchPlan &
 	for (auto &run : plan) {
 		if (run.handles.size() == 1 &&
 		    Settings::Get<StorageBlockPrefetchSetting>(db) != StorageBlockPrefetch::DEBUG_FORCE_ALWAYS) {
-			// skip single-block runs unless debug_force_always is set - a single read cannot be batched
+			// skip runs of a single block unless debug_force_always is set, a single read cannot be batched
 			continue;
 		}
 		BatchRead(context, run);

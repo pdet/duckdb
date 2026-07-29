@@ -13,8 +13,7 @@ CHECKPOINT
 # restart so the payload blocks begin cold
 restart
 
-# this test exercises the async I/O path, so override any forced-synchronous
-# table scan execution strategy (e.g. from test_table_scan's --on-init)
+# override any forced synchronous scan strategy from test configs, this test exercises the async I/O path
 statement ok
 SET debug_physical_table_scan_execution_strategy=DEFAULT
 

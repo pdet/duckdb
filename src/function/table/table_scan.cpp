@@ -347,7 +347,7 @@ public:
 					if (storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks)) {
 						if (!io_tasks.empty()) {
 							AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
-							// on resume the prepared vector is decoded without re-registering I/O
+							// on resume the prepared vector is decoded without registering I/O again
 							if (data_p.HandleBlocked(io_result)) {
 								return;
 							}

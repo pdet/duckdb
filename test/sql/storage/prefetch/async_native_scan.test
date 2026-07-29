@@ -46,7 +46,7 @@ DETACH rd
 statement ok
 CHECKPOINT
 
-# restart so the first forced-prefetch pass runs on cold blocks
+# restart so the first forced prefetch pass runs on cold blocks
 restart
 
 foreach strategy DEFAULT SYNCHRONOUS
@@ -136,7 +136,7 @@ endloop
 
 endloop
 
-# forced-async configuration for the remaining checks
+# forced async configuration for the remaining checks
 statement ok
 SET debug_physical_table_scan_execution_strategy=DEFAULT
 
@@ -146,7 +146,7 @@ SET storage_block_prefetch='debug_force_always'
 statement ok
 SET async_threads=4
 
-# transaction-local rows are scanned through the synchronous path after the persistent phase
+# rows local to the transaction are scanned through the synchronous path after the persistent phase
 statement ok
 BEGIN
 
@@ -172,7 +172,7 @@ SELECT count(*), sum(i) FROM read_duckdb('__TEST_DIR__/async_native_scan_rd.db')
 ----
 100000	4999950000
 
-# one more guaranteed-cold forced-async pass
+# one more forced async pass on cold blocks
 restart
 
 statement ok

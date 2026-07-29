@@ -1,5 +1,5 @@
 # name: test/sql/storage/prefetch/async_native_scan_positional.test
-# description: Positional scans cannot receive resume callbacksm async scan I/O must fall back to synchronous execution
+# description: Positional scans cannot receive resume callbacks, async scan I/O must fall back to synchronous execution
 # group: [prefetch]
 
 load __TEST_DIR__/async_native_scan_positional.db

@@ -865,7 +865,7 @@ bool RowGroup::PrepareScan(ScanOptions options, CollectionScanState &state) {
 					has_sample_selection = true;
 				}
 			} else {
-				// Percentage-based system sampling: original behavior
+				// percentage based system sampling
 				if (state.random.NextRandom() > sampling_info.sample_rate) {
 					NextVector(state);
 					continue;
@@ -916,8 +916,7 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 			const auto &column = column_ids[i];
 			auto &col_data = GetColumn(column);
 			state.column_scans[i].update_scan_type = options.update_type;
-			// pass max_count explicitly so we never read past the row count we captured at scan
-			// init time (concurrent inserts can grow the column past max_count)
+			// pass max_count explicitly, concurrent inserts can grow the column past the count captured at scan init
 			col_data.Scan(transaction, state.vector_index, state.column_scans[i], result.data[i], max_count);
 			if (has_sample_selection) {
 				result.data[i].Slice(sample_sel, sample_count);
@@ -948,7 +947,6 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 			sel.Initialize(nullptr);
 		}
 		//! first, we scan the columns with filters, fetch their data and generate a selection vector.
-		//! get runtime statistics
 		auto adaptive_filter = filter_info.GetAdaptiveFilter();
 		auto filter_state = filter_info.BeginFilter();
 		if (has_filters) {
@@ -958,7 +956,7 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 				auto filter_idx = permutation[i];
 				auto &filter = filter_list[filter_idx];
 				if (filter.IsAlwaysTrue()) {
-					// this filter is always true - skip it
+					// this filter is always true, skip it
 					continue;
 				}
 				auto &table_filter_state = *filter.filter_state;

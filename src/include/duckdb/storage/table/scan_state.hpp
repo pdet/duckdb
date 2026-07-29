@@ -225,7 +225,7 @@ private:
 	idx_t always_true_filters = 0;
 };
 
-//! Per-vector eligibility state computed by RowGroup::PrepareScan and consumed by ProcessPreparedScan
+//! Eligibility state of one vector, computed by RowGroup::PrepareScan and consumed by ProcessPreparedScan
 struct PreparedScanVector {
 	PreparedScanVector();
 
@@ -237,11 +237,11 @@ struct PreparedScanVector {
 	idx_t max_count = 0;
 	//! The number of rows visible to the transaction (held in CollectionScanState::valid_sel)
 	idx_t visible_count = 0;
-	//! Whether the prepared vector has a system-sample selection
+	//! Whether the prepared vector has a system sample selection
 	bool has_sample_selection = false;
 	//! The number of sampled rows (held in sample_sel)
 	idx_t sample_count = 0;
-	//! The system-sample selection
+	//! The system sample selection
 	SelectionVector sample_sel;
 
 	void Reset();

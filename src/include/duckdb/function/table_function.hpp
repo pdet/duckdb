@@ -182,7 +182,7 @@ public:
 	}
 
 public:
-	//! Handles a BLOCKED result per the execution mode - returns true when the function must return to yield
+	//! Handles a BLOCKED result per the execution mode, returns true when the function must return to yield
 	DUCKDB_API bool HandleBlocked(AsyncResult &blocked_result);
 
 public:
