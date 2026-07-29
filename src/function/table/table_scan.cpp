@@ -340,38 +340,40 @@ public:
 		do {
 			if (bind_data.is_create_index) {
 				storage.CreateIndexScan(l_state.scan_state, output);
-			} else if (l_state.scan_state.table_state.row_group) {
-				// persistent storage phase - prepare the next vector and schedule its I/O before decoding
-				vector<unique_ptr<AsyncTask>> io_tasks;
-				if (storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks)) {
-					if (!io_tasks.empty()) {
-						AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
-						// on resume the prepared vector is decoded without re-registering I/O
-						if (data_p.HandleBlocked(io_result)) {
+			} else {
+				if (l_state.scan_state.table_state.row_group) {
+					// persistent storage phase, prepare the next vector and schedule its I/O before decoding
+					vector<unique_ptr<AsyncTask>> io_tasks;
+					if (storage.PreparePersistentScanIO(tx, l_state.scan_state, io_tasks)) {
+						if (!io_tasks.empty()) {
+							AsyncResult io_result(std::move(io_tasks), TaskSchedulerType::ASYNC);
+							// on resume the prepared vector is decoded without re-registering I/O
+							if (data_p.HandleBlocked(io_result)) {
+								return;
+							}
+						}
+						if (CanRemoveFilterColumns()) {
+							l_state.all_columns.Reset();
+							storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, l_state.all_columns);
+							output.ReferenceColumns(l_state.all_columns, projection_ids);
+						} else {
+							storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, output);
+						}
+						if (output.size() > 0) {
 							return;
 						}
+						// the prepared vector was filtered out entirely, prepare the next vector
+						context.InterruptCheck();
+						continue;
 					}
-					if (CanRemoveFilterColumns()) {
-						l_state.all_columns.Reset();
-						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, l_state.all_columns);
-						output.ReferenceColumns(l_state.all_columns, projection_ids);
-					} else {
-						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, output);
-					}
-					if (output.size() > 0) {
-						return;
-					}
-					// the prepared vector was filtered out entirely - prepare the next vector
-					context.InterruptCheck();
-					continue;
 				}
-				// the assignment is exhausted
-			} else if (CanRemoveFilterColumns()) {
-				l_state.all_columns.Reset();
-				storage.Scan(tx, l_state.all_columns, l_state.scan_state);
-				output.ReferenceColumns(l_state.all_columns, projection_ids);
-			} else {
-				storage.Scan(tx, output, l_state.scan_state);
+				if (CanRemoveFilterColumns()) {
+					l_state.all_columns.Reset();
+					storage.Scan(tx, l_state.all_columns, l_state.scan_state);
+					output.ReferenceColumns(l_state.all_columns, projection_ids);
+				} else {
+					storage.Scan(tx, output, l_state.scan_state);
+				}
 			}
 			if (output.size() > 0) {
 				return;
