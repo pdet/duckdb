@@ -802,31 +802,31 @@ bool RowGroup::CheckZonemapSegments(CollectionScanState &state) {
 	}
 }
 
-void RowGroup::RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state) {
+bool RowGroup::RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state) {
+	if (!GetBlockManager().Prefetch()) {
+		return false;
+	}
 	const auto &column_ids = state.GetColumnIds();
 	for (idx_t i = 0; i < column_ids.size(); i++) {
 		GetColumn(column_ids[i]).InitializePrefetch(prefetch_state, state.column_scans[i], row_count);
 	}
+	return true;
 }
 
 void RowGroup::PrefetchScanIO(CollectionScanState &state, idx_t row_count) {
-	auto &block_manager = GetBlockManager();
-	if (!block_manager.Prefetch()) {
+	PrefetchState prefetch_state;
+	if (!RegisterScanIO(state, row_count, prefetch_state)) {
 		return;
 	}
-	PrefetchState prefetch_state;
-	RegisterScanIO(state, row_count, prefetch_state);
-	block_manager.buffer_manager.Prefetch(state.context, prefetch_state.blocks);
+	GetBlockManager().buffer_manager.Prefetch(state.context, prefetch_state.blocks);
 }
 
 vector<unique_ptr<AsyncTask>> RowGroup::CollectScanIOTasks(CollectionScanState &state, idx_t row_count) {
-	auto &block_manager = GetBlockManager();
-	if (!block_manager.Prefetch()) {
+	PrefetchState prefetch_state;
+	if (!RegisterScanIO(state, row_count, prefetch_state)) {
 		return vector<unique_ptr<AsyncTask>>();
 	}
-	PrefetchState prefetch_state;
-	RegisterScanIO(state, row_count, prefetch_state);
-	return block_manager.buffer_manager.CreatePrefetchTasks(state.context, prefetch_state.blocks);
+	return GetBlockManager().buffer_manager.CreatePrefetchTasks(state.context, prefetch_state.blocks);
 }
 
 bool RowGroup::PrepareScan(ScanOptions options, CollectionScanState &state) {

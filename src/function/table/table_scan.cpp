@@ -105,6 +105,17 @@ public:
 	bool CanRemoveFilterColumns() const {
 		return !projection_ids.empty();
 	}
+	//! Runs the scan into all_columns and removes filter columns from the output, or scans directly into output
+	template <class FUNC>
+	void ScanAndRemoveFilterColumns(DataChunk &all_columns, DataChunk &output, FUNC &&scan) {
+		if (!CanRemoveFilterColumns()) {
+			scan(output);
+			return;
+		}
+		all_columns.Reset();
+		scan(all_columns);
+		output.ReferenceColumns(all_columns, projection_ids);
+	}
 };
 
 class DuckIndexScanState : public TableScanGlobalState {
@@ -205,13 +216,9 @@ public:
 				auto row_id_data = reinterpret_cast<data_ptr_t>(row_ids + offset);
 				Vector local_vector(LogicalType::ROW_TYPE, row_id_data, scan_count);
 
-				if (CanRemoveFilterColumns()) {
-					l_state.all_columns.Reset();
-					storage.Fetch(tx, l_state.all_columns, column_ids, local_vector, scan_count, l_state.fetch_state);
-					output.ReferenceColumns(l_state.all_columns, projection_ids);
-				} else {
-					storage.Fetch(tx, output, column_ids, local_vector, scan_count, l_state.fetch_state);
-				}
+				ScanAndRemoveFilterColumns(l_state.all_columns, output, [&](DataChunk &result) {
+					storage.Fetch(tx, result, column_ids, local_vector, scan_count, l_state.fetch_state);
+				});
 
 				l_state.rows_scanned += scan_count;
 
@@ -231,13 +238,9 @@ public:
 				// Scan (sequentially, always same logical thread) local_storage
 				auto &local_storage = LocalStorage::Get(tx);
 				{
-					if (CanRemoveFilterColumns()) {
-						l_state.all_columns.Reset();
-						local_storage.Scan(l_state.scan_state.local_state, column_ids, l_state.all_columns);
-						output.ReferenceColumns(l_state.all_columns, projection_ids);
-					} else {
-						local_storage.Scan(l_state.scan_state.local_state, column_ids, output);
-					}
+					ScanAndRemoveFilterColumns(l_state.all_columns, output, [&](DataChunk &result) {
+						local_storage.Scan(l_state.scan_state.local_state, column_ids, result);
+					});
 					l_state.rows_scanned += output.size();
 				}
 				return;
@@ -327,12 +330,9 @@ public:
 
 #ifdef DUCKDB_DEBUG_ASYNC_SINK_SOURCE
 		{
-			vector<unique_ptr<AsyncTask>> test_tasks = AsyncResult::GenerateTestTasks();
-			if (!test_tasks.empty()) {
-				AsyncResult test_result(std::move(test_tasks));
-				if (data_p.HandleBlocked(test_result)) {
-					return;
-				}
+			AsyncResult test_result;
+			if (AsyncResult::TryGenerateTestResult(test_result) && data_p.HandleBlocked(test_result)) {
+				return;
 			}
 		}
 #endif
@@ -351,13 +351,9 @@ public:
 							return;
 						}
 					}
-					if (CanRemoveFilterColumns()) {
-						l_state.all_columns.Reset();
-						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, l_state.all_columns);
-						output.ReferenceColumns(l_state.all_columns, projection_ids);
-					} else {
-						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, output);
-					}
+					ScanAndRemoveFilterColumns(l_state.all_columns, output, [&](DataChunk &result) {
+						storage.ProcessPreparedPersistentScan(tx, l_state.scan_state, result);
+					});
 					if (output.size() > 0) {
 						return;
 					}
@@ -366,13 +362,8 @@ public:
 					continue;
 				}
 				// the assignment is exhausted, Scan drains any claimed local storage rows
-				if (CanRemoveFilterColumns()) {
-					l_state.all_columns.Reset();
-					storage.Scan(tx, l_state.all_columns, l_state.scan_state);
-					output.ReferenceColumns(l_state.all_columns, projection_ids);
-				} else {
-					storage.Scan(tx, output, l_state.scan_state);
-				}
+				ScanAndRemoveFilterColumns(l_state.all_columns, output,
+				                           [&](DataChunk &result) { storage.Scan(tx, result, l_state.scan_state); });
 			}
 			if (output.size() > 0) {
 				return;

@@ -258,8 +258,8 @@ public:
 	ColumnData &GetRawColumnData(storage_t c) const;
 
 private:
-	//! Registers payload prefetch candidates for an initialized scan state without reading payload blocks
-	void RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state);
+	//! Registers prefetch candidates for the next row_count rows, returns false when prefetching is not supported
+	bool RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state);
 	void InitializeAppendInternal(RowGroupAppendState &append_state);
 	optional_ptr<RowVersionManager> GetVersionInfo();
 	optional_ptr<RowVersionManager> GetVersionInfoIfLoaded() const;

@@ -200,7 +200,6 @@ SourceResultType PhysicalTableScan::GetDataInternal(ExecutionContext &context, D
 					return SourceResultType::BLOCKED;
 				}
 			}
-			// the caller cannot block or cannot receive the resume callback, we run the I/O synchronously
 			data.async_result.ExecuteTasksSynchronously();
 			return SourceResultType::HAVE_MORE_OUTPUT;
 		}
