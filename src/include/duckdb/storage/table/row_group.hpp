@@ -260,6 +260,10 @@ public:
 private:
 	//! Registers prefetch candidates for the next row_count rows, returns false when prefetching is not supported
 	bool RegisterScanIO(CollectionScanState &state, idx_t row_count, PrefetchState &prefetch_state);
+	//! Shared scan-state setup for InitializeScan and InitializeScanWithOffset
+	bool InitializeScanInternal(CollectionScanState &state, SegmentNode<RowGroup> &node, idx_t vector_offset);
+	//! Advances the scan past the current vector, clearing the prepared state
+	void FinishVector(CollectionScanState &state);
 	void InitializeAppendInternal(RowGroupAppendState &append_state);
 	optional_ptr<RowVersionManager> GetVersionInfo();
 	optional_ptr<RowVersionManager> GetVersionInfoIfLoaded() const;

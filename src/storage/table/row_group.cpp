@@ -382,39 +382,7 @@ void CollectionScanState::Initialize(const QueryContext &context_p, const vector
 	}
 }
 
-bool RowGroup::InitializeScanWithOffset(CollectionScanState &state, SegmentNode<RowGroup> &node, idx_t vector_offset) {
-	auto &column_ids = state.GetColumnIds();
-	auto &filters = state.GetFilterInfo();
-	if (!CheckZonemap(state.context.GetClientContext(), filters, node.GetRowStart())) {
-		return false;
-	}
-	if (!RefersToSameObject(node.GetNode(), *this)) {
-		throw InternalException("RowGroup::InitializeScanWithOffset segment node mismatch");
-	}
-
-	D_ASSERT(!state.prepared_vector.prepared);
-	state.prepared_vector.Reset();
-	state.row_group = node;
-	state.vector_index = vector_offset;
-	auto row_start = node.GetRowStart();
-	state.max_row_group_row = row_start > state.max_row ? 0 : MinValue<idx_t>(this->count, state.max_row - row_start);
-	auto row_number = vector_offset * STANDARD_VECTOR_SIZE;
-	if (state.max_row_group_row == 0) {
-		// exceeded row groups to scan
-		return false;
-	}
-	D_ASSERT(!state.column_scans.empty());
-	for (idx_t i = 0; i < column_ids.size(); i++) {
-		const auto &column = column_ids[i];
-		auto &column_data = GetColumn(column);
-		column_data.InitializeScanWithOffset(state.column_scans[i], row_number);
-		state.column_scans[i].scan_options = &state.GetOptions();
-	}
-	return true;
-}
-
-bool RowGroup::InitializeScan(CollectionScanState &state, SegmentNode<RowGroup> &node) {
-	auto &column_ids = state.GetColumnIds();
+bool RowGroup::InitializeScanInternal(CollectionScanState &state, SegmentNode<RowGroup> &node, idx_t vector_offset) {
 	auto &filters = state.GetFilterInfo();
 	if (!CheckZonemap(state.context.GetClientContext(), filters, node.GetRowStart())) {
 		return false;
@@ -422,19 +390,41 @@ bool RowGroup::InitializeScan(CollectionScanState &state, SegmentNode<RowGroup> 
 	if (!RefersToSameObject(node.GetNode(), *this)) {
 		throw InternalException("RowGroup::InitializeScan segment node mismatch");
 	}
-	auto row_start = node.GetRowStart();
 	D_ASSERT(!state.prepared_vector.prepared);
 	state.prepared_vector.Reset();
 	state.row_group = node;
-	state.vector_index = 0;
+	state.vector_index = vector_offset;
+	auto row_start = node.GetRowStart();
 	state.max_row_group_row = row_start > state.max_row ? 0 : MinValue<idx_t>(this->count, state.max_row - row_start);
 	if (state.max_row_group_row == 0) {
+		// exceeded row groups to scan
 		return false;
 	}
 	D_ASSERT(!state.column_scans.empty());
+	return true;
+}
+
+bool RowGroup::InitializeScanWithOffset(CollectionScanState &state, SegmentNode<RowGroup> &node, idx_t vector_offset) {
+	if (!InitializeScanInternal(state, node, vector_offset)) {
+		return false;
+	}
+	const auto &column_ids = state.GetColumnIds();
+	auto row_number = vector_offset * STANDARD_VECTOR_SIZE;
 	for (idx_t i = 0; i < column_ids.size(); i++) {
-		auto column = column_ids[i];
-		auto &column_data = GetColumn(column);
+		auto &column_data = GetColumn(column_ids[i]);
+		column_data.InitializeScanWithOffset(state.column_scans[i], row_number);
+		state.column_scans[i].scan_options = &state.GetOptions();
+	}
+	return true;
+}
+
+bool RowGroup::InitializeScan(CollectionScanState &state, SegmentNode<RowGroup> &node) {
+	if (!InitializeScanInternal(state, node, 0)) {
+		return false;
+	}
+	const auto &column_ids = state.GetColumnIds();
+	for (idx_t i = 0; i < column_ids.size(); i++) {
+		auto &column_data = GetColumn(column_ids[i]);
 		column_data.InitializeScan(state.column_scans[i]);
 		state.column_scans[i].scan_options = &state.GetOptions();
 	}
@@ -654,8 +644,13 @@ void RowGroup::CommitDrop() {
 	drop_state.FinalizeCommit();
 }
 
-void RowGroup::NextVector(CollectionScanState &state) {
+void RowGroup::FinishVector(CollectionScanState &state) {
 	state.vector_index++;
+	state.prepared_vector.Reset();
+}
+
+void RowGroup::NextVector(CollectionScanState &state) {
+	FinishVector(state);
 	const auto &column_ids = state.GetColumnIds();
 	for (idx_t i = 0; i < column_ids.size(); i++) {
 		const auto &column = column_ids[i];
@@ -934,7 +929,6 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 			approved_tuple_count = IntersectSelections(state.valid_sel, count, sample_sel, sample_count, intersect_sel);
 			if (approved_tuple_count == 0) {
 				NextVector(state);
-				prepared.Reset();
 				return;
 			}
 			sel.Initialize(intersect_sel);
@@ -994,8 +988,7 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 				col_data.Skip(state.column_scans[i]);
 			}
 			filter_info.EndFilter(filter_state);
-			state.vector_index++;
-			prepared.Reset();
+			FinishVector(state);
 			return;
 		}
 		//! Now we use the selection vector to fetch data for the other columns.
@@ -1016,8 +1009,7 @@ void RowGroup::ProcessPreparedScan(ScanOptions options, CollectionScanState &sta
 		count = approved_tuple_count;
 	}
 	result.SetChildCardinality(count);
-	state.vector_index++;
-	prepared.Reset();
+	FinishVector(state);
 }
 
 void RowGroup::Scan(ScanOptions options, CollectionScanState &state, DataChunk &result) {
