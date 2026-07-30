@@ -320,6 +320,7 @@ vector<unique_ptr<AsyncTask>> StandardBufferManager::CreatePrefetchTasks(QueryCo
                                                                          vector<shared_ptr<BlockHandle>> &handles) {
 	auto plan = RegisterPrefetch(handles);
 	vector<unique_ptr<AsyncTask>> tasks;
+	// unlike ExecutePrefetch, single-block runs are not skipped: an async read still overlaps I/O with decoding
 	tasks.reserve(plan.size());
 	for (auto &run : plan) {
 		auto io_size = run.handles.size() * run.handles[0]->GetBlockAllocSize();
