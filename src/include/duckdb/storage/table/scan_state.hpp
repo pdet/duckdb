@@ -232,8 +232,6 @@ struct PreparedScanVector {
 
 	//! Whether a vector is currently prepared for processing
 	bool prepared = false;
-	//! Whether I/O for the prepared vector has been registered
-	bool io_registered = false;
 	//! The number of rows in the prepared vector
 	idx_t max_count = 0;
 	//! The number of rows visible to the transaction (held in CollectionScanState::valid_sel)
@@ -274,6 +272,8 @@ public:
 	SelectionVector valid_sel;
 	//! The currently prepared vector (see RowGroup::PrepareScan)
 	PreparedScanVector prepared_vector;
+	//! Whether scan I/O for the current row group assignment has been registered (see PrepareScanIO)
+	bool assignment_io_registered = false;
 
 	RandomEngine random;
 
@@ -294,7 +294,7 @@ public:
 	optional_ptr<SegmentNode<RowGroup>> GetRootSegment() const;
 	bool Scan(DuckTransaction &transaction, DataChunk &result);
 	bool Scan(DataChunk &result, TableScanType type, optional_ptr<SegmentLock> l = nullptr);
-	//! Prepares the next eligible vector of the assignment and collects its I/O tasks
+	//! Prepares the next eligible vector, collecting the remaining assignment's I/O tasks on first call
 	bool PrepareScanIO(DuckTransaction &transaction, vector<unique_ptr<AsyncTask>> &tasks);
 	//! Processes the vector prepared by PrepareScanIO
 	void ProcessPreparedScan(DuckTransaction &transaction, DataChunk &result);

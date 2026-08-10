@@ -311,19 +311,20 @@ bool CollectionScanState::PrepareScanIO(DuckTransaction &transaction, vector<uni
 		row_group = nullptr;
 		return false;
 	}
-	if (prepared_vector.io_registered) {
-		// I/O for the prepared vector was already registered (e.g. we are resuming after BLOCKED)
+	if (assignment_io_registered) {
+		// the assignment's I/O was already registered, either by an earlier vector or before yielding
 		return true;
 	}
-	prepared_vector.io_registered = true;
-	tasks = current_row_group.CollectScanIOTasks(*this, prepared_vector.max_count);
+	assignment_io_registered = true;
+	// register the entire remaining assignment, one yield loads the blocks of many vectors in batched runs
+	tasks = current_row_group.CollectScanIOTasks(*this, max_row_group_row - vector_index * STANDARD_VECTOR_SIZE);
 	return true;
 }
 
 void CollectionScanState::ProcessPreparedScan(DuckTransaction &transaction, DataChunk &result) {
 	D_ASSERT(row_group);
 	D_ASSERT(prepared_vector.prepared);
-	D_ASSERT(prepared_vector.io_registered);
+	D_ASSERT(assignment_io_registered);
 	ScanOptions options {TransactionData(transaction)};
 	row_group->GetNode().ProcessPreparedScan(options, *this, result);
 }
@@ -333,7 +334,6 @@ PreparedScanVector::PreparedScanVector() : sample_sel(STANDARD_VECTOR_SIZE) {
 
 void PreparedScanVector::Reset() {
 	prepared = false;
-	io_registered = false;
 }
 
 PrefetchState::~PrefetchState() {
