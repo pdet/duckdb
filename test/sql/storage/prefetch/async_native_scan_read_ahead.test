@@ -44,6 +44,15 @@ SELECT count(*) FROM integers WHERE i < 100
 ----
 90
 
+# insertion order is preserved across read-ahead jobs
+query I
+SELECT i FROM integers WHERE i % 250000 = 1
+----
+1
+250001
+500001
+750001
+
 # transaction-local rows are drained by read-ahead jobs as well
 statement ok
 BEGIN
