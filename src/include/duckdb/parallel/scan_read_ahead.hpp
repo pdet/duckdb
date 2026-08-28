@@ -114,6 +114,12 @@ public:
 	//! The callback must assign the job's batch index, densely from 0 in claim order.
 	using ProduceJobCallback = std::function<unique_ptr<ScanReadAheadJob>(vector<unique_ptr<AsyncTask>> &io_tasks)>;
 
+	//! Stop producing jobs, drop the queued ones and make their unstarted I/O bail out. Idempotent, does not wait:
+	//! in-flight I/O of dropped jobs is settled on destruction. Jobs acquired after this are dropped.
+	void Cancel();
+	bool IsCancelled() const {
+		return cancelled.load();
+	}
 	//! Settle the claimed job's scheduled I/O, blocking until it completed, and release its budget charge
 	void WaitForJob(ScanReadAheadJob &job);
 	//! Acquire the next job, producing and claiming as needed; on ACQUIRED the job's I/O has been settled.
@@ -156,6 +162,10 @@ private:
 	bool TryReserveSlot();
 	//! Schedule the job's I/O and admit the job to the queue
 	void PushJob(unique_ptr<ScanReadAheadJob> job, vector<unique_ptr<AsyncTask>> io_tasks);
+	//! Release the job's budget charge and slot without claiming it, its I/O is settled on destruction
+	void DropJob(unique_ptr<ScanReadAheadJob> job);
+	//! Settle the dropped jobs' in-flight I/O and destroy them
+	void ReapDroppedJobs();
 	//! Push an error onto the async executor
 	void PushError(ErrorData error);
 	//! Throw if any read-ahead thread or task pushed an error
@@ -182,6 +192,9 @@ private:
 	//! Bytes of scheduled I/O that has not completed yet, released once the claimed job's I/O finished
 	atomic<idx_t> pending_io_bytes {0};
 	atomic<bool> done {false};
+	atomic<bool> cancelled {false};
+	//! Jobs dropped by cancellation, kept until their in-flight I/O is settled
+	vector<unique_ptr<ScanReadAheadJob>> dropped_jobs;
 	//! Threads that reserved a slot but have not pushed their job yet
 	atomic<idx_t> active_producers {0};
 	//! Async I/O executor (async pool)

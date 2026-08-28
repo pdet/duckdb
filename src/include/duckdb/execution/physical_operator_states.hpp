@@ -153,6 +153,9 @@ public:
 		annotated_lock_guard<annotated_mutex> guard(lock);
 		ResetBlocking();
 	}
+	//! Called once the pipeline is done pulling from this state (every executor finished, or the query failed)
+	virtual void Complete(ClientContext &context) {
+	}
 
 	template <class TARGET>
 	TARGET &Cast() {

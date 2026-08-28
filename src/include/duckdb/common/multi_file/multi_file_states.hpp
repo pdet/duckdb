@@ -192,12 +192,15 @@ struct MultiFileGlobalState : public GlobalTableFunctionState {
 	unique_ptr<ScanReadAhead> read_ahead;
 	//! Scan states of finished read-ahead jobs, recycled so learned scan state carries over
 	vector<unique_ptr<LocalTableFunctionState>> state_pool;
+	//! Set once the pipeline is done with the scan, threads still in the scan return without decoding
+	atomic<bool> cancelled {false};
 
 	optional_ptr<const PhysicalOperator> op;
 
 	idx_t MaxThreads() const override {
 		return max_threads;
 	}
+	void Complete(ClientContext &context) override;
 
 	//! Push a finished job's scan state, so learned scan state carries over to jobs created later
 	void PushState(unique_ptr<LocalTableFunctionState> state) {

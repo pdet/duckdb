@@ -78,6 +78,9 @@ public:
 	virtual idx_t MaxThreads() const {
 		return 1;
 	}
+	//! Called once the pipeline is done pulling from the scan, nothing it still produces is consumed
+	virtual void Complete(ClientContext &context) {
+	}
 
 	template <class TARGET>
 	TARGET &Cast() {

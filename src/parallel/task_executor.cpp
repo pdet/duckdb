@@ -82,9 +82,12 @@ void TaskExecutor::WorkOnTasks() {
 	}
 }
 
-void TaskExecutor::CancelAndDrain() {
-	// make tasks that have not started yet bail out instead of executing their work
+void TaskExecutor::Cancel() {
 	cancelled = true;
+}
+
+void TaskExecutor::CancelAndDrain() {
+	Cancel();
 	DrainTasks();
 }
 

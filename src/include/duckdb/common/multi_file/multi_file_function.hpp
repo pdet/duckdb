@@ -845,8 +845,12 @@ public:
 	                                                 MultiFileBindData &bind_data) {
 		auto &read_ahead = *gstate.read_ahead;
 		if (lstate.job_state == MultiFileJobState::WAIT_IO) {
-			// resuming after parking, the job's I/O has completed
+			// resuming after parking, the job's I/O has completed or was cancelled
 			read_ahead.WaitForJob(*lstate.job);
+			if (read_ahead.IsCancelled()) {
+				lstate.job_state = MultiFileJobState::NONE;
+				return ScanReadAheadAcquire::EXHAUSTED;
+			}
 			lstate.job_state = MultiFileJobState::DECODE;
 			return ScanReadAheadAcquire::ACQUIRED;
 		}
@@ -886,6 +890,11 @@ public:
 		auto &data = data_p.local_state->Cast<MultiFileLocalState>();
 		auto &gstate = data_p.global_state->Cast<MultiFileGlobalState>();
 		auto &bind_data = data_p.bind_data->CastNoConst<MultiFileBindData>();
+		if (gstate.cancelled) {
+			// the pipeline finished early, nothing this scan still produces is consumed
+			data_p.async_result = SourceResultType::FINISHED;
+			return;
+		}
 
 		do {
 			// Acquire a job whenever we don't hold one ready to decode

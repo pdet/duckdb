@@ -24,6 +24,8 @@ bool PipelineEvent::AutoFinishWithoutTasks() const {
 }
 
 void PipelineEvent::FinishEvent() {
+	// every executor of the pipeline finished, the source is not pulled again
+	pipeline->CompleteSource();
 }
 
 } // namespace duckdb

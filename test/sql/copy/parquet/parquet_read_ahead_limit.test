@@ -1,0 +1,91 @@
+# name: test/sql/copy/parquet/parquet_read_ahead_limit.test
+# description: A pipeline that finishes early cancels the read-ahead I/O that has not started
+# group: [parquet]
+
+require parquet
+
+# read-ahead parks scan threads on their I/O, so override a forced-synchronous scan strategy
+statement ok
+SET debug_physical_table_scan_execution_strategy=DEFAULT
+
+# idle worker threads also run async I/O, a single thread of each serialises the scheduled reads
+statement ok
+SET threads=1
+
+statement ok
+SET async_threads=1
+
+# every row group's I/O is scheduled by the first scan call
+statement ok
+SET read_ahead_depth=8
+
+statement ok
+COPY (
+    SELECT i,
+        hash(i)::VARCHAR AS s1,
+        hash(i + 1)::VARCHAR AS s2,
+        hash(i + 2)::VARCHAR AS s3
+    FROM range(1200000) t(i)
+) TO '{TEST_DIR}/read_ahead_limit.parquet' (ROW_GROUP_SIZE 150000)
+
+query I
+SELECT num_row_groups FROM parquet_file_metadata('{TEST_DIR}/read_ahead_limit.parquet')
+----
+8
+
+# every read takes long enough that the LIMIT is reached while the second row group is still being read
+statement ok
+SET GLOBAL debug_fs_delay_mean_ms=300
+
+statement ok
+SET GLOBAL debug_fs_delay_stddev_ms=0
+
+statement ok
+CALL enable_logging(['FileSystem', 'PhysicalOperator'])
+
+# project every column so each row group's I/O is its full span
+query I
+SELECT count(DISTINCT (i, s1, s2, s3)) FROM (FROM '{TEST_DIR}/read_ahead_limit.parquet' LIMIT 16)
+----
+16
+
+query I
+SELECT count(*)
+FROM duckdb_logs_parsed('PhysicalOperator')
+WHERE class = 'ParquetReader' AND event = 'ReadRowGroup'
+----
+8
+
+# the LIMIT cancels the reads that have not started: the first row group and at most the read in flight
+query I
+SELECT count(*) < 3
+FROM duckdb_logs_parsed('FileSystem')
+WHERE op = 'READ' AND path LIKE '%read_ahead_limit.parquet' AND bytes > 1000000
+----
+true
+
+statement ok
+CALL truncate_duckdb_logs()
+
+# without read-ahead only the row group that produced the rows is read
+statement ok
+SET read_ahead_depth=0
+
+query I
+SELECT count(DISTINCT (i, s1, s2, s3)) FROM (FROM '{TEST_DIR}/read_ahead_limit.parquet' LIMIT 16)
+----
+16
+
+query I
+SELECT count(*)
+FROM duckdb_logs_parsed('PhysicalOperator')
+WHERE class = 'ParquetReader' AND event = 'ReadRowGroup'
+----
+1
+
+query I
+SELECT count(*)
+FROM duckdb_logs_parsed('FileSystem')
+WHERE op = 'READ' AND path LIKE '%read_ahead_limit.parquet' AND bytes > 1000000
+----
+1

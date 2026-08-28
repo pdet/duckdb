@@ -475,6 +475,16 @@ void Pipeline::SetSourceState(shared_ptr<GlobalSourceState> state) {
 	source_state = std::move(state);
 }
 
+void Pipeline::CompleteSource() {
+	if (IsExternalInput() || !source) {
+		return;
+	}
+	auto source_state = GetSourceState();
+	if (source_state) {
+		source_state->Complete(GetClientContext());
+	}
+}
+
 void Pipeline::FinishSourceAndPreventBlocking(ClientContext &context) {
 	if (IsExternalInput() || !source) {
 		return;
@@ -484,6 +494,7 @@ void Pipeline::FinishSourceAndPreventBlocking(ClientContext &context) {
 		return;
 	}
 	source->SourceFinished(context, *source_state);
+	source_state->Complete(context);
 	annotated_lock_guard<annotated_mutex> state_guard(source_state->lock);
 	source_state->PreventBlocking();
 	source_state->UnblockTasks();

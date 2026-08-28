@@ -98,7 +98,50 @@ ScanReadAhead::ScanReadAhead(ClientContext &context, idx_t read_ahead_depth_p,
 }
 
 ScanReadAhead::~ScanReadAhead() {
+	Cancel();
 	executor->CancelAndDrain();
+	ReapDroppedJobs();
+}
+
+void ScanReadAhead::Cancel() {
+	if (cancelled.exchange(true)) {
+		return;
+	}
+	SetDone();
+	executor->Cancel();
+	deque<unique_ptr<ScanReadAheadJob>> dropped;
+	{
+		lock_guard<mutex> guard(lock);
+		dropped.swap(ready_queue);
+		for (auto &entry : pending_jobs) {
+			dropped.push_back(std::move(entry.second));
+		}
+		pending_jobs.clear();
+		if (memory_governor) {
+			memory_governor->Release();
+		}
+	}
+	for (auto &job : dropped) {
+		DropJob(std::move(job));
+	}
+}
+
+void ScanReadAhead::DropJob(unique_ptr<ScanReadAheadJob> job) {
+	pending_io_bytes -= job->io_bytes;
+	job->io_bytes = 0;
+	ReleaseSlot();
+	// destroying the job would wait for its in-flight I/O, reap it later
+	lock_guard<mutex> guard(lock);
+	dropped_jobs.push_back(std::move(job));
+}
+
+void ScanReadAhead::ReapDroppedJobs() {
+	vector<unique_ptr<ScanReadAheadJob>> reaped;
+	{
+		lock_guard<mutex> guard(lock);
+		reaped.swap(dropped_jobs);
+	}
+	reaped.clear();
 }
 
 unique_ptr<ScanReadAhead> ScanReadAhead::Create(ClientContext &context) {
@@ -176,6 +219,9 @@ ScanReadAheadAcquire ScanReadAhead::AcquireJob(ClientContext &context, TableFunc
                                                unique_ptr<ScanReadAheadJob> &job) {
 	D_ASSERT(!job);
 	while (true) {
+		if (cancelled) {
+			return ScanReadAheadAcquire::EXHAUSTED;
+		}
 		// keep the queue full before claiming
 		while (TryProduceJob(claim_and_schedule)) {
 		}
@@ -203,6 +249,10 @@ ScanReadAheadAcquire ScanReadAhead::AcquireJob(ClientContext &context, TableFunc
 		}
 		// parking is not available to this caller or the I/O has already completed
 		WaitForJob(*job);
+		if (cancelled) {
+			job.reset();
+			return ScanReadAheadAcquire::EXHAUSTED;
+		}
 		return ScanReadAheadAcquire::ACQUIRED;
 	}
 }
@@ -240,20 +290,27 @@ void ScanReadAhead::PushJob(unique_ptr<ScanReadAheadJob> job, vector<unique_ptr<
 	for (auto &task : read_tasks) {
 		executor->ScheduleTask(std::move(task));
 	}
-	lock_guard<mutex> guard(lock);
-	if (memory_governor) {
-		memory_governor->UpdateReservation(pending_io_bytes.load());
-		backlog_budget = memory_governor->BackpressureBudget();
+	{
+		lock_guard<mutex> guard(lock);
+		if (!cancelled) {
+			if (memory_governor) {
+				memory_governor->UpdateReservation(pending_io_bytes.load());
+				backlog_budget = memory_governor->BackpressureBudget();
+			}
+			// producers push concurrently, so admit jobs to the queue in batch-index order
+			if (job->batch_index < next_batch_index || !pending_jobs.emplace(job->batch_index, std::move(job)).second) {
+				throw InternalException("Read-ahead jobs must have unique batch indexes, assigned densely from 0");
+			}
+			while (!pending_jobs.empty() && pending_jobs.begin()->first == next_batch_index) {
+				ready_queue.push_back(std::move(pending_jobs.begin()->second));
+				pending_jobs.erase(pending_jobs.begin());
+				next_batch_index++;
+			}
+			return;
+		}
 	}
-	// producers push concurrently, so admit jobs to the queue in batch-index order
-	if (job->batch_index < next_batch_index || !pending_jobs.emplace(job->batch_index, std::move(job)).second) {
-		throw InternalException("Read-ahead jobs must have unique batch indexes, assigned densely from 0");
-	}
-	while (!pending_jobs.empty() && pending_jobs.begin()->first == next_batch_index) {
-		ready_queue.push_back(std::move(pending_jobs.begin()->second));
-		pending_jobs.erase(pending_jobs.begin());
-		next_batch_index++;
-	}
+	// the scan was cancelled while this job was produced, its scheduled I/O bails out
+	DropJob(std::move(job));
 }
 
 void ScanReadAhead::PushError(ErrorData error) {
@@ -261,7 +318,7 @@ void ScanReadAhead::PushError(ErrorData error) {
 }
 
 void ScanReadAhead::ThrowIfError() {
-	if (executor->HasError()) {
+	if (!cancelled && executor->HasError()) {
 		executor->ThrowError();
 	}
 }

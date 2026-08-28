@@ -77,6 +77,12 @@ public:
 	idx_t MaxThreads() override {
 		return max_threads;
 	}
+
+	void Complete(ClientContext &context) override {
+		if (global_state) {
+			global_state->Complete(context);
+		}
+	}
 };
 
 class TableScanLocalSourceState : public LocalSourceState {

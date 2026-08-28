@@ -127,6 +127,8 @@ public:
 	void ResetSinkForReschedule();
 	void ResetForReschedule(bool reset_sink);
 	void ResetSource(bool force);
+	//! Signal the source state that the pipeline is done pulling from it
+	void CompleteSource();
 	void PrepareExternalInput();
 	void ClearSource();
 	void Schedule(shared_ptr<Event> &event);

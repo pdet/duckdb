@@ -13,6 +13,14 @@ MultiFileGlobalState::MultiFileGlobalState(unique_ptr<MultiFileList> owned_file_
 
 MultiFileGlobalState::~MultiFileGlobalState() = default;
 
+void MultiFileGlobalState::Complete(ClientContext &context) {
+	// flag first so scan threads stop before the read-ahead wakes the ones parked on cancelled I/O
+	cancelled = true;
+	if (read_ahead) {
+		read_ahead->Cancel();
+	}
+}
+
 MultiFileReaderInterface::~MultiFileReaderInterface() {
 }
 
