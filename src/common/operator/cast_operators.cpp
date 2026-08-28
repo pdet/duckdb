@@ -38,7 +38,7 @@ namespace duckdb {
 
 ConversionException TryCast::UnimplementedErrorMessage(PhysicalType source, PhysicalType target,
                                                        optional_ptr<CastParameters> parameters) {
-	optional_idx query_location;
+	QueryLocation query_location;
 	if (parameters) {
 		query_location = parameters->query_location;
 		if (parameters->cast_source && parameters->cast_target) {
@@ -1817,7 +1817,7 @@ template <>
 bool TryCastToGeometry::Operation(string_t input, string_t &result, Vector &result_vector, CastParameters &parameters) {
 	// Pass the query location of the cast source if available.
 	return Geometry::FromString(input, result, StringVector::GetStringHeap(result_vector), parameters.strict,
-	                            parameters.cast_source ? parameters.cast_source->GetQueryLocation() : optional_idx());
+	                            parameters.cast_source ? parameters.cast_source->GetQueryLocation() : QueryLocation());
 }
 
 //===--------------------------------------------------------------------===//
@@ -2826,7 +2826,7 @@ bool DoubleToDecimalCast(SRC input, DST &result, CastParameters &parameters, uin
 		return false;
 	}
 	// For some reason PG does not use statistical rounding here (even though it _does_ for integers...)
-	result = Cast::Operation<SRC, DST>(static_cast<SRC>(roundedValue));
+	result = Cast::Operation<double, DST>(roundedValue);
 	return true;
 }
 
@@ -3233,20 +3233,24 @@ static void FillDecimalDigits(SRC input, duckdb_fast_float::decimal &decimal, bo
 }
 
 static void FillDecimalDigits(hugeint_t input, duckdb_fast_float::decimal &decimal, bool &negative) {
+	if (input == 0) {
+		return;
+	}
+
 	if (input < 0) {
 		negative = true;
 		Hugeint::NegateInPlace(input);
 	} else {
 		negative = false;
 	}
-	uint8_t digits[DecimalWidth<hugeint_t>::max];
-	while (input > 0) {
-		uint64_t remainder;
-		input = Hugeint::DivModPositive(input, 10, remainder);
-		digits[decimal.num_digits++] = UnsafeNumericCast<uint8_t>(remainder);
-	}
+
+	char buffer[DecimalWidth<hugeint_t>::max];
+	auto end = buffer + sizeof(buffer);
+	auto begin = NumericHelper::FormatUnsigned(input, end);
+
+	decimal.num_digits = UnsafeNumericCast<uint32_t>(end - begin);
 	for (uint32_t i = 0; i < decimal.num_digits; i++) {
-		decimal.digits[i] = digits[decimal.num_digits - i - 1];
+		decimal.digits[i] = UnsafeNumericCast<uint8_t>(begin[i] - '0');
 	}
 }
 
