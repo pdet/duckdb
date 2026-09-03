@@ -159,11 +159,15 @@ private:
 
 struct ParseTypeInfo {
 	ParseTypeInfo()
-	    : validate_utf8(false), type_id(LogicalTypeId::INVALID), internal_type(PhysicalType::INVALID), scale(0),
-	      width(0) {};
-	ParseTypeInfo(const LogicalType &type, const bool validate_utf_8_p) : validate_utf8(validate_utf_8_p) {
+	    : validate_utf8(false), strip_thousands(false), type_id(LogicalTypeId::INVALID),
+	      internal_type(PhysicalType::INVALID), scale(0), width(0) {};
+	ParseTypeInfo(const LogicalType &type, const bool validate_utf_8_p, const char thousands_separator)
+	    : validate_utf8(validate_utf_8_p) {
 		type_id = type.id();
 		internal_type = type.InternalType();
+		// BIGNUM is logically numeric but physically stored as VARCHAR
+		strip_thousands =
+		    thousands_separator != '\0' && (LogicalType::IsNumeric(type_id) || type_id == LogicalTypeId::BIGNUM);
 		if (type.id() == LogicalTypeId::DECIMAL) {
 			// We only care about these if we have a decimal value
 			type.GetDecimalProperties(width, scale);
@@ -171,6 +175,8 @@ struct ParseTypeInfo {
 	}
 
 	bool validate_utf8;
+	//! Whether values of this column have thousands separators to remove before casting
+	bool strip_thousands;
 	LogicalTypeId type_id;
 	PhysicalType internal_type;
 	uint8_t scale;
@@ -207,6 +213,8 @@ public:
 	unsafe_unique_array<const char *> null_str_ptr;
 	unsafe_unique_array<idx_t> null_str_size;
 	idx_t null_str_count;
+	//! Values longer than the longest null string cannot be null
+	idx_t max_null_str_size = 0;
 
 	//! Internal Data Chunk used for flushing
 	DataChunk parse_chunk;
@@ -248,6 +256,8 @@ public:
 	//! Errors happening in the current line (if any)
 	LineError current_errors;
 	StrpTimeFormat date_format, timestamp_format;
+	bool has_date_format = false;
+	bool has_timestamp_format = false;
 	bool sniffing;
 
 	char decimal_separator;

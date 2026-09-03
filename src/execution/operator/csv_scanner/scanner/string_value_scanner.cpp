@@ -58,9 +58,10 @@ StringValueResult::StringValueResult(CSVStates &states, CSVStateMachine &state_m
 	vector<LogicalType> logical_types;
 	parse_types = make_unsafe_uniq_array<ParseTypeInfo>(number_of_columns);
 	LogicalType varchar_type = LogicalType::VARCHAR;
+	const char thousands_separator = state_machine.options.thousands_separator;
 	if (!csv_file_scan) {
 		for (idx_t i = 0; i < number_of_columns; i++) {
-			parse_types[i] = ParseTypeInfo(varchar_type, true);
+			parse_types[i] = ParseTypeInfo(varchar_type, true, thousands_separator);
 			logical_types.emplace_back(LogicalType::VARCHAR);
 			string name = "Column_" + to_string(i);
 			names.emplace_back(name);
@@ -78,10 +79,11 @@ StringValueResult::StringValueResult(CSVStates &states, CSVStateMachine &state_m
 				type = LogicalType::VARCHAR;
 			}
 			if (StringValueScanner::CanDirectlyCast(type, icu_loaded)) {
-				parse_types[i] = ParseTypeInfo(type, true);
+				parse_types[i] = ParseTypeInfo(type, true, thousands_separator);
 				logical_types.emplace_back(type);
 			} else {
-				parse_types[i] = ParseTypeInfo(varchar_type, type.id() == LogicalTypeId::VARCHAR || type.IsNested());
+				parse_types[i] = ParseTypeInfo(varchar_type, type.id() == LogicalTypeId::VARCHAR || type.IsNested(),
+				                               thousands_separator);
 				logical_types.emplace_back(LogicalType::VARCHAR);
 			}
 		}
@@ -102,7 +104,7 @@ StringValueResult::StringValueResult(CSVStates &states, CSVStateMachine &state_m
 		if (!projecting_columns) {
 			for (idx_t j = logical_types.size(); j < number_of_columns; j++) {
 				// This can happen if we have sneaky null columns at the end that we wish to ignore
-				parse_types[j] = ParseTypeInfo(varchar_type, true);
+				parse_types[j] = ParseTypeInfo(varchar_type, true, thousands_separator);
 				logical_types.emplace_back(LogicalType::VARCHAR);
 			}
 		}
@@ -122,9 +124,12 @@ StringValueResult::StringValueResult(CSVStates &states, CSVStateMachine &state_m
 	for (idx_t i = 0; i < null_str_count; i++) {
 		null_str_ptr[i] = state_machine.options.null_str[i].c_str();
 		null_str_size[i] = state_machine.options.null_str[i].size();
+		max_null_str_size = MaxValue(max_null_str_size, null_str_size[i]);
 	}
 	date_format = state_machine.options.dialect_options.date_format.at(LogicalTypeId::DATE).GetValue();
 	timestamp_format = state_machine.options.dialect_options.date_format.at(LogicalTypeId::TIMESTAMP).GetValue();
+	has_date_format = !date_format.Empty();
+	has_timestamp_format = !timestamp_format.Empty();
 	decimal_separator = state_machine.options.decimal_separator[0];
 
 	if (iterator.first_one) {
@@ -235,39 +240,16 @@ void FullLinePosition::SanitizeError(string &value) {
 }
 
 void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool allocate) {
-	if (HandleTooManyColumnsError(value_ptr, size)) {
-		return;
-	}
 	if (cur_col_id >= number_of_columns) {
-		if (!state_machine.state_machine_options.strict_mode.GetValue()) {
-			used_unstrictness = true;
-			return;
-		}
-		bool error = true;
-		if (cur_col_id == number_of_columns && ((quoted && state_machine.options.allow_quoted_nulls) || !quoted)) {
-			// we make an exception if the first over-value is null
-			bool is_value_null = false;
-			for (idx_t i = 0; i < null_str_count; i++) {
-				is_value_null = is_value_null || IsValueNull(null_str_ptr[i], value_ptr, size);
-			}
-			error = !is_value_null;
-		}
-		if (error) {
-			// We error pointing to the current value error.
-			current_errors.Insert(TOO_MANY_COLUMNS, cur_col_id, chunk_col_id, last_position);
-			cur_col_id++;
-		}
+		HandleTooManyColumnsError(value_ptr, size);
+		return;
+	}
+	if (projecting_columns && !projected_columns[cur_col_id]) {
+		cur_col_id++;
 		return;
 	}
 
-	if (projecting_columns) {
-		if (!projected_columns[cur_col_id]) {
-			cur_col_id++;
-			return;
-		}
-	}
-
-	if (((quoted && state_machine.options.allow_quoted_nulls) || !quoted)) {
+	if (size <= max_null_str_size && ((quoted && state_machine.options.allow_quoted_nulls) || !quoted)) {
 		// Check for the occurrence of escaped null string like \N only if strict_mode is disabled
 		const bool check_unquoted_escaped_null =
 		    state_machine.state_machine_options.strict_mode.GetValue() == false && escaped && !quoted && size == 1;
@@ -305,11 +287,7 @@ void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool
 	}
 	bool success = true;
 	string strip_thousands;
-	// Whether current type is logically numeric (BIGNUM is physically stored as VARCHAR instead of numerical value).
-	if ((LogicalType::IsNumeric(parse_types[chunk_col_id].type_id) ||
-	     parse_types[chunk_col_id].type_id == LogicalTypeId::BIGNUM) &&
-	    state_machine.options.thousands_separator != '\0') {
-		// If we have a thousands separator we should try to use that
+	if (parse_types[chunk_col_id].strip_thousands) {
 		strip_thousands = BaseScanner::RemoveSeparator(value_ptr, size, state_machine.options.thousands_separator);
 		value_ptr = strip_thousands.c_str();
 		size = strip_thousands.size();
@@ -390,7 +368,7 @@ void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool
 		                               false, state_machine.options.decimal_separator[0]);
 		break;
 	case LogicalTypeId::DATE: {
-		if (!date_format.Empty()) {
+		if (has_date_format) {
 			success = date_format.TryParseDate(value_ptr, size,
 			                                   static_cast<date_t *>(vector_ptr[chunk_col_id])[number_of_rows]);
 		} else {
@@ -410,7 +388,7 @@ void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool
 	}
 	case LogicalTypeId::TIMESTAMP:
 	case LogicalTypeId::TIMESTAMP_TZ: {
-		if (!timestamp_format.Empty()) {
+		if (has_timestamp_format) {
 			success = timestamp_format.TryParseTimestamp(
 			    value_ptr, size, static_cast<timestamp_t *>(vector_ptr[chunk_col_id])[number_of_rows]);
 		} else {
@@ -672,6 +650,10 @@ void StringValueResult::AddValue(StringValueResult &result, const idx_t buffer_p
 	} else if (result.escaped) {
 		AddPossiblyEscapedValue(result, buffer_pos, result.buffer_ptr + result.last_position.buffer_pos,
 		                        buffer_pos - result.last_position.buffer_pos, false);
+	} else if (result.projecting_columns && result.cur_col_id < result.number_of_columns &&
+	           !result.projected_columns[result.cur_col_id]) {
+		// a column that is not projected, the value is never looked at
+		result.cur_col_id++;
 	} else {
 		result.AddValueToVector(result.buffer_ptr + result.last_position.buffer_pos,
 		                        result.HandleMultiDelimiter(buffer_pos));
