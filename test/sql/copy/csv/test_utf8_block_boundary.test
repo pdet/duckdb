@@ -1,0 +1,45 @@
+# name: test/sql/copy/csv/test_utf8_block_boundary.test
+# description: UTF-8 validation of values that straddle the 64-byte blocks the scanner skips with
+# group: [csv]
+
+# an invalid byte in a value that starts in a block holding non-ASCII data and ends in an ASCII-only block,
+# detected by the scan itself
+statement error
+SELECT * FROM read_csv('data/csv/utf8_blocks/invalid_across_blocks.csv', header = false, columns = {'a': 'VARCHAR', 'b': 'VARCHAR'}, auto_detect = false, delim = ',', quote = '"', escape = '"', new_line = '\n')
+----
+Invalid unicode
+
+# the same layout with a valid two-byte character
+query II
+SELECT length(a), length(b) FROM read_csv('data/csv/utf8_blocks/valid_across_blocks.csv', header = false, columns = {'a': 'VARCHAR', 'b': 'VARCHAR'}, auto_detect = false, delim = ',', quote = '"', escape = '"', new_line = '\n')
+----
+58	13
+58	13
+
+# an invalid byte in a block right after two ASCII-only blocks
+statement error
+SELECT * FROM read_csv('data/csv/utf8_blocks/invalid_after_ascii_run.csv', header = false, columns = {'a': 'VARCHAR', 'b': 'VARCHAR'}, auto_detect = false, delim = ',', quote = '"', escape = '"', new_line = '\n')
+----
+Invalid unicode
+
+# ignoring errors drops exactly the rows whose projected column holds the invalid byte
+query I
+SELECT count(b) FROM read_csv('data/csv/utf8_blocks/invalid_across_blocks.csv', header = false, columns = {'a': 'VARCHAR', 'b': 'VARCHAR'}, ignore_errors = true)
+----
+2
+
+query I
+SELECT count(b) FROM read_csv('data/csv/utf8_blocks/invalid_after_ascii_run.csv', header = false, columns = {'a': 'VARCHAR', 'b': 'VARCHAR'}, ignore_errors = true)
+----
+1
+
+# a column that is not projected is not validated
+query I
+SELECT count(*) FROM read_csv('data/csv/utf8_blocks/invalid_across_blocks.csv', header = false, columns = {'a': 'VARCHAR', 'b': 'VARCHAR'}, ignore_errors = true)
+----
+3
+
+query I
+SELECT count(*) FROM read_csv('data/csv/utf8_blocks/invalid_after_ascii_run.csv', header = false, columns = {'a': 'VARCHAR', 'b': 'VARCHAR'}, ignore_errors = true)
+----
+2

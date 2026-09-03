@@ -280,11 +280,11 @@ public:
 	                                           const idx_t length, const bool empty);
 	//! Adds a Value to the result
 	static inline void AddValue(StringValueResult &result, const idx_t buffer_pos) {
-		if (!result.quoted && !result.escaped && result.projecting_columns &&
-		    result.cur_col_id < result.number_of_columns && !result.projected_columns[result.cur_col_id] &&
-		    result.last_position.buffer_pos <= buffer_pos) {
-			// a column that is not projected, the value is never looked at
+		if (!result.escaped && result.projecting_columns && result.cur_col_id < result.number_of_columns &&
+		    !result.projected_columns[result.cur_col_id] && result.last_position.buffer_pos <= buffer_pos) {
+			// a column that is not projected, the value is never looked at, quoted or not
 			result.cur_col_id++;
+			result.quoted = false;
 			result.last_position.buffer_pos = buffer_pos + 1;
 			return;
 		}

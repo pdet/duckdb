@@ -94,6 +94,8 @@ public:
 	bool escaped = false;
 	//! Variable to keep track if we are in a comment row. Hence, won't add it
 	bool comment = false;
+	//! Whether the value being added is known to be ASCII, so its UTF-8 validation can be skipped
+	bool field_is_ascii = false;
 	idx_t quoted_position = 0;
 
 	LinePosition last_position;
@@ -213,6 +215,8 @@ protected:
 		idx_t end = 0;
 		//! A superset of the bytes that end a skip in any state
 		uint64_t stops = 0;
+		//! The start of the run of ASCII-only blocks that ends with this block, invalid if it is not ASCII
+		idx_t ascii_start = DConstants::INVALID_INDEX;
 		//! The byte patterns that end a skip: delimiter, quote, the class of \n and \r, and comment and escape if set
 		vector<SwarBlock::BytePattern> patterns;
 	};
@@ -243,6 +247,7 @@ protected:
 		skip_block.buffer_size = cur_buffer_handle->actual_size;
 		skip_block.start = 0;
 		skip_block.end = 0;
+		skip_block.ascii_start = DConstants::INVALID_INDEX;
 	}
 
 	//! Computes the skip-stop mask of the block that starts at `start`
@@ -259,6 +264,11 @@ protected:
 		default:
 			skip_block.stops = SwarBlock::MaybeAnyMask<5>(block, patterns);
 			break;
+		}
+		if (!SwarBlock::IsAscii(block)) {
+			skip_block.ascii_start = DConstants::INVALID_INDEX;
+		} else if (skip_block.ascii_start == DConstants::INVALID_INDEX || skip_block.end != start) {
+			skip_block.ascii_start = start;
 		}
 		skip_block.start = start;
 		skip_block.end = start + SwarBlock::SIZE;
@@ -344,9 +354,140 @@ protected:
 		return CSVState::EMPTY_SPACE;
 	}
 
-	//! Walks rows without quotes from the skip block: unprojected fields cost nothing, and the value and row
-	//! callbacks are the byte loop's own. Hands over to the byte loop, with `states` and the position as it would
-	//! have them, at the first byte it does not model. Returns true when the chunk is complete or `to_pos` is reached
+	enum class RowStep : uint8_t { CONTINUE, FINISHED, HAND_OVER };
+
+	//! The row end at `pos` (a \n or \r) from state `before`, with the row callback of the byte loop
+	//! On CONTINUE `pos` is past the line ending and `states` at RECORD_SEPARATOR
+	template <class T>
+	RowStep RowEnd(T &result, const idx_t to_pos, const bool carry_on, const CSVState before, idx_t &pos) {
+		const bool carriage_return = buffer_handle_ptr[pos] == '\r';
+		// a line ending that does not match the dialect depends on the mode, the byte loop decides; a \r must be
+		// followed by its \n within this scan
+		if (carriage_return != carry_on ||
+		    (carriage_return && (pos + 1 >= to_pos || buffer_handle_ptr[pos + 1] != '\n'))) {
+			states.states[1] = before;
+			iterator.pos.buffer_pos = pos;
+			return RowStep::HAND_OVER;
+		}
+		states.states[0] = before;
+		states.states[1] = carriage_return ? CSVState::CARRIAGE_RETURN : CSVState::RECORD_SEPARATOR;
+		iterator.pos.buffer_pos = pos;
+		result.field_is_ascii = skip_block.ascii_start <= result.last_position.buffer_pos;
+		const bool full = T::AddRow(result, pos);
+		result.field_is_ascii = false;
+		pos++;
+		lines_read++;
+		if (full) {
+			iterator.pos.buffer_pos = pos;
+			return RowStep::FINISHED;
+		}
+		if (carriage_return) {
+			// the \n after the \r has no callbacks
+			states.states[0] = CSVState::CARRIAGE_RETURN;
+			states.states[1] = CSVState::RECORD_SEPARATOR;
+			pos++;
+		}
+		return RowStep::CONTINUE;
+	}
+
+	//! A quoted field from the byte after its opening quote to past the delimiter or line ending that closes it,
+	//! with the quote callbacks of the byte loop. Strict mode only: a quote is its own escape or there is none
+	template <class T>
+	RowStep QuotedField(T &result, const idx_t to_pos, const char delimiter, const char quote,
+	                    const bool escaped_quotes, const bool carry_on, idx_t &pos) {
+		const char *buffer = buffer_handle_ptr;
+		while (true) {
+			// quoted content up to a quote or a line break, the byte loop skips everything else as well
+			const auto stop = AdvanceToStop(to_pos, pos);
+			if (stop != StopResult::FOUND) {
+				states.states[1] = CSVState::QUOTED;
+				iterator.pos.buffer_pos = pos;
+				return stop == StopResult::LIMIT ? RowStep::FINISHED : RowStep::HAND_OVER;
+			}
+			char byte = buffer[pos];
+			if (byte == '\n' || byte == '\r') {
+				states.states[0] = CSVState::QUOTED;
+				states.states[1] = CSVState::QUOTED_NEW_LINE;
+				T::QuotedNewLine(result);
+				pos++;
+				if (pos >= to_pos) {
+					iterator.pos.buffer_pos = pos;
+					return RowStep::FINISHED;
+				}
+				byte = buffer[pos];
+				if (byte != quote) {
+					states.states[0] = CSVState::QUOTED_NEW_LINE;
+					states.states[1] = CSVState::QUOTED;
+					ever_quoted = true;
+					iterator.pos.buffer_pos = pos;
+					T::SetQuoted(result, pos);
+					pos++;
+					continue;
+				}
+				states.states[0] = CSVState::QUOTED_NEW_LINE;
+			} else if (byte != quote) {
+				// a delimiter or another flagged byte inside the quotes is content
+				pos++;
+				continue;
+			} else {
+				states.states[0] = CSVState::QUOTED;
+			}
+			// the closing quote
+			states.states[1] = CSVState::UNQUOTED;
+			T::SetUnquoted(result);
+			pos++;
+			// after it spaces are tolerated, a quote is an escaped quote, a delimiter or line ending closes the field
+			while (true) {
+				if (pos >= to_pos) {
+					iterator.pos.buffer_pos = pos;
+					return RowStep::FINISHED;
+				}
+				byte = buffer[pos];
+				if (byte == delimiter) {
+					states.states[0] = CSVState::UNQUOTED;
+					states.states[1] = CSVState::DELIMITER;
+					iterator.pos.buffer_pos = pos;
+					result.field_is_ascii = skip_block.ascii_start <= result.last_position.buffer_pos;
+					T::AddValue(result, pos);
+					result.field_is_ascii = false;
+					pos++;
+					return RowStep::CONTINUE;
+				}
+				if (byte == '\n' || byte == '\r') {
+					return RowEnd(result, to_pos, carry_on, CSVState::UNQUOTED, pos);
+				}
+				if (byte == quote) {
+					if (!escaped_quotes) {
+						iterator.pos.buffer_pos = pos;
+						return RowStep::HAND_OVER;
+					}
+					states.states[0] = CSVState::UNQUOTED;
+					states.states[1] = CSVState::QUOTED;
+					ever_escaped = true;
+					T::SetEscaped(result);
+					ever_quoted = true;
+					iterator.pos.buffer_pos = pos;
+					T::SetQuoted(result, pos);
+					pos++;
+					break;
+				}
+				if (byte == ' ') {
+					states.states[0] = CSVState::UNQUOTED;
+					states.states[1] = CSVState::UNQUOTED;
+					T::SetUnquoted(result);
+					pos++;
+					continue;
+				}
+				// anything else is invalid here, the byte loop reports it
+				iterator.pos.buffer_pos = pos;
+				return RowStep::HAND_OVER;
+			}
+		}
+	}
+
+	//! Walks rows from the skip block: unprojected fields cost nothing, and the value, quote and row callbacks are
+	//! the byte loop's own. Hands over to the byte loop, with `states` and the position as it would have them, at
+	//! the first byte it does not model. Returns true when the chunk is complete or `to_pos` is reached
 	template <class T>
 	bool ProcessPlainRows(T &result, const idx_t to_pos) {
 		CSVState cur = states.states[1];
@@ -363,6 +504,8 @@ protected:
 		const auto &options = state_machine->state_machine_options;
 		const char delimiter = options.delimiter.GetValue()[0];
 		const char quote = options.quote.GetValue();
+		const bool escaped_quotes = options.escape.GetValue() != '\0';
+		const bool strict_quotes = options.strict_mode.GetValue();
 		const bool carry_on = options.new_line.GetValue() == NewLineIdentifier::CARRY_ON;
 		const char *buffer = buffer_handle_ptr;
 		idx_t pos = iterator.pos.buffer_pos;
@@ -376,55 +519,49 @@ protected:
 				return stop == StopResult::LIMIT;
 			}
 			const char byte = buffer[pos];
+			RowStep step;
 			if (byte == delimiter) {
 				states.states[0] = after_run;
 				states.states[1] = CSVState::DELIMITER;
 				iterator.pos.buffer_pos = pos;
+				// the value lies in ASCII-only blocks when it starts inside the current ASCII run
+				result.field_is_ascii = skip_block.ascii_start <= result.last_position.buffer_pos;
 				T::AddValue(result, pos);
-				cur = CSVState::DELIMITER;
-				run_start = ++pos;
-				continue;
-			}
-			if (byte == '\n' || byte == '\r') {
-				const bool empty_row =
-				    pos == run_start && (cur == CSVState::RECORD_SEPARATOR || cur == CSVState::NOT_SET);
-				const bool carriage_return = byte == '\r';
-				// empty rows and line endings that do not match the dialect depend on the mode, the byte loop
-				// decides; a \r must be followed by the \n within this scan
-				if (empty_row || carriage_return != carry_on ||
-				    (carriage_return && (pos + 1 >= to_pos || buffer[pos + 1] != '\n'))) {
+				result.field_is_ascii = false;
+				pos++;
+				step = RowStep::CONTINUE;
+			} else if (byte == '\n' || byte == '\r') {
+				if (pos == run_start && (cur == CSVState::RECORD_SEPARATOR || cur == CSVState::NOT_SET)) {
+					// an empty row depends on the mode, the byte loop decides
+					states.states[1] = after_run;
+					iterator.pos.buffer_pos = pos;
+					return false;
+				}
+				step = RowEnd(result, to_pos, carry_on, after_run, pos);
+			} else if (byte == quote && after_run != CSVState::STANDARD) {
+				// a quote opens a quoted field here, inside a field it is content
+				if (!strict_quotes) {
 					states.states[1] = after_run;
 					iterator.pos.buffer_pos = pos;
 					return false;
 				}
 				states.states[0] = after_run;
-				states.states[1] = carriage_return ? CSVState::CARRIAGE_RETURN : CSVState::RECORD_SEPARATOR;
+				states.states[1] = CSVState::QUOTED;
+				ever_quoted = true;
 				iterator.pos.buffer_pos = pos;
-				const bool full = T::AddRow(result, pos);
+				T::SetQuoted(result, pos);
 				pos++;
-				lines_read++;
-				if (full) {
-					iterator.pos.buffer_pos = pos;
-					return true;
-				}
-				if (carriage_return) {
-					// the \n after the \r has no callbacks
-					states.states[0] = CSVState::CARRIAGE_RETURN;
-					states.states[1] = CSVState::RECORD_SEPARATOR;
-					pos++;
-				}
-				cur = CSVState::RECORD_SEPARATOR;
-				run_start = pos;
+				step = QuotedField(result, to_pos, delimiter, quote, escaped_quotes, carry_on, pos);
+			} else {
+				// a flagged byte that is field content
+				pos++;
 				continue;
 			}
-			if (byte == quote && after_run != CSVState::STANDARD) {
-				// a quote opens a quoted field here, inside a field it is content
-				states.states[1] = after_run;
-				iterator.pos.buffer_pos = pos;
-				return false;
+			if (step != RowStep::CONTINUE) {
+				return step == RowStep::FINISHED;
 			}
-			// a flagged byte that is field content
-			pos++;
+			cur = states.states[1];
+			run_start = pos;
 		}
 	}
 
