@@ -38,6 +38,17 @@ struct SwarWord {
 		return ZeroBytes(word ^ Repeat(byte));
 	}
 
+	//! Flags every byte of `word` that is equal to `byte` on the bits set in `byte_mask`
+	static inline uint64_t EqualBytes(uint64_t word, uint8_t byte, uint8_t byte_mask) {
+		return ZeroBytes((word & Repeat(byte_mask)) ^ Repeat(byte));
+	}
+
+	//! Flags every byte of `word` that is zero, and possibly bytes above a zero byte: cheaper than ZeroBytes, for
+	//! callers that verify the flagged bytes anyway
+	static inline uint64_t MaybeZeroBytes(uint64_t word) {
+		return (word - LSB) & ~word & MSB;
+	}
+
 	//! Whether no byte of `word` has its high bit set
 	static inline bool IsAscii(uint64_t word) {
 		return (word & MSB) == 0;
@@ -92,6 +103,18 @@ struct SwarBlock {
 		return mask;
 	}
 
+	//! Mask of the bytes in the block that are equal to `byte` on the bits set in `byte_mask`
+	static inline uint64_t EqualMask(const char *block, char byte, uint8_t byte_mask) {
+		const uint64_t pattern = SwarWord::Repeat(static_cast<uint8_t>(byte));
+		const uint64_t keep = SwarWord::Repeat(byte_mask);
+		uint64_t mask = 0;
+		for (idx_t i = 0; i < WORDS; i++) {
+			const auto word = Load<uint64_t>(const_data_ptr_cast(block + i * SwarWord::SIZE));
+			mask |= SwarWord::PackFlags(SwarWord::ZeroBytes((word & keep) ^ pattern)) << (i * SwarWord::SIZE);
+		}
+		return mask;
+	}
+
 	//! Whether every byte in the block is ASCII
 	static inline bool IsAscii(const char *block) {
 		uint64_t any = 0;
@@ -99,6 +122,31 @@ struct SwarBlock {
 			any |= Load<uint64_t>(const_data_ptr_cast(block + i * SwarWord::SIZE));
 		}
 		return SwarWord::IsAscii(any);
+	}
+
+	//! A byte pattern repeated over a word: a byte matches when it is equal to `value` on the bits set in `mask`
+	struct BytePattern {
+		BytePattern(uint8_t value_p, uint8_t mask_p)
+		    : value(SwarWord::Repeat(value_p)), mask(SwarWord::Repeat(mask_p)) {
+		}
+		uint64_t value;
+		uint64_t mask;
+	};
+
+	//! Mask of the bytes in the block that match any of the patterns, plus possibly bytes right above a match:
+	//! every match is flagged, so a caller that checks the flagged bytes can use it to skip the others
+	template <idx_t PATTERN_COUNT>
+	static inline uint64_t MaybeAnyMask(const char *block, const BytePattern *patterns) {
+		uint64_t mask = 0;
+		for (idx_t i = 0; i < WORDS; i++) {
+			const auto word = Load<uint64_t>(const_data_ptr_cast(block + i * SwarWord::SIZE));
+			uint64_t flags = 0;
+			for (idx_t p = 0; p < PATTERN_COUNT; p++) {
+				flags |= SwarWord::MaybeZeroBytes((word & patterns[p].mask) ^ patterns[p].value);
+			}
+			mask |= SwarWord::PackFlags(flags) << (i * SwarWord::SIZE);
+		}
+		return mask;
 	}
 
 	//! Inclusive prefix XOR over a mask: bit i of the result is the XOR of bits 0 through i

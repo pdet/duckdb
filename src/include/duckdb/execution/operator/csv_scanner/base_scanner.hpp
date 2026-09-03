@@ -204,6 +204,96 @@ protected:
 	//! Initializes the scanner
 	virtual void Initialize();
 
+	//! Skip-stop mask of one 64-byte block [start, end) of the current buffer, bit i is byte start + i
+	struct SkipBlock {
+		//! The buffer the block belongs to and its size
+		const char *buffer_ptr = nullptr;
+		idx_t buffer_size = 0;
+		idx_t start = 0;
+		idx_t end = 0;
+		//! A superset of the bytes that end a skip in any state
+		uint64_t stops = 0;
+		//! The byte patterns that end a skip: delimiter, quote, the class of \n and \r, and comment and escape if set
+		vector<SwarBlock::BytePattern> patterns;
+	};
+	SkipBlock skip_block;
+
+	//! Binds the skip block to the current buffer, dropping the mask of a previous one
+	void BindSkipBlock() {
+		if (skip_block.patterns.empty()) {
+			const auto &options = state_machine->state_machine_options;
+			const auto &delimiter = options.delimiter.GetValue();
+			const auto quote = static_cast<uint8_t>(options.quote.GetValue());
+			const auto escape = static_cast<uint8_t>(options.escape.GetValue());
+			const auto comment = static_cast<uint8_t>(options.comment.GetValue());
+			skip_block.patterns.emplace_back(delimiter.empty() ? uint8_t(0) : static_cast<uint8_t>(delimiter[0]), 0xff);
+			skip_block.patterns.emplace_back(quote, 0xff);
+			skip_block.patterns.emplace_back(0x08, 0xf8);
+			if (comment != '\0') {
+				skip_block.patterns.emplace_back(comment, 0xff);
+			}
+			if (escape != '\0' && escape != quote) {
+				skip_block.patterns.emplace_back(escape, 0xff);
+			}
+		}
+		if (skip_block.buffer_ptr == buffer_handle_ptr) {
+			return;
+		}
+		skip_block.buffer_ptr = buffer_handle_ptr;
+		skip_block.buffer_size = cur_buffer_handle->actual_size;
+		skip_block.start = 0;
+		skip_block.end = 0;
+	}
+
+	//! Computes the skip-stop mask of the block that starts at `start`
+	void LoadSkipBlock(idx_t start) {
+		const char *block = buffer_handle_ptr + start;
+		const auto *patterns = skip_block.patterns.data();
+		switch (skip_block.patterns.size()) {
+		case 3:
+			skip_block.stops = SwarBlock::MaybeAnyMask<3>(block, patterns);
+			break;
+		case 4:
+			skip_block.stops = SwarBlock::MaybeAnyMask<4>(block, patterns);
+			break;
+		default:
+			skip_block.stops = SwarBlock::MaybeAnyMask<5>(block, patterns);
+			break;
+		}
+		skip_block.start = start;
+		skip_block.end = start + SwarBlock::SIZE;
+	}
+
+	//! Moves the position to the next byte that `skip_table` does not skip, or to `to_pos - 1`
+	//! The skip block flags a superset of those bytes, so the walk only inspects the flagged ones
+	inline void SkipUntilStop(const bool *skip_table, const idx_t to_pos) {
+		auto &pos = iterator.pos.buffer_pos;
+		while (pos + 1 < to_pos) {
+			if (pos < skip_block.start || pos >= skip_block.end) {
+				if (pos + SwarBlock::SIZE > skip_block.buffer_size) {
+					// the tail of the buffer is walked byte by byte
+					while (skip_table[static_cast<uint8_t>(buffer_handle_ptr[pos])] && pos + 1 < to_pos) {
+						pos++;
+					}
+					return;
+				}
+				LoadSkipBlock(pos);
+			}
+			const uint64_t remaining = skip_block.stops >> (pos - skip_block.start);
+			const idx_t stop = remaining ? pos + CountZeros<uint64_t>::Trailing(remaining) : skip_block.end;
+			if (stop + 1 >= to_pos) {
+				pos = to_pos - 1;
+				return;
+			}
+			pos = stop;
+			if (remaining && !skip_table[static_cast<uint8_t>(buffer_handle_ptr[pos])]) {
+				return;
+			}
+			// the end of the block, or a flagged byte the skip table skips after all
+			pos += remaining ? 1 : 0;
+		}
+	}
+
 	//! Process one chunk
 	template <class T>
 	void Process(T &result) {
@@ -223,6 +313,7 @@ protected:
 		} else {
 			to_pos = cur_buffer_handle->actual_size;
 		}
+		BindSkipBlock();
 		while (iterator.pos.buffer_pos < to_pos) {
 			state_machine->Transition(states, buffer_handle_ptr[iterator.pos.buffer_pos]);
 			switch (states.states[1]) {
@@ -313,21 +404,7 @@ protected:
 				ever_quoted = true;
 				T::SetQuoted(result, iterator.pos.buffer_pos);
 				iterator.pos.buffer_pos++;
-				while (iterator.pos.buffer_pos + 8 < to_pos) {
-					const uint64_t value =
-					    Load<uint64_t>(reinterpret_cast<const_data_ptr_t>(&buffer_handle_ptr[iterator.pos.buffer_pos]));
-					if (SwarWord::ZeroBytes((value ^ state_machine->transition_array.quote) &
-					                        (value ^ state_machine->transition_array.escape))) {
-						break;
-					}
-					iterator.pos.buffer_pos += 8;
-				}
-
-				while (state_machine->transition_array
-				           .skip_quoted[static_cast<uint8_t>(buffer_handle_ptr[iterator.pos.buffer_pos])] &&
-				       iterator.pos.buffer_pos < to_pos - 1) {
-					iterator.pos.buffer_pos++;
-				}
+				SkipUntilStop(state_machine->transition_array.skip_quoted, to_pos);
 			} break;
 			case CSVState::UNQUOTED: {
 				if (states.states[0] == CSVState::MAYBE_QUOTED) {
@@ -348,50 +425,19 @@ protected:
 				iterator.pos.buffer_pos++;
 				used_unstrictness = true;
 				break;
-			case CSVState::STANDARD: {
+			case CSVState::STANDARD:
 				iterator.pos.buffer_pos++;
-				while (iterator.pos.buffer_pos + 8 < to_pos) {
-					uint64_t value =
-					    Load<uint64_t>(reinterpret_cast<const_data_ptr_t>(&buffer_handle_ptr[iterator.pos.buffer_pos]));
-					if (SwarWord::ZeroBytes((value ^ state_machine->transition_array.delimiter) &
-					                        (value ^ state_machine->transition_array.new_line) &
-					                        (value ^ state_machine->transition_array.carriage_return) &
-					                        (value ^ state_machine->transition_array.escape) &
-					                        (value ^ state_machine->transition_array.comment))) {
-						break;
-					}
-					iterator.pos.buffer_pos += 8;
-				}
-				while (state_machine->transition_array
-				           .skip_standard[static_cast<uint8_t>(buffer_handle_ptr[iterator.pos.buffer_pos])] &&
-				       iterator.pos.buffer_pos < to_pos - 1) {
-					iterator.pos.buffer_pos++;
-				}
+				SkipUntilStop(state_machine->transition_array.skip_standard, to_pos);
 				break;
-			}
 			case CSVState::QUOTED_NEW_LINE:
 				T::QuotedNewLine(result);
 				iterator.pos.buffer_pos++;
 				break;
-			case CSVState::COMMENT: {
+			case CSVState::COMMENT:
 				T::SetComment(result, iterator.pos.buffer_pos);
 				iterator.pos.buffer_pos++;
-				while (iterator.pos.buffer_pos + 8 < to_pos) {
-					const uint64_t value =
-					    Load<uint64_t>(reinterpret_cast<const_data_ptr_t>(&buffer_handle_ptr[iterator.pos.buffer_pos]));
-					if (SwarWord::ZeroBytes((value ^ state_machine->transition_array.new_line) &
-					                        (value ^ state_machine->transition_array.carriage_return))) {
-						break;
-					}
-					iterator.pos.buffer_pos += 8;
-				}
-				while (state_machine->transition_array
-				           .skip_comment[static_cast<uint8_t>(buffer_handle_ptr[iterator.pos.buffer_pos])] &&
-				       iterator.pos.buffer_pos < to_pos - 1) {
-					iterator.pos.buffer_pos++;
-				}
+				SkipUntilStop(state_machine->transition_array.skip_comment, to_pos);
 				break;
-			}
 			default:
 				iterator.pos.buffer_pos++;
 				break;
