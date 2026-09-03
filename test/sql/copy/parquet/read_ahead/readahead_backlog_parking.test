@@ -1,0 +1,39 @@
+# name: test/sql/copy/parquet/read_ahead/readahead_backlog_parking.test
+# description: Scan tasks shut out by a tight read-ahead budget park on the backlog and resume without losing or duplicating jobs
+# group: [read_ahead]
+
+require parquet
+
+statement ok
+SET threads=4
+
+foreach tbl a b c
+
+statement ok
+COPY (SELECT range AS i FROM range(500000)) TO '{TEST_DIR}/backlog_{tbl}.parquet' (ROW_GROUP_SIZE 20000)
+
+endloop
+
+# the memory limit caps the backlog budget at a couple of jobs per scan, the two concurrent build pipelines
+# schedule more scan tasks than that
+statement ok
+SET memory_limit='200MB'
+
+# slow reads keep the claimed jobs' I/O in flight, so the tasks holding the budget park on it
+statement ok
+SET GLOBAL debug_fs_delay_mean_ms=5
+
+statement ok
+SET GLOBAL debug_fs_delay_stddev_ms=1
+
+loop x 0 3
+
+query I
+SELECT count(*)
+FROM '{TEST_DIR}/backlog_a.parquet' a
+JOIN '{TEST_DIR}/backlog_b.parquet' b USING (i)
+JOIN '{TEST_DIR}/backlog_c.parquet' c USING (i)
+----
+500000
+
+endloop

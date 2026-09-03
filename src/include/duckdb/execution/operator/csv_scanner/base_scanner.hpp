@@ -94,7 +94,7 @@ public:
 	bool escaped = false;
 	//! Variable to keep track if we are in a comment row. Hence, won't add it
 	bool comment = false;
-	//! Whether the value being added is known to be ASCII, so its UTF-8 validation can be skipped
+	//! Whether the value being added is known to be ASCII, so its unicode validation can be skipped
 	bool field_is_ascii = false;
 	idx_t quoted_position = 0;
 
@@ -206,7 +206,7 @@ protected:
 	//! Initializes the scanner
 	virtual void Initialize();
 
-	//! Skip-stop mask of one 64-byte block [start, end) of the current buffer, bit i is byte start + i
+	//! Skip stop mask of one block of 64 bytes of the current buffer, bit i is byte start + i
 	struct SkipBlock {
 		//! The buffer the block belongs to and its size
 		const char *buffer_ptr = nullptr;
@@ -215,15 +215,22 @@ protected:
 		idx_t end = 0;
 		//! A superset of the bytes that end a skip in any state
 		uint64_t stops = 0;
-		//! The start of the run of ASCII-only blocks that ends with this block, invalid if it is not ASCII
+		//! The start of the run of ASCII only blocks that ends with this block, invalid if it is not ASCII
 		idx_t ascii_start = DConstants::INVALID_INDEX;
-		//! The byte patterns that end a skip: delimiter, quote, the class of \n and \r, and comment and escape if set
+		//! The byte patterns that end a skip, delimiter, quote, the class of \n and \r, comment and escape when set
 		vector<SwarBlock::BytePattern> patterns;
 	};
-	SkipBlock skip_block;
+	mutable SkipBlock skip_block;
+
+	//! Whether strict \r\n rows are set by the user, the byte loop then adds rows at the \n only
+	bool OnlyCarriageReturnNewlines() const {
+		const auto &options = state_machine->state_machine_options;
+		return options.strict_mode.GetValue() && options.strict_mode.IsSetByUser() &&
+		       options.new_line.GetValue() == NewLineIdentifier::CARRY_ON && options.new_line.IsSetByUser();
+	}
 
 	//! Binds the skip block to the current buffer, dropping the mask of a previous one
-	void BindSkipBlock() {
+	void BindSkipBlock() const {
 		if (skip_block.patterns.empty()) {
 			const auto &options = state_machine->state_machine_options;
 			const auto &delimiter = options.delimiter.GetValue();
@@ -250,8 +257,8 @@ protected:
 		skip_block.ascii_start = DConstants::INVALID_INDEX;
 	}
 
-	//! Computes the skip-stop mask of the block that starts at `start`
-	void LoadSkipBlock(idx_t start) {
+	//! Computes the skip stop mask of the block that starts at `start`
+	void LoadSkipBlock(idx_t start) const {
 		const char *block = buffer_handle_ptr + start;
 		const auto *patterns = skip_block.patterns.data();
 		switch (skip_block.patterns.size()) {
@@ -276,9 +283,8 @@ protected:
 
 	enum class StopResult : uint8_t { FOUND, LIMIT, TAIL };
 
-	//! Moves `pos` over the bytes not flagged in the skip block, up to `limit`
-	//! FOUND: at a flagged byte, LIMIT: at `limit`, TAIL: fewer than a block of bytes remain in the buffer
-	inline StopResult AdvanceToStop(const idx_t limit, idx_t &pos) {
+	//! Moves `pos` over unflagged bytes to a flagged one (FOUND), to `limit` (LIMIT) or into the buffer tail (TAIL)
+	inline StopResult AdvanceToStop(const idx_t limit, idx_t &pos) const {
 		while (pos < limit) {
 			if (pos < skip_block.start || pos >= skip_block.end) {
 				if (pos + SwarBlock::SIZE > skip_block.buffer_size) {
@@ -289,22 +295,18 @@ protected:
 			const uint64_t remaining = skip_block.stops >> (pos - skip_block.start);
 			if (remaining) {
 				const idx_t stop = pos + CountZeros<uint64_t>::Trailing(remaining);
-				if (stop >= limit) {
-					break;
+				if (stop < limit) {
+					pos = stop;
+					return StopResult::FOUND;
 				}
-				pos = stop;
-				return StopResult::FOUND;
 			}
-			pos = MinValue<idx_t>(skip_block.end, limit);
+			pos = MinValue<idx_t>(remaining ? limit : skip_block.end, limit);
 		}
-		pos = limit;
 		return StopResult::LIMIT;
 	}
 
-	//! Moves the position to the next byte that `skip_table` does not skip, or to `to_pos - 1`
-	//! The skip block flags a superset of those bytes, so the walk only inspects the flagged ones
-	inline void SkipUntilStop(const bool *skip_table, const idx_t to_pos) {
-		auto &pos = iterator.pos.buffer_pos;
+	//! Moves `pos` to the next byte `skip_table` does not skip, or to the byte before `to_pos`, through the skip block
+	inline void SkipUntilStop(const bool *skip_table, const idx_t to_pos, idx_t &pos) const {
 		while (pos + 1 < to_pos) {
 			const auto stop = AdvanceToStop(to_pos - 1, pos);
 			if (stop == StopResult::TAIL) {
@@ -325,24 +327,20 @@ protected:
 	//! Whether ProcessPlainRows drives the rows of this scan
 	bool use_plain_rows = false;
 
-	//! The dialects ProcessPlainRows models outside quotes: no comment, a one-byte delimiter that is not a space, a
-	//! quote that is its own escape or has none, and \n or \r\n rows
+	//! Whether ProcessPlainRows fits the dialect, one byte delimiter, no comment, escape is the quote or none
 	bool PlainRowsApplicable() const {
 		const auto &options = state_machine->state_machine_options;
 		const auto &delimiter = options.delimiter.GetValue();
 		const char quote = options.quote.GetValue();
 		const char escape = options.escape.GetValue();
 		const auto new_line = options.new_line.GetValue();
-		const bool only_rn_newlines = options.strict_mode.GetValue() && options.strict_mode.IsSetByUser() &&
-		                              new_line == NewLineIdentifier::CARRY_ON && options.new_line.IsSetByUser();
 		return options.comment.GetValue() == '\0' && delimiter.size() == 1 && delimiter[0] != ' ' &&
 		       (escape == quote || escape == '\0') &&
 		       (new_line == NewLineIdentifier::SINGLE_N || new_line == NewLineIdentifier::CARRY_ON) &&
-		       !only_rn_newlines;
+		       !OnlyCarriageReturnNewlines();
 	}
 
-	//! The state the byte loop is in after the field bytes [run_start, pos) from state `cur`: the first byte moves
-	//! it, a single space to EMPTY_SPACE and anything else to STANDARD, the rest are skipped
+	//! The byte loop state after the run [run_start, pos) from `cur`, one space is EMPTY_SPACE, else STANDARD
 	static inline CSVState AfterRun(const CSVState cur, const char *buffer, const idx_t run_start, const idx_t pos) {
 		if (pos == run_start) {
 			return cur;
@@ -356,23 +354,55 @@ protected:
 
 	enum class RowStep : uint8_t { CONTINUE, FINISHED, HAND_OVER };
 
-	//! The row end at `pos` (a \n or \r) from state `before`, with the row callback of the byte loop
-	//! On CONTINUE `pos` is past the line ending and `states` at RECORD_SEPARATOR
+	//! Leaves the byte at `pos` to the byte loop, in state `current`
+	inline RowStep HandOver(const CSVState current, const idx_t pos) {
+		states.states[1] = current;
+		iterator.pos.buffer_pos = pos;
+		return RowStep::HAND_OVER;
+	}
+
+	//! Whether the value that starts at the last position lies in ASCII only blocks
+	template <class T>
+	bool ValueIsAscii(const T &result) const {
+		return skip_block.ascii_start <= result.last_position.buffer_pos;
+	}
+
+	//! The delimiter at `pos` from state `before`, with the value callback of the byte loop
+	template <class T>
+	void ValueEnd(T &result, const CSVState before, idx_t &pos) {
+		states.states[0] = before;
+		states.states[1] = CSVState::DELIMITER;
+		iterator.pos.buffer_pos = pos;
+		result.field_is_ascii = ValueIsAscii(result);
+		T::AddValue(result, pos);
+		result.field_is_ascii = false;
+		pos++;
+	}
+
+	//! The quote at `pos` from state `before` opens quoted content, with the quote callback of the byte loop
+	template <class T>
+	void QuoteOpened(T &result, const CSVState before, idx_t &pos) {
+		states.states[0] = before;
+		states.states[1] = CSVState::QUOTED;
+		ever_quoted = true;
+		iterator.pos.buffer_pos = pos;
+		T::SetQuoted(result, pos);
+		pos++;
+	}
+
+	//! The row end at `pos` from state `before` with the row callback of the byte loop, on CONTINUE `pos` is past it
 	template <class T>
 	RowStep RowEnd(T &result, const idx_t to_pos, const bool carry_on, const CSVState before, idx_t &pos) {
 		const bool carriage_return = buffer_handle_ptr[pos] == '\r';
-		// a line ending that does not match the dialect depends on the mode, the byte loop decides; a \r must be
-		// followed by its \n within this scan
+		// a line ending that does not fit the dialect, or a \r without its \n in this scan, is left to the byte loop
 		if (carriage_return != carry_on ||
 		    (carriage_return && (pos + 1 >= to_pos || buffer_handle_ptr[pos + 1] != '\n'))) {
-			states.states[1] = before;
-			iterator.pos.buffer_pos = pos;
-			return RowStep::HAND_OVER;
+			return HandOver(before, pos);
 		}
 		states.states[0] = before;
 		states.states[1] = carriage_return ? CSVState::CARRIAGE_RETURN : CSVState::RECORD_SEPARATOR;
 		iterator.pos.buffer_pos = pos;
-		result.field_is_ascii = skip_block.ascii_start <= result.last_position.buffer_pos;
+		result.field_is_ascii = ValueIsAscii(result);
 		const bool full = T::AddRow(result, pos);
 		result.field_is_ascii = false;
 		pos++;
@@ -390,8 +420,7 @@ protected:
 		return RowStep::CONTINUE;
 	}
 
-	//! A quoted field from the byte after its opening quote to past the delimiter or line ending that closes it,
-	//! with the quote callbacks of the byte loop. Strict mode only: a quote is its own escape or there is none
+	//! A quoted field from after its opening quote to past what closes it, strict mode with the quote as escape
 	template <class T>
 	RowStep QuotedField(T &result, const idx_t to_pos, const char delimiter, const char quote,
 	                    const bool escaped_quotes, const bool carry_on, idx_t &pos) {
@@ -399,12 +428,16 @@ protected:
 		while (true) {
 			// quoted content up to a quote or a line break, the byte loop skips everything else as well
 			const auto stop = AdvanceToStop(to_pos, pos);
-			if (stop != StopResult::FOUND) {
+			if (stop == StopResult::LIMIT) {
 				states.states[1] = CSVState::QUOTED;
 				iterator.pos.buffer_pos = pos;
-				return stop == StopResult::LIMIT ? RowStep::FINISHED : RowStep::HAND_OVER;
+				return RowStep::FINISHED;
+			}
+			if (stop == StopResult::TAIL) {
+				return HandOver(CSVState::QUOTED, pos);
 			}
 			char byte = buffer[pos];
+			CSVState before = CSVState::QUOTED;
 			if (byte == '\n' || byte == '\r') {
 				states.states[0] = CSVState::QUOTED;
 				states.states[1] = CSVState::QUOTED_NEW_LINE;
@@ -416,23 +449,17 @@ protected:
 				}
 				byte = buffer[pos];
 				if (byte != quote) {
-					states.states[0] = CSVState::QUOTED_NEW_LINE;
-					states.states[1] = CSVState::QUOTED;
-					ever_quoted = true;
-					iterator.pos.buffer_pos = pos;
-					T::SetQuoted(result, pos);
-					pos++;
+					QuoteOpened(result, CSVState::QUOTED_NEW_LINE, pos);
 					continue;
 				}
-				states.states[0] = CSVState::QUOTED_NEW_LINE;
+				before = CSVState::QUOTED_NEW_LINE;
 			} else if (byte != quote) {
 				// a delimiter or another flagged byte inside the quotes is content
 				pos++;
 				continue;
-			} else {
-				states.states[0] = CSVState::QUOTED;
 			}
 			// the closing quote
+			states.states[0] = before;
 			states.states[1] = CSVState::UNQUOTED;
 			T::SetUnquoted(result);
 			pos++;
@@ -444,13 +471,7 @@ protected:
 				}
 				byte = buffer[pos];
 				if (byte == delimiter) {
-					states.states[0] = CSVState::UNQUOTED;
-					states.states[1] = CSVState::DELIMITER;
-					iterator.pos.buffer_pos = pos;
-					result.field_is_ascii = skip_block.ascii_start <= result.last_position.buffer_pos;
-					T::AddValue(result, pos);
-					result.field_is_ascii = false;
-					pos++;
+					ValueEnd(result, CSVState::UNQUOTED, pos);
 					return RowStep::CONTINUE;
 				}
 				if (byte == '\n' || byte == '\r') {
@@ -458,17 +479,11 @@ protected:
 				}
 				if (byte == quote) {
 					if (!escaped_quotes) {
-						iterator.pos.buffer_pos = pos;
-						return RowStep::HAND_OVER;
+						return HandOver(CSVState::UNQUOTED, pos);
 					}
-					states.states[0] = CSVState::UNQUOTED;
-					states.states[1] = CSVState::QUOTED;
 					ever_escaped = true;
 					T::SetEscaped(result);
-					ever_quoted = true;
-					iterator.pos.buffer_pos = pos;
-					T::SetQuoted(result, pos);
-					pos++;
+					QuoteOpened(result, CSVState::UNQUOTED, pos);
 					break;
 				}
 				if (byte == ' ') {
@@ -479,15 +494,12 @@ protected:
 					continue;
 				}
 				// anything else is invalid here, the byte loop reports it
-				iterator.pos.buffer_pos = pos;
-				return RowStep::HAND_OVER;
+				return HandOver(CSVState::UNQUOTED, pos);
 			}
 		}
 	}
 
-	//! Walks rows from the skip block: unprojected fields cost nothing, and the value, quote and row callbacks are
-	//! the byte loop's own. Hands over to the byte loop, with `states` and the position as it would have them, at
-	//! the first byte it does not model. Returns true when the chunk is complete or `to_pos` is reached
+	//! Walks rows from the skip block with the byte loop's callbacks, handing over at the first byte it does not model
 	template <class T>
 	bool ProcessPlainRows(T &result, const idx_t to_pos) {
 		CSVState cur = states.states[1];
@@ -519,39 +531,24 @@ protected:
 				return stop == StopResult::LIMIT;
 			}
 			const char byte = buffer[pos];
-			RowStep step;
+			RowStep step = RowStep::CONTINUE;
 			if (byte == delimiter) {
-				states.states[0] = after_run;
-				states.states[1] = CSVState::DELIMITER;
-				iterator.pos.buffer_pos = pos;
-				// the value lies in ASCII-only blocks when it starts inside the current ASCII run
-				result.field_is_ascii = skip_block.ascii_start <= result.last_position.buffer_pos;
-				T::AddValue(result, pos);
-				result.field_is_ascii = false;
-				pos++;
-				step = RowStep::CONTINUE;
+				ValueEnd(result, after_run, pos);
 			} else if (byte == '\n' || byte == '\r') {
 				if (pos == run_start && (cur == CSVState::RECORD_SEPARATOR || cur == CSVState::NOT_SET)) {
 					// an empty row depends on the mode, the byte loop decides
-					states.states[1] = after_run;
-					iterator.pos.buffer_pos = pos;
-					return false;
+					step = HandOver(after_run, pos);
+				} else {
+					step = RowEnd(result, to_pos, carry_on, after_run, pos);
 				}
-				step = RowEnd(result, to_pos, carry_on, after_run, pos);
 			} else if (byte == quote && after_run != CSVState::STANDARD) {
-				// a quote opens a quoted field here, inside a field it is content
+				// a quote opens quoted content here, inside a field it is content
 				if (!strict_quotes) {
-					states.states[1] = after_run;
-					iterator.pos.buffer_pos = pos;
-					return false;
+					step = HandOver(after_run, pos);
+				} else {
+					QuoteOpened(result, after_run, pos);
+					step = QuotedField(result, to_pos, delimiter, quote, escaped_quotes, carry_on, pos);
 				}
-				states.states[0] = after_run;
-				states.states[1] = CSVState::QUOTED;
-				ever_quoted = true;
-				iterator.pos.buffer_pos = pos;
-				T::SetQuoted(result, pos);
-				pos++;
-				step = QuotedField(result, to_pos, delimiter, quote, escaped_quotes, carry_on, pos);
 			} else {
 				// a flagged byte that is field content
 				pos++;
@@ -570,11 +567,7 @@ protected:
 	void Process(T &result) {
 		idx_t to_pos;
 		const bool has_escaped_value = state_machine->dialect_options.state_machine_options.escape != '\0';
-		const bool only_rn_newlines =
-		    state_machine->state_machine_options.strict_mode.GetValue() &&
-		    state_machine->state_machine_options.strict_mode.IsSetByUser() &&
-		    state_machine->state_machine_options.new_line.GetValue() == NewLineIdentifier::CARRY_ON &&
-		    state_machine->state_machine_options.new_line.IsSetByUser();
+		const bool only_rn_newlines = OnlyCarriageReturnNewlines();
 		const idx_t start_pos = iterator.pos.buffer_pos;
 		if (iterator.IsBoundarySet()) {
 			to_pos = iterator.GetEndPos();
@@ -682,7 +675,7 @@ protected:
 					ever_quoted = true;
 					T::SetQuoted(result, iterator.pos.buffer_pos);
 					iterator.pos.buffer_pos++;
-					SkipUntilStop(state_machine->transition_array.skip_quoted, to_pos);
+					SkipUntilStop(state_machine->transition_array.skip_quoted, to_pos, iterator.pos.buffer_pos);
 				} break;
 				case CSVState::UNQUOTED: {
 					if (states.states[0] == CSVState::MAYBE_QUOTED) {
@@ -705,7 +698,7 @@ protected:
 					break;
 				case CSVState::STANDARD:
 					iterator.pos.buffer_pos++;
-					SkipUntilStop(state_machine->transition_array.skip_standard, to_pos);
+					SkipUntilStop(state_machine->transition_array.skip_standard, to_pos, iterator.pos.buffer_pos);
 					break;
 				case CSVState::QUOTED_NEW_LINE:
 					T::QuotedNewLine(result);
@@ -714,7 +707,7 @@ protected:
 				case CSVState::COMMENT:
 					T::SetComment(result, iterator.pos.buffer_pos);
 					iterator.pos.buffer_pos++;
-					SkipUntilStop(state_machine->transition_array.skip_comment, to_pos);
+					SkipUntilStop(state_machine->transition_array.skip_comment, to_pos, iterator.pos.buffer_pos);
 					break;
 				default:
 					iterator.pos.buffer_pos++;

@@ -145,7 +145,7 @@ struct SortKeyVectorData {
 	data_t valid_byte;
 };
 
-//! Word-at-a-time primitives specific to encoding string/blob payloads, on top of SwarWord
+//! Word at a time primitives specific to encoding string and blob payloads, on top of SwarWord
 struct SortKeyWord {
 	//! Flags every byte of `word` that has to be escaped (\x00 or \x01)
 	static inline uint64_t EscapedBytes(uint64_t word) {
