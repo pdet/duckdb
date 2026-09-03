@@ -1019,6 +1019,7 @@ StringValueScanner::StringValueScanner(idx_t scanner_idx_p, const shared_ptr<CSV
 	}
 	iterator.buffer_size = state_machine->options.buffer_size_option.GetValue();
 	result.try_row = scanner_idx == LINE_FINDER_ID;
+	use_plain_rows = !sniffing && result_size != 1 && PlainRowsApplicable();
 }
 
 StringValueScanner::StringValueScanner(const shared_ptr<CSVBufferManager> &buffer_manager,
@@ -1034,6 +1035,7 @@ StringValueScanner::StringValueScanner(const shared_ptr<CSVBufferManager> &buffe
 		lines_read += csv_file_scan->skipped_rows;
 	}
 	iterator.buffer_size = state_machine->options.buffer_size_option.GetValue();
+	use_plain_rows = result_size != 1 && PlainRowsApplicable();
 }
 
 unique_ptr<StringValueScanner> StringValueScanner::GetCSVScanner(ClientContext &context, CSVReaderOptions &options,
