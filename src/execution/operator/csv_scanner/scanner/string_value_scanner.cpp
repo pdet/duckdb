@@ -641,7 +641,7 @@ inline idx_t StringValueResult::HandleMultiDelimiter(const idx_t buffer_pos) con
 	return size;
 }
 
-void StringValueResult::AddValue(StringValueResult &result, const idx_t buffer_pos) {
+void StringValueResult::AddValueInternal(StringValueResult &result, const idx_t buffer_pos) {
 	if (result.last_position.buffer_pos > buffer_pos) {
 		return;
 	}
@@ -650,10 +650,6 @@ void StringValueResult::AddValue(StringValueResult &result, const idx_t buffer_p
 	} else if (result.escaped) {
 		AddPossiblyEscapedValue(result, buffer_pos, result.buffer_ptr + result.last_position.buffer_pos,
 		                        buffer_pos - result.last_position.buffer_pos, false);
-	} else if (result.projecting_columns && result.cur_col_id < result.number_of_columns &&
-	           !result.projected_columns[result.cur_col_id]) {
-		// a column that is not projected, the value is never looked at
-		result.cur_col_id++;
 	} else {
 		result.AddValueToVector(result.buffer_ptr + result.last_position.buffer_pos,
 		                        result.HandleMultiDelimiter(buffer_pos));

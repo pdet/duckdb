@@ -279,7 +279,18 @@ public:
 	static inline void AddPossiblyEscapedValue(StringValueResult &result, const idx_t buffer_pos, const char *value_ptr,
 	                                           const idx_t length, const bool empty);
 	//! Adds a Value to the result
-	static inline void AddValue(StringValueResult &result, const idx_t buffer_pos);
+	static inline void AddValue(StringValueResult &result, const idx_t buffer_pos) {
+		if (!result.quoted && !result.escaped && result.projecting_columns &&
+		    result.cur_col_id < result.number_of_columns && !result.projected_columns[result.cur_col_id] &&
+		    result.last_position.buffer_pos <= buffer_pos) {
+			// a column that is not projected, the value is never looked at
+			result.cur_col_id++;
+			result.last_position.buffer_pos = buffer_pos + 1;
+			return;
+		}
+		AddValueInternal(result, buffer_pos);
+	}
+	static void AddValueInternal(StringValueResult &result, const idx_t buffer_pos);
 	//! Adds a Row to the result
 	static inline bool AddRow(StringValueResult &result, const idx_t buffer_pos);
 	//! Behavior when hitting an invalid state
