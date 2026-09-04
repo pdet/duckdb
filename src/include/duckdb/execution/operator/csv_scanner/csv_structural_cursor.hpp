@@ -10,6 +10,7 @@
 
 #include "duckdb/common/bit_utils.hpp"
 #include "duckdb/common/constants.hpp"
+#include "duckdb/common/exception.hpp"
 #include "duckdb/common/swar.hpp"
 #include "duckdb/common/vector.hpp"
 
@@ -20,17 +21,15 @@ class CSVStructuralCursor {
 public:
 	enum class Stop : uint8_t { FOUND, LIMIT, TAIL };
 
-	//! Adds a byte pattern that ends a skip, bytes match it on the bits set in `mask`
-	void AddPattern(uint8_t value, uint8_t mask) {
-		patterns.emplace_back(value, mask);
+	//! Takes the byte patterns that end a skip, a byte matches a pattern on the bits set in its mask
+	explicit CSVStructuralCursor(vector<SwarBlock::BytePattern> patterns_p) : patterns(std::move(patterns_p)) {
+		if (patterns.empty() || patterns.size() > SwarBlock::MAX_PATTERNS) {
+			throw InternalException("CSVStructuralCursor takes 1 to %d byte patterns", SwarBlock::MAX_PATTERNS);
+		}
 	}
 
-	//! Binds the cursor to a buffer, identified by index and address, dropping the block of a previous one
-	void Bind(idx_t buffer_idx_p, const char *buffer_p, idx_t buffer_size_p) {
-		if (buffer_idx == buffer_idx_p && buffer == buffer_p) {
-			return;
-		}
-		buffer_idx = buffer_idx_p;
+	//! Binds the cursor to a buffer, dropping the block of a previous one
+	void Bind(const char *buffer_p, idx_t buffer_size_p) {
 		buffer = buffer_p;
 		buffer_size = buffer_size_p;
 		start = 0;
@@ -99,9 +98,8 @@ private:
 	}
 
 	//! The byte patterns that end a skip
-	vector<SwarBlock::BytePattern> patterns;
-	//! The bound buffer, by index and by address, and its size
-	idx_t buffer_idx = DConstants::INVALID_INDEX;
+	const vector<SwarBlock::BytePattern> patterns;
+	//! The bound buffer and its size
 	const char *buffer = nullptr;
 	idx_t buffer_size = 0;
 	//! The loaded block [start, end) and its stop mask, bit i is byte start + i

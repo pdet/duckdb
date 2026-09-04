@@ -71,6 +71,9 @@ public:
 	static inline void SetEscaped(ScannerResult &result) {
 		result.escaped = true;
 	}
+	//! Tells whether the value being added lies in ASCII only blocks, only string materialization uses it
+	static inline void SetAsciiHint(ScannerResult &result, const bool is_ascii) {
+	}
 	static inline void SetComment(ScannerResult &result, idx_t buffer_pos) {
 		result.comment = true;
 	}
@@ -94,8 +97,6 @@ public:
 	bool escaped = false;
 	//! Variable to keep track if we are in a comment row. Hence, won't add it
 	bool comment = false;
-	//! Whether the value being added is known to be ASCII, so its unicode validation can be skipped
-	bool field_is_ascii = false;
 	idx_t quoted_position = 0;
 
 	LinePosition last_position;
@@ -206,10 +207,7 @@ protected:
 	//! Initializes the scanner
 	virtual void Initialize();
 
-	//! Finds the structural bytes of the current buffer, mutable because the line finder is const
-	mutable CSVStructuralCursor cursor;
-
-	//! The structural bytes of the dialect, resolved once for the skip block and the row walker
+	//! The structural bytes of the dialect, resolved once for the cursor and the row walker
 	struct StructuralDialect {
 		char delimiter = '\0';
 		bool one_byte_delimiter = false;
@@ -226,11 +224,14 @@ protected:
 		bool strict = false;
 		bool carry_on = false;
 	};
-	StructuralDialect dialect;
+	const StructuralDialect dialect;
+	//! Finds the structural bytes of the current buffer, mutable because the line finder is const
+	mutable CSVStructuralCursor cursor;
 
-	//! Resolves the dialect and the cursor patterns from the state machine options
-	void ResolveDialect() {
-		const auto &options = state_machine->state_machine_options;
+	//! Resolves the dialect from the state machine options
+	static StructuralDialect ResolveDialect(const CSVStateMachine &state_machine) {
+		StructuralDialect dialect;
+		const auto &options = state_machine.state_machine_options;
 		const auto &delimiter = options.delimiter.GetValue();
 		dialect.delimiter = delimiter.empty() ? '\0' : delimiter[0];
 		dialect.one_byte_delimiter = delimiter.size() == 1;
@@ -243,18 +244,25 @@ protected:
 		dialect.has_comment = dialect.comment != '\0';
 		dialect.strict = options.strict_mode.GetValue();
 		dialect.carry_on = options.new_line.GetValue() == NewLineIdentifier::CARRY_ON;
-		cursor.AddPattern(static_cast<uint8_t>(dialect.delimiter), 0xff);
+		return dialect;
+	}
+
+	//! The byte patterns of the dialect that end a skip of the cursor
+	static vector<SwarBlock::BytePattern> StopPatterns(const StructuralDialect &dialect) {
+		vector<SwarBlock::BytePattern> patterns;
+		patterns.emplace_back(static_cast<uint8_t>(dialect.delimiter), 0xff);
 		if (dialect.has_quote) {
-			cursor.AddPattern(static_cast<uint8_t>(dialect.quote), 0xff);
+			patterns.emplace_back(static_cast<uint8_t>(dialect.quote), 0xff);
 		}
 		// the byte class holding \n and \r
-		cursor.AddPattern(0x08, 0xf8);
+		patterns.emplace_back(0x08, 0xf8);
 		if (dialect.has_comment) {
-			cursor.AddPattern(static_cast<uint8_t>(dialect.comment), 0xff);
+			patterns.emplace_back(static_cast<uint8_t>(dialect.comment), 0xff);
 		}
 		if (dialect.has_distinct_escape) {
-			cursor.AddPattern(static_cast<uint8_t>(dialect.escape), 0xff);
+			patterns.emplace_back(static_cast<uint8_t>(dialect.escape), 0xff);
 		}
+		return patterns;
 	}
 
 	//! Whether strict \r\n rows are set by the user, the byte loop then adds rows at the \n only
@@ -266,7 +274,7 @@ protected:
 
 	//! Binds the cursor to the current buffer
 	void BindCursor() const {
-		cursor.Bind(cur_buffer_handle->buffer_idx, buffer_handle_ptr, cur_buffer_handle->actual_size);
+		cursor.Bind(buffer_handle_ptr, cur_buffer_handle->actual_size);
 	}
 
 	//! Whether ProcessPlainRows drives the rows of this scan
@@ -314,9 +322,9 @@ protected:
 		states.states[0] = before;
 		states.states[1] = CSVState::DELIMITER;
 		iterator.pos.buffer_pos = pos;
-		result.field_is_ascii = ValueIsAscii(result);
+		T::SetAsciiHint(result, ValueIsAscii(result));
 		T::AddValue(result, pos);
-		result.field_is_ascii = false;
+		T::SetAsciiHint(result, false);
 		pos++;
 	}
 
@@ -343,9 +351,9 @@ protected:
 		states.states[0] = before;
 		states.states[1] = carriage_return ? CSVState::CARRIAGE_RETURN : CSVState::RECORD_SEPARATOR;
 		iterator.pos.buffer_pos = pos;
-		result.field_is_ascii = ValueIsAscii(result);
+		T::SetAsciiHint(result, ValueIsAscii(result));
 		const bool full = T::AddRow(result, pos);
-		result.field_is_ascii = false;
+		T::SetAsciiHint(result, false);
 		pos++;
 		lines_read++;
 		if (full) {

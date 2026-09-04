@@ -243,6 +243,8 @@ public:
 	//! Information regarding projected columns
 	unsafe_unique_array<bool> projected_columns;
 	bool projecting_columns = false;
+	//! Whether the value being added is known to be ASCII, so its unicode validation can be skipped
+	bool field_is_ascii = false;
 	idx_t chunk_col_id = 0;
 
 	bool icu_loaded = false;
@@ -278,6 +280,9 @@ public:
 	//! Specialized code for possibly escaped values, makes sure to remove escapes
 	static inline void AddPossiblyEscapedValue(StringValueResult &result, const idx_t buffer_pos, const char *value_ptr,
 	                                           const idx_t length, const bool empty);
+	static inline void SetAsciiHint(StringValueResult &result, const bool is_ascii) {
+		result.field_is_ascii = is_ascii;
+	}
 	//! Skips the value of a column that is not projected and clears the value state, false when it has to be added
 	inline bool TrySkipUnprojectedValue() {
 		if (!projecting_columns || cur_col_id >= number_of_columns || projected_columns[cur_col_id]) {
