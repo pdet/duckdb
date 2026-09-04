@@ -292,21 +292,7 @@ protected:
 	//! Computes the skip stop mask of the block that starts at `start`
 	void LoadSkipBlock(idx_t start) const {
 		const char *block = buffer_handle_ptr + start;
-		const auto *patterns = skip_block.patterns.data();
-		switch (skip_block.patterns.size()) {
-		case 2:
-			skip_block.stops = SwarBlock::MaybeAnyMask<2>(block, patterns);
-			break;
-		case 3:
-			skip_block.stops = SwarBlock::MaybeAnyMask<3>(block, patterns);
-			break;
-		case 4:
-			skip_block.stops = SwarBlock::MaybeAnyMask<4>(block, patterns);
-			break;
-		default:
-			skip_block.stops = SwarBlock::MaybeAnyMask<5>(block, patterns);
-			break;
-		}
+		skip_block.stops = SwarBlock::MaybeAnyMask(block, skip_block.patterns.data(), skip_block.patterns.size());
 		if (!SwarBlock::IsAscii(block)) {
 			skip_block.ascii_start = DConstants::INVALID_INDEX;
 		} else if (skip_block.ascii_start == DConstants::INVALID_INDEX || skip_block.end != start) {

@@ -10,6 +10,7 @@
 
 #include "duckdb/common/bit_utils.hpp"
 #include "duckdb/common/bswap.hpp"
+#include "duckdb/common/exception.hpp"
 #include "duckdb/common/helper.hpp"
 #include "duckdb/common/typedefs.hpp"
 
@@ -39,7 +40,7 @@ struct SwarWord {
 
 	//! Flags every byte of `word` that is equal to `byte` on the bits set in `byte_mask`
 	static inline uint64_t EqualBytes(uint64_t word, uint8_t byte, uint8_t byte_mask) {
-		return ZeroBytes((word & Repeat(byte_mask)) ^ Repeat(byte));
+		return ZeroBytes((word & Repeat(byte_mask)) ^ Repeat(byte & byte_mask));
 	}
 
 	//! Flags every zero byte of `word` and possibly bytes above one, cheaper than ZeroBytes for callers that verify
@@ -103,7 +104,7 @@ struct SwarBlock {
 
 	//! Mask of the bytes in the block that are equal to `byte` on the bits set in `byte_mask`
 	static inline uint64_t EqualMask(const char *block, char byte, uint8_t byte_mask) {
-		const uint64_t pattern = SwarWord::Repeat(static_cast<uint8_t>(byte));
+		const uint64_t pattern = SwarWord::Repeat(static_cast<uint8_t>(byte) & byte_mask);
 		const uint64_t keep = SwarWord::Repeat(byte_mask);
 		uint64_t mask = 0;
 		for (idx_t i = 0; i < WORDS; i++) {
@@ -125,25 +126,45 @@ struct SwarBlock {
 	//! A byte pattern repeated over a word, a byte matches when it equals `value` on the bits set in `mask`
 	struct BytePattern {
 		BytePattern(uint8_t value_p, uint8_t mask_p)
-		    : value(SwarWord::Repeat(value_p)), mask(SwarWord::Repeat(mask_p)) {
+		    : value(SwarWord::Repeat(value_p & mask_p)), mask(SwarWord::Repeat(mask_p)) {
 		}
 		uint64_t value;
 		uint64_t mask;
 	};
 
+	//! The most patterns MaybeAnyMask takes at once
+	static constexpr idx_t MAX_PATTERNS = 8;
+
 	//! Mask of the bytes matching any pattern plus possibly bytes right above a match, no match is ever missed
 	template <idx_t PATTERN_COUNT>
-	static inline uint64_t MaybeAnyMask(const char *block, const BytePattern *patterns) {
-		uint64_t mask = 0;
-		for (idx_t i = 0; i < WORDS; i++) {
-			const auto word = Load<uint64_t>(const_data_ptr_cast(block + i * SwarWord::SIZE));
-			uint64_t flags = 0;
-			for (idx_t p = 0; p < PATTERN_COUNT; p++) {
-				flags |= SwarWord::MaybeZeroBytes((word & patterns[p].mask) ^ patterns[p].value);
-			}
-			mask |= SwarWord::PackFlags(flags) << (i * SwarWord::SIZE);
+	static inline uint64_t MaybeAnyMask(const char *block, const BytePattern (&patterns)[PATTERN_COUNT]) {
+		static_assert(PATTERN_COUNT >= 1 && PATTERN_COUNT <= MAX_PATTERNS, "MaybeAnyMask takes 1 to 8 patterns");
+		return MaybeAnyMaskUnrolled<PATTERN_COUNT>(block, patterns);
+	}
+
+	//! The same over the first `pattern_count` patterns, unrolled per count, at most MAX_PATTERNS
+	static inline uint64_t MaybeAnyMask(const char *block, const BytePattern *patterns, idx_t pattern_count) {
+		switch (pattern_count) {
+		case 1:
+			return MaybeAnyMaskUnrolled<1>(block, patterns);
+		case 2:
+			return MaybeAnyMaskUnrolled<2>(block, patterns);
+		case 3:
+			return MaybeAnyMaskUnrolled<3>(block, patterns);
+		case 4:
+			return MaybeAnyMaskUnrolled<4>(block, patterns);
+		case 5:
+			return MaybeAnyMaskUnrolled<5>(block, patterns);
+		case 6:
+			return MaybeAnyMaskUnrolled<6>(block, patterns);
+		case 7:
+			return MaybeAnyMaskUnrolled<7>(block, patterns);
+		case 8:
+			return MaybeAnyMaskUnrolled<8>(block, patterns);
+		default:
+			throw InternalException("SwarBlock::MaybeAnyMask takes 1 to %d patterns, got %d", MAX_PATTERNS,
+			                        pattern_count);
 		}
-		return mask;
 	}
 
 	//! Inclusive prefix XOR over a mask, bit i of the result is the XOR of bits 0 through i
@@ -154,6 +175,21 @@ struct SwarBlock {
 		mask ^= mask << 8;
 		mask ^= mask << 16;
 		mask ^= mask << 32;
+		return mask;
+	}
+
+private:
+	template <idx_t PATTERN_COUNT>
+	static inline uint64_t MaybeAnyMaskUnrolled(const char *block, const BytePattern *patterns) {
+		uint64_t mask = 0;
+		for (idx_t i = 0; i < WORDS; i++) {
+			const auto word = Load<uint64_t>(const_data_ptr_cast(block + i * SwarWord::SIZE));
+			uint64_t flags = 0;
+			for (idx_t p = 0; p < PATTERN_COUNT; p++) {
+				flags |= SwarWord::MaybeZeroBytes((word & patterns[p].mask) ^ patterns[p].value);
+			}
+			mask |= SwarWord::PackFlags(flags) << (i * SwarWord::SIZE);
+		}
 		return mask;
 	}
 };
