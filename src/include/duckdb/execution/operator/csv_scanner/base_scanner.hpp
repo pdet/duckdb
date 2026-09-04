@@ -222,6 +222,54 @@ protected:
 	};
 	mutable SkipBlock skip_block;
 
+	//! The structural bytes of the dialect, resolved once for the skip block and the row walker
+	struct StructuralDialect {
+		char delimiter = '\0';
+		bool one_byte_delimiter = false;
+		//! Whether quoting is enabled, the quote byte only means something then
+		bool has_quote = false;
+		char quote = '\0';
+		//! Whether a quote inside quoted content is escaped by doubling it
+		bool doubled_quotes = false;
+		bool has_comment = false;
+		char comment = '\0';
+		//! An escape byte other than the quote, only the byte loop handles it
+		bool has_distinct_escape = false;
+		char escape = '\0';
+		bool strict = false;
+		bool carry_on = false;
+	};
+	StructuralDialect dialect;
+
+	//! Resolves the dialect and the skip block patterns from the state machine options
+	void ResolveDialect() {
+		const auto &options = state_machine->state_machine_options;
+		const auto &delimiter = options.delimiter.GetValue();
+		dialect.delimiter = delimiter.empty() ? '\0' : delimiter[0];
+		dialect.one_byte_delimiter = delimiter.size() == 1;
+		dialect.quote = options.quote.GetValue();
+		dialect.has_quote = dialect.quote != '\0';
+		dialect.escape = options.escape.GetValue();
+		dialect.doubled_quotes = dialect.has_quote && dialect.escape == dialect.quote;
+		dialect.has_distinct_escape = dialect.escape != '\0' && dialect.escape != dialect.quote;
+		dialect.comment = options.comment.GetValue();
+		dialect.has_comment = dialect.comment != '\0';
+		dialect.strict = options.strict_mode.GetValue();
+		dialect.carry_on = options.new_line.GetValue() == NewLineIdentifier::CARRY_ON;
+		auto &patterns = skip_block.patterns;
+		patterns.emplace_back(static_cast<uint8_t>(dialect.delimiter), 0xff);
+		if (dialect.has_quote) {
+			patterns.emplace_back(static_cast<uint8_t>(dialect.quote), 0xff);
+		}
+		patterns.emplace_back(0x08, 0xf8);
+		if (dialect.has_comment) {
+			patterns.emplace_back(static_cast<uint8_t>(dialect.comment), 0xff);
+		}
+		if (dialect.has_distinct_escape) {
+			patterns.emplace_back(static_cast<uint8_t>(dialect.escape), 0xff);
+		}
+	}
+
 	//! Whether strict \r\n rows are set by the user, the byte loop then adds rows at the \n only
 	bool OnlyCarriageReturnNewlines() const {
 		const auto &options = state_machine->state_machine_options;
@@ -231,22 +279,6 @@ protected:
 
 	//! Binds the skip block to the current buffer, dropping the mask of a previous one
 	void BindSkipBlock() const {
-		if (skip_block.patterns.empty()) {
-			const auto &options = state_machine->state_machine_options;
-			const auto &delimiter = options.delimiter.GetValue();
-			const auto quote = static_cast<uint8_t>(options.quote.GetValue());
-			const auto escape = static_cast<uint8_t>(options.escape.GetValue());
-			const auto comment = static_cast<uint8_t>(options.comment.GetValue());
-			skip_block.patterns.emplace_back(delimiter.empty() ? uint8_t(0) : static_cast<uint8_t>(delimiter[0]), 0xff);
-			skip_block.patterns.emplace_back(quote, 0xff);
-			skip_block.patterns.emplace_back(0x08, 0xf8);
-			if (comment != '\0') {
-				skip_block.patterns.emplace_back(comment, 0xff);
-			}
-			if (escape != '\0' && escape != quote) {
-				skip_block.patterns.emplace_back(escape, 0xff);
-			}
-		}
 		if (skip_block.buffer_ptr == buffer_handle_ptr) {
 			return;
 		}
@@ -262,6 +294,9 @@ protected:
 		const char *block = buffer_handle_ptr + start;
 		const auto *patterns = skip_block.patterns.data();
 		switch (skip_block.patterns.size()) {
+		case 2:
+			skip_block.stops = SwarBlock::MaybeAnyMask<2>(block, patterns);
+			break;
 		case 3:
 			skip_block.stops = SwarBlock::MaybeAnyMask<3>(block, patterns);
 			break;
@@ -329,13 +364,9 @@ protected:
 
 	//! Whether ProcessPlainRows fits the dialect, one byte delimiter, no comment, escape is the quote or none
 	bool PlainRowsApplicable() const {
-		const auto &options = state_machine->state_machine_options;
-		const auto &delimiter = options.delimiter.GetValue();
-		const char quote = options.quote.GetValue();
-		const char escape = options.escape.GetValue();
-		const auto new_line = options.new_line.GetValue();
-		return options.comment.GetValue() == '\0' && delimiter.size() == 1 && delimiter[0] != ' ' &&
-		       (escape == quote || escape == '\0') &&
+		const auto new_line = state_machine->state_machine_options.new_line.GetValue();
+		return !dialect.has_comment && dialect.one_byte_delimiter && dialect.delimiter != ' ' &&
+		       !dialect.has_distinct_escape &&
 		       (new_line == NewLineIdentifier::SINGLE_N || new_line == NewLineIdentifier::CARRY_ON) &&
 		       !OnlyCarriageReturnNewlines();
 	}
@@ -392,10 +423,10 @@ protected:
 
 	//! The row end at `pos` from state `before` with the row callback of the byte loop, on CONTINUE `pos` is past it
 	template <class T>
-	RowStep RowEnd(T &result, const idx_t to_pos, const bool carry_on, const CSVState before, idx_t &pos) {
+	RowStep RowEnd(T &result, const idx_t to_pos, const CSVState before, idx_t &pos) {
 		const bool carriage_return = buffer_handle_ptr[pos] == '\r';
 		// a line ending that does not fit the dialect, or a \r without its \n in this scan, is left to the byte loop
-		if (carriage_return != carry_on ||
+		if (carriage_return != dialect.carry_on ||
 		    (carriage_return && (pos + 1 >= to_pos || buffer_handle_ptr[pos + 1] != '\n'))) {
 			return HandOver(before, pos);
 		}
@@ -422,9 +453,9 @@ protected:
 
 	//! A quoted field from after its opening quote to past what closes it, strict mode with the quote as escape
 	template <class T>
-	RowStep QuotedField(T &result, const idx_t to_pos, const char delimiter, const char quote,
-	                    const bool escaped_quotes, const bool carry_on, idx_t &pos) {
+	RowStep QuotedField(T &result, const idx_t to_pos, idx_t &pos) {
 		const char *buffer = buffer_handle_ptr;
+		const char quote = dialect.quote;
 		while (true) {
 			// quoted content up to a quote or a line break, the byte loop skips everything else as well
 			const auto stop = AdvanceToStop(to_pos, pos);
@@ -470,15 +501,15 @@ protected:
 					return RowStep::FINISHED;
 				}
 				byte = buffer[pos];
-				if (byte == delimiter) {
+				if (byte == dialect.delimiter) {
 					ValueEnd(result, CSVState::UNQUOTED, pos);
 					return RowStep::CONTINUE;
 				}
 				if (byte == '\n' || byte == '\r') {
-					return RowEnd(result, to_pos, carry_on, CSVState::UNQUOTED, pos);
+					return RowEnd(result, to_pos, CSVState::UNQUOTED, pos);
 				}
 				if (byte == quote) {
-					if (!escaped_quotes) {
+					if (!dialect.doubled_quotes) {
 						return HandOver(CSVState::UNQUOTED, pos);
 					}
 					ever_escaped = true;
@@ -513,12 +544,6 @@ protected:
 		default:
 			return false;
 		}
-		const auto &options = state_machine->state_machine_options;
-		const char delimiter = options.delimiter.GetValue()[0];
-		const char quote = options.quote.GetValue();
-		const bool escaped_quotes = options.escape.GetValue() != '\0';
-		const bool strict_quotes = options.strict_mode.GetValue();
-		const bool carry_on = options.new_line.GetValue() == NewLineIdentifier::CARRY_ON;
 		const char *buffer = buffer_handle_ptr;
 		idx_t pos = iterator.pos.buffer_pos;
 		idx_t run_start = pos;
@@ -532,22 +557,22 @@ protected:
 			}
 			const char byte = buffer[pos];
 			RowStep step = RowStep::CONTINUE;
-			if (byte == delimiter) {
+			if (byte == dialect.delimiter) {
 				ValueEnd(result, after_run, pos);
 			} else if (byte == '\n' || byte == '\r') {
 				if (pos == run_start && (cur == CSVState::RECORD_SEPARATOR || cur == CSVState::NOT_SET)) {
 					// an empty row depends on the mode, the byte loop decides
 					step = HandOver(after_run, pos);
 				} else {
-					step = RowEnd(result, to_pos, carry_on, after_run, pos);
+					step = RowEnd(result, to_pos, after_run, pos);
 				}
-			} else if (byte == quote && after_run != CSVState::STANDARD) {
+			} else if (dialect.has_quote && byte == dialect.quote && after_run != CSVState::STANDARD) {
 				// a quote opens quoted content here, inside a field it is content
-				if (!strict_quotes) {
+				if (!dialect.strict) {
 					step = HandOver(after_run, pos);
 				} else {
 					QuoteOpened(result, after_run, pos);
-					step = QuotedField(result, to_pos, delimiter, quote, escaped_quotes, carry_on, pos);
+					step = QuotedField(result, to_pos, pos);
 				}
 			} else {
 				// a flagged byte that is field content
