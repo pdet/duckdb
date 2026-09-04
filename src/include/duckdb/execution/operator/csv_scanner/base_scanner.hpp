@@ -13,7 +13,7 @@
 #include "duckdb/execution/operator/csv_scanner/csv_state_machine.hpp"
 #include "duckdb/execution/operator/csv_scanner/csv_error.hpp"
 #include "duckdb/common/helper.hpp"
-#include "duckdb/common/swar.hpp"
+#include "duckdb/execution/operator/csv_scanner/csv_structural_cursor.hpp"
 
 namespace duckdb {
 
@@ -206,21 +206,8 @@ protected:
 	//! Initializes the scanner
 	virtual void Initialize();
 
-	//! Skip stop mask of one block of 64 bytes of the current buffer, bit i is byte start + i
-	struct SkipBlock {
-		//! The buffer the block belongs to and its size
-		const char *buffer_ptr = nullptr;
-		idx_t buffer_size = 0;
-		idx_t start = 0;
-		idx_t end = 0;
-		//! A superset of the bytes that end a skip in any state
-		uint64_t stops = 0;
-		//! The start of the run of ASCII only blocks that ends with this block, invalid if it is not ASCII
-		idx_t ascii_start = DConstants::INVALID_INDEX;
-		//! The byte patterns that end a skip, delimiter, quote, the class of \n and \r, comment and escape when set
-		vector<SwarBlock::BytePattern> patterns;
-	};
-	mutable SkipBlock skip_block;
+	//! Finds the structural bytes of the current buffer, mutable because the line finder is const
+	mutable CSVStructuralCursor cursor;
 
 	//! The structural bytes of the dialect, resolved once for the skip block and the row walker
 	struct StructuralDialect {
@@ -241,7 +228,7 @@ protected:
 	};
 	StructuralDialect dialect;
 
-	//! Resolves the dialect and the skip block patterns from the state machine options
+	//! Resolves the dialect and the cursor patterns from the state machine options
 	void ResolveDialect() {
 		const auto &options = state_machine->state_machine_options;
 		const auto &delimiter = options.delimiter.GetValue();
@@ -256,17 +243,17 @@ protected:
 		dialect.has_comment = dialect.comment != '\0';
 		dialect.strict = options.strict_mode.GetValue();
 		dialect.carry_on = options.new_line.GetValue() == NewLineIdentifier::CARRY_ON;
-		auto &patterns = skip_block.patterns;
-		patterns.emplace_back(static_cast<uint8_t>(dialect.delimiter), 0xff);
+		cursor.AddPattern(static_cast<uint8_t>(dialect.delimiter), 0xff);
 		if (dialect.has_quote) {
-			patterns.emplace_back(static_cast<uint8_t>(dialect.quote), 0xff);
+			cursor.AddPattern(static_cast<uint8_t>(dialect.quote), 0xff);
 		}
-		patterns.emplace_back(0x08, 0xf8);
+		// the byte class holding \n and \r
+		cursor.AddPattern(0x08, 0xf8);
 		if (dialect.has_comment) {
-			patterns.emplace_back(static_cast<uint8_t>(dialect.comment), 0xff);
+			cursor.AddPattern(static_cast<uint8_t>(dialect.comment), 0xff);
 		}
 		if (dialect.has_distinct_escape) {
-			patterns.emplace_back(static_cast<uint8_t>(dialect.escape), 0xff);
+			cursor.AddPattern(static_cast<uint8_t>(dialect.escape), 0xff);
 		}
 	}
 
@@ -277,72 +264,9 @@ protected:
 		       options.new_line.GetValue() == NewLineIdentifier::CARRY_ON && options.new_line.IsSetByUser();
 	}
 
-	//! Binds the skip block to the current buffer, dropping the mask of a previous one
-	void BindSkipBlock() const {
-		if (skip_block.buffer_ptr == buffer_handle_ptr) {
-			return;
-		}
-		skip_block.buffer_ptr = buffer_handle_ptr;
-		skip_block.buffer_size = cur_buffer_handle->actual_size;
-		skip_block.start = 0;
-		skip_block.end = 0;
-		skip_block.ascii_start = DConstants::INVALID_INDEX;
-	}
-
-	//! Computes the skip stop mask of the block that starts at `start`
-	void LoadSkipBlock(idx_t start) const {
-		const char *block = buffer_handle_ptr + start;
-		skip_block.stops = SwarBlock::MaybeAnyMask(block, skip_block.patterns.data(), skip_block.patterns.size());
-		if (!SwarBlock::IsAscii(block)) {
-			skip_block.ascii_start = DConstants::INVALID_INDEX;
-		} else if (skip_block.ascii_start == DConstants::INVALID_INDEX || skip_block.end != start) {
-			skip_block.ascii_start = start;
-		}
-		skip_block.start = start;
-		skip_block.end = start + SwarBlock::SIZE;
-	}
-
-	enum class StopResult : uint8_t { FOUND, LIMIT, TAIL };
-
-	//! Moves `pos` over unflagged bytes to a flagged one (FOUND), to `limit` (LIMIT) or into the buffer tail (TAIL)
-	inline StopResult AdvanceToStop(const idx_t limit, idx_t &pos) const {
-		while (pos < limit) {
-			if (pos < skip_block.start || pos >= skip_block.end) {
-				if (pos + SwarBlock::SIZE > skip_block.buffer_size) {
-					return StopResult::TAIL;
-				}
-				LoadSkipBlock(pos);
-			}
-			const uint64_t remaining = skip_block.stops >> (pos - skip_block.start);
-			if (remaining) {
-				const idx_t stop = pos + CountZeros<uint64_t>::Trailing(remaining);
-				if (stop < limit) {
-					pos = stop;
-					return StopResult::FOUND;
-				}
-			}
-			pos = MinValue<idx_t>(remaining ? limit : skip_block.end, limit);
-		}
-		return StopResult::LIMIT;
-	}
-
-	//! Moves `pos` to the next byte `skip_table` does not skip, or to the byte before `to_pos`, through the skip block
-	inline void SkipUntilStop(const bool *skip_table, const idx_t to_pos, idx_t &pos) const {
-		while (pos + 1 < to_pos) {
-			const auto stop = AdvanceToStop(to_pos - 1, pos);
-			if (stop == StopResult::TAIL) {
-				// the tail of the buffer is walked byte by byte
-				while (skip_table[static_cast<uint8_t>(buffer_handle_ptr[pos])] && pos + 1 < to_pos) {
-					pos++;
-				}
-				return;
-			}
-			if (stop == StopResult::LIMIT || !skip_table[static_cast<uint8_t>(buffer_handle_ptr[pos])]) {
-				return;
-			}
-			// a flagged byte the skip table skips after all
-			pos++;
-		}
+	//! Binds the cursor to the current buffer
+	void BindCursor() const {
+		cursor.Bind(cur_buffer_handle->buffer_idx, buffer_handle_ptr, cur_buffer_handle->actual_size);
 	}
 
 	//! Whether ProcessPlainRows drives the rows of this scan
@@ -381,7 +305,7 @@ protected:
 	//! Whether the value that starts at the last position lies in ASCII only blocks
 	template <class T>
 	bool ValueIsAscii(const T &result) const {
-		return skip_block.ascii_start <= result.last_position.buffer_pos;
+		return cursor.AsciiFrom(result.last_position.buffer_pos);
 	}
 
 	//! The delimiter at `pos` from state `before`, with the value callback of the byte loop
@@ -444,13 +368,13 @@ protected:
 		const char quote = dialect.quote;
 		while (true) {
 			// quoted content up to a quote or a line break, the byte loop skips everything else as well
-			const auto stop = AdvanceToStop(to_pos, pos);
-			if (stop == StopResult::LIMIT) {
+			const auto stop = cursor.AdvanceToStop(to_pos, pos);
+			if (stop == CSVStructuralCursor::Stop::LIMIT) {
 				states.states[1] = CSVState::QUOTED;
 				iterator.pos.buffer_pos = pos;
 				return RowStep::FINISHED;
 			}
-			if (stop == StopResult::TAIL) {
+			if (stop == CSVStructuralCursor::Stop::TAIL) {
 				return HandOver(CSVState::QUOTED, pos);
 			}
 			char byte = buffer[pos];
@@ -534,12 +458,12 @@ protected:
 		idx_t pos = iterator.pos.buffer_pos;
 		idx_t run_start = pos;
 		while (true) {
-			const auto stop = AdvanceToStop(to_pos, pos);
+			const auto stop = cursor.AdvanceToStop(to_pos, pos);
 			const CSVState after_run = AfterRun(cur, buffer, run_start, pos);
-			if (stop != StopResult::FOUND) {
+			if (stop != CSVStructuralCursor::Stop::FOUND) {
 				states.states[1] = after_run;
 				iterator.pos.buffer_pos = pos;
-				return stop == StopResult::LIMIT;
+				return stop == CSVStructuralCursor::Stop::LIMIT;
 			}
 			const char byte = buffer[pos];
 			RowStep step = RowStep::CONTINUE;
@@ -588,7 +512,7 @@ protected:
 		} else {
 			to_pos = cur_buffer_handle->actual_size;
 		}
-		BindSkipBlock();
+		BindCursor();
 		while (iterator.pos.buffer_pos < to_pos) {
 			if (use_plain_rows && ProcessPlainRows(result, to_pos)) {
 				break;
@@ -686,7 +610,7 @@ protected:
 					ever_quoted = true;
 					T::SetQuoted(result, iterator.pos.buffer_pos);
 					iterator.pos.buffer_pos++;
-					SkipUntilStop(state_machine->transition_array.skip_quoted, to_pos, iterator.pos.buffer_pos);
+					cursor.SkipUntilStop(state_machine->transition_array.skip_quoted, to_pos, iterator.pos.buffer_pos);
 				} break;
 				case CSVState::UNQUOTED: {
 					if (states.states[0] == CSVState::MAYBE_QUOTED) {
@@ -709,7 +633,8 @@ protected:
 					break;
 				case CSVState::STANDARD:
 					iterator.pos.buffer_pos++;
-					SkipUntilStop(state_machine->transition_array.skip_standard, to_pos, iterator.pos.buffer_pos);
+					cursor.SkipUntilStop(state_machine->transition_array.skip_standard, to_pos,
+					                     iterator.pos.buffer_pos);
 					break;
 				case CSVState::QUOTED_NEW_LINE:
 					T::QuotedNewLine(result);
@@ -718,7 +643,7 @@ protected:
 				case CSVState::COMMENT:
 					T::SetComment(result, iterator.pos.buffer_pos);
 					iterator.pos.buffer_pos++;
-					SkipUntilStop(state_machine->transition_array.skip_comment, to_pos, iterator.pos.buffer_pos);
+					cursor.SkipUntilStop(state_machine->transition_array.skip_comment, to_pos, iterator.pos.buffer_pos);
 					break;
 				default:
 					iterator.pos.buffer_pos++;

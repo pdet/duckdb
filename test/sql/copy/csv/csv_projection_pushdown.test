@@ -44,3 +44,25 @@ query I
 SELECT filename.replace('\', '/').split('/')[-1] FROM v1 LIMIT 1
 ----
 projection_pushdown.csv
+
+# an unprojected column with escaped quotes, in one buffer and straddling tiny buffers
+query II
+SELECT a, c FROM read_csv('{DATA_DIR}/csv/projection_escaped.csv', header = false, columns = {'a': 'INTEGER', 'b': 'VARCHAR', 'c': 'VARCHAR'})
+----
+1	x
+2	y
+3	z
+
+query II
+SELECT a, c FROM read_csv('{DATA_DIR}/csv/projection_escaped.csv', header = false, columns = {'a': 'INTEGER', 'b': 'VARCHAR', 'c': 'VARCHAR'}, buffer_size = 20)
+----
+1	x
+2	y
+3	z
+
+query I
+SELECT b FROM read_csv('{DATA_DIR}/csv/projection_escaped.csv', header = false, columns = {'a': 'INTEGER', 'b': 'VARCHAR', 'c': 'VARCHAR'}, buffer_size = 20)
+----
+a "b" c
+d,e
+NULL

@@ -278,13 +278,19 @@ public:
 	//! Specialized code for possibly escaped values, makes sure to remove escapes
 	static inline void AddPossiblyEscapedValue(StringValueResult &result, const idx_t buffer_pos, const char *value_ptr,
 	                                           const idx_t length, const bool empty);
+	//! Skips the value of a column that is not projected and clears the value state, false when it has to be added
+	inline bool TrySkipUnprojectedValue() {
+		if (!projecting_columns || cur_col_id >= number_of_columns || projected_columns[cur_col_id]) {
+			return false;
+		}
+		cur_col_id++;
+		quoted = false;
+		escaped = false;
+		return true;
+	}
 	//! Adds a Value to the result
 	static inline void AddValue(StringValueResult &result, const idx_t buffer_pos) {
-		if (!result.escaped && result.projecting_columns && result.cur_col_id < result.number_of_columns &&
-		    !result.projected_columns[result.cur_col_id] && result.last_position.buffer_pos <= buffer_pos) {
-			// a column that is not projected, the value is never looked at, quoted or not
-			result.cur_col_id++;
-			result.quoted = false;
+		if (result.last_position.buffer_pos <= buffer_pos && result.TrySkipUnprojectedValue()) {
 			result.last_position.buffer_pos = buffer_pos + 1;
 			return;
 		}

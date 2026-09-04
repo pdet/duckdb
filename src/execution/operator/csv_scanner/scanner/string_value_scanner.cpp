@@ -244,8 +244,7 @@ void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool
 		HandleTooManyColumnsError(value_ptr, size);
 		return;
 	}
-	if (projecting_columns && !projected_columns[cur_col_id]) {
-		cur_col_id++;
+	if (TrySkipUnprojectedValue()) {
 		return;
 	}
 
@@ -574,12 +573,8 @@ void StringValueResult::AddQuotedValue(StringValueResult &result, const idx_t bu
 void StringValueResult::AddPossiblyEscapedValue(StringValueResult &result, const idx_t buffer_pos,
                                                 const char *value_ptr, const idx_t length, const bool empty) {
 	if (result.escaped) {
-		if (result.projecting_columns) {
-			if (!result.projected_columns[result.cur_col_id]) {
-				result.cur_col_id++;
-				result.escaped = false;
-				return;
-			}
+		if (result.TrySkipUnprojectedValue()) {
+			return;
 		}
 		if (result.cur_col_id >= result.number_of_columns &&
 		    !result.state_machine.state_machine_options.strict_mode.GetValue()) {
@@ -1492,13 +1487,7 @@ void StringValueScanner::ProcessOverBufferValue() {
 		}
 		j++;
 	}
-	bool skip_value = false;
-	if (result.projecting_columns) {
-		if (!result.projected_columns[result.cur_col_id] && result.cur_col_id != result.number_of_columns) {
-			result.cur_col_id++;
-			skip_value = true;
-		}
-	}
+	const bool skip_value = result.TrySkipUnprojectedValue();
 	if (!skip_value) {
 		string_t value;
 		if (result.quoted && !result.comment) {
@@ -1740,15 +1729,16 @@ bool StringValueScanner::SkipUntilState(CSVState initial_state, CSVState until_s
 	current_state.Initialize(initial_state);
 	bool first_column = true;
 	const idx_t to_pos = current_iterator.GetEndPos();
-	BindSkipBlock();
+	BindCursor();
 	while (current_iterator.pos.buffer_pos < to_pos) {
 		state_machine_strict->Transition(current_state, buffer_handle_ptr[current_iterator.pos.buffer_pos++]);
 		if (current_state.IsState(CSVState::STANDARD) || current_state.IsState(CSVState::STANDARD_NEWLINE)) {
-			SkipUntilStop(state_machine_strict->transition_array.skip_standard, to_pos,
-			              current_iterator.pos.buffer_pos);
+			cursor.SkipUntilStop(state_machine_strict->transition_array.skip_standard, to_pos,
+			                     current_iterator.pos.buffer_pos);
 		}
 		if (current_state.IsState(CSVState::QUOTED)) {
-			SkipUntilStop(state_machine_strict->transition_array.skip_quoted, to_pos, current_iterator.pos.buffer_pos);
+			cursor.SkipUntilStop(state_machine_strict->transition_array.skip_quoted, to_pos,
+			                     current_iterator.pos.buffer_pos);
 		}
 		if ((current_state.IsState(CSVState::DELIMITER) || current_state.IsState(CSVState::CARRIAGE_RETURN) ||
 		     current_state.IsState(CSVState::RECORD_SEPARATOR)) &&
