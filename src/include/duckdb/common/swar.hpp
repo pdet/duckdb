@@ -33,16 +33,6 @@ struct SwarWord {
 		return ~(((word & LOW7) + LOW7) | word) & MSB;
 	}
 
-	//! Flags every byte of `word` that is equal to `byte`
-	static inline uint64_t EqualBytes(uint64_t word, uint8_t byte) {
-		return ZeroBytes(word ^ Repeat(byte));
-	}
-
-	//! Flags every byte of `word` that is equal to `byte` on the bits set in `byte_mask`
-	static inline uint64_t EqualBytes(uint64_t word, uint8_t byte, uint8_t byte_mask) {
-		return ZeroBytes((word & Repeat(byte_mask)) ^ Repeat(byte & byte_mask));
-	}
-
 	//! Flags every zero byte of `word` and possibly bytes above one, cheaper than ZeroBytes for callers that verify
 	static inline uint64_t MaybeZeroBytes(uint64_t word) {
 		return (word - LSB) & ~word & MSB;
@@ -91,29 +81,6 @@ struct SwarBlock {
 	static constexpr idx_t SIZE = 64;
 	static constexpr idx_t WORDS = SIZE / SwarWord::SIZE;
 
-	//! Mask of the bytes in the block that are equal to `byte`
-	static inline uint64_t EqualMask(const char *block, char byte) {
-		const uint64_t pattern = SwarWord::Repeat(static_cast<uint8_t>(byte));
-		uint64_t mask = 0;
-		for (idx_t i = 0; i < WORDS; i++) {
-			const auto word = Load<uint64_t>(const_data_ptr_cast(block + i * SwarWord::SIZE));
-			mask |= SwarWord::PackFlags(SwarWord::ZeroBytes(word ^ pattern)) << (i * SwarWord::SIZE);
-		}
-		return mask;
-	}
-
-	//! Mask of the bytes in the block that are equal to `byte` on the bits set in `byte_mask`
-	static inline uint64_t EqualMask(const char *block, char byte, uint8_t byte_mask) {
-		const uint64_t pattern = SwarWord::Repeat(static_cast<uint8_t>(byte) & byte_mask);
-		const uint64_t keep = SwarWord::Repeat(byte_mask);
-		uint64_t mask = 0;
-		for (idx_t i = 0; i < WORDS; i++) {
-			const auto word = Load<uint64_t>(const_data_ptr_cast(block + i * SwarWord::SIZE));
-			mask |= SwarWord::PackFlags(SwarWord::ZeroBytes((word & keep) ^ pattern)) << (i * SwarWord::SIZE);
-		}
-		return mask;
-	}
-
 	//! Whether every byte in the block is ASCII
 	static inline bool IsAscii(const char *block) {
 		uint64_t any = 0;
@@ -136,13 +103,6 @@ struct SwarBlock {
 	static constexpr idx_t MAX_PATTERNS = 8;
 
 	//! Mask of the bytes matching any pattern plus possibly bytes right above a match, no match is ever missed
-	template <idx_t PATTERN_COUNT>
-	static inline uint64_t MaybeAnyMask(const char *block, const BytePattern (&patterns)[PATTERN_COUNT]) {
-		static_assert(PATTERN_COUNT >= 1 && PATTERN_COUNT <= MAX_PATTERNS, "MaybeAnyMask takes 1 to 8 patterns");
-		return MaybeAnyMaskUnrolled<PATTERN_COUNT>(block, patterns);
-	}
-
-	//! The same over the first `pattern_count` patterns, unrolled per count, at most MAX_PATTERNS
 	static inline uint64_t MaybeAnyMask(const char *block, const BytePattern *patterns, idx_t pattern_count) {
 		switch (pattern_count) {
 		case 1:
@@ -167,18 +127,8 @@ struct SwarBlock {
 		}
 	}
 
-	//! Inclusive prefix XOR over a mask, bit i of the result is the XOR of bits 0 through i
-	static inline uint64_t PrefixXor(uint64_t mask) {
-		mask ^= mask << 1;
-		mask ^= mask << 2;
-		mask ^= mask << 4;
-		mask ^= mask << 8;
-		mask ^= mask << 16;
-		mask ^= mask << 32;
-		return mask;
-	}
-
 private:
+	//! MaybeAnyMask with the pattern loop unrolled for a count known at compile time
 	template <idx_t PATTERN_COUNT>
 	static inline uint64_t MaybeAnyMaskUnrolled(const char *block, const BytePattern *patterns) {
 		uint64_t mask = 0;
