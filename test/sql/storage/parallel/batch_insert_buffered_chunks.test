@@ -1,0 +1,40 @@
+# name: test/sql/storage/parallel/batch_insert_buffered_chunks.test
+# description: Test buffered and promoted insert batches with nested values
+# group: [parallel]
+
+require parquet
+
+statement ok
+SET threads=4
+
+foreach row_group_size 4096 16384
+
+statement ok
+ATTACH '{TEST_DIR}/buffered_chunks_{row_group_size}.db' AS buffered (ROW_GROUP_SIZE {row_group_size})
+
+foreach batch_size 2048 4096 8192 10240
+
+statement ok
+COPY (SELECT i, CASE WHEN i%3=0 THEN NULL ELSE {'s': repeat(i::VARCHAR, 8), 'l': [i, NULL]} END AS v FROM range(65536) t(i)) TO '{TEST_DIR}/buffered_chunks.parquet' (ROW_GROUP_SIZE {batch_size})
+
+foreach row_count 3 12288 65536
+
+statement ok
+CREATE TABLE buffered.result AS FROM read_parquet('{TEST_DIR}/buffered_chunks.parquet') WHERE i < {row_count}
+
+query III
+SELECT count(*) = {row_count}, bool_and(i = rowid), bool_and(v IS NOT DISTINCT FROM CASE WHEN i%3=0 THEN NULL ELSE {'s': repeat(i::VARCHAR, 8), 'l': [i, NULL]} END) FROM buffered.result
+----
+true	true	true
+
+statement ok
+DROP TABLE buffered.result
+
+endloop
+
+endloop
+
+statement ok
+DETACH buffered
+
+endloop
