@@ -12,7 +12,10 @@
 #include "duckdb/common/set.hpp"
 
 namespace duckdb {
+class ColumnDataCollection;
+class DataChunk;
 class PartialBlockManager;
+struct TableAppendState;
 
 struct OptimisticWriteCollection {
 	~OptimisticWriteCollection();
@@ -42,6 +45,10 @@ public:
 	unique_ptr<OptimisticWriteCollection>
 	CreateCollection(DataTable &storage, const vector<LogicalType> &insert_types,
 	                 OptimisticWritePartialManagers type = OptimisticWritePartialManagers::PER_COLUMN);
+	//! Append a chunk and flush completed row groups as needed
+	void Append(OptimisticWriteCollection &row_groups, DataChunk &chunk, TableAppendState &append_state);
+	//! Append all chunks of a column data collection
+	void Append(OptimisticWriteCollection &row_groups, ColumnDataCollection &chunks, TableAppendState &append_state);
 	//! Write a new row group to disk (if possible)
 	void WriteNewRowGroup(OptimisticWriteCollection &row_groups, idx_t flushed_row_group_idx);
 	//! Write any unflushed row groups of a collection to disk

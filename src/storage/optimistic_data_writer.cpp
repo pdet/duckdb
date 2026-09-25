@@ -1,5 +1,6 @@
 #include "duckdb/storage/optimistic_data_writer.hpp"
 
+#include "duckdb/common/types/column/column_data_collection.hpp"
 #include "duckdb/main/settings.hpp"
 #include "duckdb/storage/partial_block_manager.hpp"
 #include "duckdb/storage/data_table.hpp"
@@ -69,6 +70,22 @@ unique_ptr<OptimisticWriteCollection> OptimisticDataWriter::CreateCollection(Dat
 		}
 	}
 	return result;
+}
+
+void OptimisticDataWriter::Append(OptimisticWriteCollection &row_groups, DataChunk &chunk,
+                                  TableAppendState &append_state) {
+	auto flushed_row_group_idx = row_groups.collection->Append(chunk, append_state);
+	if (flushed_row_group_idx.IsValid()) {
+		WriteNewRowGroup(row_groups, flushed_row_group_idx.GetIndex());
+	}
+}
+
+void OptimisticDataWriter::Append(OptimisticWriteCollection &row_groups, ColumnDataCollection &chunks,
+                                  TableAppendState &append_state) {
+	for (auto &chunk : chunks.Chunks()) {
+		chunk.Flatten();
+		Append(row_groups, chunk, append_state);
+	}
 }
 
 void OptimisticDataWriter::WriteNewRowGroup(OptimisticWriteCollection &row_groups, idx_t flushed_row_group_idx) {

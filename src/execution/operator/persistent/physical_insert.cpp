@@ -645,11 +645,7 @@ SinkResultType PhysicalInsert::Sink(ExecutionContext &context, DataChunk &insert
 	D_ASSERT(action_type != OnConflictAction::UPDATE);
 
 	auto &optimistic_collection = data_table.GetOptimisticCollection(context.client, lstate.collection_index);
-	auto &collection = *optimistic_collection.collection;
-	auto flushed_row_group_idx = collection.Append(insert_chunk, lstate.local_append_state);
-	if (flushed_row_group_idx.IsValid()) {
-		lstate.optimistic_writer->WriteNewRowGroup(optimistic_collection, flushed_row_group_idx.GetIndex());
-	}
+	lstate.optimistic_writer->Append(optimistic_collection, insert_chunk, lstate.local_append_state);
 	return SinkResultType::NEED_MORE_INPUT;
 }
 

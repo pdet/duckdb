@@ -1,0 +1,92 @@
+# name: test/sql/storage/parallel/batch_insert_buffered_chunks.test
+# description: Test buffered and promoted insert batches with nested values
+# group: [parallel]
+
+require parquet
+
+statement ok
+SET threads=4
+
+statement ok
+CREATE MACRO buffered_value(i) AS CASE WHEN i%3=0 THEN NULL ELSE {'s': repeat(i::VARCHAR, 8), 'l': [i, NULL]} END
+
+foreach row_group_size 4096 16384
+
+statement ok
+ATTACH '{TEST_DIR}/buffered_chunks_{row_group_size}.db' AS buffered (ROW_GROUP_SIZE {row_group_size})
+
+foreach batch_size 2048 4096 8192 10240
+
+statement ok
+COPY (SELECT i, buffered_value(i) AS v FROM range(65536) t(i)) TO '{TEST_DIR}/buffered_chunks.parquet' (ROW_GROUP_SIZE {batch_size})
+
+foreach row_count 3 12288 65536
+
+statement ok
+CREATE TABLE buffered.result AS FROM read_parquet('{TEST_DIR}/buffered_chunks.parquet') WHERE i < {row_count}
+
+query III
+SELECT count(*) = {row_count}, bool_and(i = rowid), bool_and(v IS NOT DISTINCT FROM buffered_value(i)) FROM buffered.result
+----
+true	true	true
+
+statement ok
+DROP TABLE buffered.result
+
+endloop
+
+# Sparse batches use the local append path
+statement ok
+CREATE TABLE buffered.result AS FROM read_parquet('{TEST_DIR}/buffered_chunks.parquet') WHERE i%{batch_size}=0
+
+query III
+SELECT count(*) = 65535//{batch_size}+1, bool_and(i = rowid*{batch_size}), bool_and(v IS NOT DISTINCT FROM buffered_value(i)) FROM buffered.result
+----
+true	true	true
+
+statement ok
+DROP TABLE buffered.result
+
+endloop
+
+# Small batches enable buffering before larger batches require promotion
+statement ok
+COPY (SELECT i, buffered_value(i) AS v FROM range(327680) t(i)) TO '{TEST_DIR}/promoted_chunks.parquet' (ROW_GROUP_SIZE 10240)
+
+statement ok
+CREATE VIEW mixed_batches AS FROM read_parquet('{TEST_DIR}/promoted_chunks.parquet') WHERE i%10240=0 OR i>=163840
+
+statement ok
+CREATE TABLE buffered.result AS FROM mixed_batches
+
+query III
+SELECT count(*) = 163856, bool_and(rowid = CASE WHEN i<163840 THEN i//10240 ELSE i-163840+16 END), bool_and(v IS NOT DISTINCT FROM buffered_value(i)) FROM buffered.result
+----
+true	true	true
+
+statement ok
+DROP TABLE buffered.result
+
+statement ok
+CREATE TABLE buffered.result(i BIGINT CHECK (i<327679), v STRUCT(s VARCHAR, l BIGINT[]))
+
+statement error
+INSERT INTO buffered.result FROM mixed_batches
+----
+CHECK constraint failed
+
+query I
+SELECT count(*) FROM buffered.result
+----
+0
+
+statement ok
+DROP TABLE buffered.result
+
+statement ok
+DROP VIEW mixed_batches
+
+statement ok
+DETACH buffered
+
+endloop
