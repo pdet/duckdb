@@ -1,0 +1,27 @@
+# name: test/parquet/parquet_schema_read_ahead.test
+# description: A parquet scan with its schema given up front is read ahead
+# group: [parquet]
+
+require parquet
+
+statement ok
+COPY (SELECT range::INTEGER i FROM range(100000)) TO '{TEMP_DIR}/schema_read_ahead_1.parquet' (FIELD_IDS {i: 0}, ROW_GROUP_SIZE 10000)
+
+statement ok
+COPY (SELECT range::INTEGER i FROM range(100000, 200000)) TO '{TEMP_DIR}/schema_read_ahead_2.parquet' (FIELD_IDS {i: 0}, ROW_GROUP_SIZE 10000)
+
+statement ok
+CALL enable_logging('AsyncTaskSchedule')
+
+query II
+SELECT count(*), sum(renamed_i)
+FROM read_parquet('{TEMP_DIR}/schema_read_ahead_*.parquet', schema=map {
+                    0: {name: 'renamed_i', type: 'BIGINT', default_value: NULL}
+                  })
+----
+200000	19999900000
+
+query I
+SELECT count(*) > 0 FROM duckdb_logs_parsed('AsyncTaskSchedule') WHERE pool = 'READ_AHEAD'
+----
+true

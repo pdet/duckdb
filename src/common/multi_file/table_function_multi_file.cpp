@@ -593,13 +593,11 @@ void TableFunctionMultiFileWrapper::BindReader(ClientContext &context, vector<Lo
 }
 
 unique_ptr<GlobalTableFunctionState>
-TableFunctionMultiFileWrapper::InitializeGlobalState(ClientContext &, MultiFileBindData &bind_data,
+TableFunctionMultiFileWrapper::InitializeGlobalState(ClientContext &, MultiFileBindData &,
                                                      MultiFileGlobalState &global_state) {
 	auto result = make_uniq<TableFunctionMultiFileGlobalState>();
-	// the wrapped function is told which file of this scan it reads, so that a function that reports per-file
-	// information (like the CSV rejects tables) can tell the files of a scan apart from those of another scan
 	result->op = global_state.op;
-	result->file_count = bind_data.file_list->GetTotalFileCount();
+	result->file_count = global_state.file_list.GetTotalFileCount();
 	return std::move(result);
 }
 
@@ -615,14 +613,10 @@ bool TableFunctionMultiFileWrapper::SupportsReadAhead(const MultiFileBindData &b
 	auto &data = bind_data.bind_data->Cast<TableFunctionMultiFileData>();
 	auto file_bind_data = data.options.schema_bind_data;
 	if (!file_bind_data && !bind_data.union_readers.empty()) {
-		// the schema was combined from the files rather than taken from one of them - ask the first of them
+		// Use the first file when the schema was combined
 		file_bind_data = bind_data.union_readers[0]->Cast<TableFunctionUnionData>().bind_data;
 	}
-	if (!file_bind_data) {
-		// we do not have the bind of a file of this scan to ask
-		return false;
-	}
-	return settings.supports_read_ahead(*file_bind_data);
+	return settings.supports_read_ahead(file_bind_data.get());
 }
 
 void TableFunctionMultiFileWrapper::FinishReading(ClientContext &context, GlobalTableFunctionState &,

@@ -118,9 +118,9 @@ typedef bool (*table_function_claim_batch_t)(ClientContext &context, TableFuncti
 //! Called when a local state will not scan any more batches - lets the function release the resources of the batch
 //! it scanned last. The counterpart of table_function_claim_batch_t
 typedef void (*table_function_finish_batch_t)(ClientContext &context, TableFunctionInput &input);
-//! Whether the scan of this function can be driven by read-ahead - batches are then claimed and have their I/O
-//! scheduled ahead of being scanned. Only meaningful together with table_function_claim_batch_t
-typedef bool (*table_function_supports_read_ahead_t)(const FunctionData &bind_data);
+//! Whether batches can be loaded before scanning. Requires table_function_claim_batch_t
+//! bind_data is null when no file was bound
+typedef bool (*table_function_supports_read_ahead_t)(optional_ptr<const FunctionData> bind_data);
 //! Schedules the I/O needed by the batch a local state has claimed, so it can be loaded before it is scanned
 typedef AsyncResult (*table_function_schedule_io_t)(ClientContext &context, TableFunctionInput &input);
 //! Called on the read-ahead pool once the scan of this function has been initialized, before any batch is claimed.
