@@ -113,8 +113,12 @@ struct TableFunctionCombineSchemaInput {
 
 //! Claims the next batch for the given local state - returns false when there is nothing left to scan.
 //! A function that implements this is scanned one batch at a time, rather than being run until it returns an empty
-//! chunk. This lets the scan tell the batches apart, so that batches scanned in parallel can be put back in order
+//! chunk. This lets the scan tell the batches apart, so that batches scanned in parallel can be put back in order.
+//! This is called while the lock of the scan is held - setting up the claimed batch belongs in prepare_batch
 typedef bool (*table_function_claim_batch_t)(ClientContext &context, TableFunctionInput &input);
+//! Prepares the batch claim_batch claimed for the given local state, before its I/O is scheduled. This is called
+//! without any lock held. Only meaningful together with table_function_claim_batch_t
+typedef void (*table_function_prepare_batch_t)(ClientContext &context, TableFunctionInput &input);
 //! Called when a local state will not scan any more batches - lets the function release the resources of the batch
 //! it scanned last. The counterpart of table_function_claim_batch_t
 typedef void (*table_function_finish_batch_t)(ClientContext &context, TableFunctionInput &input);
@@ -198,6 +202,7 @@ struct TableFunctionMultiFileSettings {
 
 	//! How the wrapped function takes part in the scan - all optional, see the typedefs above
 	table_function_claim_batch_t claim_batch = nullptr;
+	table_function_prepare_batch_t prepare_batch = nullptr;
 	table_function_finish_batch_t finish_batch = nullptr;
 	table_function_supports_read_ahead_t supports_read_ahead = nullptr;
 	table_function_schedule_io_t schedule_io = nullptr;
@@ -262,6 +267,8 @@ public:
 	void FinishFile(ClientContext &context, GlobalTableFunctionState &gstate) override;
 	bool TryInitializeScan(ClientContext &context, GlobalTableFunctionState &gstate,
 	                       LocalTableFunctionState &lstate) override;
+	void PrepareScan(ClientContext &context, GlobalTableFunctionState &gstate,
+	                 LocalTableFunctionState &lstate) override;
 	AsyncResult ScheduleIO(ClientContext &context, GlobalTableFunctionState &gstate,
 	                       LocalTableFunctionState &lstate) override;
 	AsyncResult Scan(ClientContext &context, GlobalTableFunctionState &gstate, LocalTableFunctionState &lstate,

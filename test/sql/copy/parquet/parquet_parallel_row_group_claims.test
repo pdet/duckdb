@@ -1,0 +1,142 @@
+# name: test/sql/copy/parquet/parquet_parallel_row_group_claims.test
+# description: Every row group of a multi-file Parquet scan is claimed once, and counted once, when many threads prune them
+# group: [parquet]
+
+require parquet
+
+require json
+
+# 4 files of 64 row groups each - every row group holds a single date_sk
+statement ok
+SET threads=1
+
+loop i 0 4
+
+statement ok
+COPY (SELECT range // 2048 AS date_sk, (range * 7919) % 1000 AS quantity FROM range({i} * 131072, ({i} + 1) * 131072)) TO '{TEST_DIR}/rg_claims_{i}.parquet' (ROW_GROUP_SIZE 2048)
+
+endloop
+
+statement ok
+CREATE TABLE dates AS SELECT range AS date_sk, range // 4 AS week FROM range(256)
+
+statement ok
+SET threads=8
+
+statement ok
+SET tracked_metrics = ['operator.row_groups_scanned', 'operator.total_row_groups_to_scan', 'operator.type'];
+
+# the view over the profiler output is bound against a first profile, and reads the latest one when queried
+statement ok
+PRAGMA enable_profiling = 'json'
+
+statement ok
+PRAGMA profiling_output = '{TEST_DIR}/rg_claims_profile.json'
+
+statement ok
+SELECT count(*) FROM read_parquet('{TEST_DIR}/rg_claims_*.parquet')
+
+statement ok
+PRAGMA disable_profiling
+
+statement ok
+CREATE VIEW parquet_scan_row_groups AS
+WITH RECURSIVE ops(op) AS (
+    SELECT unnest(operator)::JSON AS op FROM '{TEST_DIR}/rg_claims_profile.json'
+    UNION ALL
+    SELECT unnest((op->'children')::JSON[]) FROM ops WHERE json_array_length(op->'children') > 0
+)
+SELECT (op->>'row_groups_scanned')::BIGINT AS scanned,
+       (op->>'total_row_groups_to_scan')::BIGINT AS total
+FROM ops
+WHERE op->>'type' = 'TABLE_SCAN' AND (op->>'total_row_groups_to_scan')::BIGINT = 256
+
+# with and without read-ahead, which claim the row groups through different paths
+foreach depth 0 -1
+
+statement ok
+SET read_ahead_depth={depth}
+
+# a range filter on the sorted column prunes all but 4 row groups
+statement ok
+CALL enable_logging('PhysicalOperator')
+
+statement ok
+PRAGMA enable_profiling = 'json'
+
+statement ok
+PRAGMA profiling_output = '{TEST_DIR}/rg_claims_profile.json'
+
+query II
+SELECT count(*), sum(quantity) FROM read_parquet('{TEST_DIR}/rg_claims_*.parquet')
+WHERE date_sk BETWEEN 100 AND 103 AND quantity BETWEEN 100 AND 500
+----
+3284	984702
+
+statement ok
+PRAGMA disable_profiling
+
+statement ok
+CALL disable_logging()
+
+query II
+SELECT event, count(*) FROM duckdb_logs_parsed('PhysicalOperator') WHERE class='ParquetReader' GROUP BY event ORDER BY event
+----
+ReadRowGroup	4
+SkipRowGroup	252
+
+query I
+SELECT count(DISTINCT info['file'] || ':' || info['row_group_id']) FROM duckdb_logs_parsed('PhysicalOperator') WHERE class='ParquetReader'
+----
+256
+
+query II
+SELECT scanned, total FROM parquet_scan_row_groups
+----
+4	256
+
+statement ok
+CALL truncate_duckdb_logs()
+
+# the same row groups are pruned by the filter the join pushes into the scan
+statement ok
+CALL enable_logging('PhysicalOperator')
+
+statement ok
+PRAGMA enable_profiling = 'json'
+
+statement ok
+PRAGMA profiling_output = '{TEST_DIR}/rg_claims_profile.json'
+
+query II
+SELECT count(*), sum(quantity) FROM read_parquet('{TEST_DIR}/rg_claims_*.parquet') JOIN dates USING (date_sk)
+WHERE week = 25 AND quantity BETWEEN 100 AND 500
+----
+3284	984702
+
+statement ok
+PRAGMA disable_profiling
+
+statement ok
+CALL disable_logging()
+
+query II
+SELECT event, count(*) FROM duckdb_logs_parsed('PhysicalOperator') WHERE class='ParquetReader' GROUP BY event ORDER BY event
+----
+ReadRowGroup	4
+SkipRowGroup	252
+
+query I
+SELECT count(DISTINCT info['file'] || ':' || info['row_group_id']) FROM duckdb_logs_parsed('PhysicalOperator') WHERE class='ParquetReader'
+----
+256
+
+query II
+SELECT scanned, total FROM parquet_scan_row_groups
+----
+4	256
+
+statement ok
+CALL truncate_duckdb_logs()
+
+endloop

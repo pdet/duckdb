@@ -307,6 +307,17 @@ bool TableFunctionFileReader::TryInitializeScan(ClientContext &context, GlobalTa
 	return true;
 }
 
+void TableFunctionFileReader::PrepareScan(ClientContext &context, GlobalTableFunctionState &,
+                                          LocalTableFunctionState &lstate_p) {
+	auto &lstate = lstate_p.Cast<TableFunctionMultiFileLocalState>();
+	if (!settings.claim_batch || !settings.prepare_batch || !lstate.local_state) {
+		return;
+	}
+	// the batch was claimed while the lock of the scan was held - setting it up is done here, without that lock
+	TableFunctionInput input(bind_data.get(), lstate.local_state.get(), global_state.get());
+	settings.prepare_batch(context, input);
+}
+
 AsyncResult TableFunctionFileReader::ScheduleIO(ClientContext &context, GlobalTableFunctionState &gstate,
                                                 LocalTableFunctionState &lstate_p) {
 	if (!settings.schedule_io) {

@@ -1,0 +1,16 @@
+# name: benchmark/parquet/row_group_pruning_join.benchmark
+# description: Scan Parquet files whose row groups are almost all pruned by a filter derived from a join
+# group: [parquet]
+
+name Parquet Row Group Pruning (Join Filter)
+group parquet
+
+load
+copy (select range // 2048 as date_sk, (range * 7919) % 1000 as quantity from range(0, 1638400)) to '${BENCHMARK_DIR}/row_group_pruning_0.parquet' (row_group_size 2048);
+copy (select range // 2048 as date_sk, (range * 7919) % 1000 as quantity from range(1638400, 3276800)) to '${BENCHMARK_DIR}/row_group_pruning_1.parquet' (row_group_size 2048);
+copy (select range // 2048 as date_sk, (range * 7919) % 1000 as quantity from range(3276800, 4915200)) to '${BENCHMARK_DIR}/row_group_pruning_2.parquet' (row_group_size 2048);
+copy (select range // 2048 as date_sk, (range * 7919) % 1000 as quantity from range(4915200, 6553600)) to '${BENCHMARK_DIR}/row_group_pruning_3.parquet' (row_group_size 2048);
+create table dates as select range as date_sk, range // 30 as month from range(3200);
+
+run
+select count(*), sum(quantity) from read_parquet('${BENCHMARK_DIR}/row_group_pruning_*.parquet') join dates using (date_sk) where month = 50 and quantity between 100 and 500;
