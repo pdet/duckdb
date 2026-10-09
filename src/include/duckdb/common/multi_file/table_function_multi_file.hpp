@@ -345,6 +345,8 @@ private:
 	atomic<bool> file_is_assigned;
 	//! Set when the wrapped function has emitted its last chunk for this file
 	atomic<bool> exhausted;
+	//! Set when the scan has finished this file - a batch scheduled after that collects its own metrics
+	atomic<bool> finished;
 };
 
 //! A MultiFileReaderInterface that turns a table function reading a single file into a multi-file table function.

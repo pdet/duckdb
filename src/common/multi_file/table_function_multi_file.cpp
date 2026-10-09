@@ -51,7 +51,7 @@ TableFunctionFileReader::TableFunctionFileReader(TableFunction function_p, OpenF
                                                  TableFunctionMultiFileSettings settings_p)
     : BaseFileReader(std::move(file_p)), function(std::move(function_p)),
       named_parameters(std::move(named_parameters_p)), settings(std::move(settings_p)), file_is_assigned(false),
-      exhausted(false) {
+      exhausted(false), finished(false) {
 }
 
 TableFunctionFileReader::~TableFunctionFileReader() = default;
@@ -200,6 +200,7 @@ void TableFunctionFileReader::CollectMetrics(ClientContext &context, GlobalTable
 
 void TableFunctionFileReader::FinishFile(ClientContext &context, GlobalTableFunctionState &gstate) {
 	// this reader is about to be released - collect what the wrapped function counted for its file
+	finished = true;
 	CollectMetrics(context, gstate);
 }
 
@@ -326,8 +327,10 @@ AsyncResult TableFunctionFileReader::ScheduleIO(ClientContext &context, GlobalTa
 	auto &lstate = lstate_p.Cast<TableFunctionMultiFileLocalState>();
 	TableFunctionInput input(bind_data.get(), lstate.local_state.get(), global_state.get());
 	auto result = settings.schedule_io(context, input);
-	// the file may already have been finished while this batch was queued - collect what scheduling it counted
-	CollectMetrics(context, gstate);
+	if (finished) {
+		// the file was finished while this batch was queued - collect what scheduling it counted
+		CollectMetrics(context, gstate);
+	}
 	return result;
 }
 
