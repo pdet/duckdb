@@ -220,6 +220,8 @@ public:
 	ResizeableBuffer repeat_buf;
 
 	bool prefetch_mode = false;
+	//! The column gap pinned through "parquet_prefetch_column_gap" - read once per file rather than per row group
+	optional_idx pinned_column_gap;
 	//! Number of filter head counts, used for prefetching
 	idx_t filter_head_count = 0;
 	//! Surviving row count

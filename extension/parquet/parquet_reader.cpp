@@ -226,15 +226,22 @@ static bool ShouldAndCanPrefetch(ClientContext &context, CachingFileHandle &file
 }
 
 //! Coalescing gap for the scan's prefetch I/O, either pinned through a setting or chosen by the cost model
+static optional_idx GetPinnedColumnGap(ClientContext &context) {
+	Value pinned_gap;
+	context.TryGetCurrentSetting("parquet_prefetch_column_gap", pinned_gap);
+	if (pinned_gap.IsNull()) {
+		return optional_idx();
+	}
+	return MinValue<uint64_t>(pinned_gap.GetValue<uint64_t>(), PrefetchCostModel::GAP_MAX);
+}
+
 static uint64_t DetermineAcceptedColumnGap(ClientContext &context, ParquetReaderScanState &state) {
 	uint64_t gap = ReadHeadComparator::DEFAULT_ACCEPTED_COLUMN_GAP;
 	if (!state.prefetch_mode) {
 		return gap;
 	}
-	Value pinned_gap;
-	context.TryGetCurrentSetting("parquet_prefetch_column_gap", pinned_gap);
-	if (!pinned_gap.IsNull()) {
-		return MinValue<uint64_t>(pinned_gap.GetValue<uint64_t>(), PrefetchCostModel::GAP_MAX);
+	if (state.pinned_column_gap.IsValid()) {
+		return state.pinned_column_gap.GetIndex();
 	}
 	// remote files measure their requests in the file system, local files in the caching file handle
 	NetworkThroughputEstimate estimate;
@@ -1833,6 +1840,7 @@ void ParquetReader::InitializeScan(ClientContext &context, ParquetReaderScanStat
 	state.sel.Initialize(STANDARD_VECTOR_SIZE);
 	if (!state.file_handle || state.file_handle->GetPath() != file_handle->GetPath()) {
 		state.prefetch_mode = ShouldAndCanPrefetch(context, *file_handle);
+		state.pinned_column_gap = state.prefetch_mode ? GetPinnedColumnGap(context) : optional_idx();
 		// all scan states share one handle (opened with parallel access), so open handles and
 		// connections scale with the number of readers instead of the number of row-group jobs
 		lock_guard<mutex> guard(prewarm_lock);
