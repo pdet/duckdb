@@ -258,16 +258,34 @@ static bool ShouldAndCanPrefetch(ClientContext &context, CachingFileHandle &file
 	return file_handle.CanSeek() && !disable_prefetch;
 }
 
+//! The gap pinned through the setting, if set
+static bool TryGetPinnedColumnGap(ClientContext &context, uint64_t &result) {
+	Value pinned_gap;
+	context.TryGetCurrentSetting("parquet_prefetch_column_gap", pinned_gap);
+	if (pinned_gap.IsNull()) {
+		return false;
+	}
+	result = MinValue<uint64_t>(pinned_gap.GetValue<uint64_t>(), PrefetchCostModel::GAP_MAX);
+	return true;
+}
+
+//! The bytes a request could have transferred during one round trip, pinned or measured for a remote file
+static bool TryDetermineRoundTripBytes(ClientContext &context, ParquetReaderScanState &state, uint64_t &result) {
+	if (TryGetPinnedColumnGap(context, result)) {
+		return true;
+	}
+	// local reads pay no request round trip, their lazy fetch decision keeps the match ratio rule
+	return state.file_handle->IsRemoteFile() && state.cost_model_state.TryGetColumnGapSize(result);
+}
+
 //! Coalescing gap for the scan's prefetch I/O, either pinned through a setting or chosen by the cost model
 static uint64_t DetermineAcceptedColumnGap(ClientContext &context, ParquetReaderScanState &state) {
 	uint64_t gap = ReadHeadComparator::DEFAULT_ACCEPTED_COLUMN_GAP;
 	if (!state.prefetch_mode) {
 		return gap;
 	}
-	Value pinned_gap;
-	context.TryGetCurrentSetting("parquet_prefetch_column_gap", pinned_gap);
-	if (!pinned_gap.IsNull()) {
-		return MinValue<uint64_t>(pinned_gap.GetValue<uint64_t>(), PrefetchCostModel::GAP_MAX);
+	if (TryGetPinnedColumnGap(context, gap)) {
+		return gap;
 	}
 	// remote files measure their requests in the file system, local files in the caching file handle
 	NetworkThroughputEstimate estimate;
@@ -2644,25 +2662,35 @@ ParquetPrefetchStrategy ParquetReader::RegisterRowGroupReads(ClientContext &cont
 			} else {
 				bool filters_look_unselective = false;
 				if (filters) {
+					unordered_set<idx_t> filter_column_chunks;
+					for (auto &scan_filter : state.scan_filters) {
+						state.GetColumnReader(scan_filter.filter_idx.GetIndex())
+						    .GatherColumnChunks(filter_column_chunks);
+					}
+					uint64_t filter_compressed_bytes = 0;
+					for (auto column_chunk : filter_column_chunks) {
+						filter_compressed_bytes +=
+						    NumericCast<uint64_t>(group.columns[column_chunk].meta_data.total_compressed_size);
+					}
+					uint64_t round_trip_bytes;
 					if (state.prefetch_metrics.row_groups_executed == 0) {
 						filters_look_unselective = true;
 						if (scan_percentage > ParquetReaderPrefetchConfig::WHOLE_GROUP_PREFETCH_MINIMUM_SCAN) {
-							unordered_set<idx_t> filter_column_chunks;
-							for (auto &scan_filter : state.scan_filters) {
-								state.GetColumnReader(scan_filter.filter_idx.GetIndex())
-								    .GatherColumnChunks(filter_column_chunks);
-							}
-							uint64_t filter_compressed_bytes = 0;
-							for (auto column_chunk : filter_column_chunks) {
-								filter_compressed_bytes +=
-								    NumericCast<uint64_t>(group.columns[column_chunk].meta_data.total_compressed_size);
-							}
 							filters_look_unselective =
 							    filter_column_chunks.empty() ||
 							    static_cast<double>(filter_compressed_bytes) /
 							            static_cast<double>(total_row_group_span) >
 							        ParquetReaderPrefetchConfig::FIRST_GROUP_PREFETCH_MAXIMUM_FILTER_SCAN;
 						}
+					} else if (TryDetermineRoundTripBytes(context, state, round_trip_bytes)) {
+						// lazily fetching the payload after the filter saves the payload of the row groups without
+						// matches and costs one round trip on the row groups with them
+						const double match_ratio = static_cast<double>(state.prefetch_metrics.row_groups_with_matches) /
+						                           static_cast<double>(state.prefetch_metrics.row_groups_executed);
+						const uint64_t payload_bytes =
+						    to_scan_compressed_bytes - MinValue(filter_compressed_bytes, to_scan_compressed_bytes);
+						filters_look_unselective = (1.0 - match_ratio) * static_cast<double>(payload_bytes) <=
+						                           match_ratio * static_cast<double>(round_trip_bytes);
 					} else {
 						filters_look_unselective = static_cast<double>(state.prefetch_metrics.row_groups_with_matches) /
 						                               static_cast<double>(state.prefetch_metrics.row_groups_executed) >

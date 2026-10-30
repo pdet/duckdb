@@ -140,7 +140,7 @@ SELECT sum(a + b + c + g)
 FROM read_parquet('{TEST_DIR}/rgo2.parquet')
 WHERE g = 500
 
-# Initial groups are not fully selective, but then it becomes, so strategy changes for prefetch_filters
+# Later groups are fully filtered, but the small payload is not worth a round trip at this pinned gap
 query ITTT
 SELECT row_group_id, fully_filtered, strategy, prefetch_groups
 FROM duckdb_logs_parsed('ParquetPrefetch')
@@ -151,8 +151,8 @@ ORDER BY row_group_id
 1	false	whole_group	[[a, b, c, g]]
 2	false	whole_group	[[a, b, c, g]]
 3	true	whole_group	[[a, b, c, g]]
-4	true	prefetch_filters	[[g], [a, b, c]]
-5	true	prefetch_filters	[[g], [a, b, c]]
+4	true	whole_group	[[a, b, c, g]]
+5	true	whole_group	[[a, b, c, g]]
 
 statement ok
 CALL truncate_duckdb_logs()
@@ -178,7 +178,7 @@ FROM read_parquet('{TEST_DIR}/rgo3.parquet')
 WHERE g = 500
 
 
-# prefetch_filters can also go back to whole_group if it crossed the 90% filtering
+# prefetch_filters goes back to whole_group once the match ratio makes the savings smaller than a round trip
 query ITTT
 SELECT row_group_id, fully_filtered, strategy, prefetch_groups
 FROM duckdb_logs_parsed('ParquetPrefetch')
@@ -188,14 +188,14 @@ ORDER BY row_group_id
 0	true	whole_group	[[a, b, c, g]]
 1	false	prefetch_filters	[[g], [a, b, c]]
 2	false	prefetch_filters	[[g], [a, b, c]]
-3	false	prefetch_filters	[[g], [a, b, c]]
-4	false	prefetch_filters	[[g], [a, b, c]]
-5	false	prefetch_filters	[[g], [a, b, c]]
-6	false	prefetch_filters	[[g], [a, b, c]]
-7	false	prefetch_filters	[[g], [a, b, c]]
-8	false	prefetch_filters	[[g], [a, b, c]]
-9	false	prefetch_filters	[[g], [a, b, c]]
-10	false	prefetch_filters	[[g], [a, b, c]]
+3	false	whole_group	[[a, b, c, g]]
+4	false	whole_group	[[a, b, c, g]]
+5	false	whole_group	[[a, b, c, g]]
+6	false	whole_group	[[a, b, c, g]]
+7	false	whole_group	[[a, b, c, g]]
+8	false	whole_group	[[a, b, c, g]]
+9	false	whole_group	[[a, b, c, g]]
+10	false	whole_group	[[a, b, c, g]]
 11	false	whole_group	[[a, b, c, g]]
 
 statement ok

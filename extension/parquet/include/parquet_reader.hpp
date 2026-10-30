@@ -101,7 +101,8 @@ struct TableFilterState;
 struct ParquetReaderPrefetchConfig {
 	//! Percentage of data in a row group span that should be scanned for enabling whole group prefetch
 	static constexpr double WHOLE_GROUP_PREFETCH_MINIMUM_SCAN = 0.95;
-	//! How many row groups need to produce at least one surviving row (from filtering)
+	//! How many row groups need to produce at least one surviving row (from filtering),
+	//! used only while no round trip size has been pinned or measured
 	static constexpr double PREFETCH_FILTER_MINIMUM_MATCH_RATIO = 0.9;
 	//! Before observing matches, only speculate on filter columns that are cheap to read
 	static constexpr double FIRST_GROUP_PREFETCH_MAXIMUM_FILTER_SCAN = 0.05;

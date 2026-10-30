@@ -1,0 +1,99 @@
+# name: test/sql/copy/parquet/parquet_prefetch_match_ratio_cost.test
+# description: Weigh the bytes saved by lazy filter prefetch against the round trips it costs
+# group: [parquet]
+
+require parquet
+
+require vector_size 2048
+
+statement ok
+SET threads=1
+
+statement ok
+SET read_ahead_depth=1
+
+# every row group spans flag 0 to 100, only the even ones contain a 42
+statement ok
+COPY (
+    SELECT CASE WHEN i%2048=0 THEN 0 WHEN i%2048=2047 THEN 100
+        WHEN (i//2048)%2=0 AND i%2048=1024 THEN 42 ELSE 50 END AS flag,
+        md5(i::VARCHAR)||md5((i+1)::VARCHAR)||md5((i+2)::VARCHAR)||
+        md5((i+3)::VARCHAR)||md5((i+4)::VARCHAR)||md5((i+5)::VARCHAR) AS payload
+    FROM range(16384) t(i)
+) TO '{TEST_DIR}/match_ratio_cost.parquet'
+    (ROW_GROUP_SIZE 2048, COMPRESSION 'uncompressed', WRITE_BLOOM_FILTER FALSE)
+
+statement ok
+CALL enable_logging('ParquetPrefetch')
+
+# a large round trip makes lazy fetch a bad trade at every observed match ratio
+statement ok
+SET parquet_prefetch_column_gap=33554432
+
+query II
+SELECT count(*), sum(length(payload)) FROM read_parquet('{TEST_DIR}/match_ratio_cost.parquet') WHERE flag=42
+----
+4	768
+
+query IT
+SELECT row_group_id,strategy FROM duckdb_logs_parsed('ParquetPrefetch')
+WHERE file_path LIKE '%match_ratio_cost.parquet' ORDER BY row_group_id
+----
+0	prefetch_filters
+1	whole_group
+2	whole_group
+3	whole_group
+4	whole_group
+5	whole_group
+6	whole_group
+7	whole_group
+
+statement ok
+CALL truncate_duckdb_logs()
+
+# a small round trip keeps lazy fetch worth it at the same match ratio
+statement ok
+SET parquet_prefetch_column_gap=4096
+
+query II
+SELECT count(*), sum(length(payload)) FROM read_parquet('{TEST_DIR}/match_ratio_cost.parquet') WHERE flag=42
+----
+4	768
+
+query IT
+SELECT row_group_id,strategy FROM duckdb_logs_parsed('ParquetPrefetch')
+WHERE file_path LIKE '%match_ratio_cost.parquet' ORDER BY row_group_id
+----
+0	prefetch_filters
+1	whole_group
+2	prefetch_filters
+3	prefetch_filters
+4	prefetch_filters
+5	prefetch_filters
+6	prefetch_filters
+7	prefetch_filters
+
+statement ok
+CALL truncate_duckdb_logs()
+
+# a filter that never matches keeps lazy fetch worth it even with a large round trip
+statement ok
+SET parquet_prefetch_column_gap=33554432
+
+query II
+SELECT count(*), sum(length(payload)) FROM read_parquet('{TEST_DIR}/match_ratio_cost.parquet') WHERE flag=43
+----
+0	NULL
+
+query IT
+SELECT row_group_id,strategy FROM duckdb_logs_parsed('ParquetPrefetch')
+WHERE file_path LIKE '%match_ratio_cost.parquet' ORDER BY row_group_id
+----
+0	prefetch_filters
+1	prefetch_filters
+2	prefetch_filters
+3	prefetch_filters
+4	prefetch_filters
+5	prefetch_filters
+6	prefetch_filters
+7	prefetch_filters

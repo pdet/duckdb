@@ -64,10 +64,10 @@ ORDER BY row_group_id
 1	false	whole_group	[[a, b, c, g]]
 2	false	whole_group	[[a, b, c, g]]
 3	true	whole_group	[[a, b, c, g]]
-4	true	prefetch_filters	[[g], [a, b, c]]
-5	true	prefetch_filters	[[g], [a, b, c]]
+4	true	whole_group	[[a, b, c, g]]
+5	true	whole_group	[[a, b, c, g]]
 
-# File B already takes advantage of that info
+# File B starts from the match ratio file A observed
 query ITTT
 SELECT row_group_id, fully_filtered, strategy, prefetch_groups
 FROM duckdb_logs_parsed('ParquetPrefetch')
@@ -75,11 +75,11 @@ WHERE file_path LIKE '%multifile_b.parquet'
 ORDER BY row_group_id
 ----
 0	false	prefetch_filters	[[g], [a, b, c]]
-1	false	prefetch_filters	[[g], [a, b, c]]
-2	false	prefetch_filters	[[g], [a, b, c]]
-3	true	prefetch_filters	[[g], [a, b, c]]
-4	true	prefetch_filters	[[g], [a, b, c]]
-5	true	prefetch_filters	[[g], [a, b, c]]
+1	false	whole_group	[[a, b, c, g]]
+2	false	whole_group	[[a, b, c, g]]
+3	true	whole_group	[[a, b, c, g]]
+4	true	whole_group	[[a, b, c, g]]
+5	true	whole_group	[[a, b, c, g]]
 
 statement ok
 CALL truncate_duckdb_logs()
@@ -100,5 +100,5 @@ ORDER BY row_group_id
 1	false	whole_group	[[a, b, c, g]]
 2	false	whole_group	[[a, b, c, g]]
 3	true	whole_group	[[a, b, c, g]]
-4	true	prefetch_filters	[[g], [a, b, c]]
-5	true	prefetch_filters	[[g], [a, b, c]]
+4	true	whole_group	[[a, b, c, g]]
+5	true	whole_group	[[a, b, c, g]]
