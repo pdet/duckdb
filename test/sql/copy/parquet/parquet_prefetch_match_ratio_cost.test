@@ -97,3 +97,40 @@ WHERE file_path LIKE '%match_ratio_cost.parquet' ORDER BY row_group_id
 5	prefetch_filters
 6	prefetch_filters
 7	prefetch_filters
+
+statement ok
+CALL truncate_duckdb_logs()
+
+# with a page index only the retained pages are read, so the savings shrink with them
+# the filter column has four pages per group, three only hold 50 and are pruned
+statement ok
+COPY (
+    SELECT CASE WHEN i%8192=6144 THEN 0 WHEN i%8192=8191 THEN 100
+        WHEN (i//8192)%2=0 AND i%8192=6200 THEN 42 ELSE 50 END AS f,
+        md5(i::VARCHAR)||md5((i+1)::VARCHAR)||md5((i+2)::VARCHAR)||
+        md5((i+3)::VARCHAR)||md5((i+4)::VARCHAR)||md5((i+5)::VARCHAR) AS payload
+    FROM range(65536) t(i)
+) TO '{TEST_DIR}/match_ratio_pages.parquet'
+    (ROW_GROUP_SIZE 8192, DATA_PAGE_SIZE_LIMIT 4096, WRITE_PAGE_INDEX true, COMPRESSION 'uncompressed', WRITE_BLOOM_FILTER FALSE)
+
+# a round trip of 1 MiB outweighs the quarter of the payload the retained pages hold
+statement ok
+SET parquet_prefetch_column_gap=1048576
+
+query II
+SELECT count(*), sum(length(payload)) FROM read_parquet('{TEST_DIR}/match_ratio_pages.parquet') WHERE f=42
+----
+4	768
+
+query IT
+SELECT row_group_id,strategy FROM duckdb_logs_parsed('ParquetPrefetch')
+WHERE file_path LIKE '%match_ratio_pages.parquet' ORDER BY row_group_id
+----
+0	prefetch_filters_pages
+1	column_wise_eager_pages
+2	column_wise_eager_pages
+3	column_wise_eager_pages
+4	column_wise_eager_pages
+5	column_wise_eager_pages
+6	column_wise_eager_pages
+7	column_wise_eager_pages

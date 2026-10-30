@@ -2687,10 +2687,16 @@ ParquetPrefetchStrategy ParquetReader::RegisterRowGroupReads(ClientContext &cont
 						// matches and costs one round trip on the row groups with them
 						const double match_ratio = static_cast<double>(state.prefetch_metrics.row_groups_with_matches) /
 						                           static_cast<double>(state.prefetch_metrics.row_groups_executed);
-						const uint64_t payload_bytes =
-						    to_scan_compressed_bytes - MinValue(filter_compressed_bytes, to_scan_compressed_bytes);
-						filters_look_unselective = (1.0 - match_ratio) * static_cast<double>(payload_bytes) <=
-						                           match_ratio * static_cast<double>(round_trip_bytes);
+						double payload_bytes = static_cast<double>(
+						    to_scan_compressed_bytes - MinValue(filter_compressed_bytes, to_scan_compressed_bytes));
+						if (state.page_index_active) {
+							// only the pages of rows that may match are read, scale the savings accordingly
+							payload_bytes *=
+							    static_cast<double>(ParquetPageIndexUtils::RowCount(state.page_index.row_ranges)) /
+							    static_cast<double>(group.num_rows);
+						}
+						filters_look_unselective =
+						    (1.0 - match_ratio) * payload_bytes <= match_ratio * static_cast<double>(round_trip_bytes);
 					} else {
 						filters_look_unselective = static_cast<double>(state.prefetch_metrics.row_groups_with_matches) /
 						                               static_cast<double>(state.prefetch_metrics.row_groups_executed) >

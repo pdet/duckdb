@@ -180,6 +180,7 @@
         "test/sql/copy/parquet/parquet_prefetch_projection.test",
         "test/sql/copy/parquet/parquet_prefetch_shared_column_chunks.test",
         "test/sql/copy/parquet/parquet_prefetch_metrics_multifile.test",
+        "test/sql/copy/parquet/parquet_prefetch_match_ratio_cost.test",
         "test/sql/copy/parquet/parquet_prefetch_strategy_option.test",
         "test/sql/copy/parquet/parquet_prefetch_cost_model.test",
         "test/sql/copy/parquet/parquet_prefetch_cost_model_remote.test"
