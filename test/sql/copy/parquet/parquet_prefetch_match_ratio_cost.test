@@ -113,7 +113,7 @@ COPY (
 ) TO '{TEST_DIR}/match_ratio_pages.parquet'
     (ROW_GROUP_SIZE 8192, DATA_PAGE_SIZE_LIMIT 4096, WRITE_PAGE_INDEX true, COMPRESSION 'uncompressed', WRITE_BLOOM_FILTER FALSE)
 
-# a round trip of 1 MiB outweighs the half of the payload the retained page holds
+# a round trip of 1 MiB exceeds the retained payload
 statement ok
 SET parquet_prefetch_column_gap=1048576
 
@@ -125,6 +125,78 @@ SELECT count(*), sum(length(payload)) FROM read_parquet('{TEST_DIR}/match_ratio_
 query IT
 SELECT row_group_id,strategy FROM duckdb_logs_parsed('ParquetPrefetch')
 WHERE file_path LIKE '%match_ratio_pages.parquet' ORDER BY row_group_id
+----
+0	prefetch_filters_pages
+1	column_wise_eager_pages
+2	column_wise_eager_pages
+3	column_wise_eager_pages
+4	column_wise_eager_pages
+5	column_wise_eager_pages
+6	column_wise_eager_pages
+7	column_wise_eager_pages
+
+statement ok
+CALL truncate_duckdb_logs()
+
+# a variant payload counts like any other, a filter without matches keeps lazy fetch worth it
+statement ok
+COPY (
+    SELECT CASE WHEN i%2048=0 THEN 0 WHEN i%2048=2047 THEN 100
+        WHEN (i//2048)%2=0 AND i%2048=1024 THEN 42 ELSE 50 END AS flag,
+        CAST(md5(i::VARCHAR)||md5((i+1)::VARCHAR)||md5((i+2)::VARCHAR)||
+        md5((i+3)::VARCHAR)||md5((i+4)::VARCHAR)||md5((i+5)::VARCHAR) AS VARIANT) AS payload
+    FROM range(16384) t(i)
+) TO '{TEST_DIR}/match_ratio_variant.parquet'
+    (ROW_GROUP_SIZE 2048, COMPRESSION 'uncompressed', WRITE_BLOOM_FILTER FALSE)
+
+statement ok
+SET parquet_prefetch_column_gap=33554432
+
+query II
+SELECT count(*), max(length(payload::VARCHAR)) FROM read_parquet('{TEST_DIR}/match_ratio_variant.parquet') WHERE flag=43
+----
+0	NULL
+
+query IT
+SELECT row_group_id,strategy FROM duckdb_logs_parsed('ParquetPrefetch')
+WHERE file_path LIKE '%match_ratio_variant.parquet' ORDER BY row_group_id
+----
+0	prefetch_filters
+1	prefetch_filters
+2	prefetch_filters
+3	prefetch_filters
+4	prefetch_filters
+5	prefetch_filters
+6	prefetch_filters
+7	prefetch_filters
+
+statement ok
+CALL truncate_duckdb_logs()
+
+# the retained pages hold almost no payload here, so a small round trip already outweighs them
+statement ok
+COPY (
+    SELECT CASE WHEN i%8192=6144 THEN 0 WHEN i%8192=8191 THEN 100
+        WHEN (i//8192)%2=0 AND i%8192=6200 THEN 42 ELSE 50 END AS f,
+        CASE WHEN i%8192<4096 THEN md5(i::VARCHAR)||md5((i+1)::VARCHAR)||md5((i+2)::VARCHAR)||
+            md5((i+3)::VARCHAR)||md5((i+4)::VARCHAR)||md5((i+5)::VARCHAR)||md5((i+6)::VARCHAR)||
+            md5((i+7)::VARCHAR)||md5((i+8)::VARCHAR)||md5((i+9)::VARCHAR)||md5((i+10)::VARCHAR)||md5((i+11)::VARCHAR)
+        ELSE 'x' END AS payload
+    FROM range(65536) t(i)
+) TO '{TEST_DIR}/match_ratio_uneven.parquet'
+    (ROW_GROUP_SIZE 8192, DATA_PAGE_SIZE_LIMIT 4096, WRITE_PAGE_INDEX true, COMPRESSION 'uncompressed', WRITE_BLOOM_FILTER FALSE)
+
+statement ok
+SET parquet_prefetch_column_gap=262144
+
+query II
+SELECT count(*), sum(length(payload)) FROM read_parquet('{TEST_DIR}/match_ratio_uneven.parquet') WHERE f=42
+----
+4	4
+
+query IT
+SELECT row_group_id,strategy FROM duckdb_logs_parsed('ParquetPrefetch')
+WHERE file_path LIKE '%match_ratio_uneven.parquet' ORDER BY row_group_id
 ----
 0	prefetch_filters_pages
 1	column_wise_eager_pages

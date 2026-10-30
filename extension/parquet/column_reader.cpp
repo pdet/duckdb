@@ -194,8 +194,7 @@ vector<pair<idx_t, idx_t>> ColumnReader::PrefetchRanges(optional_idx &first_page
 		}
 		return ranges;
 	}
-	// the page index tells which pages hold rows that may match: the dictionary page (and anything else in front of
-	// the first data page) plus only those pages - adjacent pages are coalesced by the transport
+	// the dictionary page plus the retained data pages, adjacent ones are coalesced by the transport
 	auto &locations = offset_index->page_locations;
 	const auto chunk_start = FileOffset();
 	const auto first_data_page = NumericCast<idx_t>(locations[0].offset);
@@ -229,10 +228,7 @@ void ColumnReader::RegisterPrefetch(ThriftFileTransport &transport, bool allow_m
 	if (offset_index) {
 		const auto chunk_start = FileOffset();
 		const auto chunk_size = NumericCast<idx_t>(chunk->meta_data.total_compressed_size);
-		// a chunk the cache already holds several small pieces of is being probed repeatedly: once a probe misses a
-		// page, fetch the chunk whole, so this and every later read of it is served from the cache, as it would be
-		// without the page index. The read re-fetches the cached pieces with the gaps around them, so it sends about
-		// as many requests as on a cold cache
+		// refill a fragmented cached chunk whole once a probe misses a page
 		if (ShouldReadChunkWhole(transport.GetCachingFileHandle(), chunk_start, chunk_size, ranges)) {
 			transport.RegisterPrefetch(chunk_start, chunk_size, allow_merge, true);
 			return;
@@ -245,9 +241,10 @@ void ColumnReader::RegisterPrefetch(ThriftFileTransport &transport, bool allow_m
 }
 
 void ColumnReader::GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) {
-	if (IsSkipped() || !chunk) {
+	if (IsSkipped()) {
 		return;
 	}
+	// a probe that misses a fragmented cached chunk reads it whole, the estimate stays with the pages
 	optional_idx first_page_offset;
 	idx_t bytes = 0;
 	for (auto &range : PrefetchRanges(first_page_offset)) {

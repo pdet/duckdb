@@ -241,6 +241,15 @@ void VariantColumnReader::GatherColumnChunks(unordered_set<idx_t> &column_chunks
 	}
 }
 
+void VariantColumnReader::GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) {
+	for (auto &child : child_readers) {
+		if (!child) {
+			continue;
+		}
+		child->GatherPrefetchBytes(column_chunk_bytes);
+	}
+}
+
 idx_t VariantColumnReader::GroupRowsAvailable() {
 	for (auto &child : child_readers) {
 		if (!child) {
