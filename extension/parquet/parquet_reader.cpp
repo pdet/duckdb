@@ -2683,8 +2683,7 @@ ParquetPrefetchStrategy ParquetReader::RegisterRowGroupReads(ClientContext &cont
 							        ParquetReaderPrefetchConfig::FIRST_GROUP_PREFETCH_MAXIMUM_FILTER_SCAN;
 						}
 					} else if (TryDetermineRoundTripBytes(context, state, round_trip_bytes)) {
-						// lazy fetch saves the payload of the row groups without matches and costs the others a round
-						// trip
+						// lazy fetch saves unmatched payload bytes but adds a round trip for matches
 						const double match_ratio = static_cast<double>(state.prefetch_metrics.row_groups_with_matches) /
 						                           static_cast<double>(state.prefetch_metrics.row_groups_executed);
 						unordered_map<idx_t, idx_t> prefetch_bytes;

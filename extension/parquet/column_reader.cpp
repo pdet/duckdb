@@ -204,8 +204,7 @@ vector<pair<idx_t, idx_t>> ColumnReader::PrefetchRanges(optional_idx &first_page
 	const auto row_group_rows = NumericCast<idx_t>(chunk->meta_data.num_values);
 	for (idx_t page_idx = 0; page_idx < locations.size(); page_idx++) {
 		const auto begin = NumericCast<idx_t>(locations[page_idx].first_row_index);
-		const auto end = page_idx + 1 < locations.size() ? NumericCast<idx_t>(locations[page_idx + 1].first_row_index)
-		                                                 : row_group_rows;
+		const auto end = begin + ParquetPageIndexUtils::PageRowCount(*offset_index, page_idx, row_group_rows);
 		if (!PageIndexNeedsRows(begin, end)) {
 			continue;
 		}
