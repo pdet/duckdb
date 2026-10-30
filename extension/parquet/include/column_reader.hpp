@@ -31,6 +31,7 @@
 #include "duckdb/common/types/string_type.hpp"
 #include "duckdb/common/types/vector.hpp"
 #include "duckdb/common/unordered_set.hpp"
+#include "duckdb/common/unordered_map.hpp"
 #include "duckdb/common/types/vector_cache.hpp"
 #include "duckdb/common/encryption_functions.hpp"
 #include "duckdb/common/assert.hpp"
@@ -171,12 +172,16 @@ public:
 	virtual idx_t FileOffset() const;
 	//! Adds the indexes of the row group's column chunks this reader reads
 	virtual void GatherColumnChunks(unordered_set<idx_t> &column_chunks);
+	//! Adds the bytes a prefetch reads per column chunk, only the retained pages when the page index prunes
+	virtual void GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes);
 	virtual idx_t GroupRowsAvailable();
 
 	// register the range this reader will touch for prefetching
 	virtual void RegisterPrefetch(ThriftFileTransport &transport, bool allow_merge);
 	//! The first offset RegisterPrefetch registered: the chunk start, or the first needed page with a page index
 	idx_t PrefetchOffset() const;
+	//! The byte ranges a prefetch of this reader reads, only the retained pages when the page index prunes
+	vector<pair<idx_t, idx_t>> PrefetchRanges(optional_idx &first_page_offset) const;
 	//! Hands the reader the page index of the row group, so it can prefetch and read only the pages whose rows may
 	//! match the filters. Called after InitializeRead, only for row groups where the page index prunes pages.
 	virtual void InitializePageIndex(const ParquetRowGroupPageIndex &page_index);

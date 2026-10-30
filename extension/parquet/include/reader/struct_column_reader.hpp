@@ -35,6 +35,7 @@ public:
 	void Skip(idx_t num_values) override;
 	idx_t GroupRowsAvailable() override;
 	void GatherColumnChunks(unordered_set<idx_t> &column_chunks) override;
+	void GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) override;
 	void RegisterPrefetch(ThriftFileTransport &transport, bool allow_merge) override;
 	void InitializePageIndex(const ParquetRowGroupPageIndex &page_index) override;
 };

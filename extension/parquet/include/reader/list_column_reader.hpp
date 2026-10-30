@@ -40,6 +40,10 @@ public:
 		child_column_reader->GatherColumnChunks(column_chunks);
 	}
 
+	void GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) override {
+		child_column_reader->GatherPrefetchBytes(column_chunk_bytes);
+	}
+
 	void RegisterPrefetch(ThriftFileTransport &transport, bool allow_merge) override {
 		child_column_reader->RegisterPrefetch(transport, allow_merge);
 	}

@@ -102,7 +102,7 @@ statement ok
 CALL truncate_duckdb_logs()
 
 # with a page index only the retained pages are read, so the savings shrink with them
-# the filter column has four pages per group, three only hold 50 and are pruned
+# the filter column has two pages per group, the first only holds 50 and is pruned
 statement ok
 COPY (
     SELECT CASE WHEN i%8192=6144 THEN 0 WHEN i%8192=8191 THEN 100
@@ -113,7 +113,7 @@ COPY (
 ) TO '{TEST_DIR}/match_ratio_pages.parquet'
     (ROW_GROUP_SIZE 8192, DATA_PAGE_SIZE_LIMIT 4096, WRITE_PAGE_INDEX true, COMPRESSION 'uncompressed', WRITE_BLOOM_FILTER FALSE)
 
-# a round trip of 1 MiB outweighs the quarter of the payload the retained pages hold
+# a round trip of 1 MiB outweighs the half of the payload the retained page holds
 statement ok
 SET parquet_prefetch_column_gap=1048576
 

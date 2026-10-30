@@ -150,6 +150,15 @@ void StructColumnReader::GatherColumnChunks(unordered_set<idx_t> &column_chunks)
 	}
 }
 
+void StructColumnReader::GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) {
+	for (auto &child : child_readers) {
+		if (!child) {
+			continue;
+		}
+		child->GatherPrefetchBytes(column_chunk_bytes);
+	}
+}
+
 static bool TypeHasExactRowCount(const LogicalType &type) {
 	switch (type.id()) {
 	case LogicalTypeId::LIST:

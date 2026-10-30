@@ -181,31 +181,27 @@ idx_t ColumnReader::PrefetchOffset() const {
 	return prefetch_offset.IsValid() ? prefetch_offset.GetIndex() : FileOffset();
 }
 
-void ColumnReader::RegisterPrefetch(ThriftFileTransport &transport, bool allow_merge) {
-	prefetch_offset = optional_idx();
+vector<pair<idx_t, idx_t>> ColumnReader::PrefetchRanges(optional_idx &first_page_offset) const {
+	vector<pair<idx_t, idx_t>> ranges;
+	first_page_offset = optional_idx();
 	if (!chunk) {
-		return;
+		return ranges;
 	}
 	if (!offset_index) {
-		uint64_t size = chunk->meta_data.total_compressed_size;
-		if (size == 0) {
-			// nothing to prefetch
-			return;
+		const auto size = NumericCast<idx_t>(chunk->meta_data.total_compressed_size);
+		if (size != 0) {
+			ranges.emplace_back(FileOffset(), size);
 		}
-		transport.RegisterPrefetch(FileOffset(), size, allow_merge);
-		return;
+		return ranges;
 	}
 	// the page index tells which pages hold rows that may match: the dictionary page (and anything else in front of
 	// the first data page) plus only those pages - adjacent pages are coalesced by the transport
 	auto &locations = offset_index->page_locations;
 	const auto chunk_start = FileOffset();
-	const auto chunk_size = NumericCast<idx_t>(chunk->meta_data.total_compressed_size);
 	const auto first_data_page = NumericCast<idx_t>(locations[0].offset);
-	vector<pair<idx_t, idx_t>> ranges;
 	if (chunk_start < first_data_page) {
 		ranges.emplace_back(chunk_start, first_data_page - chunk_start);
 	}
-	optional_idx first_page_offset;
 	const auto row_group_rows = NumericCast<idx_t>(chunk->meta_data.num_values);
 	for (idx_t page_idx = 0; page_idx < locations.size(); page_idx++) {
 		const auto begin = NumericCast<idx_t>(locations[page_idx].first_row_index);
@@ -220,18 +216,44 @@ void ColumnReader::RegisterPrefetch(ThriftFileTransport &transport, bool allow_m
 		}
 		ranges.emplace_back(page_offset, NumericCast<idx_t>(locations[page_idx].compressed_page_size));
 	}
-	// a chunk the cache already holds several small pieces of is being probed repeatedly: once a probe misses a page,
-	// fetch the chunk whole, so this and every later read of it is served from the cache, as it would be without the
-	// page index. The read re-fetches the cached pieces with the gaps around them, so it sends about as many requests
-	// as on a cold cache
-	if (ShouldReadChunkWhole(transport.GetCachingFileHandle(), chunk_start, chunk_size, ranges)) {
-		transport.RegisterPrefetch(chunk_start, chunk_size, allow_merge, true);
+	return ranges;
+}
+
+void ColumnReader::RegisterPrefetch(ThriftFileTransport &transport, bool allow_merge) {
+	prefetch_offset = optional_idx();
+	optional_idx first_page_offset;
+	auto ranges = PrefetchRanges(first_page_offset);
+	if (ranges.empty()) {
 		return;
 	}
-	prefetch_offset = first_page_offset;
+	if (offset_index) {
+		const auto chunk_start = FileOffset();
+		const auto chunk_size = NumericCast<idx_t>(chunk->meta_data.total_compressed_size);
+		// a chunk the cache already holds several small pieces of is being probed repeatedly: once a probe misses a
+		// page, fetch the chunk whole, so this and every later read of it is served from the cache, as it would be
+		// without the page index. The read re-fetches the cached pieces with the gaps around them, so it sends about
+		// as many requests as on a cold cache
+		if (ShouldReadChunkWhole(transport.GetCachingFileHandle(), chunk_start, chunk_size, ranges)) {
+			transport.RegisterPrefetch(chunk_start, chunk_size, allow_merge, true);
+			return;
+		}
+		prefetch_offset = first_page_offset;
+	}
 	for (auto &range : ranges) {
 		transport.RegisterPrefetch(range.first, range.second, allow_merge);
 	}
+}
+
+void ColumnReader::GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) {
+	if (IsSkipped() || !chunk) {
+		return;
+	}
+	optional_idx first_page_offset;
+	idx_t bytes = 0;
+	for (auto &range : PrefetchRanges(first_page_offset)) {
+		bytes += range.second;
+	}
+	column_chunk_bytes[ColumnIndex()] = bytes;
 }
 
 void ColumnReader::InitializePageIndex(const ParquetRowGroupPageIndex &page_index) {

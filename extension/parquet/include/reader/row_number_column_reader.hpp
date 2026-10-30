@@ -62,6 +62,8 @@ public:
 	};
 	void GatherColumnChunks(unordered_set<idx_t> &column_chunks) override {
 	}
+	void GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) override {
+	}
 	idx_t FileOffset() const override {
 		return 0;
 	}
@@ -92,6 +94,8 @@ public:
 		return NumericLimits<idx_t>::Maximum();
 	};
 	void GatherColumnChunks(unordered_set<idx_t> &column_chunks) override {
+	}
+	void GatherPrefetchBytes(unordered_map<idx_t, idx_t> &column_chunk_bytes) override {
 	}
 	idx_t FileOffset() const override {
 		return 0;

@@ -258,7 +258,14 @@ static bool ShouldAndCanPrefetch(ClientContext &context, CachingFileHandle &file
 	return file_handle.CanSeek() && !disable_prefetch;
 }
 
-//! The gap pinned through the setting, if set
+static uint64_t SumChunkBytes(const duckdb_parquet::RowGroup &group, const unordered_set<idx_t> &column_chunks) {
+	uint64_t bytes = 0;
+	for (auto column_chunk : column_chunks) {
+		bytes += NumericCast<uint64_t>(group.columns[column_chunk].meta_data.total_compressed_size);
+	}
+	return bytes;
+}
+
 static bool TryGetPinnedColumnGap(ClientContext &context, uint64_t &result) {
 	Value pinned_gap;
 	context.TryGetCurrentSetting("parquet_prefetch_column_gap", pinned_gap);
@@ -2620,10 +2627,7 @@ ParquetPrefetchStrategy ParquetReader::RegisterRowGroupReads(ClientContext &cont
 	}
 	// the row group statistics could not rule the row group out - the page index may still rule out pages
 	PreparePageIndex(context, state);
-	uint64_t to_scan_compressed_bytes = 0;
-	for (auto column_chunk : scanned_column_chunks) {
-		to_scan_compressed_bytes += NumericCast<uint64_t>(group.columns[column_chunk].meta_data.total_compressed_size);
-	}
+	const uint64_t to_scan_compressed_bytes = SumChunkBytes(group, scanned_column_chunks);
 	const bool row_group_skipped = state.offset_in_group == (idx_t)group.num_rows;
 	if (row_group_skipped) {
 		++state.row_groups_skipped;
@@ -2667,11 +2671,7 @@ ParquetPrefetchStrategy ParquetReader::RegisterRowGroupReads(ClientContext &cont
 						state.GetColumnReader(scan_filter.filter_idx.GetIndex())
 						    .GatherColumnChunks(filter_column_chunks);
 					}
-					uint64_t filter_compressed_bytes = 0;
-					for (auto column_chunk : filter_column_chunks) {
-						filter_compressed_bytes +=
-						    NumericCast<uint64_t>(group.columns[column_chunk].meta_data.total_compressed_size);
-					}
+					const uint64_t filter_compressed_bytes = SumChunkBytes(group, filter_column_chunks);
 					uint64_t round_trip_bytes;
 					if (state.prefetch_metrics.row_groups_executed == 0) {
 						filters_look_unselective = true;
@@ -2683,17 +2683,19 @@ ParquetPrefetchStrategy ParquetReader::RegisterRowGroupReads(ClientContext &cont
 							        ParquetReaderPrefetchConfig::FIRST_GROUP_PREFETCH_MAXIMUM_FILTER_SCAN;
 						}
 					} else if (TryDetermineRoundTripBytes(context, state, round_trip_bytes)) {
-						// lazily fetching the payload after the filter saves the payload of the row groups without
-						// matches and costs one round trip on the row groups with them
+						// lazy fetch saves the payload of the row groups without matches and costs the others a round
+						// trip
 						const double match_ratio = static_cast<double>(state.prefetch_metrics.row_groups_with_matches) /
 						                           static_cast<double>(state.prefetch_metrics.row_groups_executed);
-						double payload_bytes = static_cast<double>(
-						    to_scan_compressed_bytes - MinValue(filter_compressed_bytes, to_scan_compressed_bytes));
-						if (state.page_index_active) {
-							// only the pages of rows that may match are read, scale the savings accordingly
-							payload_bytes *=
-							    static_cast<double>(ParquetPageIndexUtils::RowCount(state.page_index.row_ranges)) /
-							    static_cast<double>(group.num_rows);
+						unordered_map<idx_t, idx_t> prefetch_bytes;
+						for (idx_t i = 0; i < column_ids.size(); i++) {
+							state.GetColumnReader(MultiFileLocalIndex(i)).GatherPrefetchBytes(prefetch_bytes);
+						}
+						double payload_bytes = 0;
+						for (auto &entry : prefetch_bytes) {
+							if (filter_column_chunks.find(entry.first) == filter_column_chunks.end()) {
+								payload_bytes += static_cast<double>(entry.second);
+							}
 						}
 						filters_look_unselective =
 						    (1.0 - match_ratio) * payload_bytes <= match_ratio * static_cast<double>(round_trip_bytes);
