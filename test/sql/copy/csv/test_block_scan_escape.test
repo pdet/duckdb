@@ -1,0 +1,79 @@
+# name: test/sql/copy/csv/test_block_scan_escape.test
+# description: Quoted values with an escape other than the quote in the block scanner: results stay the same as the byte loop's
+# group: [csv]
+
+statement ok
+COPY (SELECT i || ',"' || repeat('q', i % 70) || '\"x\\y",' || i FROM range(1000) t(i)) TO '{TEST_DIR}/escape_offsets.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+statement ok
+COPY (SELECT i || ',"' || repeat('q', i % 70) || '\"x\\y",' || i FROM range(1000) t(i)) TO '{TEST_DIR}/escape_offsets_crlf.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '', NEW_LINE '\r\n');
+
+statement ok
+COPY (SELECT i || '||"' || repeat('q', i % 70) || '\"x|\\y"||' || i FROM range(1000) t(i)) TO '{TEST_DIR}/escape_offsets_pipe2.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+statement ok
+COPY (SELECT line FROM (SELECT i AS o, 'p' || i || ',"' || repeat('q', i % 61) || '",' || i AS line FROM range(300) t(i) UNION ALL SELECT 1000 + unnest(range(10)) AS o, unnest(['1,"a\"b",x', '2,"a\\b",x', '3,"a\\",x', '4,"a\' || chr(10) || 'b",x', '5,"\"",x', '6,"a\,b",x', '7,a\b,x', '8,"a' || chr(10) || 'b\"c",x', '9,"' || repeat('z', 61) || '\"",x', '10,"\\\"",x']) AS line UNION ALL SELECT 2000 + i AS o, 'p' || (2000 + i) || ',"' || repeat('q', i % 61) || '",' || i AS line FROM range(300) t(i)) ORDER BY o) TO '{TEST_DIR}/escape_values.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+statement ok
+COPY (SELECT line FROM (SELECT i AS o, 'p' || i || ',"' || repeat('q', i % 61) || '",' || i AS line FROM range(300) t(i) UNION ALL SELECT 1000 AS o, '11,"a\",x' AS line UNION ALL SELECT 2000 + i AS o, 'p' || (2000 + i) || ',"' || repeat('q', i % 61) || '",' || i AS line FROM range(300) t(i)) ORDER BY o) TO '{TEST_DIR}/escape_unterminated.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+# the escape lands on every byte of a block, also on its last one
+query III
+SELECT count(*), count(*) FILTER (b = repeat('q', a % 70) || '"x\y'), sum(c) FROM read_csv('{TEST_DIR}/escape_offsets.csv', delim=',', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'INTEGER'})
+----
+1000	1000	499500
+
+# with buffers that end inside the escaped values
+query III
+SELECT count(*), count(*) FILTER (b = repeat('q', a % 70) || '"x\y'), sum(c) FROM read_csv('{TEST_DIR}/escape_offsets.csv', delim=',', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'INTEGER'}, buffer_size=300, max_line_size=200, parallel=false)
+----
+1000	1000	499500
+
+query III
+SELECT count(*), count(*) FILTER (b = repeat('q', a % 70) || '"x\y'), sum(c) FROM read_csv('{TEST_DIR}/escape_offsets.csv', delim=',', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'INTEGER'}, buffer_size=300, max_line_size=200)
+----
+1000	1000	499500
+
+# the column with the escapes is not projected
+query I
+SELECT sum(c) FROM read_csv('{TEST_DIR}/escape_offsets.csv', delim=',', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'INTEGER'})
+----
+499500
+
+# a carriage return and line feed row end
+query III
+SELECT count(*), count(*) FILTER (b = repeat('q', a % 70) || '"x\y'), sum(c) FROM read_csv('{TEST_DIR}/escape_offsets_crlf.csv', delim=',', quote='"', escape='\', header=false, new_line='\r\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'INTEGER'})
+----
+1000	1000	499500
+
+# a delimiter of two bytes, one of its bytes is data inside the quotes
+query III
+SELECT count(*), count(*) FILTER (b = repeat('q', a % 70) || '"x|\y'), sum(c) FROM read_csv('{TEST_DIR}/escape_offsets_pipe2.csv', delim='||', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'INTEGER'})
+----
+1000	1000	499500
+
+# an escaped quote, escape, line feed and delimiter, an escape outside quotes, and an escape behind a quoted line feed
+query III
+SELECT a, replace(b, chr(10), '<LF>'), c FROM read_csv('{TEST_DIR}/escape_values.csv', delim=',', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'VARCHAR','b':'VARCHAR','c':'VARCHAR'}) WHERE a NOT LIKE 'p%' ORDER BY a::INT
+----
+1	a"b	x
+2	a\b	x
+3	a\	x
+4	a<LF>b	x
+5	"	x
+6	a,b	x
+7	a\b	x
+8	a<LF>b"c	x
+9	zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"	x
+10	\"	x
+
+query I
+SELECT count(*) FROM read_csv('{TEST_DIR}/escape_values.csv', delim=',', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'VARCHAR','b':'VARCHAR','c':'VARCHAR'}, buffer_size=300, max_line_size=200, parallel=false)
+----
+610
+
+# an escaped closing quote leaves the value open
+statement error
+SELECT count(*) FROM read_csv('{TEST_DIR}/escape_unterminated.csv', delim=',', quote='"', escape='\', header=false, new_line='\n', auto_detect=false, columns={'a':'VARCHAR','b':'VARCHAR','c':'VARCHAR'})
+----
+<REGEX>:.*CSV Error on Line.*

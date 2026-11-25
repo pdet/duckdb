@@ -26,6 +26,9 @@ BaseScanner::BaseScanner(shared_ptr<CSVBufferManager> buffer_manager_p, shared_p
       block_cr(state_machine->state_machine_options.new_line.GetValue() == NewLineIdentifier::SINGLE_R),
       block_escape_is_quote(block_quote != '\0' && state_machine->state_machine_options.escape.GetValue() ==
                                                        state_machine->state_machine_options.quote.GetValue()),
+      block_escape(block_quote != '\0' && !block_escape_is_quote
+                       ? static_cast<uint8_t>(state_machine->state_machine_options.escape.GetValue())
+                       : 0),
       block_comment(static_cast<uint8_t>(state_machine->state_machine_options.comment.GetValue())) {
 	D_ASSERT(buffer_manager);
 	D_ASSERT(state_machine);

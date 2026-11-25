@@ -22,7 +22,13 @@ static bool BlockScanEligible(const StateMachine &transition_array, const CSVSta
 	    options.embedded_quotes.GetValue() != CSVEmbeddedQuotes::NONE) {
 		return false;
 	}
-	if (delimiter.empty() || delimiter.size() > 4 || (escape != '\0' && escape != quote)) {
+	if (delimiter.empty() || delimiter.size() > 4) {
+		return false;
+	}
+	// an escape other than the quote is a byte of its own inside quoted values
+	const bool quoted_escape = quote != '\0' && escape != '\0' && escape != quote;
+	if (quoted_escape && (escape == static_cast<uint8_t>(delimiter[0]) || escape == comment || escape == '\n' ||
+	                      escape == '\r')) {
 		return false;
 	}
 	if (comment != '\0' &&
@@ -129,12 +135,25 @@ static bool BlockScanEligible(const StateMachine &transition_array, const CSVSta
 		return false;
 	}
 	for (uint32_t byte = 0; byte < StateMachine::NUM_TRANSITIONS; byte++) {
-		if (byte == quote || byte == '\n' || byte == '\r') {
+		if (byte == quote || byte == '\n' || byte == '\r' || (quoted_escape && byte == escape)) {
 			continue;
 		}
 		if (transition_array[byte][quoted] != CSVState::QUOTED ||
 		    transition_array[byte][quoted_new_line] != CSVState::QUOTED) {
 			return false;
+		}
+	}
+	if (quoted_escape) {
+		// the escape leaves the quoted states for one byte, which is data whatever it is
+		const auto escaped = static_cast<uint8_t>(CSVState::ESCAPE);
+		if (transition_array[escape][quoted] != CSVState::ESCAPE ||
+		    transition_array[escape][quoted_new_line] != CSVState::ESCAPE) {
+			return false;
+		}
+		for (uint32_t byte = 0; byte < StateMachine::NUM_TRANSITIONS; byte++) {
+			if (transition_array[byte][escaped] != CSVState::QUOTED) {
+				return false;
+			}
 		}
 	}
 	if (new_line == NewLineIdentifier::SINGLE_N && transition_array['\n'][unquoted] != CSVState::RECORD_SEPARATOR) {

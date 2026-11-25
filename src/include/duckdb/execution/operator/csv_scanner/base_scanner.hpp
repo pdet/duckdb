@@ -244,6 +244,8 @@ protected:
 	const bool block_crlf;
 	const bool block_cr;
 	const bool block_escape_is_quote;
+	//! The escape of quoted values when it is not the quote, 0 otherwise
+	const uint8_t block_escape;
 	const uint8_t block_comment;
 
 	//! Whether the state machine can hand the current byte to ProcessBlocks
@@ -515,6 +517,30 @@ protected:
 							T::SetQuoted(result, at);
 						}
 						last = at + 1;
+						continue;
+					}
+					if (block_escape != '\0' && byte == block_escape) {
+						if (at + 1 >= limit) {
+							return HandOverQuoted(at, last);
+						}
+						// the escape and the byte behind it, which is data whatever it is
+						SetQuotedStatesBefore(at, last);
+						D_ASSERT(ReplayStates(at, at + 2).states[0] == CSVState::ESCAPE);
+						D_ASSERT(ReplayStates(at, at + 2).states[1] == CSVState::QUOTED);
+						states.states[0] = states.states[1];
+						states.states[1] = CSVState::ESCAPE;
+						iterator.pos.buffer_pos = at;
+						T::SetEscaped(result);
+						states.states[0] = CSVState::ESCAPE;
+						states.states[1] = CSVState::QUOTED;
+						iterator.pos.buffer_pos = at + 1;
+						if (static_cast<uint8_t>(buffer[at + 1]) == block_quote) {
+							ever_escaped = true;
+						}
+						ever_quoted = true;
+						T::SetQuoted(result, at + 1);
+						candidates &= ~(uint64_t(1) << (at + 1 - pos));
+						last = at + 2;
 						continue;
 					}
 					if (byte != block_quote) {
