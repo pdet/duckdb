@@ -140,7 +140,10 @@ public:
 		return false;
 	}
 
-	bool HandleErrors(StringValueResult &result);
+	//! Handles the errors of the current line, false when the line has none
+	bool HandleErrors(StringValueResult &result) {
+		return is_error_in_line && HandleErrorsInternal(result);
+	}
 
 	bool HasError() const {
 		return !current_errors.empty();
@@ -149,6 +152,9 @@ public:
 	idx_t Size() const {
 		return current_errors.size();
 	}
+
+private:
+	bool HandleErrorsInternal(StringValueResult &result);
 
 private:
 	vector<CurrentError> current_errors;
