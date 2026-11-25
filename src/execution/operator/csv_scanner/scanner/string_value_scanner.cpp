@@ -266,7 +266,7 @@ static bool ParseDecimal(const char *value_ptr, idx_t size, const ParseTypeInfo 
 }
 
 void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool allocate) {
-	if (HandleTooManyColumnsError(value_ptr, size)) {
+	if (cur_col_id >= number_of_columns && HandleTooManyColumnsError(value_ptr, size)) {
 		return;
 	}
 	const bool policy_quoted = quoted || was_quoted;
@@ -341,9 +341,9 @@ void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool
 	bool success = true;
 	string strip_thousands;
 	// Whether current type is logically numeric (BIGNUM is physically stored as VARCHAR instead of numerical value).
-	if ((LogicalType::IsNumeric(parse_types[chunk_col_id].type_id) ||
-	     parse_types[chunk_col_id].type_id == LogicalTypeId::BIGNUM) &&
-	    state_machine.options.thousands_separator != '\0') {
+	if (state_machine.options.thousands_separator != '\0' &&
+	    (LogicalType::IsNumeric(parse_types[chunk_col_id].type_id) ||
+	     parse_types[chunk_col_id].type_id == LogicalTypeId::BIGNUM)) {
 		// If we have a thousands separator we should try to use that
 		strip_thousands = BaseScanner::RemoveSeparator(value_ptr, size, state_machine.options.thousands_separator);
 		value_ptr = strip_thousands.c_str();
@@ -772,7 +772,7 @@ void StringValueResult::HandleUnicodeError(idx_t col_idx, LinePosition &error_po
 	}
 }
 
-bool LineError::HandleErrors(StringValueResult &result) {
+bool LineError::HandleErrorsInternal(StringValueResult &result) {
 	bool skip_sniffing = false;
 	for (auto &cur_error : current_errors) {
 		if (cur_error.type == CSVErrorType::INVALID_ENCODING) {
@@ -965,7 +965,9 @@ bool StringValueResult::AddRowInternal() {
 		}
 		return false;
 	}
-	NullPaddingQuotedNewlineCheck();
+	if (quoted_new_line) {
+		NullPaddingQuotedNewlineCheck();
+	}
 	quoted_new_line = false;
 	// We need to check if we are getting the correct number of columns here.
 	// If columns are correct, we add it, and that's it.
