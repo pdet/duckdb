@@ -254,6 +254,11 @@ public:
 	idx_t &lines_read;
 	bool &used_unstrictness;
 	//! Information regarding projected columns
+	//! Bytes of the current buffer that hold no high bit, probed as the values of string columns come up
+	const char *ascii_begin = nullptr;
+	const char *ascii_end = nullptr;
+	//! The bytes a probe reads ahead of a value at most
+	static constexpr idx_t ASCII_PROBE_BYTES = 4096;
 	unsafe_unique_array<bool> projected_columns;
 	bool projecting_columns = false;
 	//! For every column the values from it on that are not projected and end on a delimiter
@@ -362,6 +367,8 @@ public:
 	}
 	//! Reads the field a record end inside an open quote left in progress as NULL
 	void AddUnterminatedQuoteNull();
+	//! Probes the bytes from the value on for high bits, returns whether the value lies before the first
+	bool ProbeAsciiBytes(const char *value_ptr, idx_t size);
 	//! Routes a quoted field through the embedded quote text pass when that pass could change it
 	inline void DemoteUnenclosedQuotedValue(const char *value_ptr, idx_t size) {
 		if (!quoted || size == 0 || !state_machine.state_machine_options.ToggleQuotes()) {

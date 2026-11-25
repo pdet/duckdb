@@ -502,8 +502,9 @@ void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool
 	default: {
 		// By default, we add a string
 		// We only evaluate if a string is utf8 valid, if it's actually a varchar
-		if (parse_types[chunk_col_id].validate_utf8 && !ascii_value &&
-		    !Utf8Proc::IsValid(value_ptr, UnsafeNumericCast<uint32_t>(size))) {
+		const bool in_ascii_bytes = value_ptr >= ascii_begin && value_ptr + size <= ascii_end;
+		if (parse_types[chunk_col_id].validate_utf8 && !ascii_value && !in_ascii_bytes &&
+		    !ProbeAsciiBytes(value_ptr, size) && !Utf8Proc::IsValid(value_ptr, UnsafeNumericCast<uint32_t>(size))) {
 			bool force_error = !state_machine.options.ignore_errors.GetValue() && sniffing;
 			// Invalid unicode, we must error
 			if (force_error) {
@@ -542,6 +543,26 @@ void StringValueResult::AddValueToVector(const char *value_ptr, idx_t size, bool
 	}
 	cur_col_id++;
 	chunk_col_id++;
+}
+
+bool StringValueResult::ProbeAsciiBytes(const char *value_ptr, const idx_t size) {
+	const char *buffer_end = buffer_ptr + buffer_size;
+	if (value_ptr < buffer_ptr || value_ptr + size > buffer_end) {
+		// a value built outside the buffer is checked on its own
+		return false;
+	}
+	const char *probe_end = MinValue(value_ptr + MaxValue<idx_t>(size, ASCII_PROBE_BYTES), buffer_end);
+	const char *pos = value_ptr;
+	while (pos + sizeof(uint64_t) <= probe_end && SwarWord::IsAscii(Load<uint64_t>(const_data_ptr_cast(pos)))) {
+		pos += sizeof(uint64_t);
+	}
+	// the bytes of the last word before its high bit, or the fewer than eight bytes left to probe
+	while (pos < probe_end && (static_cast<uint8_t>(*pos) & 0x80) == 0) {
+		pos++;
+	}
+	ascii_begin = value_ptr;
+	ascii_end = pos;
+	return value_ptr + size <= pos;
 }
 
 DataChunk &StringValueResult::ToChunk() {
@@ -2096,6 +2117,8 @@ void StringValueScanner::FinishMoveToNextBuffer(shared_ptr<CSVBufferHandle> next
 	ProcessOverBufferValue();
 	result.buffer_ptr = buffer_handle_ptr;
 	result.buffer_size = cur_buffer_handle->actual_size;
+	result.ascii_begin = nullptr;
+	result.ascii_end = nullptr;
 }
 
 void StringValueResult::SkipBOM() const {

@@ -1,0 +1,49 @@
+# name: test/sql/copy/csv/test_utf8_ascii_bytes.test
+# description: String values in bytes without a high bit skip the UTF-8 check, values with one are still checked
+# group: [csv]
+
+# valid UTF-8 between long stretches of ASCII rows
+statement ok
+COPY (SELECT line FROM (SELECT i AS o, i || ',name_' || i || ',plain text' AS line FROM range(2000) t(i) UNION ALL SELECT 5000 + unnest(range(3)), unnest(['1,é,accent', '2,😀,emoji', '3,ascii,é at the end é']) UNION ALL SELECT 6000 + i, i || ',name_' || i || ',plain text' FROM range(2000) t(i)) ORDER BY o) TO '{TEST_DIR}/ascii_valid.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+# an invalid byte in a value behind ASCII rows, and one right behind an ASCII value
+statement ok
+COPY (SELECT repeat('1,aaaa,bbbb' || chr(10), 300)::BLOB || '2,cc'::BLOB || '\xFF'::BLOB || ',dd'::BLOB || chr(10)::BLOB || repeat('3,eeee,ffff' || chr(10), 300)::BLOB || '4,gggg,'::BLOB || '\xC3'::BLOB || chr(10)::BLOB || repeat('5,hhhh,iiii' || chr(10), 300)::BLOB) TO '{TEST_DIR}/ascii_invalid.csv' (FORMAT BLOB);
+
+# the byte loop of an escape that works outside quotes
+query IIII
+SELECT count(*), count(*) FILTER (b = 'é'), count(*) FILTER (b = '😀'), count(*) FILTER (c LIKE '%é') FROM read_csv('{TEST_DIR}/ascii_valid.csv', delim=',', quote='"', escape='\', escape_mode='anywhere', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'VARCHAR'})
+----
+4003	1	1	1
+
+statement error
+SELECT count(b), count(c) FROM read_csv('{TEST_DIR}/ascii_invalid.csv', delim=',', quote='"', escape='\', escape_mode='anywhere', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'VARCHAR'})
+----
+<REGEX>:.*Invalid unicode.*
+
+query III
+SELECT count(b), count(c), sum(a) FROM read_csv('{TEST_DIR}/ascii_invalid.csv', delim=',', quote='"', escape='\', escape_mode='anywhere', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'VARCHAR'}, ignore_errors=true)
+----
+900	900	2700
+
+# with buffers that end between the probes
+query III
+SELECT count(b), count(c), sum(a) FROM read_csv('{TEST_DIR}/ascii_invalid.csv', delim=',', quote='"', escape='\', escape_mode='anywhere', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'VARCHAR'}, ignore_errors=true, buffer_size=300, max_line_size=200, parallel=false)
+----
+900	900	2700
+
+# the block scan of the standard rules
+query IIII
+SELECT count(*), count(*) FILTER (b = 'é'), count(*) FILTER (b = '😀'), count(*) FILTER (c LIKE '%é') FROM read_csv('{TEST_DIR}/ascii_valid.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'VARCHAR'})
+----
+4003	1	1	1
+
+statement error
+SELECT count(b), count(c) FROM read_csv('{TEST_DIR}/ascii_invalid.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'VARCHAR'})
+----
+<REGEX>:.*Invalid unicode.*
+
+query III
+SELECT count(b), count(c), sum(a) FROM read_csv('{TEST_DIR}/ascii_invalid.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'a':'INTEGER','b':'VARCHAR','c':'VARCHAR'}, ignore_errors=true)
+----
+900	900	2700
