@@ -105,6 +105,18 @@ public:
 	static inline bool AddRowWithoutValue(T &result, const idx_t buffer_pos) {
 		return false;
 	}
+	//! Results that skip values override these, so the block scan skips a run of them at once
+	template <class T>
+	static inline bool SkipsRuns(const T &result) {
+		return false;
+	}
+	template <class T>
+	static inline idx_t SkippableRun(const T &result, const idx_t buffer_pos) {
+		return 0;
+	}
+	template <class T>
+	static inline void SkipValues(T &result, const idx_t count, const idx_t buffer_pos) {
+	}
 	//! Whether a value of this result may skip its UTF-8 check, so the block scan tracks ASCII blocks
 	template <class T>
 	static inline bool TracksAscii(const T &result) {
@@ -385,6 +397,43 @@ protected:
 		}
 	}
 
+	//! Skips the values that end on the delimiters right ahead, returns whether any were skipped
+	template <class T>
+	bool BlockSkipRun(T &result, uint64_t &candidates, const idx_t pos, const idx_t limit, idx_t &last) {
+		const idx_t skippable = T::SkippableRun(result, pos + CountZeros<uint64_t>::Trailing(candidates));
+		if (skippable == 0) {
+			return false;
+		}
+		uint64_t ahead = candidates;
+		idx_t count = 0;
+		idx_t at = last;
+		idx_t previous = last;
+		while (ahead && count < skippable) {
+			const idx_t next = pos + CountZeros<uint64_t>::Trailing(ahead);
+			if (next >= limit || static_cast<uint8_t>(buffer_handle_ptr[next]) != block_delimiter) {
+				break;
+			}
+			ahead &= ahead - 1;
+			previous = at;
+			at = next;
+			count++;
+		}
+		if (count == 0) {
+			return false;
+		}
+		const auto before = count > 1 ? StateAfterData(CSVState::DELIMITER, previous + 1, at)
+		                              : StateAfterData(states.states[1], last, at);
+		D_ASSERT(ReplayStates(last, at + 1).states[1] == CSVState::DELIMITER);
+		D_ASSERT(ReplayStates(last, at + 1).states[0] == before);
+		states.states[0] = before;
+		states.states[1] = CSVState::DELIMITER;
+		iterator.pos.buffer_pos = at;
+		T::SkipValues(result, count, at);
+		candidates = ahead;
+		last = at + 1;
+		return true;
+	}
+
 	//! The row end at `at`, `before` is the state before it, `ascii` whether the last value lies in ASCII blocks.
 	//! Returns true when the result is full
 	template <class T, bool TRACK_ASCII>
@@ -469,6 +518,8 @@ protected:
 		const bool track_ascii = TRACK_ASCII;
 		bool value_ascii = track_ascii && IsSeparatorState(states.states[1]);
 		bool block_ascii = false;
+		// whether runs of values nobody asked for are skipped at once
+		const bool skips_runs = !MULTI_BYTE_DELIMITER && T::SkipsRuns(result);
 		uint64_t candidates;
 		idx_t block_end;
 		while (pos < to_pos && skipper.BlockCandidates(pos, candidates, block_end)) {
@@ -477,6 +528,10 @@ protected:
 			    track_ascii && !SwarBlock::HasHighBits(const_data_ptr_cast(buffer + block_end - SwarBlock::SIZE));
 			value_ascii = value_ascii && block_ascii;
 			while (candidates) {
+				if (skips_runs && !quoted && !(COMMENT && comment) && BlockSkipRun(result, candidates, pos, limit, last)) {
+					value_ascii = block_ascii;
+					continue;
+				}
 				const idx_t at = pos + CountZeros<uint64_t>::Trailing(candidates);
 				if (at >= limit) {
 					break;

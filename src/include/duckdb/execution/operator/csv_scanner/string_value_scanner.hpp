@@ -256,6 +256,12 @@ public:
 	//! Information regarding projected columns
 	unsafe_unique_array<bool> projected_columns;
 	bool projecting_columns = false;
+	//! For every column the values from it on that are not projected and end on a delimiter
+	unsafe_unique_array<idx_t> skippable_runs;
+	//! Whether a row has a run long enough to skip at once
+	bool skips_runs = false;
+	//! The shortest run worth skipping at once
+	static constexpr idx_t MIN_SKIPPABLE_RUN = 2;
 	idx_t chunk_col_id = 0;
 
 	bool icu_loaded = false;
@@ -308,6 +314,18 @@ public:
 	//! Called by the block scan only, which reads the standard rules, see BlockScanEligible
 	static inline void SkipValue(StringValueResult &result, const idx_t buffer_pos);
 	static inline bool AddRowWithoutValue(StringValueResult &result, const idx_t buffer_pos);
+	static inline bool SkipsRuns(const StringValueResult &result) {
+		return result.skips_runs;
+	}
+	//! The values from the current column on that are not projected and end on a delimiter
+	static inline idx_t SkippableRun(const StringValueResult &result, const idx_t buffer_pos) {
+		if (result.cur_col_id >= result.number_of_columns || result.last_position.buffer_pos > buffer_pos) {
+			return 0;
+		}
+		return result.skippable_runs[result.cur_col_id];
+	}
+	//! Skips `count` values of a skippable run, the last one ends on the delimiter at `buffer_pos`
+	static inline void SkipValues(StringValueResult &result, const idx_t count, const idx_t buffer_pos);
 	static inline bool TracksAscii(const StringValueResult &result) {
 		return result.validates_utf8;
 	}

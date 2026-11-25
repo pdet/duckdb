@@ -117,6 +117,15 @@ StringValueResult::StringValueResult(CSVStates &states, CSVStateMachine &state_m
 				parse_types[j] = ParseTypeInfo(varchar_type, true);
 				logical_types.emplace_back(LogicalType::VARCHAR);
 			}
+		} else {
+			// the last value of a row ends on the row end, so it is never part of a run
+			skippable_runs = make_unsafe_uniq_array<idx_t>(number_of_columns);
+			idx_t run = 0;
+			for (idx_t col_idx = number_of_columns; col_idx-- > 0;) {
+				run = projected_columns[col_idx] || col_idx + 1 == number_of_columns ? 0 : run + 1;
+				skippable_runs[col_idx] = run;
+				skips_runs = skips_runs || run >= MIN_SKIPPABLE_RUN;
+			}
 		}
 	}
 
@@ -752,6 +761,13 @@ void StringValueResult::SkipValue(StringValueResult &result, const idx_t buffer_
 		return;
 	}
 	result.SkipValueInternal();
+	result.last_position.buffer_pos = buffer_pos + 1;
+}
+
+void StringValueResult::SkipValues(StringValueResult &result, const idx_t count, const idx_t buffer_pos) {
+	D_ASSERT(!result.quoted && !result.escaped);
+	D_ASSERT(count <= result.skippable_runs[result.cur_col_id]);
+	result.cur_col_id += count;
 	result.last_position.buffer_pos = buffer_pos + 1;
 }
 

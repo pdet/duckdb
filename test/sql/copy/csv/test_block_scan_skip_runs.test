@@ -1,0 +1,98 @@
+# name: test/sql/copy/csv/test_block_scan_skip_runs.test
+# description: Runs of columns that are not projected are skipped at once by the block scanner: values, errors and null padding stay the same
+# group: [csv]
+
+# twelve columns, column j of row i holds i * (j + 1)
+statement ok
+COPY (SELECT array_to_string(list_transform(range(12), lambda j: (i * (j + 1))::VARCHAR), ',') FROM range(3000) t(i)) TO '{TEST_DIR}/runs.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+statement ok
+COPY (SELECT array_to_string(list_transform(range(12), lambda j: (i * (j + 1))::VARCHAR), ',') FROM range(3000) t(i)) TO '{TEST_DIR}/runs_crlf.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '', NEW_LINE '\r\n');
+
+# quoted values with delimiters and line feeds, empty values and spaces in the columns that are skipped
+statement ok
+COPY (SELECT i || ',"a,b",,  ,x y,"q""q' || chr(10) || 'r",' || i * 3 FROM range(3000) t(i)) TO '{TEST_DIR}/runs_quoted.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+# a row with too few and a row with too many columns between rows that fit
+statement ok
+COPY (SELECT line FROM (SELECT i AS o, array_to_string(list_transform(range(12), lambda j: (i * (j + 1))::VARCHAR), ',') AS line FROM range(600) t(i) UNION ALL SELECT 1000, '7,8,9' UNION ALL SELECT 1001, array_to_string(list_transform(range(14), lambda j: j::VARCHAR), ',') UNION ALL SELECT 2000 + i, array_to_string(list_transform(range(12), lambda j: (i * (j + 1))::VARCHAR), ',') FROM range(600) t(i)) ORDER BY o) TO '{TEST_DIR}/runs_bad.csv' (FORMAT CSV, HEADER false, QUOTE '', ESCAPE '');
+
+query I
+SELECT count(*) FROM read_csv('{TEST_DIR}/runs.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'})
+----
+3000
+
+# the run behind the first column
+query I
+SELECT sum(c0) FROM read_csv('{TEST_DIR}/runs.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'})
+----
+4498500
+
+# the run before the last column
+query I
+SELECT sum(c11) FROM read_csv('{TEST_DIR}/runs.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'})
+----
+53982000
+
+# a run between two columns that are read
+query II
+SELECT sum(c0), sum(c11) FROM read_csv('{TEST_DIR}/runs.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'})
+----
+4498500	53982000
+
+# runs before, between and behind the columns that are read
+query III
+SELECT sum(c2), sum(c5), sum(c9) FROM read_csv('{TEST_DIR}/runs.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'})
+----
+13495500	26991000	44985000
+
+# with buffers that end inside the runs
+query III
+SELECT sum(c2), sum(c5), sum(c9) FROM read_csv('{TEST_DIR}/runs.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'}, buffer_size=300, max_line_size=200)
+----
+13495500	26991000	44985000
+
+query II
+SELECT sum(c0), sum(c11) FROM read_csv('{TEST_DIR}/runs.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'}, buffer_size=300, max_line_size=200, parallel=false)
+----
+4498500	53982000
+
+# a carriage return and line feed row end
+query II
+SELECT sum(c0), sum(c11) FROM read_csv('{TEST_DIR}/runs_crlf.csv', delim=',', quote='"', escape='"', header=false, new_line='\r\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'})
+----
+4498500	53982000
+
+# a run ends at a quoted value and goes on behind it
+query II
+SELECT sum(c0), sum(c6) FROM read_csv('{TEST_DIR}/runs_quoted.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'VARCHAR','c2':'VARCHAR','c3':'VARCHAR','c4':'VARCHAR','c5':'VARCHAR','c6':'BIGINT'})
+----
+4498500	13495500
+
+query III
+SELECT count(*), count(c2), count(*) FILTER (c5 = 'q"q' || chr(10) || 'r') FROM read_csv('{TEST_DIR}/runs_quoted.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'VARCHAR','c2':'VARCHAR','c3':'VARCHAR','c4':'VARCHAR','c5':'VARCHAR','c6':'BIGINT'})
+----
+3000	0	3000
+
+# the row with too few columns ends inside a run
+statement error
+SELECT sum(c0) FROM read_csv('{TEST_DIR}/runs_bad.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'})
+----
+CSV Error on Line: 601
+
+# both rows are removed with ignore_errors
+query II
+SELECT count(*), sum(c0) FROM read_csv('{TEST_DIR}/runs_bad.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'}, ignore_errors=true)
+----
+1200	359400
+
+query II
+SELECT count(*), sum(c11) FROM read_csv('{TEST_DIR}/runs_bad.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'}, ignore_errors=true)
+----
+1200	4312800
+
+# the short row is padded and the long row is removed
+query II
+SELECT count(*), sum(c0) FROM read_csv('{TEST_DIR}/runs_bad.csv', delim=',', quote='"', escape='"', header=false, new_line='\n', auto_detect=false, columns={'c0':'BIGINT','c1':'BIGINT','c2':'BIGINT','c3':'BIGINT','c4':'BIGINT','c5':'BIGINT','c6':'BIGINT','c7':'BIGINT','c8':'BIGINT','c9':'BIGINT','c10':'BIGINT','c11':'BIGINT'}, ignore_errors=true, null_padding=true, parallel=false)
+----
+1201	359407
